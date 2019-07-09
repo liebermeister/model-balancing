@@ -1,0 +1,32 @@
+!!SBtab SBtabVersion='1.0' TableType='Quantity' TableName='Parameter' Document='E. coli central carbon metabolism - balanced parameters' Date='2018-03-15'						
+!QuantityType	!Reaction	!Compound	!Mode	!Unit	!Reaction:Identifiers:kegg.reaction	!Compound:Identifiers:kegg.compound
+equilibrium constant	PTS_RPTSsy		0.0031566286	dimensionless	RPTSsy	
+equilibrium constant	PGI_R02740		0.40022189	dimensionless	R02740	
+equilibrium constant	PFK_R04779		0.7944892	dimensionless	R04779	
+equilibrium constant	ALD_R01070		0.21267712	dimensionless	R01070	
+equilibrium constant	TIM_R01015		0.88364243	dimensionless	R01015	
+equilibrium constant	GAP_R01061		0.4864867	dimensionless	R01061	
+equilibrium constant	PGK_R01512		154.4775	dimensionless	R01512	
+equilibrium constant	PGM_R01518		1.3254375	dimensionless	R01518	
+equilibrium constant	PGH_R00658		0.14414491	dimensionless	R00658	
+equilibrium constant	PYK_R00200		0.11263693	dimensionless	R00200	
+equilibrium constant	PDH_R00209		310.28474	dimensionless	R00209	
+equilibrium constant	ZWF_R00835		0.2691021	dimensionless	R00835	
+equilibrium constant	GLH_R02035		1.2571109	dimensionless	R02035	
+equilibrium constant	PGD_R01528		10.37614	dimensionless	R01528	
+equilibrium constant	RPI_R01056		0.97518564	dimensionless	R01056	
+equilibrium constant	RPE_R01529		0.80321679	dimensionless	R01529	
+equilibrium constant	TXT_R01641		2.1915665	dimensionless	R01641	
+equilibrium constant	TAL_R08575		0.0050081243	dimensionless	R08575	
+equilibrium constant	TXT_R01067		7.7173758	dimensionless	R01067	
+equilibrium constant	FBP_R00762		1.3811084	dimensionless	R00762	
+equilibrium constant	CSN_R00351		0.070494558	dimensionless	R00351	
+equilibrium constant	ACN_R01325		0.00012313338	dimensionless	R01325	
+equilibrium constant	ACN_R01900		0.026241138	dimensionless	R01900	
+equilibrium constant	ICD_R00709		0.25339169	dimensionless	R00709	
+equilibrium constant	KGD_R08549		0.12622582	dimensionless	R08549	
+equilibrium constant	SCS_R00405		15.990621	dimensionless	R00405	
+equilibrium constant	SDH_R02164		0.79022	dimensionless	R02164	
+equilibrium constant	FUM_R01082		8.6969202	dimensionless	R01082	
+equilibrium constant	MDH_R00342		0.0037341059	dimensionless	R00342	
+equilibrium constant	PPC_R00345		0.13636096	dimensionless	R00345	

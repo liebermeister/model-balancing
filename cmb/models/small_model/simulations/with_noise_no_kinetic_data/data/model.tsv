@@ -1,0 +1,52 @@
+!!!SBtab				
+!!SBtab Document='small_model' TableName='Reaction' TableType='Reaction' SBtabVersion='1.0' Date='2019-06-11'				
+!ID	!ReactionFormula	!Name	!IsReversible	
+E1	X1 <=> S2	E1	True	
+E2	X3 <=> S4	E2	True	
+E3	S2 + S4 <=> S5	E3	True	
+E4	S5 <=> X6	E4	True	
+E5	S5 <=> X7	E5	True	
+%				
+!!SBtab Document='small_model' TableName='Compound' TableType='Compound' SBtabVersion='1.0' Date='2019-06-11'				
+!ID	!Name	!IsConstant		
+X1	X1	True		
+S2	S2	False		
+X3	X3	True		
+S4	S4	False		
+S5	S5	False		
+X6	X6	True		
+X7	X7	True		
+%				
+!!SBtab Document='small_model' TableName='Parameter' TableType='Quantity' SBtabVersion='1.0' Date='2019-06-11'				
+!QuantityType	!Reaction	!Compound	!Mode	!Unit
+equilibrium constant	E1		0.092609416	dimensionless
+equilibrium constant	E2		2.3877131	dimensionless
+equilibrium constant	E3		1.8207247	dimensionless
+equilibrium constant	E4		0.26843147	dimensionless
+equilibrium constant	E5		0.57580647	dimensionless
+catalytic rate constant geometric mean	E1		44.865001	1/s
+catalytic rate constant geometric mean	E2		1399.5004	1/s
+catalytic rate constant geometric mean	E3		6271.5012	1/s
+catalytic rate constant geometric mean	E4		8.6547332	1/s
+catalytic rate constant geometric mean	E5		3706.4097	1/s
+Michaelis constant	E1	X1	0.058347204	mM
+Michaelis constant	E1	S2	0.0016204554	mM
+Michaelis constant	E3	S2	26.442459	mM
+Michaelis constant	E2	X3	147.39219	mM
+Michaelis constant	E2	S4	87.058472	mM
+Michaelis constant	E3	S4	0.0025102725	mM
+Michaelis constant	E3	S5	0.059618201	mM
+Michaelis constant	E4	S5	0.0010513548	mM
+Michaelis constant	E5	S5	0.00038572565	mM
+Michaelis constant	E4	X6	0.040760933	mM
+Michaelis constant	E5	X7	0.0522232	mM
+substrate catalytic rate constant	E1		81.926941	1/s
+substrate catalytic rate constant	E2		2813.8168	1/s
+substrate catalytic rate constant	E3		8929.262	1/s
+substrate catalytic rate constant	E4		0.72015004	1/s
+substrate catalytic rate constant	E5		241.71256	1/s
+product catalytic rate constant	E1		24.569065	1/s
+product catalytic rate constant	E2		696.06571	1/s
+product catalytic rate constant	E3		4404.8127	1/s
+product catalytic rate constant	E4		104.01222	1/s
+product catalytic rate constant	E5		56833.922	1/s

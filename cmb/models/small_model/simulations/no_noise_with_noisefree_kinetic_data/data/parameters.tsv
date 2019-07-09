@@ -1,0 +1,33 @@
+!!SBtab Document='small_model' TableName='Parameter' TableType='Quantity' SBtabVersion='1.0' Date='2019-06-10'				
+!QuantityType	!Reaction	!Compound	!Value	!Unit
+equilibrium constant	E1		0.05322758	dimensionless
+equilibrium constant	E2		1.760469	dimensionless
+equilibrium constant	E3		4.3551954	dimensionless
+equilibrium constant	E4		0.64460454	dimensionless
+equilibrium constant	E5		0.63082446	dimensionless
+catalytic rate constant geometric mean	E1		266.14096	1/s
+catalytic rate constant geometric mean	E2		145.87347	1/s
+catalytic rate constant geometric mean	E3		512.63139	1/s
+catalytic rate constant geometric mean	E4		50.771523	1/s
+catalytic rate constant geometric mean	E5		724.38615	1/s
+Michaelis constant	E1	X1	0.0088336788	mM
+Michaelis constant	E1	S2	0.012932638	mM
+Michaelis constant	E3	S2	2.6270501	mM
+Michaelis constant	E2	X3	1.7344756	mM
+Michaelis constant	E2	S4	0.011077201	mM
+Michaelis constant	E3	S4	0.062246943	mM
+Michaelis constant	E3	S5	0.35696389	mM
+Michaelis constant	E4	S5	0.44571505	mM
+Michaelis constant	E5	S5	0.045454075	mM
+Michaelis constant	E4	X6	0.26407668	mM
+Michaelis constant	E5	X7	0.015196548	mM
+substrate catalytic rate constant	E1		50.746644	1/s
+substrate catalytic rate constant	E2		2421.9188	1/s
+substrate catalytic rate constant	E3		724.08586	1/s
+substrate catalytic rate constant	E4		52.957869	1/s
+substrate catalytic rate constant	E5		995.03494	1/s
+product catalytic rate constant	E1		1395.7772	1/s
+product catalytic rate constant	E2		8.786037	1/s
+product catalytic rate constant	E3		362.92787	1/s
+product catalytic rate constant	E4		48.675441	1/s
+product catalytic rate constant	E5		527.35363	1/s
