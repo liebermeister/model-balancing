@@ -1,0 +1,31 @@
+!!SBtab TableType='Quantity' TableID='Concentration'  Organism='Escherichia coli' SBtabVersion='1.0' Unit='mM'			
+!QuantityType	!Reaction	!Reaction:Identifiers:kegg.reaction	data
+concentration of enzyme	PTS_RPTSsy	RPTSsy	0.0052772441
+concentration of enzyme	PGI_R02740	R02740	0.0044271666
+concentration of enzyme	PFK_R04779	R04779	0.0024618428
+concentration of enzyme	ALD_R01070	R01070	
+concentration of enzyme	TIM_R01015	R01015	0.0061319332
+concentration of enzyme	GAP_R01061	R01061	0.024067338
+concentration of enzyme	PGK_R01512	R01512	0.014506657
+concentration of enzyme	PGM_R01518	R01518	0.0080626697
+concentration of enzyme	PGH_R00658	R00658	0.024884366
+concentration of enzyme	PYK_R00200	R00200	0.0076606892
+concentration of enzyme	PDH_R00209	R00209	0.0077736742
+concentration of enzyme	ZWF_R00835	R00835	0.0014011675
+concentration of enzyme	GLH_R02035	R02035	0.0017831643
+concentration of enzyme	PGD_R01528	R01528	0.013452899
+concentration of enzyme	RPI_R01056	R01056	0.003620131
+concentration of enzyme	RPE_R01529	R01529	0.0023565439
+concentration of enzyme	TXT_R01641	R01641	
+concentration of enzyme	TAL_R08575	R08575	0.0098996364
+concentration of enzyme	TXT_R01067	R01067	0.0017969992
+concentration of enzyme	FBP_R00762	R00762	
+concentration of enzyme	CSN_R00351	R00351	0.0060373947
+concentration of enzyme	ACN_R01900	R01900	0.0060312459
+concentration of enzyme	ICD_R00709	R00709	0.017891595
+concentration of enzyme	KGD_R08549	R08549	0.0053033767
+concentration of enzyme	SCS_R00405	R00405	0.0075992007
+concentration of enzyme	SDH_R02164	R02164	0.0032181505
+concentration of enzyme	FUM_R01082	R01082	0.0015986991
+concentration of enzyme	MDH_R00342	R00342	0.024144199
+concentration of enzyme	PPC_R00345	R00345	0.006214174

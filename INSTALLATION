@@ -1,19 +1,18 @@
------------------------------------
-MATLAB code for Metabolic Economics
+--------------------------------------
+MATLAB code for Convex Model Balancing
 
-Wolfram Liebermeister (2014)
------------------------------------
+Wolfram Liebermeister (2019)
+-------------------------------------
 
 
 INSTALLATION
 
   1. Unpack the files
-  2. Include the subdirectory 'cba' into your Matlab path
+  2. Include the subdirectory 'convex-model-balancing' into your Matlab path
   3. Make sure that the following toolboxes are installed:
-      o Metabolic Network Toolbox  (https://github.com/liebermeister/mnt)
-      o SBML Toolbox               (http://sbml.org/Software/SBMLToolbox)
+      o Metabolic Network Toolbox  (https://github.com/liebermeister/metabolic-network-toolbox)
       o SBtab toolbox              (https://github.com/liebermeister/sbtab-matlab)
-      o efmtool Toolbox            (http://www.csb.ethz.ch/tools/efmtool)
+      o SBML Toolbox               (http://sbml.org/Software/SBMLToolbox)
 
 
 REQUIREMENTS
@@ -22,10 +21,9 @@ REQUIREMENTS
 
   They also require
 
-    Metabolic Network Toolbox - (https://github.com/liebermeister/mnt)
-    SBMLtoolbox    - SBML import / export  (see http://sbml.org/Software/SBMLToolbox)
-    SBtab toolbox  - SBtab format (https://github.com/liebermeister/sbtab-matlab)
-    efmtool        - Elementary flux modes (see http://www.csb.ethz.ch/tools/efmtool)
+    Metabolic Network Toolbox - (https://github.com/liebermeister/metabolic-network-toolbox)
+    SBtab toolbox             - SBtab format (https://github.com/liebermeister/sbtab-matlab)
+    SBMLtoolbox               - SBML import / export  (see http://sbml.org/Software/SBMLToolbox)
 
 
 STATE OF THE SOFTWARE.
