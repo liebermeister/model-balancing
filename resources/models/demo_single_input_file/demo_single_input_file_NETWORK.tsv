@@ -1,0 +1,19 @@
+!!!SBtab Document='small_model'
+				
+!!SBtab TableID='Reaction' TableType='Reaction' TableName='Reaction'				
+!ID	!ReactionFormula	!Name	!Identifiers:kegg.reaction	!IsReversible	
+E1	X1 <=> S2	E1	E1	True	
+E2	X3 <=> S4	E2	E2	True	
+E3	S2 + S4 <=> S5	E3	E3	True	
+E4	S5 <=> X6	E4	E4	True	
+E5	S5 <=> X7	E5	E5	True	
+				
+!!SBtab TableID='Compound' TableType='Compound' TableName='Compound'				
+!ID	!Name	!Identifiers:kegg.compound	!IsConstant		
+X1	X1	X1	True		
+S2	S2	S2	False		
+X3	X3	X3	True		
+S4	S4	S4	False		
+S5	S5	S5	False		
+X6	X6	X6	True		
+X7	X7	X7	True		

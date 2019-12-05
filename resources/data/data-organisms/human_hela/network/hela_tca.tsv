@@ -1,4 +1,4 @@
-!!SBtab TableID='Reaction' TableType='Reaction' Document='Model' SBtabVersion='1.0'				
+!!SBtab TableID='Reaction' TableType='Reaction' Document='Model' SBtabVersion='1.0'
 !ID	!ReactionFormula	!Name	!Identifiers:kegg.reaction	!IsReversible
 GLI_GLUNim	Glutamine_ex <=> Glutamine	Gln transport		True
 GTS_GLTEsy	M_adp_m + Glutamine + M_pi_m <=> M_atp_m + M_glu_L_m + M_nh4_m	Gln synthetase		True

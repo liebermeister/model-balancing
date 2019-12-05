@@ -1,6 +1,6 @@
-function [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max, preposterior, pp] = convex_model_balancing(filenames, cmb_options, network, q_info, prior, bounds, data, true)
+function [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max, preposterior, pp] = convex_model_balancing(filenames, cmb_options, network, q_info, prior, bounds, data, true, init)
 
-% [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max, preposterior, pp] = convex_model_balancing(filenames, cmb_options, network, q_info, prior, bounds, data, true)
+% [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max, preposterior, pp] = convex_model_balancing(filenames, cmb_options, network, q_info, prior, bounds, data, true, init)
 %
 % Run convex model balancing
 %
@@ -13,6 +13,7 @@ function [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max,
 %   bounds       struct describing bounds in the optimality problem (details see cmb_make_bounds)
 %   data         struct describing data used in the optimality problem
 %   true         struct describing true model variables (optional; only for models with artificial data)
+%   init         struct containing initial values
 %
 % Output variables:
 %   optimal            struct containing the model variables obtained from optimisation
@@ -30,7 +31,10 @@ function [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max,
 tic
     
 eval(default('true','[]'));
-  
+
+ns = size(data.X.mean,2);
+cmb_options.ns = ns;
+
 % -----------------------------------------------
 % Initialise some variables
 
@@ -39,10 +43,12 @@ eval(default('true','[]'));
 ns = size(data.X.mean,2);
 nq = length(prior.q.mean);
 
-cmb_options.ns = ns;
-
 % Prepare the preposterior distributions (individual terms)
 preposterior = cmb_prepare_posterior(prior, data, cmb_options, q_info);
+
+if sum(isnan(data.V.mean)),
+  error('Some flux values are unknown');
+end
 
 V = data.V.mean;
 
@@ -54,6 +60,7 @@ if isempty(true),
     cmb_options.initial_values_variant = 'preposterior_mode';
   end
 end
+
 
 % -----------------------------------------------
 % Initial values
@@ -97,6 +104,7 @@ switch cmb_options.initial_values_variant,
 
 end
 
+
 % -----------------------------------------------
 % Compute the optimum state and parameter values
 
@@ -119,15 +127,19 @@ display(' '); display('Running optimisation ..');
 
 optimal.A_forward = optimal.A .* sign(sign(V)+0.5);
 
+
 % -----------------------------------------------
 % Compare posterior loss scores for true values, initial guess, and predicted solution
+% -----------------------------------------------
 
 if cmb_options.display,
   cmb_display_scores(network, q_info, cmb_options, pp, preposterior, init, optimal, true, V, cmb_options.verbose);
 end
 
+
 % -----------------------------------------------
 % Further improve the solution (or try it as a check) by additional optimisation rounds
+% -----------------------------------------------
 
 if cmb_options.use_safe_optimisation,
   cont = 1;
@@ -141,8 +153,9 @@ if cmb_options.use_safe_optimisation,
 end
 
 
-% -----------------------------------------------
-% Davidi-style estimate of kcat values
+% ---------------------------------------------------------------------
+% Estimation of kcat values by maximal kapp values (as in Davidi et al)
+% ---------------------------------------------------------------------
 
 kapp_max.forward =  max([data.V.mean ./ data.E.mean],[],2); 
 kapp_max.reverse = -min([data.V.mean ./ data.E.mean],[],2);
@@ -151,8 +164,10 @@ kapp_max.reverse(kapp_max.reverse<0) = nan;
 
 calculation_time = toc;
 
+
 % -----------------------------------------------
 % Graphics
+% -----------------------------------------------
 
 if cmb_options.show_graphics,
   display(' '); ca;
@@ -162,18 +177,21 @@ end
 
 % -----------------------------------------------
 % Save results as SBtab files and .mat files
+% -----------------------------------------------
 
 if cmb_options.save_results,
   display(' '); 
   
-  cmb_save_results(network, data, optimal, filenames, struct('calculation_time',calculation_time));
+  cmb_save_results(network, data, optimal, filenames, cmb_options, struct('calculation_time',calculation_time));
 
   save(filenames.result_file,'optimal', 'calculation_time', 'gradient_V', 'init', 'cmb_options', 'V', 'kapp_max', 'preposterior', 'pp', 'filenames', 'cmb_options', 'network', 'q_info', 'prior', 'bounds', 'data', 'true');
 
 end
 
+
 % -----------------------------------------------
 % Result statistics
+% -----------------------------------------------
 
 if cmb_options.display + cmb_options.save_results,
   display(' '); 

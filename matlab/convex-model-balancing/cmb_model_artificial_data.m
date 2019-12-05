@@ -1,19 +1,17 @@
-function [filenames, network, q_info, prior, bounds, data, true] = cmb_model_artificial_data(model_name, network_sbml, cmb_options, c_init, result_dir)
+function [network, bounds, prior, q_info, data, true, kinetic_data, state_data] = cmb_model_artificial_data(model_name, network_sbml_file, cmb_options, c_init)
 
-% [filenames, network, q_info, prior, bounds, data, true] = cmb_model_artificial_data(model_name, network_sbml, cmb_options, c_init, result_dir)
+% [network, bounds, prior, q_info, data, true, kinetic_data] = cmb_model_artificial_data(model_name, network_sbml_file, cmb_options, c_init)
 %
 % Generate input data for a Convex Model Balancing problem with artifical data
 % 
 % Input variables
 %   model_name   (string) model name  
-%   network_sbml filename of SBML network model 
+%   network_sbml_file filename of SBML network model 
 %   cmb_options  struct containing options
 %   c_init       (optional) matrix; initial guess of (non-logarithmic) metabolite concentrations; 
 %                           also used for generating the artificial data 
-%   result_dir   (optional) directory name (for result files)
 %
 % Output variables
-%   filenames    struct describing filenames used (constructed using [out_DIR] and [cmb_options.run])
 %   network      struct describing metabolic network (format as in Metabolic Network Toolbox)
 %   q_info       struct describing the dependencies between model variables
 %   prior        struct describing priors in the optimality problem (details see cmb_make_prior)
@@ -23,38 +21,11 @@ function [filenames, network, q_info, prior, bounds, data, true] = cmb_model_art
 %
 % For CMB problems with "real" data, use cmb_model_and_data instead
   
-eval(default('result_dir','[]','c_init','[]'));
-
-% set filenames
-
-if ~isempty(result_dir),
-  if strcmp(result_dir(end),filesep),
-    result_dir = result_dir(1:end-1);
-  end
-  DIR = [result_dir filesep model_name filesep];;
-else
-  DIR = [cmb_basedir '/../results/' model_name filesep];
-  display(sprintf('No output directory specified. I will use the directory %s',DIR));
-end
-  
-filenames.model_name     = model_name;
-filenames.network_sbml   = network_sbml;
-filenames.run_dir        = [ DIR  'simulations/' cmb_options.run ];
-filenames.graphics_dir   = [ DIR  'simulations/' cmb_options.run '/ps-files/' ];
-filenames.data           = [ DIR  'simulations/' cmb_options.run '/data/'     ];
-filenames.states_out     = [ DIR  'simulations/' cmb_options.run '/data/'];
-filenames.parameters_out = [ DIR  'simulations/' cmb_options.run '/data/parameters.tsv'];
-filenames.model_out      = [ DIR  'simulations/' cmb_options.run '/data/model.tsv'];
-filenames.report         = [ DIR  'simulations/' cmb_options.run '/data/report.txt'];
-filenames.options_file   = [ DIR  'simulations/' cmb_options.run '/data/options'];
-filenames.result_file    = [ DIR  'simulations/' cmb_options.run '/data/results'];
-
-[~,~] = mkdir(filenames.graphics_dir);
-[~,~] = mkdir(filenames.data);
+eval(default('c_init','[]'));
 
 % load network 
 
-network = network_sbml_import(filenames.network_sbml);
+network = network_sbml_import(network_sbml_file);
 
 % parameter structure (depends on cmb_options.parameterisation)
 
@@ -62,7 +33,7 @@ q_info = cmb_define_parameterisation(network, cmb_options);
 
 % generate model kinetics and artificial data
 
-[kinetics, prior, bounds, data, true] = cmb_generate_artificial_data(network, cmb_options, q_info, c_init);
+[kinetics, prior, bounds, data, true, kinetic_data, state_data] = cmb_generate_artificial_data(network, cmb_options, q_info, c_init);
 
 network.kinetics = kinetics;
 

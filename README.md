@@ -9,6 +9,8 @@ Convex model balancing functions for Matlab
 
   o SBtab toolbox  (https://github.com/liebermeister/sbtab-matlab)
 
+  o Enzyme cost minimization toolbox  (https://github.com/liebermeister/enzyme-cost-minimization)
+
 Please make sure that these matlab packages are installed in your system and that all these directories and subdirectories are included in your matlab path.
 
 ## License

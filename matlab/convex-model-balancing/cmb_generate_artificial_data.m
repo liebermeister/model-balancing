@@ -1,6 +1,6 @@
-function [kinetics, prior, bounds, data, true] = cmb_generate_artificial_data(network, cmb_options, q_info, c_init)
+function [kinetics, prior, bounds, data, true, kinetic_data, state_data] = cmb_generate_artificial_data(network, cmb_options, q_info, c_init)
 
-% [kinetics, prior, bounds, data, true] = cmb_generate_artificial_data(network, cmb_options, q_info)
+% [kinetics, prior, bounds, data, true, kinetic_data, state_data] = cmb_generate_artificial_data(network, cmb_options, q_info)
 %
 % Generate an artificial data set for a given metabolic network structure
 % 
@@ -184,6 +184,7 @@ end
 % check whether true values satisfy bounds
 
 flag_ok = 1;
+
 if find(true.q < bounds.q_min),                              warning('Lower bounds for q violated'); flag_ok = 0; end
 if find(true.q > bounds.q_max),                              warning('Upper bounds for q violated'); flag_ok = 0; end
 if find(true.X < repmat(bounds.x_min,1,ns)),                 warning('Lower bounds for X violated'); flag_ok = 0; end
@@ -210,6 +211,17 @@ if find(true.A_forward < 0), error('Negative driving force encountered'); end
 % end
 
 kinetics = network.kinetics;
+[kinetics.Kcatf, kinetics.Kcatr] = modular_KV_Keq_to_kcat(network.N,network.kinetics);
+
+% ------------------------------------------------------------
+% data structure 'kinetic_data'
+
+kinetic_data = kinetics_to_kinetic_data(network);
+
+% ------------------------------------------------------------
+% data structure 'state_data'
+
+state_data = data_to_state_data(data);
 
 % ------------------------------------------------------------
 

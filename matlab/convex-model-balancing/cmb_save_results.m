@@ -1,6 +1,6 @@
-function cmb_save_results(network, data, optimal, filenames, options)
+function cmb_save_results(network, data, optimal, filenames, cmb_options, options)
 
-% cmb_save_results(network, data, optimal, filenames, options)
+% cmb_save_results(network, data, optimal, filenames, cmb_options, options)
 %
 % save results of model balancing as SBtab files
   
@@ -40,6 +40,14 @@ for it = 1:ns,
   result.V.(data.samples{it}) = data.V.mean(:,it);
 end
 
-ecm_sbtab_options = struct('r', optimal.kinetics,'method','emc4cm','document_name',filenames.model_name, 'save_tolerance_ranges',0,'sbtab_attributes',struct('CalculationTime', options.calculation_time),'filename_model_state', 'kinetic_model', 'filename_state_runs','metabolic_states');
+ecm_sbtab_options = struct('r', optimal.kinetics,'method','emc4cm','document_name',filenames.model_name, 'save_tolerance_ranges',0,'sbtab_attributes',struct('DocumentName', 'CMB result', 'Document', 'CMBresult', 'CalculationTime', sprintf('%f s',options.calculation_time)),'filename_model_state', filenames.kinetic_model, 'filename_state_runs',filenames.metabolic_states);
 
 ecm_save_result_sbtab(filenames.states_out, network_optimal, result.C, result.E, result.A, ecm_sbtab_options,[],[],[],[],[],[],[],result.V);
+
+
+% ----------------------------------------
+% save cmb_options as sbtab file
+
+cmb_options_sbtab = options_to_sbtab(cmb_options,struct('TableName','Options for convex model balancing','TableID','OptionsCMB','Method','convex-model-balancing'));
+
+sbtab_table_save(cmb_options_sbtab,struct('filename',filenames.options_tsv));

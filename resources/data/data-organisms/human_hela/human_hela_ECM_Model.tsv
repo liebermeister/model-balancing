@@ -1,27 +1,28 @@
-!!!SBtab						
-!!SBtab Document='HeLa model and data' TableID='Reaction' TableType='Reaction' SBtabVersion='1.0' Date='2019-07-11'				
+!!!SBtab Document='HeLa model and data'						
+						
+!!SBtab TableID='Reaction' TableType='Reaction' TableName='Reaction'						
 !ID	!ReactionFormula	!Name	!Identifiers:kegg.reaction	!IsReversible	!NameForPlots	
-GLI_GLUNim	Glutamine_ex <=> Glutamine	Gln transport		True		
-GTS_GLTEsy	M_adp_m + Glutamine + M_pi_m <=> M_atp_m + M_glu_L_m + M_nh4_m	Gln synthetase		True		
-R_GLUDym	M_glu_L_m + M_nadp_m <=> M_akg_m + M_nadph_m + M_nh4_m	Glu dehydrogenase		True		
-R_AKGDam	M_akg_m + M_coa_m + M_nad_m <=> M_co2_m + M_nadh_m + M_succoa_m	AKGD	R01197	False		
-R_SUCOAS1m	M_adp_m + M_pi_m + M_succoa_m <=> M_atp_m + M_coa_m + M_succ_m	SUCLG	R00405	True		
-R_SUCD2_u6m	M_q6_m + M_succ_m <=> M_fum_m + M_q6h2_m	SUCD		True		
-R_FUMm	M_fum_m <=> M_mal_L_m	FUM	R01082	True		
-R_MDHm	M_mal_L_m + M_nad_m <=> M_nadh_m + M_oaa_m	MDH	R00342	True		
-R_CSm	M_accoa_m + M_oaa_m <=> M_cit_m + M_coa_m	CS		False		
-R_ACL	M_atp_m + M_cit_m + M_coa_c <=> M_accoa_c + M_adp_m + M_oaa_c + M_pi_m	ACL		False		
-R_ACONTm	M_cit_m <=> M_icit_m	ACO	R01324	True		
-R_ICDHym	M_akg_m + M_co2_m + M_nadph_m <=> M_icit_m + M_nadp_m	IDH(NADP)	R00267	True		
-R_ICDHxm	M_icit_m + M_nad_m <=> M_akg_m + M_co2_m + M_nadh_m	IDH(NAD)	R00709	False		
-ASS_ASPAsy	M_oaa_m <=> M_asp_L_c	Asp synthesis		True		
-ASC_ASPAcons	M_asp_L_c <=> AspartateSink	Asp consumption		True		
-PYS_PYRIsy	M_asp_L_c <=> M_co2_m + Pyrimidines	Pyr synthesis		True		
-R_PC	M_atp_m + M_hco3_m + M_pyr_m <=> M_adp_m + M_oaa_m + M_pi_m	PC	R00344	False		
-R_ALCD2m	M_coa_m + M_nad_m + M_pyr_m <=> M_accoa_m + M_co2_m + M_nadh_m	PDH		True		
-R_ME1m	M_mal_L_m + M_nad_m <=> M_co2_m + M_nadh_m + M_pyr_m	ME	R00214	False		
-%						
-!!SBtab Document='HeLa model and data' TableID='Compound' TableType='Compound' SBtabVersion='1.0' Date='2019-07-11'						
+GLI_GLUNim	Glutamine_ex <=> Glutamine	Gln transport		True	gli_glunim	
+GTS_GLTEsy	M_adp_m + Glutamine + M_pi_m <=> M_atp_m + M_glu_L_m + M_nh4_m	Gln synthetase		True	gts_gltesy	
+R_GLUDym	M_glu_L_m + M_nadp_m <=> M_akg_m + M_nadph_m + M_nh4_m	Glu dehydrogenase		True	r_gludym	
+R_AKGDam	M_akg_m + M_coa_m + M_nad_m <=> M_co2_m + M_nadh_m + M_succoa_m	AKGD	R01197	False	r_akgdam	
+R_SUCOAS1m	M_adp_m + M_pi_m + M_succoa_m <=> M_atp_m + M_coa_m + M_succ_m	SUCLG	R00405	True	r_sucoas1m	
+R_SUCD2_u6m	M_q6_m + M_succ_m <=> M_fum_m + M_q6h2_m	SUCD		True	r_sucd2_u6m	
+R_FUMm	M_fum_m <=> M_mal_L_m	FUM	R01082	True	r_fumm	
+R_MDHm	M_mal_L_m + M_nad_m <=> M_nadh_m + M_oaa_m	MDH	R00342	True	r_mdhm	
+R_CSm	M_accoa_m + M_oaa_m <=> M_cit_m + M_coa_m	CS		False	r_csm	
+R_ACL	M_atp_m + M_cit_m + M_coa_c <=> M_accoa_c + M_adp_m + M_oaa_c + M_pi_m	ACL		False	r_acl	
+R_ACONTm	M_cit_m <=> M_icit_m	ACO	R01324	True	r_acontm	
+R_ICDHym	M_akg_m + M_co2_m + M_nadph_m <=> M_icit_m + M_nadp_m	IDH(NADP)	R00267	True	r_icdhym	
+R_ICDHxm	M_icit_m + M_nad_m <=> M_akg_m + M_co2_m + M_nadh_m	IDH(NAD)	R00709	False	r_icdhxm	
+ASS_ASPAsy	M_oaa_m <=> M_asp_L_c	Asp synthesis		True	ass_aspasy	
+ASC_ASPAcons	M_asp_L_c <=> AspartateSink	Asp consumption		True	asc_aspacons	
+PYS_PYRIsy	M_asp_L_c <=> M_co2_m + Pyrimidines	Pyr synthesis		True	pys_pyrisy	
+R_PC	M_atp_m + M_hco3_m + M_pyr_m <=> M_adp_m + M_oaa_m + M_pi_m	PC	R00344	False	r_pc	
+R_ALCD2m	M_coa_m + M_nad_m + M_pyr_m <=> M_accoa_m + M_co2_m + M_nadh_m	PDH		True	r_alcd2m	
+R_ME1m	M_mal_L_m + M_nad_m <=> M_co2_m + M_nadh_m + M_pyr_m	ME	R00214	False	r_me1m	
+						
+!!SBtab TableID='Compound' TableType='Compound' TableName='Compound'						
 !ID	!Name	!Identifiers:kegg.compound	!IsConstant	!NameForPlots		
 M_accoa_m	Acetyl-CoA[m]	C00024	False	Acetyl-CoA[m]		
 M_accoa_c	Acetyl-CoA[c]	C00024	True	Acetyl-CoA[c]		
@@ -56,8 +57,8 @@ M_q6_m	Ubiquinone	C17568	True	Ubiquinone
 M_q6h2_m	Ubiquinol	C00390	True	Ubiquinol		
 M_succ_m	Succinate	C00042	False	Succinate		
 M_succoa_m	Succinyl-CoA	C00091	False	Succinyl-CoA		
-%						
-!!SBtab DocumentName='HeLa model and data' TableID='Layout' TableType='Layout' SBtabVersion='1.0' Date='2019-07-11'						
+						
+!!SBtab TableName='Position' TableType='Position' TableID='Position'						
 !Element	!PositionX	!PositionY				
 M_accoa_m	0.24638	0.44830269				
 M_accoa_c	0.39781461	0.45474277				
@@ -111,8 +112,8 @@ PYS_PYRIsy	0.080538076	0.41804103
 R_PC	0.21285376	0.46135945				
 R_ALCD2m	0.24745009	0.48529385				
 R_ME1m	0.16945634	0.47973119				
-%						
-!!SBtab Document='HeLa model and data' TableID='Parameter' TableType='Quantity' SBtabVersion='1.0' Date='2019-07-11'						
+						
+!!SBtab TableID='Parameter' TableType='Quantity' TableName='Parameter'						
 !QuantityType	!Reaction	!Compound	!Mode	!Unit	!Reaction:Identifiers:kegg.reaction	!Compound:Identifiers:kegg.compound
 equilibrium constant	GLI_GLUNim		35.42	dimensionless		
 equilibrium constant	GTS_GLTEsy		32.66	dimensionless		
@@ -154,10 +155,10 @@ catalytic rate constant geometric mean	R_ALCD2m		20.007599	1/s
 catalytic rate constant geometric mean	R_ME1m		20.004145	1/s	R00214	
 Michaelis constant	R_CSm	M_accoa_m	0.0525	mM		C00024
 Michaelis constant	R_ALCD2m	M_accoa_m	0.09924	mM		C00024
-Michaelis constant	R_ACL	M_accoa_c	0.1177	mM		C00024
+Michaelis constant	R_ACL	M_accoa_c	0.1178	mM		C00024
 Michaelis constant	GTS_GLTEsy	M_adp_m	0.07175	mM		C00008
 Michaelis constant	R_SUCOAS1m	M_adp_m	0.1122	mM	R00405	C00008
-Michaelis constant	R_ACL	M_adp_m	0.1177	mM		C00008
+Michaelis constant	R_ACL	M_adp_m	0.1178	mM		C00008
 Michaelis constant	R_PC	M_adp_m	0.137	mM	R00344	C00008
 Michaelis constant	R_GLUDym	M_akg_m	0.1032	mM		C00026
 Michaelis constant	R_AKGDam	M_akg_m	0.08726	mM	R01197	C00026
@@ -219,10 +220,10 @@ Michaelis constant	R_MDHm	M_oaa_m	0.07612	mM	R00342	C00036
 Michaelis constant	R_CSm	M_oaa_m	0.0525	mM		C00036
 Michaelis constant	ASS_ASPAsy	M_oaa_m	0.04956	mM		C00036
 Michaelis constant	R_PC	M_oaa_m	0.137	mM	R00344	C00036
-Michaelis constant	R_ACL	M_oaa_c	0.1177	mM		C00036
+Michaelis constant	R_ACL	M_oaa_c	0.1178	mM		C00036
 Michaelis constant	GTS_GLTEsy	M_pi_m	0.07175	mM		C00009
 Michaelis constant	R_SUCOAS1m	M_pi_m	0.1122	mM	R00405	C00009
-Michaelis constant	R_ACL	M_pi_m	0.1177	mM		C00009
+Michaelis constant	R_ACL	M_pi_m	0.1178	mM		C00009
 Michaelis constant	R_PC	M_pi_m	0.137	mM	R00344	C00009
 Michaelis constant	PYS_PYRIsy	Pyrimidines	0.08572	mM		
 Michaelis constant	R_PC	M_pyr_m	0.07298	mM	R00344	C00022
@@ -272,12 +273,12 @@ product catalytic rate constant	PYS_PYRIsy		28.24	1/s
 product catalytic rate constant	R_PC		9.841	1/s	R00344	
 product catalytic rate constant	R_ALCD2m		20.32	1/s		
 product catalytic rate constant	R_ME1m		13.46	1/s	R00214	
-%						
-!!SBtab DocumentName='HeLa model and data' TableID='Flux' TableType='Quantity' Unit='mM/s' SBtabVersion='1.0' Date='2019-07-11'						
+						
+!!SBtab TableName='Flux' TableType='Quantity' TableID='Quantity' Unit='mM/s'						
 !QuantityType	!Reaction	!Reaction:Identifiers:kegg.reaction	!Value			
-flux	GLI_GLUNim		0.0053176046			
-flux	GTS_GLTEsy		0.0053176046			
-flux	R_GLUDym		0.0053176046			
+flux	GLI_GLUNim		0.0053176045			
+flux	GTS_GLTEsy		0.0053176045			
+flux	R_GLUDym		0.0053176045			
 flux	R_AKGDam	R01197	0.0059197226			
 flux	R_SUCOAS1m	R00405	0.0059197226			
 flux	R_SUCD2_u6m		0.0059197226			

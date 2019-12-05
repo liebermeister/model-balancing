@@ -1,0 +1,245 @@
+!!SBtab Document='hela_tca' TableID='Parameter' TableType='Quantity' TableName='Parameter'						
+!QuantityType	!Reaction	!Compound	!Mode	!Unit	!Reaction:Identifiers:kegg.reaction	!Compound:Identifiers:kegg.compound
+equilibrium constant	GLI_GLUNim		1	dimensionless		
+equilibrium constant	GTS_GLTEsy		1	dimensionless		
+equilibrium constant	R_GLUDym		0.6035	dimensionless		
+equilibrium constant	R_AKGDam		1	dimensionless	R01197	
+equilibrium constant	R_SUCOAS1m		1	dimensionless	R00405	
+equilibrium constant	R_SUCD2_u6m		1	dimensionless		
+equilibrium constant	R_FUMm		1	dimensionless	R01082	
+equilibrium constant	R_MDHm		1	dimensionless	R00342	
+equilibrium constant	R_CSm		0.9999	dimensionless		
+equilibrium constant	R_ACL		0.6531	dimensionless		
+equilibrium constant	R_ACONTm		0.9999	dimensionless	R01324	
+equilibrium constant	R_ICDHym		1.657	dimensionless	R00267	
+equilibrium constant	R_ICDHxm		0.6035	dimensionless	R00709	
+equilibrium constant	ASS_ASPAsy		1	dimensionless		
+equilibrium constant	ASC_ASPAcons		1	dimensionless		
+equilibrium constant	PYS_PYRIsy		0.5379	dimensionless		
+equilibrium constant	R_PC		1	dimensionless	R00344	
+equilibrium constant	R_ALCD2m		0.9999	dimensionless		
+equilibrium constant	R_ME1m		0.6035	dimensionless	R00214	
+catalytic rate constant geometric mean	GLI_GLUNim		200	1/s		
+catalytic rate constant geometric mean	GTS_GLTEsy		200	1/s		
+catalytic rate constant geometric mean	R_GLUDym		200	1/s		
+catalytic rate constant geometric mean	R_AKGDam		200	1/s	R01197	
+catalytic rate constant geometric mean	R_SUCOAS1m		200	1/s	R00405	
+catalytic rate constant geometric mean	R_SUCD2_u6m		200	1/s		
+catalytic rate constant geometric mean	R_FUMm		200	1/s	R01082	
+catalytic rate constant geometric mean	R_MDHm		200	1/s	R00342	
+catalytic rate constant geometric mean	R_CSm		200	1/s		
+catalytic rate constant geometric mean	R_ACL		200	1/s		
+catalytic rate constant geometric mean	R_ACONTm		200	1/s	R01324	
+catalytic rate constant geometric mean	R_ICDHym		200	1/s	R00267	
+catalytic rate constant geometric mean	R_ICDHxm		200	1/s	R00709	
+catalytic rate constant geometric mean	ASS_ASPAsy		200	1/s		
+catalytic rate constant geometric mean	ASC_ASPAcons		200	1/s		
+catalytic rate constant geometric mean	PYS_PYRIsy		200	1/s		
+catalytic rate constant geometric mean	R_PC		200	1/s	R00344	
+catalytic rate constant geometric mean	R_ALCD2m		200	1/s		
+catalytic rate constant geometric mean	R_ME1m		200	1/s	R00214	
+Michaelis constant	R_CSm	M_accoa_m	0.1	mM		C00024
+Michaelis constant	R_ALCD2m	M_accoa_m	0.1	mM		C00024
+Michaelis constant	R_ACL	M_accoa_c	0.1198	mM		C00024
+Michaelis constant	GTS_GLTEsy	M_adp_m	0.1	mM		C00008
+Michaelis constant	R_SUCOAS1m	M_adp_m	0.1	mM	R00405	C00008
+Michaelis constant	R_ACL	M_adp_m	0.1198	mM		C00008
+Michaelis constant	R_PC	M_adp_m	0.1	mM	R00344	C00008
+Michaelis constant	R_GLUDym	M_akg_m	0.1238	mM		C00026
+Michaelis constant	R_AKGDam	M_akg_m	0.1	mM	R01197	C00026
+Michaelis constant	R_ICDHym	M_akg_m	0.1238	mM	R00267	C00026
+Michaelis constant	R_ICDHxm	M_akg_m	0.1238	mM	R00709	C00026
+Michaelis constant	ASS_ASPAsy	M_asp_L_c	0.1	mM		C00049
+Michaelis constant	ASC_ASPAcons	M_asp_L_c	0.1	mM		C00049
+Michaelis constant	PYS_PYRIsy	M_asp_L_c	0.07692	mM		C00049
+Michaelis constant	ASC_ASPAcons	AspartateSink	0.1	mM		
+Michaelis constant	GTS_GLTEsy	M_atp_m	0.1	mM		C00002
+Michaelis constant	R_SUCOAS1m	M_atp_m	0.1	mM	R00405	C00002
+Michaelis constant	R_ACL	M_atp_m	0.08351	mM		C00002
+Michaelis constant	R_PC	M_atp_m	0.1	mM	R00344	C00002
+Michaelis constant	R_CSm	M_cit_m	0.1	mM		C00158
+Michaelis constant	R_ACL	M_cit_m	0.08351	mM		C00158
+Michaelis constant	R_ACONTm	M_cit_m	0.1	mM	R01324	C00158
+Michaelis constant	R_AKGDam	M_co2_m	0.1	mM	R01197	C00011
+Michaelis constant	R_ICDHym	M_co2_m	0.1238	mM	R00267	C00011
+Michaelis constant	R_ICDHxm	M_co2_m	0.1238	mM	R00709	C00011
+Michaelis constant	PYS_PYRIsy	M_co2_m	0.13	mM		C00011
+Michaelis constant	R_ALCD2m	M_co2_m	0.1	mM		C00011
+Michaelis constant	R_ME1m	M_co2_m	0.1238	mM	R00214	C00011
+Michaelis constant	R_AKGDam	M_coa_m	0.1	mM	R01197	C00010
+Michaelis constant	R_SUCOAS1m	M_coa_m	0.1	mM	R00405	C00010
+Michaelis constant	R_CSm	M_coa_m	0.1	mM		C00010
+Michaelis constant	R_ALCD2m	M_coa_m	0.1	mM		C00010
+Michaelis constant	R_ACL	M_coa_c	0.08351	mM		C00010
+Michaelis constant	R_SUCD2_u6m	M_fum_m	0.1	mM		C00122
+Michaelis constant	R_FUMm	M_fum_m	0.1	mM	R01082	C00122
+Michaelis constant	GTS_GLTEsy	M_glu_L_m	0.1	mM		C00025
+Michaelis constant	R_GLUDym	M_glu_L_m	0.08076	mM		C00025
+Michaelis constant	GLI_GLUNim	Glutamine	0.1	mM		C00064
+Michaelis constant	GTS_GLTEsy	Glutamine	0.1	mM		C00064
+Michaelis constant	GLI_GLUNim	Glutamine_ex	0.1	mM		C00064
+Michaelis constant	R_PC	M_hco3_m	0.1	mM	R00344	C00288
+Michaelis constant	R_ACONTm	M_icit_m	0.1	mM	R01324	C00311
+Michaelis constant	R_ICDHym	M_icit_m	0.08076	mM	R00267	C00311
+Michaelis constant	R_ICDHxm	M_icit_m	0.08076	mM	R00709	C00311
+Michaelis constant	R_FUMm	M_mal_L_m	0.1	mM	R01082	C00149
+Michaelis constant	R_MDHm	M_mal_L_m	0.1	mM	R00342	C00149
+Michaelis constant	R_ME1m	M_mal_L_m	0.08076	mM	R00214	C00149
+Michaelis constant	R_AKGDam	M_nad_m	0.1	mM	R01197	C00003
+Michaelis constant	R_MDHm	M_nad_m	0.1	mM	R00342	C00003
+Michaelis constant	R_ICDHxm	M_nad_m	0.08076	mM	R00709	C00003
+Michaelis constant	R_ALCD2m	M_nad_m	0.1	mM		C00003
+Michaelis constant	R_ME1m	M_nad_m	0.08076	mM	R00214	C00003
+Michaelis constant	R_AKGDam	M_nadh_m	0.1	mM	R01197	C00004
+Michaelis constant	R_MDHm	M_nadh_m	0.1	mM	R00342	C00004
+Michaelis constant	R_ICDHxm	M_nadh_m	0.1238	mM	R00709	C00004
+Michaelis constant	R_ALCD2m	M_nadh_m	0.1	mM		C00004
+Michaelis constant	R_ME1m	M_nadh_m	0.1238	mM	R00214	C00004
+Michaelis constant	R_GLUDym	M_nadp_m	0.08076	mM		C00006
+Michaelis constant	R_ICDHym	M_nadp_m	0.08076	mM	R00267	C00006
+Michaelis constant	R_GLUDym	M_nadph_m	0.1238	mM		C00005
+Michaelis constant	R_ICDHym	M_nadph_m	0.1238	mM	R00267	C00005
+Michaelis constant	GTS_GLTEsy	M_nh4_m	0.1	mM		C00014
+Michaelis constant	R_GLUDym	M_nh4_m	0.1238	mM		C00014
+Michaelis constant	R_MDHm	M_oaa_m	0.1	mM	R00342	C00036
+Michaelis constant	R_CSm	M_oaa_m	0.1	mM		C00036
+Michaelis constant	ASS_ASPAsy	M_oaa_m	0.1	mM		C00036
+Michaelis constant	R_PC	M_oaa_m	0.1	mM	R00344	C00036
+Michaelis constant	R_ACL	M_oaa_c	0.1198	mM		C00036
+Michaelis constant	GTS_GLTEsy	M_pi_m	0.1	mM		C00009
+Michaelis constant	R_SUCOAS1m	M_pi_m	0.1	mM	R00405	C00009
+Michaelis constant	R_ACL	M_pi_m	0.1198	mM		C00009
+Michaelis constant	R_PC	M_pi_m	0.1	mM	R00344	C00009
+Michaelis constant	PYS_PYRIsy	Pyrimidines	0.13	mM		
+Michaelis constant	R_PC	M_pyr_m	0.1	mM	R00344	C00022
+Michaelis constant	R_ALCD2m	M_pyr_m	0.1	mM		C00022
+Michaelis constant	R_ME1m	M_pyr_m	0.1238	mM	R00214	C00022
+Michaelis constant	R_SUCD2_u6m	M_q6_m	0.1	mM		C17568
+Michaelis constant	R_SUCD2_u6m	M_q6h2_m	0.1	mM		C00390
+Michaelis constant	R_SUCOAS1m	M_succ_m	0.1	mM	R00405	C00042
+Michaelis constant	R_SUCD2_u6m	M_succ_m	0.1	mM		C00042
+Michaelis constant	R_AKGDam	M_succoa_m	0.1	mM	R01197	C00091
+Michaelis constant	R_SUCOAS1m	M_succoa_m	0.1	mM	R00405	C00091
+substrate catalytic rate constant	GLI_GLUNim		200	1/s		
+substrate catalytic rate constant	GTS_GLTEsy		200	1/s		
+substrate catalytic rate constant	R_GLUDym		288	1/s		
+substrate catalytic rate constant	R_AKGDam		200	1/s	R01197	
+substrate catalytic rate constant	R_SUCOAS1m		200	1/s	R00405	
+substrate catalytic rate constant	R_SUCD2_u6m		200	1/s		
+substrate catalytic rate constant	R_FUMm		200	1/s	R01082	
+substrate catalytic rate constant	R_MDHm		200	1/s	R00342	
+substrate catalytic rate constant	R_CSm		200	1/s		
+substrate catalytic rate constant	R_ACL		272	1/s		
+substrate catalytic rate constant	R_ACONTm		200	1/s	R01324	
+substrate catalytic rate constant	R_ICDHym		138.9	1/s	R00267	
+substrate catalytic rate constant	R_ICDHxm		288	1/s	R00709	
+substrate catalytic rate constant	ASS_ASPAsy		200	1/s		
+substrate catalytic rate constant	ASC_ASPAcons		200	1/s		
+substrate catalytic rate constant	PYS_PYRIsy		312.9	1/s		
+substrate catalytic rate constant	R_PC		200	1/s	R00344	
+substrate catalytic rate constant	R_ALCD2m		200	1/s		
+substrate catalytic rate constant	R_ME1m		288	1/s	R00214	
+product catalytic rate constant	GLI_GLUNim		200	1/s		
+product catalytic rate constant	GTS_GLTEsy		200	1/s		
+product catalytic rate constant	R_GLUDym		138.9	1/s		
+product catalytic rate constant	R_AKGDam		200	1/s	R01197	
+product catalytic rate constant	R_SUCOAS1m		200	1/s	R00405	
+product catalytic rate constant	R_SUCD2_u6m		200	1/s		
+product catalytic rate constant	R_FUMm		200	1/s	R01082	
+product catalytic rate constant	R_MDHm		200	1/s	R00342	
+product catalytic rate constant	R_CSm		200	1/s		
+product catalytic rate constant	R_ACL		147.1	1/s		
+product catalytic rate constant	R_ACONTm		200	1/s	R01324	
+product catalytic rate constant	R_ICDHym		287.9	1/s	R00267	
+product catalytic rate constant	R_ICDHxm		138.9	1/s	R00709	
+product catalytic rate constant	ASS_ASPAsy		200	1/s		
+product catalytic rate constant	ASC_ASPAcons		200	1/s		
+product catalytic rate constant	PYS_PYRIsy		127.8	1/s		
+product catalytic rate constant	R_PC		200	1/s	R00344	
+product catalytic rate constant	R_ALCD2m		200	1/s		
+product catalytic rate constant	R_ME1m		138.9	1/s	R00214	
+standard chemical potential		M_accoa_m	0.01474	kJ/mol		C00024
+standard chemical potential		M_accoa_c	0.1477	kJ/mol		C00024
+standard chemical potential		M_adp_m	0.1255	kJ/mol		C00008
+standard chemical potential		M_akg_m	0.3525	kJ/mol		C00026
+standard chemical potential		M_asp_L_c	-0.1036	kJ/mol		C00049
+standard chemical potential		AspartateSink	-0.1036	kJ/mol		
+standard chemical potential		M_atp_m	-0.1255	kJ/mol		C00002
+standard chemical potential		M_cit_m	-0.2364	kJ/mol		C00158
+standard chemical potential		M_co2_m	0.6186	kJ/mol		C00011
+standard chemical potential		M_coa_m	0.1479	kJ/mol		C00010
+standard chemical potential		M_coa_c	-0.1477	kJ/mol		C00010
+standard chemical potential		M_fum_m	-0.05897	kJ/mol		C00122
+standard chemical potential		M_glu_L_m	-0.2767	kJ/mol		C00025
+standard chemical potential		Glutamine	-0.07529	kJ/mol		C00064
+standard chemical potential		Glutamine_ex	-0.07526	kJ/mol		C00064
+standard chemical potential		M_hco3_m	-0.2566	kJ/mol		C00288
+standard chemical potential		M_icit_m	-0.2363	kJ/mol		C00311
+standard chemical potential		M_mal_L_m	-0.05901	kJ/mol		C00149
+standard chemical potential		M_nad_m	-0.02223	kJ/mol		C00003
+standard chemical potential		M_nadh_m	0.02223	kJ/mol		C00004
+standard chemical potential		M_nadp_m	-0.02237	kJ/mol		C00006
+standard chemical potential		M_nadph_m	0.02237	kJ/mol		C00005
+standard chemical potential		M_nh4_m	0.5778	kJ/mol		C00014
+standard chemical potential		M_oaa_m	-0.1034	kJ/mol		C00036
+standard chemical potential		M_oaa_c	0.1477	kJ/mol		C00036
+standard chemical potential		M_pi_m	0.1255	kJ/mol		C00009
+standard chemical potential		Purines	0	kJ/mol		
+standard chemical potential		Pyrimidines	0.8148	kJ/mol		
+standard chemical potential		M_pyr_m	0.5298	kJ/mol		C00022
+standard chemical potential		M_q6_m	-0.06239	kJ/mol		C17568
+standard chemical potential		M_q6h2_m	0.06239	kJ/mol		C00390
+standard chemical potential		M_succ_m	0.06584	kJ/mol		C00042
+standard chemical potential		M_succoa_m	-0.1627	kJ/mol		C00091
+concentration		M_accoa_m	0.1	mM		C00024
+concentration		M_accoa_c	0.1	mM		C00024
+concentration		M_adp_m	0.1	mM		C00008
+concentration		M_akg_m	0.1	mM		C00026
+concentration		M_asp_L_c	0.1	mM		C00049
+concentration		AspartateSink	0.1	mM		
+concentration		M_atp_m	0.1	mM		C00002
+concentration		M_cit_m	0.1	mM		C00158
+concentration		M_co2_m	0.1	mM		C00011
+concentration		M_coa_m	0.1	mM		C00010
+concentration		M_coa_c	0.1	mM		C00010
+concentration		M_fum_m	0.1	mM		C00122
+concentration		M_glu_L_m	0.1	mM		C00025
+concentration		Glutamine	0.1	mM		C00064
+concentration		Glutamine_ex	0.1	mM		C00064
+concentration		M_hco3_m	0.1	mM		C00288
+concentration		M_icit_m	0.1	mM		C00311
+concentration		M_mal_L_m	0.1	mM		C00149
+concentration		M_nad_m	0.1	mM		C00003
+concentration		M_nadh_m	0.1	mM		C00004
+concentration		M_nadp_m	0.1	mM		C00006
+concentration		M_nadph_m	0.1	mM		C00005
+concentration		M_nh4_m	0.1	mM		C00014
+concentration		M_oaa_m	0.1	mM		C00036
+concentration		M_oaa_c	0.1	mM		C00036
+concentration		M_pi_m	0.1	mM		C00009
+concentration		Purines	0.1	mM		
+concentration		Pyrimidines	0.1	mM		
+concentration		M_pyr_m	0.1	mM		C00022
+concentration		M_q6_m	0.1	mM		C17568
+concentration		M_q6h2_m	0.1	mM		C00390
+concentration		M_succ_m	0.1	mM		C00042
+concentration		M_succoa_m	0.1	mM		C00091
+concentration of enzyme	GLI_GLUNim		0.001	mM		
+concentration of enzyme	GTS_GLTEsy		0.001	mM		
+concentration of enzyme	R_GLUDym		0.001	mM		
+concentration of enzyme	R_AKGDam		0.001	mM	R01197	
+concentration of enzyme	R_SUCOAS1m		0.001	mM	R00405	
+concentration of enzyme	R_SUCD2_u6m		0.001	mM		
+concentration of enzyme	R_FUMm		0.001	mM	R01082	
+concentration of enzyme	R_MDHm		0.001	mM	R00342	
+concentration of enzyme	R_CSm		0.001	mM		
+concentration of enzyme	R_ACL		0.001	mM		
+concentration of enzyme	R_ACONTm		0.001	mM	R01324	
+concentration of enzyme	R_ICDHym		0.001	mM	R00267	
+concentration of enzyme	R_ICDHxm		0.001	mM	R00709	
+concentration of enzyme	ASS_ASPAsy		0.001	mM		
+concentration of enzyme	ASC_ASPAcons		0.001	mM		
+concentration of enzyme	PYS_PYRIsy		0.001	mM		
+concentration of enzyme	R_PC		0.001	mM	R00344	
+concentration of enzyme	R_ALCD2m		0.001	mM		
+concentration of enzyme	R_ME1m		0.001	mM	R00214	

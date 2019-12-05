@@ -1,5 +1,6 @@
 !!!SBtab			
-!!SBtab DocumentName='HeLa model and data' TableID='ConcentrationData' TableType='Quantity' Unit='mM' SBtabVersion='1.0' Date='2019-07-11'			
+			
+!!SBtab TableName='ConcentrationData' TableType='Quantity' TableID='Quantity' Unit='mM'			
 !QuantityType	!Compound	!Compound:Identifiers:kegg.compound	!Value
 concentration	M_accoa_m	C00024	0.018281061
 concentration	M_accoa_c	C00024	0.0054271079
@@ -34,25 +35,25 @@ concentration	M_q6_m	C17568	NaN
 concentration	M_q6h2_m	C00390	NaN
 concentration	M_succ_m	C00042	0.042307841
 concentration	M_succoa_m	C00091	NaN
-%			
-!!SBtab DocumentName='HeLa model and data' TableID='EnzymeData' TableType='Quantity' Unit='mM' SBtabVersion='1.0' Date='2019-07-11'			
+			
+!!SBtab TableName='EnzymeData' TableType='Quantity' TableID='Quantity' Unit='mM'			
 !QuantityType	!Reaction	!Reaction:Identifiers:kegg.reaction	!Value
 concentration of enzyme	GLI_GLUNim		NaN
-concentration of enzyme	GTS_GLTEsy		0.00043266805
+concentration of enzyme	GTS_GLTEsy		0.00043894638
 concentration of enzyme	R_GLUDym		NaN
-concentration of enzyme	R_AKGDam	R01197	0.00086382997
-concentration of enzyme	R_SUCOAS1m	R00405	0.00068409535
-concentration of enzyme	R_SUCD2_u6m		0.00066693556
-concentration of enzyme	R_FUMm	R01082	0.0018631999
-concentration of enzyme	R_MDHm	R00342	0.005114615
-concentration of enzyme	R_CSm		0.0040796838
+concentration of enzyme	R_AKGDam	R01197	0.00087375347
+concentration of enzyme	R_SUCOAS1m	R00405	0.00066747258
+concentration of enzyme	R_SUCD2_u6m		0.000684733
+concentration of enzyme	R_FUMm	R01082	0.001879837
+concentration of enzyme	R_MDHm	R00342	0.0050438672
+concentration of enzyme	R_CSm		0.0041047544
 concentration of enzyme	R_ACL		NaN
-concentration of enzyme	R_ACONTm	R01324	0.00021216441
-concentration of enzyme	R_ICDHym	R00267	0.00034421448
-concentration of enzyme	R_ICDHxm	R00709	0.00044300761
+concentration of enzyme	R_ACONTm	R01324	0.00021817854
+concentration of enzyme	R_ICDHym	R00267	0.0003369704
+concentration of enzyme	R_ICDHxm	R00709	0.0004392816
 concentration of enzyme	ASS_ASPAsy		NaN
 concentration of enzyme	ASC_ASPAcons		NaN
 concentration of enzyme	PYS_PYRIsy		NaN
-concentration of enzyme	R_PC	R00344	0.00047409994
-concentration of enzyme	R_ALCD2m		0.00077118932
-concentration of enzyme	R_ME1m	R00214	0.00054347604
+concentration of enzyme	R_PC	R00344	0.00047008878
+concentration of enzyme	R_ALCD2m		0.00076251776
+concentration of enzyme	R_ME1m	R00214	0.00055411756

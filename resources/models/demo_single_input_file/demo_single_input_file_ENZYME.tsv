@@ -1,0 +1,9 @@
+!!!SBtab Document='small_model'
+
+!!SBtab TableID='EnzymeConcentration' TableType='Quantity' TableName='Enzyme levels' Unit='mM'
+!QuantityType	!Reaction	!Reaction:Identifiers:kegg.reaction	!Mean	!Std
+concentration of enzyme	E1	E1	0.00091380148	0.00091380148
+concentration of enzyme	E2	E2	0.00125971	0.00125971   
+concentration of enzyme	E3	E3	0.00076423212	0.00076423212
+concentration of enzyme	E4	E4	0.0005035739	0.0005035739 
+concentration of enzyme	E5	E5	0.00067196248	0.00067196248

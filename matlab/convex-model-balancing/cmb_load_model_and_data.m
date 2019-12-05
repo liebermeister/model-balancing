@@ -1,4 +1,4 @@
-function [network, kinetic_data, state_data] = cmb_load_model_and_data(model_file, kinetic_data_file, state_data_files, replace_ids_in_network)
+function [network, kinetic_data, state_data] = cmb_load_model_and_data(model_file, kinetic_data_file, state_data_files, replace_ids_in_network,match_data_by)
 
 % [network, kinetic_data, state_data] = cmb_load_model_and_data(model_file, kinetic_data_file, metabolite_data_file, enzyme_data_file, flux_data_file)
 %
@@ -14,19 +14,29 @@ function [network, kinetic_data, state_data] = cmb_load_model_and_data(model_fil
 %   enzyme_data_file:     enzyme data (filename)
 %   flux_data_file:       flux data (filename)
 %
+%   replace_ids_in_network = [];
+%   match_data_by          = 'KeggId'; % ModelElementId
+%
 % Output:
 %   network:        model data structure (as in MNT toolbox)
 %   kinetic_data:   kinetic data data structure (as in MNT toolbox, mnt_kinetic_data)
 %   state_data:     metabolite, enzyme, and flux data
 
 
-eval(default('kinetic_data_file', '[]', 'metabolite_data_file', '[]', 'enzyme_data_file', '[]', 'flux_data_file', '[]','replace_ids_in_network','[]'));
+eval(default('kinetic_data_file', '[]', 'metabolite_data_file', '[]', 'enzyme_data_file', '[]', 'flux_data_file', '[]','replace_ids_in_network','[]','match_data_by','''KeggId'''));
   
 options.use_sbml_ids         = 0;
 options.use_kegg_ids         = 1;
 options.parameter_prior_file = cmb_prior_file;
   
 network = network_import_model(model_file);
+if ~isfield(network,'metabolite_KEGGID'),
+  network.metabolite_KEGGID = {};
+end
+
+if ~isfield(network,'reaction_KEGGID'),
+  network.reaction_KEGGID = {};
+end
 
 if length(kinetic_data_file),
   parameter_prior = parameter_balancing_prior([],options.parameter_prior_file,0); 
@@ -48,7 +58,14 @@ if length(state_data_files),
   if isfield(state_data_files,'samples'),
     state_data.samples = state_data_files.samples;
   end
-  state_data.metabolite_data = load_network_state_data(network, sdf.metabolite.file, sdf.metabolite.type, sdf.metabolite.columns_mean, sdf.metabolite.columns_std, replace_ids_in_network);
-  state_data.enzyme_data     = load_network_state_data(network, sdf.enzyme.file, sdf.enzyme.type, sdf.enzyme.columns_mean, sdf.enzyme.columns_std, replace_ids_in_network);
-  state_data.flux_data       = load_network_state_data(network, sdf.flux.file, sdf.flux.type, sdf.flux.columns_mean, sdf.flux.columns_std, replace_ids_in_network);
+  sdf.metabolite.replace_ids_in_network = replace_ids_in_network;
+  sdf.enzyme.replace_ids_in_network     = replace_ids_in_network;
+  sdf.flux.replace_ids_in_network       = replace_ids_in_network;
+  sdf.metabolite.match_data_by          = match_data_by;
+  sdf.enzyme.match_data_by              = match_data_by;
+  sdf.flux.match_data_by                = match_data_by;
+
+  state_data.metabolite_data = load_network_state_data(network, sdf.metabolite.file, sdf.metabolite.type, sdf.metabolite);
+  state_data.enzyme_data     = load_network_state_data(network, sdf.enzyme.file,     sdf.enzyme.type,     sdf.enzyme);
+  state_data.flux_data       = load_network_state_data(network, sdf.flux.file,       sdf.flux.type,       sdf.flux);
 end

@@ -46,7 +46,9 @@ cmb_options.initial_values_variant = 'average_sample';
 % and generate "true" kinetic model, priors, and artificial data
 % -----------------------------------------------
 
-[filenames, network, q_info, prior, bounds, data, true] = cmb_model_artificial_data(model, network_sbml, cmb_options, c_init, result_dir);
+filenames = cmb_filenames(model, run, result_dir, network_sbml);
+
+[network, bounds, prior, q_info, data, true, kinetic_data, state_data] = cmb_model_artificial_data(model, network_sbml, cmb_options, c_init);
 
 
 % -----------------------------------------------
