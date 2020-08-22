@@ -1,6 +1,8 @@
-Test files for convex model balancing (CVXpy version)
-=====================================================
+Test files for model balancing (CVXpy version)
+==============================================
 
-Directory "examples": example model (+ data) file (SBtab)
+Directories:
 
-Directory "prior-table": (SBtab) table describing priors and bounds for all relevenant types of model variables
+* "examples": example model (+ data) file (SBtab)
+
+* "prior-table": (SBtab) table describing priors and bounds for all relevenant types of model variables
