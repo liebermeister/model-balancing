@@ -1,8 +1,10 @@
-function cmb_save_results(network, data, optimal, filenames, cmb_options, options)
+function cmb_save_results(network, data, optimal, filenames, cmb_options, options, true)
 
 % cmb_save_results(network, data, optimal, filenames, cmb_options, options)
 %
 % save results of model balancing as SBtab files
+
+eval(default('true','[]'));
   
 ns = size(optimal.C,2);
   
@@ -44,6 +46,28 @@ ecm_sbtab_options = struct('r', optimal.kinetics,'method','emc4cm','document_nam
 
 ecm_save_result_sbtab(filenames.states_out, network_optimal, result.C, result.E, result.A, ecm_sbtab_options,[],[],[],[],[],[],[],result.V);
 
+
+% -----------------------------------------
+% For artificial data: Save "true" metabolic states as SBtab
+
+if length(true),
+
+  network_true = network;
+  network_true.kinetics = true.kinetics;
+
+  clear result
+  
+  for it = 1:ns,
+    result.C.(data.samples{it}) = exp(true.X(:,it));
+    result.E.(data.samples{it}) = true.E(:,it);
+    result.A.(data.samples{it}) = true.A_forward(:,it) .* sign(true.V(:,it));
+    result.V.(data.samples{it}) = true.V(:,it);
+  end
+  
+  ecm_sbtab_options = struct('r', optimal.kinetics,'method','emc4cm','document_name',filenames.model_name, 'save_tolerance_ranges',0,'sbtab_attributes',struct('DocumentName', 'CMB result', 'Document', 'CMBresult', 'CalculationTime', sprintf('%f s',options.calculation_time)),'filename_model_state', filenames.kinetic_model, 'filename_state_runs','metabolic_states');
+  ecm_save_result_sbtab(filenames.state_true, network_true, result.C, result.E, result.A, ecm_sbtab_options,[],[],[],[],[],[],[],result.V);
+
+end
 
 % ----------------------------------------
 % save cmb_options as sbtab file

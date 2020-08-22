@@ -182,7 +182,7 @@ end
 if cmb_options.save_results,
   display(' '); 
   
-  cmb_save_results(network, data, optimal, filenames, cmb_options, struct('calculation_time',calculation_time));
+  cmb_save_results(network, data, optimal, filenames, cmb_options, struct('calculation_time',calculation_time), true);
 
   save(filenames.result_file,'optimal', 'calculation_time', 'gradient_V', 'init', 'cmb_options', 'V', 'kapp_max', 'preposterior', 'pp', 'filenames', 'cmb_options', 'network', 'q_info', 'prior', 'bounds', 'data', 'true');
 
