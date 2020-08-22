@@ -1,4 +1,4 @@
-!!SBtab Document='hela_tca' TableID='Parameter' TableType='Quantity' TableName='Parameter'						
+!!SBtab TableID='Parameter' TableType='Quantity' TableName='Parameter'						
 !QuantityType	!Reaction	!Compound	!Mode	!Unit	!Reaction:Identifiers:kegg.reaction	!Compound:Identifiers:kegg.compound
 equilibrium constant	GLI_GLUNim		1	dimensionless		
 equilibrium constant	GTS_GLTEsy		1	dimensionless		

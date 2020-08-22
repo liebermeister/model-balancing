@@ -9,6 +9,7 @@ global LP_info % variable defined in cmb_estimation
 if verbose,
   if sum(LP_info.y_ineq_A * y > LP_info.y_ineq_b - LP_info.epsilon) ~=0,
     warning('Constraint violation detected');
+    max_violation = max(LP_info.y_ineq_A * y - [ LP_info.y_ineq_b - LP_info.epsilon])
   end
 end
 
@@ -88,6 +89,6 @@ if cmb_options.use_gradient,
   
 end
 
-if verbose,
-  log_posterior
-end
+%if verbose,
+%  log_posterior
+%end

@@ -1,4 +1,4 @@
-!!SBtab TableType="Quantity"										
+!!SBtab TableType='Quantity'										
 !QuantityType	!Compound	!Reaction	!Unit	!Median	!Mean	!Std	!Lower	!Upper	!Compound:Identifiers:kegg.compound	!Reaction:Identifiers:kegg.reaction
 catalytic rate constant geometric mean		GLI_GLUNim	1/s	NaN	NaN	NaN	1e-07	10000		
 catalytic rate constant geometric mean		GTS_GLTEsy	1/s	NaN	NaN	NaN	1e-07	10000		

@@ -25,6 +25,9 @@ eval(default('c_init','[]'));
 
 % load network 
 
+if cmb_options.verbose,
+  display(sprintf('Reading file %s', network_sbml_file));
+end
 network = network_sbml_import(network_sbml_file);
 
 % parameter structure (depends on cmb_options.parameterisation)

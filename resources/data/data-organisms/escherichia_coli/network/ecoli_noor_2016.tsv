@@ -489,7 +489,7 @@ flux	PPC_R00345	R00345	-0.2114
 						
 !!SBtab TableID='ConcentrationConstraint' TableName='ConcentrationConstraint' TableType='Quantity' Unit='mM'						
 
-!QuantityType	!Compound	!Compound:Identifiers:kegg.compound	!Concentration:Min	!Concentration:Max		
+!QuantityType	!Compound	!Compound:Identifiers:kegg.compound	!Min	!Max		
 concentration	_S__Malate	C00149	0.001	10		
 concentration	Acetyl_CoA	C00024	0.001	10		
 concentration	Fumarate	C00122	0.001	10		
