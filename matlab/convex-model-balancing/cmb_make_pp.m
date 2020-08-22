@@ -6,4 +6,5 @@ pp.network             = network;
 pp.enzyme_cost_weights = ones(size(network.actions));
 pp.ind_scored_enzymes  = [1:length(network.actions)]';
 pp.multiple_conditions = 0; 
+pp.multiple_conditions_anticipate = 0;
 pp.fluctuations_safety_margin = 0;

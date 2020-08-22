@@ -5,6 +5,24 @@ The file contains a model structure + artificial data ("measured" kinetic consta
 
 Later, model (network structure), kinetic "data", and "omics data" may be in separate files (but always as SBtab tables, ie they can be combined into a single file without problems).
 
-Provenance:
-this github repository,
-file convex-model-balancing/resources/models/demo_single_input_file/demo_single_input_file_MODEL_AND_DATA.tsv
+Provenance: matlab script 'cmb_example_for_cvxpy.m'
+
+Files:
+
+Model structure (including reconstructed kinetic constants)
+* kinetic_model.tsv
+
+Data:
+* kinetic_data.tsv
+* state_data.tsv
+
+Prior table:
+* see ../../prior-table/cmb_prior.tsv
+
+Reconstructed omics data
+* metabolic_states.tsv
+
+Diagnostic files:
+* options.tsv
+* report.txt
+* results.mat
