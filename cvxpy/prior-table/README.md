@@ -1,7 +1,8 @@
-SBtab table describing all relevant types of model variables
+"Prior" table describing relevant types of model variables
+==========================================================
 
-The same file is used in Parameter balancing 
+Provenance: prior file used by script "cmb_example_for_cvxpy"
 
-Provenance: from this github repository, file
-convex-model-balancing/resources/data/data-prior/cmb_prior.tsv
-(originally from Parameter balancing)
+Note: the same file is also used in Parameter Balancing (and stems originally from Parameter Balancing)
+
+
