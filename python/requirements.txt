@@ -1,0 +1,5 @@
+cvxpy
+equilibrator-api
+numpy
+scipy
+pandas
