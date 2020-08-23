@@ -91,6 +91,7 @@ clear true
 ns = cmb_options.ns;
 
 true.q = cmb_kinetics_to_q(network, cmb_options, q_info);
+true.qall = cmb_q_to_qall(true.q, q_info);
 
 % --------------------------------------------------------------
 % metabolic states
