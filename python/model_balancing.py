@@ -165,7 +165,7 @@ def solve(
         ln_D_P = S_prod.T @ (ln_conc_met_matrix - ln_Km_matrix)
         
         if rate_law == "S":
-            ln_eta_kinetic += [cp.Constant(np.zeros(self.Nr))]
+            ln_eta_kinetic += [cp.Constant(np.zeros(Nr,))]
         elif rate_law == "1S":
             ln_eta_kinetic += [-cp.diag(cp.logistic(-ln_D_S))]
         elif rate_law == "SP":
