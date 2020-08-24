@@ -1,0 +1,18 @@
+!!SBtab TableType='Quantity'										
+!QuantityType	!Compound	!Reaction	!Unit	!Median	!Mean	!Std	!Lower	!Upper	!Compound:Identifiers:kegg.compound	!Reaction:Identifiers:kegg.reaction
+Michaelis constant	X1	E1	mM	0.008809908	NaN	NaN	NaN	NaN		
+Michaelis constant	S2	E1	mM	0.012949655	NaN	NaN	NaN	NaN		
+Michaelis constant	S2	E3	mM	2.6201256	NaN	NaN	NaN	NaN		
+Michaelis constant	X3	E2	mM	1.7367366	NaN	NaN	NaN	NaN		
+Michaelis constant	S4	E2	mM	0.011065878	NaN	NaN	NaN	NaN		
+Michaelis constant	S4	E3	mM	0.06244919	NaN	NaN	NaN	NaN		
+Michaelis constant	S5	E3	mM	0.35569224	NaN	NaN	NaN	NaN		
+Michaelis constant	S5	E4	mM	0.44581907	NaN	NaN	NaN	NaN		
+Michaelis constant	S5	E5	mM	0.045389171	NaN	NaN	NaN	NaN		
+Michaelis constant	X6	E4	mM	0.26407129	NaN	NaN	NaN	NaN		
+Michaelis constant	X7	E5	mM	0.015178301	NaN	NaN	NaN	NaN		
+equilibrium constant		E1	dimensionless	0.052572571	NaN	NaN	NaN	NaN		
+equilibrium constant		E2	dimensionless	1.7597466	NaN	NaN	NaN	NaN		
+equilibrium constant		E3	dimensionless	4.3755067	NaN	NaN	NaN	NaN		
+equilibrium constant		E4	dimensionless	0.64455593	NaN	NaN	NaN	NaN		
+equilibrium constant		E5	dimensionless	0.63021124	NaN	NaN	NaN	NaN		
