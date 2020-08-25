@@ -52,8 +52,12 @@ def _B_matrix(
 
     return A - np.ones((A.shape[0], S_subs.shape[0])) @ S_subs
 
-def create_dense_matrix(S: np.array, x: cp.Variable) -> Expression:
+def create_dense_matrix(S: np.array, x) -> Expression:
     Nc, Nr = S.shape
+    
+    if x.size == 0:
+        return np.zeros((Nc, Nr))
+    
     K_mat = []
     k = 0
     for i in range(Nc):
@@ -70,6 +74,87 @@ def create_dense_matrix(S: np.array, x: cp.Variable) -> Expression:
 
 def z_score(ln_x, gmean: np.array, ln_cov: np.array) -> Expression:
     return cp.quad_form(ln_x - np.log(gmean), np.linalg.pinv(ln_cov))
+
+def _driving_forces(ln_Keq, ln_conc_met, S: np.array):
+    Ncond = ln_conc_met.shape[1]
+    return cp.vstack([ln_Keq] * Ncond).T - S.T @ ln_conc_met
+
+def _ln_kcatr(ln_kcatf, ln_Km, ln_Keq, S: np.array):
+    """Haldane relationship constraint."""
+    ln_Km_matrix = create_dense_matrix(S, ln_Km)
+    return cp.diag(S.T @ ln_Km_matrix) + ln_kcatf - ln_Keq
+
+def _ln_capacity(fluxes: np.array, ln_kcatf):
+    Ncond = fluxes.shape[1]
+    return np.log(fluxes.m_as("M/s")) - cp.vstack([ln_kcatf] * Ncond).T
+
+def _ln_eta_thermodynamic(driving_forces):
+    return cp.log(1.0 - cp.exp(-driving_forces))
+
+def _ln_eta_kinetic(ln_conc_met, ln_Km, S: np.array, rate_law: str = "CM"):
+    Nc, Nr = S.shape
+    Ncond = ln_conc_met.shape[1]
+    
+    S_subs = abs(S)
+    S_prod = abs(S)
+    S_subs[S > 0] = 0
+    S_prod[S < 0] = 0
+    
+    ln_Km_matrix = create_dense_matrix(S, ln_Km)
+
+    ln_eta_kinetic = []
+    for i in range(Ncond):
+        ln_conc_met_matrix = cp.vstack([ln_conc_met[:, i]] * Nr).T
+        ln_D_S = S_subs.T @ (ln_conc_met_matrix - ln_Km_matrix)
+        ln_D_P = S_prod.T @ (ln_conc_met_matrix - ln_Km_matrix)
+        
+        if rate_law == "S":
+            ln_eta_kinetic += [cp.Constant(np.zeros(Nr,))]
+        elif rate_law == "1S":
+            ln_eta_kinetic += [-cp.diag(cp.logistic(-ln_D_S))]
+        elif rate_law == "SP":
+            ln_eta_kinetic += [-cp.diag(cp.logistic(-ln_D_S + ln_D_P))]
+        elif rate_law == "1SP":
+            ln_eta_kinetic += [-cp.diag(cp.logistic(-ln_D_S + cp.logistic(ln_D_P)))]
+        elif rate_law == "CM":
+            _ln_eta_of_reaction = []
+            for j in range(Nr):
+                B = _B_matrix(Nc, S_subs[:, j], S_prod[:, j])
+                _ln_eta_of_reaction += [-cp.log_sum_exp(B @ (ln_conc_met[:, i] - ln_Km_matrix[:, j]))]
+            ln_eta_kinetic += [cp.reshape(cp.vstack(_ln_eta_of_reaction), (Nr,))]
+        else:
+            raise ValueError(f"unsupported rate law {rate_law}")
+
+    return cp.vstack(ln_eta_kinetic).T
+
+def _ln_eta_regulation(ln_conc_met, ln_Ka, ln_Ki, A_act: np.array, A_inh: np.array):
+    Nc, Nr = A_act.shape
+    Ncond = ln_conc_met.shape[1]
+
+    ln_Ka_matrix = create_dense_matrix(A_act, ln_Ka)
+    ln_Ki_matrix = create_dense_matrix(A_inh, ln_Ki)
+    
+    ln_eta_allosteric = []
+    for i in range(Ncond):
+        ln_conc_met_matrix = cp.vstack([ln_conc_met[:, i]] * Nr).T
+        ln_act = A_act.T @ cp.logistic(ln_Ka_matrix - ln_conc_met_matrix)
+        ln_inh = A_inh.T @ cp.logistic(ln_conc_met_matrix - ln_Ki_matrix)
+        ln_eta_act = -cp.diag(ln_act)
+        ln_eta_inh = -cp.diag(ln_inh)
+        ln_eta_allosteric += [ln_eta_act + ln_eta_inh]
+    return cp.vstack(ln_eta_allosteric).T
+
+def _ln_conc_enz(
+    ln_Keq, ln_kcatf, ln_Km, ln_Ka, ln_Ki, ln_conc_met,
+    fluxes: np.array, S: np.array, A_act: np.array, A_inh: np.array,
+    rate_law: str = "CM"
+):
+    driving_forces = _driving_forces(ln_Keq, ln_conc_met, S)
+    ln_capacity = _ln_capacity(fluxes, ln_kcatf)
+    ln_eta_thermodynamic = _ln_eta_thermodynamic(driving_forces)
+    ln_eta_kinetic = _ln_eta_kinetic(ln_conc_met, ln_Km, S, rate_law=rate_law)
+    ln_eta_regulation = _ln_eta_regulation(ln_conc_met, ln_Ka, ln_Ki, A_act, A_inh)
+    return ln_capacity - ln_eta_thermodynamic - ln_eta_kinetic - ln_eta_regulation
 
 def solve(
     S,
@@ -99,12 +184,6 @@ def solve(
     assert conc_met_gmean.shape == (Nc, Ncond)
     assert conc_met_gstd.shape == (Nc, Ncond)
 
-    # helper matrices
-    S_subs = abs(S)
-    S_prod = abs(S)
-    S_subs[S > 0] = 0
-    S_prod[S < 0] = 0
-
     # define the independent variables and their z-scores
     ln_conc_met = cp.Variable(shape=(Nc, Ncond))
     z2_scores_met = sum(cp.square(
@@ -118,83 +197,48 @@ def solve(
     z2_scores_kcatf = z_score(ln_kcatf, kcatf_gmean.m_as("1/s"), kcatf_ln_cov)
 
     if Km_gmean.size == 0:
-        ln_Km_matrix = np.zeros((Nc, Nr))
+        ln_Km = np.array([])
         z2_scores_Km = cp.Constant(0)
     else:
         ln_Km = cp.Variable(Km_gmean.size)
-        ln_Km_matrix = create_dense_matrix(S, ln_Km)
         z2_scores_Km = z_score(ln_Km, Km_gmean.m_as("M"), Km_ln_cov)
 
     if Ka_gmean.size == 0:
-        ln_Ka_matrix = np.zeros((Nc, Nr))
+        ln_Ka = np.array([])
         z2_scores_Ka = cp.Constant(0)
     else:
         ln_Ka = cp.Variable(Ka_gmean.size)
-        ln_Ka_matrix = create_dense_matrix(A_act, ln_Ka)
         z2_scores_Ka = z_score(ln_Ka, Ka_gmean.m_as("M"), Ka_ln_cov)
 
     if Ki_gmean.size == 0:
-        ln_Ki_matrix = np.zeros((Nc, Nr))
+        ln_Ki = np.array([])
         z2_scores_Ki = cp.Constant(0)
     else:
         ln_Ki = cp.Variable(Ki_gmean.size)
-        ln_Ki_matrix = create_dense_matrix(A_inh, ln_Ki)
         z2_scores_Ki = z_score(ln_Ki, Ki_gmean.m_as("M"), Ki_ln_cov)
 
     # the dependent parameters are:
     # - reverse kcats
     # - enzyme concentrations
     
-    # Haldane relationship constraint
-    ln_kcatr = cp.diag(S.T @ ln_Km_matrix) + ln_kcatf - ln_Keq
+    ln_kcatr = _ln_kcatr(ln_kcatf, ln_Km, ln_Keq, S)
     z2_scores_kcatr = z_score(ln_kcatr, kcatr_gmean.m_as("1/s"), kcatr_ln_cov)
 
-    driving_forces = cp.vstack([ln_Keq] * Ncond).T - S.T @ ln_conc_met
+    driving_forces = _driving_forces(ln_Keq, ln_conc_met, S)
     
     ### capacity term
-    ln_capacity = np.log(fluxes.m_as("M/s")) - cp.vstack([ln_kcatf] * Ncond).T
+    ln_capacity = _ln_capacity(fluxes, ln_kcatf)
 
     ### thermodynamic term
-    ln_eta_thermodynamic = cp.log(1.0 - cp.exp(-driving_forces))
+    ln_eta_thermodynamic = _ln_eta_thermodynamic(driving_forces)
 
     ### kinetic term
-    ln_eta_kinetic = []
-    for i in range(Ncond):
-        ln_conc_met_matrix = cp.vstack([ln_conc_met[:, i]] * Nr).T
-        ln_D_S = S_subs.T @ (ln_conc_met_matrix - ln_Km_matrix)
-        ln_D_P = S_prod.T @ (ln_conc_met_matrix - ln_Km_matrix)
-        
-        if rate_law == "S":
-            ln_eta_kinetic += [cp.Constant(np.zeros(Nr,))]
-        elif rate_law == "1S":
-            ln_eta_kinetic += [-cp.diag(cp.logistic(-ln_D_S))]
-        elif rate_law == "SP":
-            ln_eta_kinetic += [-cp.diag(cp.logistic(-ln_D_S + ln_D_P))]
-        elif rate_law == "1SP":
-            ln_eta_kinetic += [-cp.diag(cp.logistic(-ln_D_S + cp.logistic(ln_D_P)))]
-        elif rate_law == "CM":
-            ln_eta = []
-            for j in range(Nr):
-                B = _B_matrix(Nc, S_subs[:, j], S_prod[:, j])
-                ln_eta += [-cp.log_sum_exp(B @ (ln_conc_met[:, i] - ln_Km_matrix[:, j]))]
-            ln_eta_kinetic += [cp.reshape(cp.vstack(ln_eta), (Nr,))]
-        else:
-            raise ValueError(f"unsupported rate law {rate_law}")
-
-    ln_eta_kinetic = cp.vstack(ln_eta_kinetic).T
+    ln_eta_kinetic = _ln_eta_kinetic(ln_conc_met, ln_Km, S, rate_law=rate_law)
 
     ### allosteric term
-    ln_eta_allosteric = []
-    for i in range(Ncond):
-        ln_conc_met_matrix = cp.vstack([ln_conc_met[:, i]] * Nr).T
-        ln_act = A_act.T @ cp.logistic(ln_Ka_matrix - ln_conc_met_matrix)
-        ln_inh = A_inh.T @ cp.logistic(ln_conc_met_matrix - ln_Ki_matrix)
-        ln_eta_act = -cp.diag(ln_act)
-        ln_eta_inh = -cp.diag(ln_inh)
-        ln_eta_allosteric += [ln_eta_act + ln_eta_inh]
-    ln_eta_allosteric = cp.vstack(ln_eta_allosteric).T
+    ln_eta_regulation = _ln_eta_regulation(ln_conc_met, ln_Ka, ln_Ki, A_act, A_inh)
     
-    ln_conc_enz = ln_capacity - ln_eta_thermodynamic - ln_eta_kinetic - ln_eta_allosteric
+    ln_conc_enz = ln_capacity - ln_eta_thermodynamic - ln_eta_kinetic - ln_eta_regulation
         
     # ln enzyme concentrations are convex functions of the ln metabolite concentrations
     # but, since the z-scores use the square function, we have to take only the positive
@@ -222,7 +266,7 @@ def solve(
     print("\nDriving forces (RT) =\n", driving_forces.value)
     print("\nη(thr) =\n", np.exp(ln_eta_thermodynamic.value).round(2))
     print("\nη(kin) =\n", np.exp(ln_eta_kinetic.value).round(2))
-    print("\nη(reg) =\n", np.exp(ln_eta_allosteric.value).round(2))
+    print("\nη(reg) =\n", np.exp(ln_eta_regulation.value).round(2))
     print("\n\n\n")
     print("All Z-scores\n" + "-"*50)
     print("enzymes = ", z2_scores_enz.value.round(2))
