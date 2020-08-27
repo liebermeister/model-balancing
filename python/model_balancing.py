@@ -1,11 +1,11 @@
+from typing import Union
+
 import itertools
 import cvxpy as cp
 import numpy as np
-import pandas as pd
 from cvxpy.constraints.constraint import Constraint
 from cvxpy.expressions.expression import Expression
 from cvxpy.problems.objective import Objective
-from equilibrator_api import Q_, R, default_T
 
 # helper function for the CM rate law
 
@@ -52,7 +52,12 @@ def _B_matrix(
 
     return A - np.ones((A.shape[0], S_subs.shape[0])) @ S_subs
 
-def create_dense_matrix(S: np.array, x) -> Expression:
+def _create_dense_matrix(
+    S: np.array,
+    x: Union[np.array, cp.Variable],
+) -> Expression:
+    """Converts a sparse list of affinity parameters (e.g. Km) to a matrix."""
+    
     Nc, Nr = S.shape
     
     if x.size == 0:
@@ -72,26 +77,54 @@ def create_dense_matrix(S: np.array, x) -> Expression:
     K_mat = cp.vstack(K_mat)
     return K_mat
 
-def z_score(ln_x, gmean: np.array, ln_cov: np.array) -> Expression:
-    return cp.quad_form(ln_x - np.log(gmean), np.linalg.pinv(ln_cov))
+def _z_score(
+    x: Union[np.array, cp.Expression],
+    mu: np.array,
+    cov: np.array,
+) -> Expression:
+    """Calculates the sum of squared Z-scores (with a covariance mat)."""
+    return cp.quad_form(x - mu, np.linalg.pinv(cov))
 
-def _driving_forces(ln_Keq, ln_conc_met, S: np.array):
+def _driving_forces(
+    ln_Keq: Union[np.array, cp.Expression],
+    ln_conc_met: Union[np.array, cp.Expression],
+    S: np.array,
+) -> Expression:
+    """Calculates the driving forces of all reactions."""
     Ncond = ln_conc_met.shape[1]
     return cp.vstack([ln_Keq] * Ncond).T - S.T @ ln_conc_met
 
-def _ln_kcatr(ln_kcatf, ln_Km, ln_Keq, S: np.array):
-    """Haldane relationship constraint."""
-    ln_Km_matrix = create_dense_matrix(S, ln_Km)
+def _ln_kcatr(
+    ln_kcatf: Union[np.array, cp.Expression],
+    ln_Km: Union[np.array, cp.Expression],
+    ln_Keq: Union[np.array, cp.Expression],
+    S: np.array,
+) -> Expression:
+    """Calculate the kcat-reverse based on Haldane relationship constraint."""
+    ln_Km_matrix = _create_dense_matrix(S, ln_Km)
     return cp.diag(S.T @ ln_Km_matrix) + ln_kcatf - ln_Keq
 
-def _ln_capacity(fluxes: np.array, ln_kcatf):
+def _ln_capacity(
+    fluxes: np.array,
+    ln_kcatf: Union[np.array, cp.Expression],
+) -> Expression:
+    """Calculate the capacity term of the enzyme."""
     Ncond = fluxes.shape[1]
     return np.log(fluxes.m_as("M/s")) - cp.vstack([ln_kcatf] * Ncond).T
 
-def _ln_eta_thermodynamic(driving_forces):
+def _ln_eta_thermodynamic(
+    driving_forces: Union[np.array, cp.Expression]
+) -> Expression:
+    """Calculate the thermodynamic term of the enzyme."""
     return cp.log(1.0 - cp.exp(-driving_forces))
 
-def _ln_eta_kinetic(ln_conc_met, ln_Km, S: np.array, rate_law: str = "CM"):
+def _ln_eta_kinetic(
+    ln_conc_met: Union[np.array, cp.Expression],
+    ln_Km: Union[np.array, cp.Expression],
+    S: np.array,
+    rate_law: str = "CM",
+) -> Expression:
+    """Calculate the kinetic (saturation) term of the enzyme."""
     Nc, Nr = S.shape
     Ncond = ln_conc_met.shape[1]
     
@@ -100,7 +133,7 @@ def _ln_eta_kinetic(ln_conc_met, ln_Km, S: np.array, rate_law: str = "CM"):
     S_subs[S > 0] = 0
     S_prod[S < 0] = 0
     
-    ln_Km_matrix = create_dense_matrix(S, ln_Km)
+    ln_Km_matrix = _create_dense_matrix(S, ln_Km)
 
     ln_eta_kinetic = []
     for i in range(Ncond):
@@ -127,12 +160,19 @@ def _ln_eta_kinetic(ln_conc_met, ln_Km, S: np.array, rate_law: str = "CM"):
 
     return cp.vstack(ln_eta_kinetic).T
 
-def _ln_eta_regulation(ln_conc_met, ln_Ka, ln_Ki, A_act: np.array, A_inh: np.array):
+def _ln_eta_regulation(
+    ln_conc_met: Union[np.array, cp.Expression],
+    ln_Ka: Union[np.array, cp.Expression],
+    ln_Ki: Union[np.array, cp.Expression],
+    A_act: np.array,
+    A_inh: np.array
+) -> Expression:
+    """Calculate the regulation (allosteric) term of the enzyme."""
     Nc, Nr = A_act.shape
     Ncond = ln_conc_met.shape[1]
 
-    ln_Ka_matrix = create_dense_matrix(A_act, ln_Ka)
-    ln_Ki_matrix = create_dense_matrix(A_inh, ln_Ki)
+    ln_Ka_matrix = _create_dense_matrix(A_act, ln_Ka)
+    ln_Ki_matrix = _create_dense_matrix(A_inh, ln_Ki)
     
     ln_eta_allosteric = []
     for i in range(Ncond):
@@ -145,10 +185,19 @@ def _ln_eta_regulation(ln_conc_met, ln_Ka, ln_Ki, A_act: np.array, A_inh: np.arr
     return cp.vstack(ln_eta_allosteric).T
 
 def _ln_conc_enz(
-    ln_Keq, ln_kcatf, ln_Km, ln_Ka, ln_Ki, ln_conc_met,
-    fluxes: np.array, S: np.array, A_act: np.array, A_inh: np.array,
-    rate_law: str = "CM"
-):
+    ln_Keq: Union[np.array, cp.Expression],
+    ln_kcatf: Union[np.array, cp.Expression],
+    ln_Km: Union[np.array, cp.Expression],
+    ln_Ka: Union[np.array, cp.Expression],
+    ln_Ki: Union[np.array, cp.Expression],
+    ln_conc_met: Union[np.array, cp.Expression],
+    fluxes: np.array,
+    S: np.array,
+    A_act: np.array,
+    A_inh: np.array,
+    rate_law: str = "CM",
+) -> Expression:
+    """Calculate the required enzyme levels based on fluxes and rate laws."""
     driving_forces = _driving_forces(ln_Keq, ln_conc_met, S)
     ln_capacity = _ln_capacity(fluxes, ln_kcatf)
     ln_eta_thermodynamic = _ln_eta_thermodynamic(driving_forces)
@@ -157,19 +206,28 @@ def _ln_conc_enz(
     return ln_capacity - ln_eta_thermodynamic - ln_eta_kinetic - ln_eta_regulation
 
 def solve(
-    S,
-    fluxes,
-    A_act,
-    A_inh,
-    Keq_gmean, Keq_ln_cov,
-    conc_enz_gmean, conc_enz_gstd,
-    conc_met_gmean, conc_met_gstd,
-    kcatf_gmean, kcatf_ln_cov,
-    kcatr_gmean, kcatr_ln_cov,
-    Km_gmean, Km_ln_cov,
-    Ka_gmean, Ka_ln_cov,
-    Ki_gmean, Ki_ln_cov,
-    rate_law: str = "CM"
+    S: np.array,
+    fluxes: np.array,
+    A_act: np.array,
+    A_inh: np.array,
+    Keq_gmean: np.array,
+    Keq_ln_cov: np.array,
+    conc_enz_gmean: np.array,
+    conc_enz_gstd: np.array,
+    conc_met_gmean: np.array,
+    conc_met_gstd: np.array,
+    kcatf_gmean: np.array,
+    kcatf_ln_cov: np.array,
+    kcatr_gmean: np.array,
+    kcatr_ln_cov: np.array,
+    Km_gmean: np.array,
+    Km_ln_cov: np.array,
+    Ka_gmean: np.array,
+    Ka_ln_cov: np.array,
+    Ki_gmean: np.array,
+    Ki_ln_cov: np.array,
+    rate_law: str = "CM",
+    solver: str = "SCS",
 ):
 
     Nc, Nr = S.shape
@@ -185,44 +243,49 @@ def solve(
     assert conc_met_gstd.shape == (Nc, Ncond)
 
     # define the independent variables and their z-scores
-    ln_conc_met = cp.Variable(shape=(Nc, Ncond))
+    ln_conc_met = cp.Variable(shape=(Nc, Ncond), value=np.log(conc_met_gmean.m_as("M")))
+
+    # conc_met is given as a matrix (with conditions as columns) and therefore
+    # we assume a diagonal covariance matrix (for simplicity). Instead of a
+    # ln_cov matrix, we simply have the geometric means and stds arranged in 
+    # the same shape as the variables.
     z2_scores_met = sum(cp.square(
         (ln_conc_met - np.log(conc_met_gmean.m_as("M"))) / np.log(conc_met_gstd)
     ).flatten())
 
-    ln_Keq = cp.Variable(shape=Nr)
-    z2_scores_Keq = z_score(ln_Keq, Keq_gmean, Keq_ln_cov)
+    ln_Keq = cp.Variable(shape=Nr, value=np.log(Keq_gmean.m_as("")))
+    z2_scores_Keq = _z_score(ln_Keq, np.log(Keq_gmean.m_as("")), Keq_ln_cov)
 
-    ln_kcatf = cp.Variable(shape=(Nr))
-    z2_scores_kcatf = z_score(ln_kcatf, kcatf_gmean.m_as("1/s"), kcatf_ln_cov)
+    ln_kcatf = cp.Variable(shape=(Nr), value=np.log(kcatf_gmean.m_as("1/s")))
+    z2_scores_kcatf = _z_score(ln_kcatf, np.log(kcatf_gmean.m_as("1/s")), kcatf_ln_cov)
 
     if Km_gmean.size == 0:
         ln_Km = np.array([])
         z2_scores_Km = cp.Constant(0)
     else:
-        ln_Km = cp.Variable(Km_gmean.size)
-        z2_scores_Km = z_score(ln_Km, Km_gmean.m_as("M"), Km_ln_cov)
+        ln_Km = cp.Variable(shape=Km_gmean.size, value=np.log(Km_gmean.m_as("M")))
+        z2_scores_Km = _z_score(ln_Km, np.log(Km_gmean.m_as("M")), Km_ln_cov)
 
     if Ka_gmean.size == 0:
         ln_Ka = np.array([])
         z2_scores_Ka = cp.Constant(0)
     else:
-        ln_Ka = cp.Variable(Ka_gmean.size)
-        z2_scores_Ka = z_score(ln_Ka, Ka_gmean.m_as("M"), Ka_ln_cov)
+        ln_Ka = cp.Variable(shape=Ka_gmean.size, value=np.log(Ka_gmean.m_as("M")))
+        z2_scores_Ka = _z_score(ln_Ka, np.log(Ka_gmean.m_as("M")), Ka_ln_cov)
 
     if Ki_gmean.size == 0:
         ln_Ki = np.array([])
         z2_scores_Ki = cp.Constant(0)
     else:
-        ln_Ki = cp.Variable(Ki_gmean.size)
-        z2_scores_Ki = z_score(ln_Ki, Ki_gmean.m_as("M"), Ki_ln_cov)
+        ln_Ki = cp.Variable(shape=Ki_gmean.size, value=np.log(Ki_gmean.m_as("M")))
+        z2_scores_Ki = _z_score(ln_Ki, np.log(Ki_gmean.m_as("M")), Ki_ln_cov)
 
     # the dependent parameters are:
     # - reverse kcats
     # - enzyme concentrations
     
     ln_kcatr = _ln_kcatr(ln_kcatf, ln_Km, ln_Keq, S)
-    z2_scores_kcatr = z_score(ln_kcatr, kcatr_gmean.m_as("1/s"), kcatr_ln_cov)
+    z2_scores_kcatr = _z_score(ln_kcatr, np.log(kcatr_gmean.m_as("1/s")), kcatr_ln_cov)
 
     driving_forces = _driving_forces(ln_Keq, ln_conc_met, S)
     
@@ -257,9 +320,13 @@ def solve(
         z2_scores_kcatr +
         z2_scores_enz
     )
+    
+    print(f"initial Z-score = {objective.value:.2e}")
 
     prob = cp.Problem(objective, [driving_forces >= 1e-6])
-    prob.solve(solver="SCS")
+    prob.solve(solver=solver)
+
+    print(f"optimal Z-score = {objective.value:.2e}")
 
     print("\nMetabolite concentrations (M) =\n", np.exp(ln_conc_met.value))
     print("\nEnzyme concentrations (M) =\n", np.exp(ln_conc_enz.value))
