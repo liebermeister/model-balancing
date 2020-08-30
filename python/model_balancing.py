@@ -69,11 +69,11 @@ class ModelBalancing(object):
         self.kcatf_ln_cov = kcatf_ln_cov
         self.ln_kcatr_gmean = cp.Parameter(shape=(self.Nr, ), value=np.log(kcatr_gmean.m_as("1/s")))
         self.kcatr_ln_cov = kcatr_ln_cov
-        self.Km_gmean = Km_gmean
+        self.ln_Km_gmean = np.log(Km_gmean.m_as("M"))
         self.Km_ln_cov = Km_ln_cov
-        self.Ka_gmean = Ka_gmean
+        self.ln_Ka_gmean = np.log(Ka_gmean.m_as("M"))
         self.Ka_ln_cov = Ka_ln_cov
-        self.Ki_gmean = Ki_gmean
+        self.ln_Ki_gmean = np.log(Ki_gmean.m_as("M"))
         self.Ki_ln_cov = Ki_ln_cov
         self.rate_law = "CM"
         self.solver = "MOSEK"
@@ -83,6 +83,26 @@ class ModelBalancing(object):
         assert self.ln_conc_met_gstd.shape == (self.Nc, self.Ncond)
         
         self.ln_conc_met = cp.Variable(shape=(self.Nc, self.Ncond))
+        self.ln_Keq = cp.Variable(shape=(self.Nr, ))
+        self.ln_kcatf = cp.Variable(shape=(self.Nr, ))
+        
+        for p in ["Km", "Ka", "Ki"]:
+            ln_gmean = self.__getattribute__(f"ln_{p}_gmean")
+            ln_cov = self.__getattribute__(f"{p}_ln_cov")
+            if ln_gmean.size == 0:
+                self.__setattr__(f"ln_{p}", np.array([]))
+                self.__setattr__(f"z2_scores_{p}", cp.Constant(0))
+            else:
+                ln_p = cp.Variable(shape=ln_gmean.size)
+                self.__setattr__(f"z2_scores_{p}", ModelBalancing._z_score(ln_p, ln_gmean, ln_cov))
+                self.__setattr__(f"ln_{p}", ln_p)
+        
+        for p in ["Keq", "kcatf", "kcatr"]:
+            ln_p = self.__getattribute__(f"ln_{p}")
+            ln_gmean = self.__getattribute__(f"ln_{p}_gmean")
+            ln_cov = self.__getattribute__(f"{p}_ln_cov")
+            self.__setattr__(f"z2_scores_{p}", ModelBalancing._z_score(ln_p, ln_gmean, ln_cov))
+
         # conc_met is given as a matrix (with conditions as columns) and therefore
         # we assume a diagonal covariance matrix (for simplicity). Instead of a
         # ln_cov matrix, we simply have the geometric means and stds arranged in 
@@ -90,38 +110,6 @@ class ModelBalancing(object):
         self.z2_scores_met = sum(cp.square(
             (self.ln_conc_met - self.ln_conc_met_gmean) / self.ln_conc_met_gstd
         ).flatten())
-        
-        self.ln_Keq = cp.Variable(shape=(self.Nr, ))
-        self.z2_scores_Keq = ModelBalancing._z_score(self.ln_Keq, self.ln_Keq_gmean, self.Keq_ln_cov)
-
-        self.ln_kcatf = cp.Variable(shape=(self.Nr, ))
-        self.z2_scores_kcatf = ModelBalancing._z_score(self.ln_kcatf, self.ln_kcatf_gmean, self.kcatf_ln_cov)
-
-        if self.Km_gmean.size == 0:
-            self.ln_Km = np.array([])
-            self.z2_scores_Km = cp.Constant(0)
-        else:
-            self.ln_Km = cp.Variable(shape=self.Km_gmean.size)
-            self.z2_scores_Km = ModelBalancing._z_score(self.ln_Km, np.log(self.Km_gmean.m_as("M")), self.Km_ln_cov)
-
-        if self.Ka_gmean.size == 0:
-            self.ln_Ka = np.array([])
-            self.z2_scores_Ka = cp.Constant(0)
-        else:
-            self.ln_Ka = cp.Variable(shape=self.Ka_gmean.size)
-            self.z2_scores_Ka = ModelBalancing._z_score(self.ln_Ka, np.log(self.Ka_gmean.m_as("M")), self.Ka_ln_cov)
-
-        if self.Ki_gmean.size == 0:
-            self.ln_Ki = np.array([])
-            self.z2_scores_Ki = cp.Constant(0)
-        else:
-            self.ln_Ki = cp.Variable(shape=self.Ki_gmean.size)
-            self.z2_scores_Ki = ModelBalancing._z_score(self.ln_Ki, np.log(self.Ki_gmean.m_as("M")), self.Ki_ln_cov)
-        
-        # the dependent parameters are:
-        # - reverse kcats
-        # - enzyme concentrations
-        self.z2_scores_kcatr = ModelBalancing._z_score(self.ln_kcatr, self.ln_kcatr_gmean, self.kcatr_ln_cov)
 
         # ln enzyme concentrations are convex functions of the ln metabolite concentrations
         # but, since the z-scores use the square function, we have to take only the positive
@@ -130,16 +118,14 @@ class ModelBalancing(object):
             cp.pos(self.ln_conc_enz - self.ln_conc_enz_gmean) / self.ln_conc_enz_gstd
         ).flatten())
 
-        self.objective = cp.Minimize(
-            self.z2_scores_met +
-            self.z2_scores_Keq +
-            self.z2_scores_kcatf +
-            self.z2_scores_Km +
-            self.z2_scores_Ka +
-            self.z2_scores_Ki +
-            self.z2_scores_kcatr +
-            self.z2_scores_enz
+        total_z2_scores = sum(
+            [
+                self.__getattribute__(f"z2_scores_{p}")
+                for p in ["Km", "Ka", "Ki", "Keq", "kcatf", "kcatr", "met", "enz"]
+            ]
         )
+        self.objective = cp.Minimize(total_z2_scores)
+
     @staticmethod
     def _B_matrix(
         Nc: int, col_subs: np.ndarray, col_prod: np.ndarray
@@ -360,14 +346,14 @@ class ModelBalancing(object):
         self.ln_Keq.value = self.ln_Keq_gmean.value
         self.ln_kcatf.value = self.ln_kcatf_gmean.value
 
-        if self.Km_gmean.size != 0:
-            self.ln_Km.value = np.log(self.Km_gmean.m_as("M"))
+        if self.ln_Km_gmean.size != 0:
+            self.ln_Km.value = self.ln_Km_gmean
 
-        if self.Ka_gmean.size != 0:
-            self.ln_Ka.value = np.log(self.Ka_gmean.m_as("M"))
+        if self.ln_Ka_gmean.size != 0:
+            self.ln_Ka.value = self.ln_Ka_gmean
 
-        if self.Ki_gmean.size != 0:
-            self.ln_Ki.value = np.log(self.Ki_gmean.m_as("M"))
+        if self.ln_Ki_gmean.size != 0:
+            self.ln_Ki.value = self.ln_Ki_gmean
            
         self.ln_kcatr_gmean.value = self.ln_kcatr.value
         self.ln_conc_enz_gmean.value = self.ln_conc_enz.value
@@ -380,15 +366,10 @@ class ModelBalancing(object):
     def objective_value(self) -> float:
         return self.objective.value
 
-    def print_z_scores(self) -> None:
-        print("enzymes = ", self.z2_scores_enz.value.round(2))
-        print("metabolites = ", self.z2_scores_met.value.round(2))
-        print("Keq = ", self.z2_scores_Keq.value.round(2))
-        print("kcat forward = ", self.z2_scores_kcatf.value.round(2))
-        print("kcat reverse = ", self.z2_scores_kcatr.value.round(2))
-        print("Km = ", self.z2_scores_Km.value.round(2))
-        print("Ka = ", self.z2_scores_Ka.value.round(2))
-        print("Ki = ", self.z2_scores_Ki.value.round(2))
+    def print_z_scores(self, percision: int = 2) -> None:
+        for p in ["enz", "met", "Keq", "kcatf", "kcatr", "Km", "Ka", "Ki"]:
+            z = self.__getattribute__(f"z2_scores_{p}").value
+            print(f"{p} = {z.round(percision)}")
         
     def print_status(self) -> None:
         print("\nMetabolite concentrations (M) =\n", np.exp(self.ln_conc_met.value))
