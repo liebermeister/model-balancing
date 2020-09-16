@@ -1,5 +1,5 @@
-cvxpy
-equilibrator-api
-numpy
-scipy
-pandas
+cvxpy>=1.1.5
+pint>=0.15
+numpy>=1.19
+scipy>=1.5
+pandas>=1.1
