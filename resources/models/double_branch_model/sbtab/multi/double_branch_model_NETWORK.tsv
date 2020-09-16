@@ -1,4 +1,4 @@
-!!!SBtab Document='small_model'
+!!!SBtab Document='double_branch_model'
 				
 !!SBtab TableID='Reaction' TableType='Reaction' TableName='Reaction'				
 !ID	!ReactionFormula	!Name	!Identifiers:kegg.reaction	!IsReversible	

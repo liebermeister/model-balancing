@@ -1,4 +1,4 @@
-!!!SBtab Document='small_model'
+!!!SBtab Document='double_branch_model'
 
 !!SBtab TableID='EnzymeConcentration' TableType='Quantity' TableName='Enzyme levels' Unit='mM'
 !QuantityType	!Reaction	!Reaction:Identifiers:kegg.reaction	!Mean	!Std

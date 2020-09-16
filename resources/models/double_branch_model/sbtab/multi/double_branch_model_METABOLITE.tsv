@@ -1,4 +1,4 @@
-!!!SBtab Document='small_model'
+!!!SBtab Document='double_branch_model'
 
 !!SBtab TableID='MetaboliteConcentration' TableType='Quantity' TableName='Metabolite concentrations' Unit='mM'
 !QuantityType	!Compound	!Compound:Identifiers:kegg.compound	!Mean	!Std

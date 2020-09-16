@@ -2,8 +2,9 @@ function [network, q_info, data, c_init, kinetic_data, state_data] = cmb_read_mo
 
 % [network, q_info, data, c_init, kinetic_data, state_data] = cmb_read_model_and_data(cmb_options, file, columns_mean, columns_std)
 %
-% file: either a single sbtab filename or a cell array of such filenames (files to be combined)
-% options:      struct with (optional) fields
+% 'file': either a single sbtab filename or a cell array of such filenames (files to be combined)
+% 'options':      
+ % struct with (optional) fields
 %      options.metabolite_table_id (default 'MetaboliteConcentration')
 %      options.flux_table_id       (default 'Flux')
 %      options.enzyme_table_id     (default 'EnzymeConcentration')

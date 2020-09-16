@@ -2,29 +2,29 @@ function [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max,
 
 % [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max, preposterior, pp] = convex_model_balancing(filenames, cmb_options, network, q_info, prior, bounds, data, true, init)
 %
-% Run convex model balancing
+% Convex model balancing
 %
-% Input variables
-%   filenames    struct containing (model- and run-specific) filenames for input and output files
-%   cmb_options  struct containing options 
-%   network      struct describing metabolic network (format as in Metabolic Network Toolbox)
-%   q_info       struct describing the dependencies between model variables
-%   prior        struct describing priors in the optimality problem (details see cmb_make_prior)
-%   bounds       struct describing bounds in the optimality problem (details see cmb_make_bounds)
-%   data         struct describing data used in the optimality problem
-%   true         struct describing true model variables (optional; only for models with artificial data)
-%   init         struct containing initial values
+% Input variables:
+%   filenames    struct, (model- and run-specific) filenames for input and output files
+%   cmb_options  struct, options 
+%   network      struct, metabolic network (format as in Metabolic Network Toolbox)
+%   q_info       struct, the dependencies between model variables
+%   prior        struct, priors in the optimality problem (details see cmb_make_prior)
+%   bounds       struct, bounds in the optimality problem (details see cmb_make_bounds)
+%   data         struct, data used in the optimality problem
+%   true         struct, true model variables (optional; only for models with artificial data)
+%   init         struct, initial values
 %
 % Output variables:
-%   optimal            struct containing the model variables obtained from optimisation
-%   calculation_time   calculation time in seconds
-%   gradient_V         gradient of enzyme posterior loss with respect to fluxes (currently not computed)
-%   init               struct containing the initial model variables (fields init.q and init.X)
-%   cmb_options        struct containing options (updated by the function)
-%   V                  flux data 
-%   kapp_max           struct containing kapp_max values
-%   preposterior       struct containing the preposterior distribution
-%   pp                 struct containing some data used during calculation (see cmb_make_pp(network))
+%   optimal          struct containing the model variables obtained from optimisation
+%   calculation_time calculation time in seconds
+%   gradient_V       gradient of enzyme posterior loss w.r.t. fluxes (currently not computed)
+%   init             struct containing the initial model variables (fields init.q and init.X)
+%   cmb_options      struct containing options (updated by the function)
+%   V                flux data 
+%   kapp_max         struct containing kapp_max values
+%   preposterior     struct containing the preposterior distribution
+%   pp               struct containing some data used during calculation (see cmb_make_pp(network))
 %
 % For generating the input data, see 'cmb_model_and_data' and 'cmb_model_artificial_data'
 
@@ -82,6 +82,7 @@ switch cmb_options.initial_values_variant,
     %% existing cmb_options.init is used 
   case 'average_sample';
     display(sprintf('\n-------------------\nFinding initial point by running model balancing on average state data'));
+
     my_cmb_options                        = cmb_options;
     my_cmb_options.ns                     = 1;
     my_cmb_options.initial_values_variant = 'preposterior_mode'; 
@@ -129,7 +130,8 @@ optimal.A_forward = optimal.A .* sign(sign(V)+0.5);
 
 
 % -----------------------------------------------
-% Compare posterior loss scores for true values, initial guess, and predicted solution
+% Compare posterior loss scores for true values, 
+% initial guess, and predicted solution
 % -----------------------------------------------
 
 if cmb_options.display,
@@ -138,7 +140,8 @@ end
 
 
 % -----------------------------------------------
-% Further improve the solution (or try it as a check) by additional optimisation rounds
+% Further improve the solution (or try it as a check) 
+% by additional optimisation rounds
 % -----------------------------------------------
 
 if cmb_options.use_safe_optimisation,

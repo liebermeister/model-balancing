@@ -1,4 +1,4 @@
-!!!SBtab Document='small_model'
+!!!SBtab Document='double_branch_model'
 
 !!SBtab TableID='Flux' TableType='Quantity' TableName='Metabolic flux' Unit='mM/s'			
 !QuantityType	!Reaction	!Reaction:Identifiers:kegg.reaction	!Mean	!Std

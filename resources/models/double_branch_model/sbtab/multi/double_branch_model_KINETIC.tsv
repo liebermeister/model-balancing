@@ -1,6 +1,6 @@
-!!!SBtab Document='small_model'				
+!!!SBtab Document='double_branch_model'				
 
-!!SBtab Document='small_model' TableID='Parameter' TableType='Quantity' TableName='Parameter'				
+!!SBtab Document='double_branch_model' TableID='Parameter' TableType='Quantity' TableName='Parameter'				
 !QuantityType	!Reaction	!Compound	!Mode	!Unit	!Compound:Identifiers:kegg.reaction	!Compound:Identifiers:kegg.compound
 equilibrium constant	E1		0.053116813	dimensionless	E1	
 equilibrium constant	E2		1.7628165	dimensionless	E2	

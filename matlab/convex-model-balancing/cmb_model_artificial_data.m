@@ -1,16 +1,16 @@
-function [network, bounds, prior, q_info, data, true, kinetic_data, state_data] = cmb_model_artificial_data(model_name, network_sbml_file, cmb_options, c_init)
+function [network, bounds, prior, q_info, data, true, kinetic_data, state_data] = cmb_model_artificial_data(network_file, cmb_options, c_init, position_sbtab_file)
 
-% [network, bounds, prior, q_info, data, true, kinetic_data] = cmb_model_artificial_data(model_name, network_sbml_file, cmb_options, c_init)
+% [network, bounds, prior, q_info, data, true, kinetic_data] = cmb_model_artificial_data(network_file, cmb_options, c_init, position_sbtab_file)
 %
 % Generate input data for a Convex Model Balancing problem with artifical data
 % 
 % Input variables
-%   model_name   (string) model name  
-%   network_sbml_file filename of SBML network model 
+%   network_file filename of SBML or SBtab network model 
 %   cmb_options  struct containing options
 %   c_init       (optional) matrix; initial guess of (non-logarithmic) metabolite concentrations; 
 %                           also used for generating the artificial data 
-%
+%   position_sbtab_file (optional) filename of SBtab file (table "Position") for network layout
+% 
 % Output variables
 %   network      struct describing metabolic network (format as in Metabolic Network Toolbox)
 %   q_info       struct describing the dependencies between model variables
@@ -21,25 +21,29 @@ function [network, bounds, prior, q_info, data, true, kinetic_data, state_data] 
 %
 % For CMB problems with "real" data, use cmb_model_and_data instead
   
-eval(default('c_init','[]'));
+eval(default('c_init','[]','position_sbtab_file','[]'));
 
 % load network 
 
 if cmb_options.verbose,
-  display(sprintf('Reading file %s', network_sbml_file));
+  display(sprintf('Reading file %s', network_file));
 end
-network = network_sbml_import(network_sbml_file);
+
+network = network_import(network_file);
+
+if length(position_sbtab_file),
+  network = netgraph_read_positions(network, position_sbtab_file);
+end
 
 % parameter structure (depends on cmb_options.parameterisation)
 
-q_info = cmb_define_parameterisation(network, cmb_options); 
+q_info = cmb_define_parameterisation(network, cmb_options);
 
 % generate model kinetics and artificial data
 
 [kinetics, prior, bounds, data, true, kinetic_data, state_data] = cmb_generate_artificial_data(network, cmb_options, q_info, c_init);
 
 network.kinetics = kinetics;
-
 
 % possibly, use different kinetic constants prior (for reconstruction) than prior used to generate the model kinetics
 
