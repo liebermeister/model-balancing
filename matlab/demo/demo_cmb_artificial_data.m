@@ -35,16 +35,17 @@ filenames = cmb_filenames(model, run, result_dir, network_file);
 
 % -------------------------------------------------------------
 % E. coli CCM model (network structure from SBML file)
-% To use this example model, uncomment the following lines
 % (calculation time about 30 minutes)
 % -------------------------------------------------------------
+
+% To use this example model, please uncomment the following lines
 
 % model        = 'e_coli_artificial';  
 % run          = 'no_noise_with_noisefree_kinetic_data';
 % result_dir   = tempdir;
-% network_file = [cmb_resourcedir '/data/data-organisms/escherichia_coli/network/ecoli_ccm_ProteinComposition_Network.xml'];
+% network_file = [cmb_resourcedir '/models/e_coli_noor_2016/ecoli_ccm_ProteinComposition_Network.xml'];
 % layout_file  = [];
-% c_init       = e_coli_c_init(model,cmb_default_options);
+% c_init       = cmb_e_coli_c_init(model,cmb_default_options);
 % ns           = 4;
 
 
@@ -76,4 +77,4 @@ cmb_options.verbose                = run;
 % Run model balancing and save results to files 
 % -----------------------------------------------
 
-convex_model_balancing(filenames, cmb_options, network, q_info, prior, bounds, data, true);
+model_balancing(filenames, cmb_options, network, q_info, prior, bounds, data, true);

@@ -1,0 +1,8 @@
+Provenance: 
+
+* ecoli_ccm_ProteinComposition_Haverkorn_model_data
+* ecoli_ccm_ProteinComposition_Haverkorn_options
+* ecoli_ccm_ProteinComposition_Haverkorn
+
+from
+/home/wolfram/projekte/enzyme_cost_minimization/matlab/example_ecoli/data/data-matlab

@@ -116,4 +116,4 @@ end
 % Run convex parameter estimation
 % -----------------------------------------------
 
-convex_model_balancing(filenames, cmb_options, network, q_info, prior, bounds, data, [], init);
+model_balancing(filenames, cmb_options, network, q_info, prior, bounds, data, [], init);

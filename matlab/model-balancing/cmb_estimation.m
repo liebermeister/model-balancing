@@ -12,13 +12,14 @@ function [optimal, gradient_V, init, time] = cmb_estimation(network, q_info, bou
 % --------------------------------------------------------
 
 % --------------------------------------------------------------
-%% Set global variables to speed up function modular_velocities
+%% Use global variables to speed up function modular_velocities
 global global_structure_matrices
-global_structure_matrices = 1;
 global Mplus Mminus Wplus Wminus nm nr ind_M ind_Wp ind_Wm
+global LP_info % variable used in cmb_log_posterior
+% --------------------------------------------------------------
+
 N = network.N; W = network.regulation_matrix; ind_ext = find(network.external); h = network.kinetics.h;
 [Mplus, Mminus, Wplus, Wminus, nm, nr, N_int,ind_M,ind_Wp,ind_Wm] = make_structure_matrices(N,W,ind_ext,h);
-global LP_info % variable used in cmb_log_posterior
 
 % --------------------------------------------------------------
 
@@ -193,3 +194,4 @@ gradient_V = nan;
 time = toc(tstart);
 
 display(sprintf('Calculation time: %3.2f s',time));
+

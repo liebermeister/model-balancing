@@ -1,8 +1,9 @@
-function [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max, preposterior, pp] = convex_model_balancing(filenames, cmb_options, network, q_info, prior, bounds, data, true, init)
+function [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max, preposterior, pp] = model_balancing(filenames, cmb_options, network, q_info, prior, bounds, data, true, init)
 
-% [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max, preposterior, pp] = convex_model_balancing(filenames, cmb_options, network, q_info, prior, bounds, data, true, init)
+% [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max, preposterior, pp] = model_balancing(filenames, cmb_options, network, q_info, prior, bounds, data, true, init)
 %
 % Convex model balancing
+% For input and output variables, see the demo files
 %
 % Input variables:
 %   filenames    struct, (model- and run-specific) filenames for input and output files
@@ -29,7 +30,15 @@ function [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max,
 % For generating the input data, see 'cmb_model_and_data' and 'cmb_model_artificial_data'
 
 tic
-    
+
+  % --------------------------------------------------------------
+%% Set global variables to speed up function modular_velocities
+global global_structure_matrices
+global_structure_matrices = 1;
+global Mplus Mminus Wplus Wminus nm nr ind_M ind_Wp ind_Wm
+global LP_info % variable used in cmb_log_posterior
+% --------------------------------------------------------------
+
 eval(default('true','[]'));
 
 ns = size(data.X.mean,2);
@@ -98,7 +107,7 @@ switch cmb_options.initial_values_variant,
     my_data.V.std  = nanmean(data.V.std,2); 
     my_data.X.std  = nanmean(data.X.std,2);
     my_data.E.std  = exp(nanmean(log(data.E.std),2));
-    my_optimal = convex_model_balancing(filenames, my_cmb_options, network, my_q_info, my_prior, my_bounds, my_data);
+    my_optimal = model_balancing(filenames, my_cmb_options, network, my_q_info, my_prior, my_bounds, my_data);
     cmb_options.init.q = my_optimal.q;
     cmb_options.init.X = repmat(my_optimal.X,1,cmb_options.ns);
     display(sprintf('Initial point found\n-------------------'));
@@ -205,3 +214,7 @@ if cmb_options.save_results,
   mytable(report,0,filenames.report);
 end
 
+% --------------------------------------------------------------
+%% Clear global variables
+clearvars -global global_structure_matrices Mplus Mminus Wplus Wminus nm nr ind_M ind_Wp ind_Wm LP_info
+% --------------------------------------------------------------

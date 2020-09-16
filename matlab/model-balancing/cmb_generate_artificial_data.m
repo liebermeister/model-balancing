@@ -224,6 +224,9 @@ kinetic_data = kinetics_to_kinetic_data(network);
 
 state_data = data_to_state_data(data);
 
+%% Clear global variables
+clearvars -global global_structure_matrices Mplus Mminus Wplus Wminus nm nr ind_M ind_Wp ind_Wm
+
 % ------------------------------------------------------------
 
 function x = gaussian_random_matrix(xmean,xstd,xmin,xmax,ni,nj)
