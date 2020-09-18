@@ -16,3 +16,13 @@ equilibrium constant		E2	dimensionless	1.7597466	NaN	NaN	NaN	NaN
 equilibrium constant		E3	dimensionless	4.3755067	NaN	NaN	NaN	NaN		
 equilibrium constant		E4	dimensionless	0.64455593	NaN	NaN	NaN	NaN		
 equilibrium constant		E5	dimensionless	0.63021124	NaN	NaN	NaN	NaN		
+substrate catalytic rate constant		E1	1/s	50.402099	NaN	NaN	NaN	NaN		
+substrate catalytic rate constant		E2	1/s	2421.1899	NaN	NaN	NaN	NaN		
+substrate catalytic rate constant		E3	1/s	729.18418	NaN	NaN	NaN	NaN		
+substrate catalytic rate constant		E4	1/s	52.958489	NaN	NaN	NaN	NaN		
+substrate catalytic rate constant		E5	1/s	995.49201	NaN	NaN	NaN	NaN		
+product catalytic rate constant		E1	1/s	1409.2117	NaN	NaN	NaN	NaN		
+product catalytic rate constant		E2	1/s	8.7665889	NaN	NaN	NaN	NaN		
+product catalytic rate constant		E3	1/s	362.27166	NaN	NaN	NaN	NaN		
+product catalytic rate constant		E4	1/s	48.66733	NaN	NaN	NaN	NaN		
+product catalytic rate constant		E5	1/s	528.22938	NaN	NaN	NaN	NaN		

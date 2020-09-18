@@ -11,4 +11,4 @@ Fitted (metabolite): 28
 Fitted (enzyme):     20
 Fitted (kinetic):    21
 Fitted (TOTAL):      69
-Calculation time:    4.6 s
+Calculation time:    5.6 s

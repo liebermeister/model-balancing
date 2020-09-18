@@ -43,16 +43,22 @@ end
 
 rng(cmb_options.random_seed,'twister');
 
-%% for simplicity: randomly choose std chem pot
-mu0                  = cmb_options.quantities.mu0.std * randn(nm,1);
-network.kinetics.Keq = exp(- network.N' * mu0/RT); 
-network.kinetics.KV  = exp(gaussian_random_matrix(cmb_options.quantities.KV.mean_ln,cmb_options.quantities.KV.std_ln,log(1.1*cmb_options.quantities.KV.min),log(0.9*cmb_options.quantities.KV.max),nr,1));
-network.kinetics.KM  = double(network.kinetics.KM~=0) .* exp(gaussian_random_matrix(cmb_options.quantities.KM.mean_ln,cmb_options.quantities.KM.std_ln,log(1.1*cmb_options.quantities.KM.min),log(0.9*cmb_options.quantities.KM.max),nr,nm));
 if isempty(c_init),
   c_init = ones(length(network.metabolites),cmb_options.ns);
 end
-network.kinetics.c   = c_init;
-network.kinetics.u   = network.kinetics.u .* exp(0.5*randn(nr,1));
+
+%% for simplicity: randomly choose std chem pot
+kinetics         = network.kinetics;
+mu0              = cmb_options.quantities.mu0.std * randn(nm,1);
+kinetics.Keq     = exp(- network.N' * mu0/RT); 
+kinetics.KV      = exp(gaussian_random_matrix(cmb_options.quantities.KV.mean_ln,cmb_options.quantities.KV.std_ln,log(1.1*cmb_options.quantities.KV.min),log(0.9*cmb_options.quantities.KV.max),nr,1));
+kinetics.KM      = double(kinetics.KM~=0) .* exp(gaussian_random_matrix(cmb_options.quantities.KM.mean_ln,cmb_options.quantities.KM.std_ln,log(1.1*cmb_options.quantities.KM.min),log(0.9*cmb_options.quantities.KM.max),nr,nm));
+[kinetics.Kcatf, kinetics.Kcatr] = modular_KV_Keq_to_kcat(network.N, kinetics);
+kinetics.c       = c_init;
+kinetics.u       = kinetics.u .* exp(0.5*randn(nr,1));
+network.kinetics = kinetics;
+
+modular_rate_law_haldane(network)
 
 
 % -------------------------------------------------------------
@@ -65,8 +71,6 @@ network.kinetics.u   = network.kinetics.u .* exp(0.5*randn(nr,1));
 
 [nr,nm,nx,KM_ind,KA_ind,KI_ind,nKM,nKA,nKI] = network_numbers(network);
 
-keq = network.kinetics.Keq;
-
 
 % --------------------------------------------------------------
 % Bounds
@@ -74,6 +78,7 @@ keq = network.kinetics.Keq;
 % FIX: rather get these numbers from parameter prior table
 
 bounds = cmb_make_bounds(network,q_info,cmb_options);
+
 
 % --------------------------------------------------------------
 % Priors (kinetic constants)
@@ -90,7 +95,7 @@ clear true
 
 ns = cmb_options.ns;
 
-true.q = cmb_kinetics_to_q(network, cmb_options, q_info);
+true.q    = cmb_kinetics_to_q(network, cmb_options, q_info);
 true.qall = cmb_q_to_qall(true.q, q_info);
 
 % --------------------------------------------------------------
@@ -102,7 +107,9 @@ rng(cmb_options.random_seed,'twister');
 % factors 0.1 are used to obtain concentrations in reasonable ranges
 
 e_ref = cmb_options.metabolic_prior_e_geom_mean * [cmb_options.metabolic_artificial_e_geom_std .^ randn(nr,1)];
+
 network.kinetics.u = e_ref;
+kinetics.u         = e_ref;
 
 [c_ref, v_ref] = network_steady_state(network, network.kinetics.c);
 x_ref  = log(c_ref);
@@ -124,14 +131,13 @@ for j=1:ns,
   my_network = network;
   my_network.kinetics.c = exp(X_init(:,j));
   my_network.kinetics.u = true.E(:,j);
-  [c_ss,v_ss] = network_steady_state(my_network,my_network.kinetics.c);
+  [c_ss,v_ss] = network_steady_state(my_network, my_network.kinetics.c);
   true.X(:,j) = log(c_ss);
   true.V(:,j) = v_ss;
   true.A_forward(:,j) = sign(v_ss) .* [log(network.kinetics.Keq) - network.N' * true.X(:,j)];
 end
 
 true.kinetics = network.kinetics;
-[true.kinetics.Kcatf, true.kinetics.Kcatr] = modular_KV_Keq_to_kcat(network.N,network.kinetics);
 
 
 % --------------------------------------------------------------
@@ -211,9 +217,6 @@ if find(true.A_forward < 0), error('Negative driving force encountered'); end
 %   [true.V(:,it), network_velocities(exp(true.X(:,it)),nn)]
 % end
 
-kinetics = network.kinetics;
-[kinetics.Kcatf, kinetics.Kcatr] = modular_KV_Keq_to_kcat(network.N,network.kinetics);
-
 % ------------------------------------------------------------
 % data structure 'kinetic_data'
 
@@ -226,6 +229,7 @@ state_data = data_to_state_data(data);
 
 %% Clear global variables
 clearvars -global global_structure_matrices Mplus Mminus Wplus Wminus nm nr ind_M ind_Wp ind_Wm
+
 
 % ------------------------------------------------------------
 

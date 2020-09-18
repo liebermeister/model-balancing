@@ -85,9 +85,8 @@ switch cmb_options.parameterisation,
 
 end
 
-q.number     = length(q.names);
+q.number    = length(q.names);
 qall.number = length(qall.names);
-     
 
 
 % ---------------------------------------------------
@@ -114,15 +113,15 @@ switch cmb_options.parameterisation,
     for it = 1:nKM,
       stoich_matrix_reaction_KM(ind_r(it),it) = network.N(ind_m(it),ind_r(it));
     end
-    M_q_to_qall(qall.index.Keq, q.index.Keq)  = Bt;
-    M_q_to_qall(qall.index.Kcatf, q.index.Keq)=  0.5 * diag(h) * Bt;
-    M_q_to_qall(qall.index.Kcatr, q.index.Keq)= -0.5 * diag(h) * Bt;
-    M_q_to_qall(qall.index.Kcatf, q.index.KM) =  0.5 * diag(h) * stoich_matrix_reaction_KM;
-    M_q_to_qall(qall.index.Kcatr, q.index.KM) = -0.5 * diag(h) * stoich_matrix_reaction_KM;
-    M_q_to_qall(qall.index.Kcatf, q.index.KV) = eye(nr);
-    M_q_to_qall(qall.index.Kcatr, q.index.KV) = eye(nr);
+    M_q_to_qall(qall.index.Keq,   q.index.Keq) = Bt;
+    M_q_to_qall(qall.index.Kcatf, q.index.KV)  = eye(nr);
+    M_q_to_qall(qall.index.Kcatf, q.index.Keq) =  0.5 * diag(h) * Bt;
+    M_q_to_qall(qall.index.Kcatf, q.index.KM)  = -0.5 * diag(h) * stoich_matrix_reaction_KM;
+    M_q_to_qall(qall.index.Kcatr, q.index.KV)  = eye(nr);                                               
+    M_q_to_qall(qall.index.Kcatr, q.index.Keq) = -0.5 * diag(h) * Bt;
+    M_q_to_qall(qall.index.Kcatr, q.index.KM)  =  0.5 * diag(h) * stoich_matrix_reaction_KM;
 
-    M_qall_to_q(q.index.Keq, qall.index.Keq)  = pinv(full(Bt));
+    M_qall_to_q(q.index.Keq, qall.index.Keq)   = pinv(full(Bt));
     
 end
 
