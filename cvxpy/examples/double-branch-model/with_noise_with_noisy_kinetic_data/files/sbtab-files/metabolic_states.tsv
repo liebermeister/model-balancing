@@ -1,0 +1,35 @@
+!!!SBtab DocumentName='CMB result' Document='CMBresult' CalculationTime='15.970504 s'					
+					
+!!SBtab TableName='Metabolite concentrations' TableID='MetaboliteConcentration' TableType='QuantityMatrix' Unit='mM'					
+!QuantityType	!Compound	S1	S2	S3	S4
+concentration	X1	9.9529948	4.3772691	22.221497	8.6038204
+concentration	S2	0.089946722	0.13947734	0.31794327	0.21698934
+concentration	X3	1.1327039	1.2285293	1.290615	0.64554728
+concentration	S4	0.9694365	0.43803033	0.33573631	0.26858927
+concentration	S5	0.030706385	0.034693455	0.022262794	0.030139295
+concentration	X6	0.74678521	0.47114131	0.49260311	1.3973468
+concentration	X7	0.016797394	0.017397253	0.0047136368	0.013163128
+					
+!!SBtab TableName='Enzyme concentrations' TableID='EnzymeConcentration' TableType='QuantityMatrix' Unit='mM'					
+!QuantityType	!Reaction	S1	S2	S3	S4
+concentration of enzyme	E1	0.00065155668	0.0010523436	0.0010912856	0.00069228102
+concentration of enzyme	E2	0.0030251063	0.0014177366	0.0012714905	0.00091382295
+concentration of enzyme	E3	0.0011980167	0.00081144472	0.00058932683	0.00067262461
+concentration of enzyme	E4	0.00045290991	0.00074066415	0.0003234124	0.00064626942
+concentration of enzyme	E5	0.00097781047	0.00075313194	0.00031888521	0.00041481751
+					
+!!SBtab TableName='Gibbs free energies of reaction' TableID='ReactionGibbsFreeEnergy' TableType='QuantityMatrix' Unit='kJ/mol'					
+!QuantityType	!Reaction	S1	S2	S3	S4
+Gibbs energy of reaction	E1	4.6130083	1.4891927	3.474005	2.0688601
+Gibbs energy of reaction	E2	1.2869207	3.457587	4.2391107	3.074911
+Gibbs energy of reaction	E3	5.5906318	4.4061302	6.8891598	4.6380676
+Gibbs energy of reaction	E4	-8.4246169	-6.9801288	-8.1903058	-10.024024
+Gibbs energy of reaction	E5	0.3120229	0.5276721	2.6650742	0.87019312
+					
+!!SBtab TableName='Metabolic fluxes' TableID='MetabolicFlux' TableType='QuantityMatrix' Unit='mM/s'					
+!QuantityType	!Reaction	S1	S2	S3	S4
+rate of reaction	E1	0.026803648	0.022840533	0.039978916	0.018917845
+rate of reaction	E2	0.014121599	0.028894643	0.038215586	0.01492787
+rate of reaction	E3	0.026474236	0.02401125	0.041188122	0.029024352
+rate of reaction	E4	-0.016094879	-0.023303504	-0.01065914	-0.025243544
+rate of reaction	E5	0.031586865	0.04224263	0.063107452	0.035844051

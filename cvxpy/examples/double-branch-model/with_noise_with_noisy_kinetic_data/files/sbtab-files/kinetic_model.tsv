@@ -1,0 +1,68 @@
+!!!SBtab Document='CMBresult' DocumentName='CMB result' CalculationTime='15.970504 s'				
+				
+!!SBtab TableID='Reaction' TableType='Reaction' TableName='Reaction'				
+!ID	!ReactionFormula	!Name	!IsReversible	
+E1	X1 <=> S2	E1	True	
+E2	X3 <=> S4	E2	True	
+E3	S2 + S4 <=> S5	E3	True	
+E4	S5 <=> X6	E4	True	
+E5	S5 <=> X7	E5	True	
+				
+!!SBtab TableID='Compound' TableType='Compound' TableName='Compound'				
+!ID	!Name	!IsConstant		
+X1	X1	True		
+S2	S2	False		
+X3	X3	True		
+S4	S4	False		
+S5	S5	False		
+X6	X6	True		
+X7	X7	True		
+				
+!!SBtab TableID='Position' TableType='Position' TableName='Position'				
+!Element	!PositionX	!PositionY		
+X1	-0.004722	0.7662		
+S2	0.18043459	0.76591403		
+X3	-0.0065602717	0.50699807		
+S4	0.18248948	0.51110785		
+S5	0.36948434	0.63851094		
+X6	0.61401608	0.76385915		
+X7	0.61196119	0.51110785		
+E1	0.079745049	0.76591403		
+E2	0.083854826	0.50905296		
+E3	0.28934368	0.63851094		
+E4	0.44757011	0.7001576		
+E5	0.44757011	0.58097406		
+				
+!!SBtab TableID='Parameter' TableType='Quantity' TableName='Parameter'				
+!QuantityType	!Reaction	!Compound	!Mode	!Unit
+equilibrium constant	E1		0.058102619	dimensionless
+equilibrium constant	E2		1.4383406	dimensionless
+equilibrium constant	E3		3.3586161	dimensionless
+equilibrium constant	E4		0.81290145	dimensionless
+equilibrium constant	E5		0.62040785	dimensionless
+catalytic rate constant geometric mean	E1		275.99824	1/s
+catalytic rate constant geometric mean	E2		107.00769	1/s
+catalytic rate constant geometric mean	E3		558.44763	1/s
+catalytic rate constant geometric mean	E4		50.950689	1/s
+catalytic rate constant geometric mean	E5		759.52315	1/s
+Michaelis constant	E1	X1	0.0099662702	mM
+Michaelis constant	E1	S2	0.018369812	mM
+Michaelis constant	E3	S2	2.5278371	mM
+Michaelis constant	E2	X3	1.4991034	mM
+Michaelis constant	E2	S4	0.0091553825	mM
+Michaelis constant	E3	S4	0.038385354	mM
+Michaelis constant	E3	S5	0.179908	mM
+Michaelis constant	E4	S5	0.20785989	mM
+Michaelis constant	E5	S5	0.030463219	mM
+Michaelis constant	E4	X6	0.12504785	mM
+Michaelis constant	E5	X7	0.015614297	mM
+substrate catalytic rate constant	E1		49.002489	1/s
+substrate catalytic rate constant	E2		1642.19	1/s
+substrate catalytic rate constant	E3		751.61376	1/s
+substrate catalytic rate constant	E4		59.226525	1/s
+substrate catalytic rate constant	E5		835.61521	1/s
+product catalytic rate constant	E1		1554.5134	1/s
+product catalytic rate constant	E2		6.9727898	1/s
+product catalytic rate constant	E3		414.92556	1/s
+product catalytic rate constant	E4		43.831251	1/s
+product catalytic rate constant	E5		690.36011	1/s

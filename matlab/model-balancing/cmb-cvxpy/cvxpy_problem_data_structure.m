@@ -58,6 +58,7 @@ else
   
 end
 
+problem.standard_concentration        = '1 mM';
 problem.network.metabolite_names      = network.metabolites;
 problem.network.reaction_names        = network.actions;
 problem.network.stoichiometric_matrix = network.N;
