@@ -1,5 +1,6 @@
 Provenance:
 
-* file ecoli_ccm_ProteinComposition_Network.xml from /home/wolfram/projekte/enzyme_cost_minimization/html/data/ecoli_ccm/
+* file e_coli_noor_2016.xml  from /home/wolfram/projekte/enzyme_cost_minimization/html/data/ecoli_ccm/
+  (original filename ecoli_ccm_ProteinComposition_Network.xml)
 
-* file ecoli_noor_2016.tsv from /home/wolfram/matlab/wolf_packages/mnt/mnt/mnt-extensions/mnt_parameter_balancing/models/
+* file e_coli_noor_2016.tsv from MNT repository: mnt/mnt/mnt-extensions/mnt_parameter_balancing/models/

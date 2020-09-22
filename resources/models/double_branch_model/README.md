@@ -1,6 +1,13 @@
 Simple test model
 =================
 
+Network structure:
+
+X - S         X
+      \     /
+        - S
+X - S /     \ X
+
 SBML (model) and SBtab (model and data) files are provided
 
 The SBML and SBtab files are used (alternatively) in demo_cmb_experimental_data

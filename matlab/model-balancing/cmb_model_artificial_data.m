@@ -57,15 +57,25 @@ switch cmb_options.prior_variant,
     prior.E.mean = true.E;
 
   case 'broad_prior',
-    prior.q.std  = log(10^10)*ones(size(prior.q.std));
+    prior.q.std = log(10^10)*ones(size(prior.q.std));
+    prior.X.std = log(10^10)*ones(size(prior.X.std));
+    prior.E.std = log(10^10)*ones(size(prior.E.std));
   
-  case  'broad_prior_around_zero',
+  case 'broad_prior_around_zero',
     prior.q.mean = zeros(size(prior.q.std));
     prior.q.std  = log(10^10)*ones(size(prior.q.std));
+    prior.X.mean = 0 * prior.X.mean;
+    prior.X.std  = log(10^10)*ones(size(prior.X.std));
+    prior.E.mean = 0 * prior.E.mean;
+    prior.E.std  = log(10^10)*ones(size(prior.E.std));
   
   case 'broad_prior_around_true_values',
     prior.q.mean = true.q;
     prior.q.std  = log(10^10)*ones(size(prior.q.std));
+    prior.X.mean = true.X;
+    prior.X.std  = log(10^10)*ones(size(prior.X.std));
+    prior.E.mean = true.E;
+    prior.E.std  = log(10^10)*ones(size(prior.E.std));
 
   otherwise, error('');
 end

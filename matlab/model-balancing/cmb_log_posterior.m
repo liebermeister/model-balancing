@@ -6,14 +6,14 @@ no_warnings = 1;
 
 global LP_info % variable defined in cmb_estimation
 
+eval(default('verbose','0'));
+
 if verbose,
   if sum(LP_info.y_ineq_A * y > LP_info.y_ineq_b - LP_info.epsilon) ~=0,
     warning('Constraint violation detected');
     max_violation = max(LP_info.y_ineq_A * y - [ LP_info.y_ineq_b - LP_info.epsilon])
   end
 end
-
-eval(default('verbose','0'));
   
 [nr,nm,nx,KM_indices,KA_indices,KI_indices,nKM,nKA,nKI] = network_numbers(pp.network);
 
@@ -40,14 +40,20 @@ if verbose,
     display('Constraint violation detected');
   end
 end
-E(find(Aforward<0)) = inf;
-  
 
-q_log_preposterior = - 0.5 * [q - preposterior.q.mean]' * preposterior.q.cov_inv * [q - preposterior.q.mean];
+E(find(Aforward<0)) = inf;
+
+q_log_preposterior = - 0.5 *          [q - preposterior.q.mean]' * preposterior.q.cov_inv * [q - preposterior.q.mean];
 x_log_posterior    = - 0.5 * sum(sum([[X - preposterior.X.mean] ./ preposterior.X.std ].^2));
 e_log_posterior    = - 0.5 * sum(sum([[E - preposterior.E.mean] ./ preposterior.E.std ].^2));
 
 log_posterior = q_log_preposterior + x_log_posterior + e_log_posterior;
+
+if verbose,
+  q_log_preposterior
+  x_log_posterior
+  e_log_posterior
+end
 
 
 % ---------------------------------------------------------------------------
@@ -88,7 +94,3 @@ if cmb_options.use_gradient,
   log_posterior_gradient   = cmb_qX_to_y(log_posterior_gradient_q,log_posterior_gradient_X,nm,ns);
   
 end
-
-%if verbose,
-%  log_posterior
-%end

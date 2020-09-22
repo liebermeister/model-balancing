@@ -70,9 +70,9 @@ if isempty(true),
   end
 end
 
-
 % -----------------------------------------------
 % Initial values
+
 
 switch cmb_options.initial_values_variant,
   case 'preposterior_mode';
@@ -107,13 +107,18 @@ switch cmb_options.initial_values_variant,
     my_data.V.std  = nanmean(data.V.std,2); 
     my_data.X.std  = nanmean(data.X.std,2);
     my_data.E.std  = exp(nanmean(log(data.E.std),2));
-    my_optimal = model_balancing(filenames, my_cmb_options, network, my_q_info, my_prior, my_bounds, my_data);
+    if length(true),
+      my_true = true;
+      my_true.V = nanmean(true.V,2);
+      my_true.X = nanmean(true.X,2);
+      my_true.E = exp(nanmean(log(true.E),2));
+    end
+    my_optimal = model_balancing(filenames, my_cmb_options, network, my_q_info, my_prior, my_bounds, my_data, my_true);
     cmb_options.init.q = my_optimal.q;
     cmb_options.init.X = repmat(my_optimal.X,1,cmb_options.ns);
     display(sprintf('Initial point found\n-------------------'));
 
 end
-
 
 % -----------------------------------------------
 % Compute the optimum state and parameter values
@@ -142,6 +147,7 @@ optimal.A_forward = optimal.A .* sign(sign(V)+0.5);
 % Compare posterior loss scores for true values, 
 % initial guess, and predicted solution
 % -----------------------------------------------
+
 
 if cmb_options.display,
   cmb_display_scores(network, q_info, cmb_options, pp, preposterior, init, optimal, true, V, cmb_options.verbose);
