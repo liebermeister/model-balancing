@@ -1,11 +1,12 @@
 import itertools
 import os
 import warnings
-from typing import Union, Dict
+from typing import Union
 
 import numpy as np
-import scipy.special
 import pint
+
+import cvxpy as cp
 
 # Disable Pint's old fallback behavior (must come before importing Pint)
 os.environ["PINT_ARRAY_PROTOCOL_FALLBACK"] = "0"
@@ -18,7 +19,7 @@ with warnings.catch_warnings():
     Q_([])
 
 
-class ModelBalancing(object):
+class ModelBalancingConvex(object):
 
     MIN_DRIVING_FORCE = 1e-6  # in units of RT
 
@@ -58,15 +59,25 @@ class ModelBalancing(object):
         assert self.A_act.shape == (self.Nc, self.Nr)
         assert self.A_inh.shape == (self.Nc, self.Nr)
 
-        self.ln_Keq_gmean = np.log(Keq_gmean.m_as(""))
+        self.ln_Keq_gmean = cp.Parameter(
+            shape=(self.Nr,), value=np.log(Keq_gmean.m_as(""))
+        )
         self.Keq_ln_cov = Keq_ln_cov
-        self.ln_conc_enz_gmean = np.log(conc_enz_gmean.m_as("M"))
+        self.ln_conc_enz_gmean = cp.Parameter(
+            shape=(self.Nr, self.Ncond), value=np.log(conc_enz_gmean.m_as("M"))
+        )
         self.ln_conc_enz_gstd = np.log(conc_enz_gstd)
-        self.ln_conc_met_gmean = np.log(conc_met_gmean.m_as("M"))
+        self.ln_conc_met_gmean = cp.Parameter(
+            shape=(self.Nc, self.Ncond), value=np.log(conc_met_gmean.m_as("M"))
+        )
         self.ln_conc_met_gstd = np.log(conc_met_gstd)
-        self.ln_kcatf_gmean = np.log(kcatf_gmean.m_as("1/s"))
+        self.ln_kcatf_gmean = cp.Parameter(
+            shape=(self.Nr,), value=np.log(kcatf_gmean.m_as("1/s"))
+        )
         self.kcatf_ln_cov = kcatf_ln_cov
-        self.ln_kcatr_gmean = np.log(kcatr_gmean.m_as("1/s"))
+        self.ln_kcatr_gmean = cp.Parameter(
+            shape=(self.Nr,), value=np.log(kcatr_gmean.m_as("1/s"))
+        )
         self.kcatr_ln_cov = kcatr_ln_cov
         self.ln_Km_gmean = np.log(Km_gmean.m_as("M"))
         self.Km_ln_cov = Km_ln_cov
@@ -81,66 +92,58 @@ class ModelBalancing(object):
         assert self.ln_conc_enz_gstd.shape == (self.Nr, self.Ncond)
         assert self.ln_conc_met_gstd.shape == (self.Nc, self.Ncond)
 
-        self.ln_variables_dict = {
-            "conc_met": np.zeros((self.Nc, self.Ncond)),
-            "Keq": np.zeros(self.Nr),
-            "kcatf": np.zeros(self.Nr),
-            "Ka": np.zeros(Ka_gmean.shape),
-            "Ki": np.zeros(Ki_gmean.shape),
-            "Km": np.zeros(Km_gmean.shape),
-        }
+        self.ln_conc_met = cp.Variable(shape=(self.Nc, self.Ncond))
+        self.ln_Keq = cp.Variable(shape=(self.Nr,))
+        self.ln_kcatf = cp.Variable(shape=(self.Nr,))
 
-    def objective_function(
-        self,
-        ln_params_dict: Dict[str, np.ndarray],
-    ) -> float:
-        """Calculate the sum of squares of all Z-scores.
-
-        This includes the 6 independent variables, and the two dependent ones
-        (kcatr and conc_enz).
-        """
-        total_z2_scores = 0.0
-
-        for p in ["Km", "Ka", "Ki", "Keq", "kcatf", "kcatr"]:
+        for p in ["Km", "Ka", "Ki"]:
             ln_gmean = self.__getattribute__(f"ln_{p}_gmean")
             ln_cov = self.__getattribute__(f"{p}_ln_cov")
             if ln_gmean.size == 0:
-                continue
+                self.__setattr__(f"ln_{p}", np.array([]))
+                self.__setattr__(f"z2_scores_{p}", cp.Constant(0))
             else:
-                total_z2_scores += ModelBalancing._z_score(
-                    ln_params_dict[p], ln_gmean, ln_cov
+                ln_p = cp.Variable(shape=ln_gmean.size)
+                self.__setattr__(
+                    f"z2_scores_{p}", ModelBalancingConvex._z_score(ln_p, ln_gmean, ln_cov)
                 )
+                self.__setattr__(f"ln_{p}", ln_p)
 
-        # conc_met and conc_enz are given as a matrix (with conditions as
-        # columns) and therefore we assume a diagonal covariance matrix (for
-        # simplicity).
-        # Instead of a ln_cov matrix, we simply have the geometric means and
-        # stds arranged in the same shape as the variables.
-        for p in ["conc_met", "conc_enz"]:
+        for p in ["Keq", "kcatf", "kcatr"]:
+            ln_p = self.__getattribute__(f"ln_{p}")
             ln_gmean = self.__getattribute__(f"ln_{p}_gmean")
-            ln_gstd = self.__getattribute__(f"{p}_ln_gstd")
-            if ln_gmean.size == 0:
-                continue
-            else:
-                total_z2_scores += ModelBalancing._z_score(
-                    ln_params_dict[p].flatten(),
-                    ln_gmean.flatten(),
-                    ln_gstd.flatten()
-                )
+            ln_cov = self.__getattribute__(f"{p}_ln_cov")
+            self.__setattr__(
+                f"z2_scores_{p}", ModelBalancingConvex._z_score(ln_p, ln_gmean, ln_cov)
+            )
 
-        return total_z2_scores
+        # conc_met is given as a matrix (with conditions as columns) and therefore
+        # we assume a diagonal covariance matrix (for simplicity). Instead of a
+        # ln_cov matrix, we simply have the geometric means and stds arranged in
+        # the same shape as the variables.
+        self.z2_scores_met = sum(
+            cp.square(
+                (self.ln_conc_met - self.ln_conc_met_gmean) / self.ln_conc_met_gstd
+            ).flatten()
+        )
 
-    @staticmethod
-    def _z_score(
-        x: np.array, mu: np.array, cov: np.array,
-    ) -> float:
-        """Calculates the sum of squared Z-scores (with a covariance mat)."""
-        if cov.ndmin == 1:
-            return sum(map(np.sqaure, (x - mu) / cov))
-        elif cov.ndmin == 2:
-            return sum(map(np.sqaure, (x - mu) @ np.linalg.pinv(cov)))
-        else:
-            raise ValueError("Covariance can only have 1 or 2 dimensions.")
+        # ln enzyme concentrations are convex functions of the ln metabolite concentrations
+        # but, since the z-scores use the square function, we have to take only the positive
+        # values (otherwise the result is not convex).
+        self.z2_scores_enz = sum(
+            cp.square(
+                cp.pos(self.ln_conc_enz - self.ln_conc_enz_gmean)
+                / self.ln_conc_enz_gstd
+            ).flatten()
+        )
+
+        total_z2_scores = sum(
+            [
+                self.__getattribute__(f"z2_scores_{p}")
+                for p in ["Km", "Ka", "Ki", "Keq", "kcatf", "kcatr", "met", "enz"]
+            ]
+        )
+        self.objective = cp.Minimize(total_z2_scores)
 
     @staticmethod
     def _B_matrix(Nc: int, col_subs: np.ndarray, col_prod: np.ndarray) -> np.ndarray:
@@ -185,14 +188,9 @@ class ModelBalancing(object):
         return A - np.ones((A.shape[0], S_subs.shape[0])) @ S_subs
 
     @staticmethod
-    def _logistic(x: np.ndarray) -> np.ndarray:
-        """elementwise calculation of: log(1 + e ^ x)"""
-        return np.log(1.0 + np.exp(x))
-
-    @staticmethod
     def _create_dense_matrix(
-        S: np.ndarray, x: np.ndarray,
-    ) -> np.ndarray:
+        S: np.array, x: Union[np.array, cp.Variable],
+    ) -> cp.Expression:
         """Converts a sparse list of affinity parameters (e.g. Km) to a matrix."""
 
         Nc, Nr = S.shape
@@ -209,99 +207,95 @@ class ModelBalancing(object):
                     row.append(x[k])
                     k += 1
                 else:
-                    row.append(0)
-            K_mat.append(np.hstack(row))
-        K_mat = np.vstack(K_mat)
+                    row.append(cp.Constant(0))
+            K_mat.append(cp.hstack(row))
+        K_mat = cp.vstack(K_mat)
         return K_mat
+
+    @staticmethod
+    def _z_score(
+        x: Union[np.array, cp.Expression], mu: np.array, cov: np.array,
+    ) -> cp.Expression:
+        """Calculates the sum of squared Z-scores (with a covariance mat)."""
+        return cp.quad_form(x - mu, np.linalg.pinv(cov))
 
     def _driving_forces(
         self,
-        ln_Keq: np.ndarray,
-        ln_conc_met: np.ndarray,
-    ) -> np.ndarray:
+        ln_Keq: Union[np.array, cp.Expression],
+        ln_conc_met: Union[np.array, cp.Expression],
+    ) -> cp.Expression:
         """Calculates the driving forces of all reactions."""
-        return np.vstack([ln_Keq] * self.Ncond).T - self.S.T @ ln_conc_met
+        return cp.vstack([ln_Keq] * self.Ncond).T - self.S.T @ ln_conc_met
 
     @property
-    def driving_forces(self) -> np.ndarray:
+    def driving_forces(self) -> cp.Expression:
         return self._driving_forces(self.ln_Keq, self.ln_conc_met)
 
     @staticmethod
     def _ln_kcatr(
         S: np.array,
-        ln_kcatf: np.ndarray,
-        ln_Km: np.ndarray,
-        ln_Keq: np.ndarray,
-    ) -> np.ndarray:
+        ln_kcatf: Union[np.array, cp.Expression],
+        ln_Km: Union[np.array, cp.Expression],
+        ln_Keq: Union[np.array, cp.Expression],
+    ) -> cp.Expression:
         """Calculate the kcat-reverse based on Haldane relationship constraint."""
         ln_Km_matrix = ModelBalancingConvex._create_dense_matrix(S, ln_Km)
         return cp.diag(S.T @ ln_Km_matrix) + ln_kcatf - ln_Keq
 
     @property
-    def ln_kcatr(self) -> np.ndarray:
+    def ln_kcatr(self) -> cp.Expression:
         return ModelBalancingConvex._ln_kcatr(self.S, self.ln_kcatf, self.ln_Km, self.ln_Keq)
 
-    def _ln_capacity(self, ln_kcatf: np.ndarray,) -> np.ndarray:
+    def _ln_capacity(self, ln_kcatf: Union[np.array, cp.Expression],) -> cp.Expression:
         """Calculate the capacity term of the enzyme."""
-        return np.log(self.fluxes.m_as("M/s")) - np.vstack([ln_kcatf] *
-                                                          self.Ncond).T
+        return np.log(self.fluxes.m_as("M/s")) - cp.vstack([ln_kcatf] * self.Ncond).T
 
     def _ln_eta_thermodynamic(
-        self, driving_forces: np.ndarray
-    ) -> np.ndarray:
+        self, driving_forces: Union[np.array, cp.Expression]
+    ) -> cp.Expression:
         """Calculate the thermodynamic term of the enzyme."""
-        return np.log(1.0 - np.exp(-driving_forces))
+        return cp.log(1.0 - cp.exp(-driving_forces))
 
     @property
-    def ln_eta_thermodynamic(self) -> np.ndarray:
+    def ln_eta_thermodynamic(self) -> cp.Expression:
         return self._ln_eta_thermodynamic(self.driving_forces)
 
     def _ln_eta_kinetic(
         self,
-        ln_conc_met: np.ndarray,
-        ln_Km: np.ndarray,
-    ) -> np.ndarray:
+        ln_conc_met: Union[np.array, cp.Expression],
+        ln_Km: Union[np.array, cp.Expression],
+    ) -> cp.Expression:
         """Calculate the kinetic (saturation) term of the enzyme."""
         S_subs = abs(self.S)
         S_prod = abs(self.S)
         S_subs[self.S > 0] = 0
         S_prod[self.S < 0] = 0
 
-        ln_Km_matrix = ModelBalancing._create_dense_matrix(self.S, ln_Km)
+        ln_Km_matrix = ModelBalancingConvex._create_dense_matrix(self.S, ln_Km)
 
         ln_eta_kinetic = []
         for i in range(self.Ncond):
-            ln_conc_met_matrix = np.vstack([ln_conc_met[:, i]] * self.Nr).T
+            ln_conc_met_matrix = cp.vstack([ln_conc_met[:, i]] * self.Nr).T
             ln_D_S = S_subs.T @ (ln_conc_met_matrix - ln_Km_matrix)
             ln_D_P = S_prod.T @ (ln_conc_met_matrix - ln_Km_matrix)
 
             if self.rate_law == "S":
-                ln_eta_kinetic += [
-                    np.zeros(self.Nr,)
-                ]
+                ln_eta_kinetic += [cp.Constant(np.zeros(self.Nr,))]
             elif self.rate_law == "1S":
-                ln_eta_kinetic += [
-                    -np.diag(self._logistic(-ln_D_S))
-                ]
+                ln_eta_kinetic += [-cp.diag(cp.logistic(-ln_D_S))]
             elif self.rate_law == "SP":
-                ln_eta_kinetic += [
-                    -np.diag(self._logistic(-ln_D_S + ln_D_P))
-                ]
+                ln_eta_kinetic += [-cp.diag(cp.logistic(-ln_D_S + ln_D_P))]
             elif self.rate_law == "1SP":
-                ln_eta_kinetic += [
-                    -np.diag(self._logistic(-ln_D_S + self._logistic(ln_D_P)))
-                ]
+                ln_eta_kinetic += [-cp.diag(cp.logistic(-ln_D_S + cp.logistic(ln_D_P)))]
             elif self.rate_law == "CM":
                 ln_eta_of_reaction = []
                 for j in range(self.Nr):
-                    B = ModelBalancing._B_matrix(self.Nc, S_subs[:, j], S_prod[:, j])
+                    B = ModelBalancingConvex._B_matrix(self.Nc, S_subs[:, j], S_prod[:, j])
                     ln_eta_of_reaction += [
-                        -scipy.special.logsumexp(
-                            B @ (ln_conc_met[:, i] - ln_Km_matrix[:, j])
-                        )
+                        -cp.log_sum_exp(B @ (ln_conc_met[:, i] - ln_Km_matrix[:, j]))
                     ]
                 ln_eta_kinetic += [
-                    np.reshape(np.vstack(ln_eta_of_reaction), (self.Nr,))
+                    cp.reshape(cp.vstack(ln_eta_of_reaction), (self.Nr,))
                 ]
             else:
                 raise ValueError(f"unsupported rate law {self.rate_law}")
@@ -309,46 +303,42 @@ class ModelBalancing(object):
         return cp.vstack(ln_eta_kinetic).T
 
     @property
-    def ln_eta_kinetic(self) -> np.ndarray:
+    def ln_eta_kinetic(self) -> cp.Expression:
         return self._ln_eta_kinetic(self.ln_conc_met, self.ln_Km)
 
     def _ln_eta_regulation(
         self,
-        ln_conc_met: np.ndarray,
-        ln_Ka: np.ndarray,
-        ln_Ki: np.ndarray,
-    ) -> np.ndarray:
+        ln_conc_met: Union[np.array, cp.Expression],
+        ln_Ka: Union[np.array, cp.Expression],
+        ln_Ki: Union[np.array, cp.Expression],
+    ) -> cp.Expression:
         """Calculate the regulation (allosteric) term of the enzyme."""
-        ln_Ka_matrix = ModelBalancing._create_dense_matrix(self.A_act, ln_Ka)
-        ln_Ki_matrix = ModelBalancing._create_dense_matrix(self.A_inh, ln_Ki)
+        ln_Ka_matrix = ModelBalancingConvex._create_dense_matrix(self.A_act, ln_Ka)
+        ln_Ki_matrix = ModelBalancingConvex._create_dense_matrix(self.A_inh, ln_Ki)
 
         ln_eta_allosteric = []
         for i in range(self.Ncond):
-            ln_conc_met_matrix = np.vstack([ln_conc_met[:, i]] * self.Nr).T
-            ln_act = self.A_act.T @ self._logistic(
-                ln_Ka_matrix - ln_conc_met_matrix
-            )
-            ln_inh = self.A_inh.T @ self._logistic(
-                ln_conc_met_matrix - ln_Ki_matrix
-            )
-            ln_eta_act = -np.diag(ln_act)
-            ln_eta_inh = -np.diag(ln_inh)
+            ln_conc_met_matrix = cp.vstack([ln_conc_met[:, i]] * self.Nr).T
+            ln_act = self.A_act.T @ cp.logistic(ln_Ka_matrix - ln_conc_met_matrix)
+            ln_inh = self.A_inh.T @ cp.logistic(ln_conc_met_matrix - ln_Ki_matrix)
+            ln_eta_act = -cp.diag(ln_act)
+            ln_eta_inh = -cp.diag(ln_inh)
             ln_eta_allosteric += [ln_eta_act + ln_eta_inh]
-        return np.vstack(ln_eta_allosteric).T
+        return cp.vstack(ln_eta_allosteric).T
 
     @property
-    def ln_eta_regulation(self) -> np.ndarray:
+    def ln_eta_regulation(self) -> cp.Expression:
         return self._ln_eta_regulation(self.ln_conc_met, self.ln_Ka, self.ln_Ki)
 
     def _ln_conc_enz(
         self,
-        ln_Keq: np.ndarray,
-        ln_kcatf: np.ndarray,
-        ln_Km: np.ndarray,
-        ln_Ka: np.ndarray,
-        ln_Ki: np.ndarray,
-        ln_conc_met: np.ndarray,
-    ) -> np.ndarray:
+        ln_Keq: Union[np.array, cp.Expression],
+        ln_kcatf: Union[np.array, cp.Expression],
+        ln_Km: Union[np.array, cp.Expression],
+        ln_Ka: Union[np.array, cp.Expression],
+        ln_Ki: Union[np.array, cp.Expression],
+        ln_conc_met: Union[np.array, cp.Expression],
+    ) -> cp.Expression:
         """Calculate the required enzyme levels based on fluxes and rate laws."""
         driving_forces = self._driving_forces(ln_Keq, ln_conc_met)
         ln_capacity = self._ln_capacity(ln_kcatf)
@@ -358,7 +348,7 @@ class ModelBalancing(object):
         return ln_capacity - ln_eta_thermodynamic - ln_eta_kinetic - ln_eta_regulation
 
     @property
-    def ln_conc_enz(self) -> np.ndarray:
+    def ln_conc_enz(self) -> cp.Expression:
         return self._ln_conc_enz(
             self.ln_Keq,
             self.ln_kcatf,
@@ -391,3 +381,27 @@ class ModelBalancing(object):
 
         self.ln_kcatr_gmean.value = self.ln_kcatr.value
         self.ln_conc_enz_gmean.value = self.ln_conc_enz.value
+
+    def solve(self) -> None:
+        prob = cp.Problem(
+            self.objective, [self.driving_forces >= self.MIN_DRIVING_FORCE]
+        )
+        prob.solve(solver=self.solver)
+
+    @property
+    def objective_value(self) -> float:
+        return self.objective.value
+
+    def print_z_scores(self, percision: int = 2) -> None:
+        for p in ["enz", "met", "Keq", "kcatf", "kcatr", "Km", "Ka", "Ki"]:
+            z = self.__getattribute__(f"z2_scores_{p}").value
+            print(f"{p} = {z.round(percision)}")
+
+    def print_status(self) -> None:
+        print("\nMetabolite concentrations (M) =\n", np.exp(self.ln_conc_met.value))
+        print("\nEnzyme concentrations (M) =\n", np.exp(self.ln_conc_enz.value))
+        print("\nDriving forces (RT) =\n", self.driving_forces.value)
+        print("\nη(thr) =\n", np.exp(self.ln_eta_thermodynamic.value).round(2))
+        print("\nη(kin) =\n", np.exp(self.ln_eta_kinetic.value).round(2))
+        print("\nη(reg) =\n", np.exp(self.ln_eta_regulation.value).round(2))
+        print("\n\n\n")
