@@ -5,7 +5,6 @@
 import numpy as np
 from model_balancing import ModelBalancing
 from util import Q_
-import cvxpy as cp
 
 #%%
 
@@ -14,11 +13,7 @@ args = {}
 
 # choose solver
 
-if cp.MOSEK in cp.installed_solvers():
-    args["solver"] = cp.MOSEK
-else:
-    #args["solver"] = cp.SCS
-    args["solver"] = cp.ECOS
+args["solver"] = "SLSQP"
 
 #%%
 
@@ -177,7 +172,13 @@ assert mb.is_gmean_feasible()
 
 mb.initialize_with_gmeans()
 print(f"initial total squared Z-scores = {mb.objective_value}")
+mb.print_z_scores(5)
+mb.print_status()
 
+constr = mb._thermodynamic_constraints()
+print(constr.A)
+
+#%%
 mb.solve()
 print(f"optimized total squared Z-scores = {mb.objective_value}")
 

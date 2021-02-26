@@ -85,8 +85,8 @@ class ModelBalancingConvex(object):
         self.Ka_ln_cov = Ka_ln_cov
         self.ln_Ki_gmean = np.log(Ki_gmean.m_as("M"))
         self.Ki_ln_cov = Ki_ln_cov
-        self.rate_law = "CM"
-        self.solver = "MOSEK"
+        self.rate_law = rate_law
+        self.solver = solver
 
         assert self.Keq_ln_cov.shape == (self.Nr, self.Nr)
         assert self.ln_conc_enz_gstd.shape == (self.Nr, self.Ncond)
@@ -392,10 +392,10 @@ class ModelBalancingConvex(object):
     def objective_value(self) -> float:
         return self.objective.value
 
-    def print_z_scores(self, percision: int = 2) -> None:
+    def print_z_scores(self, precision: int = 2) -> None:
         for p in ["enz", "met", "Keq", "kcatf", "kcatr", "Km", "Ka", "Ki"]:
             z = self.__getattribute__(f"z2_scores_{p}").value
-            print(f"{p} = {z.round(percision)}")
+            print(f"{p} = {z.round(precision)}")
 
     def print_status(self) -> None:
         print("\nMetabolite concentrations (M) =\n", np.exp(self.ln_conc_met.value))
