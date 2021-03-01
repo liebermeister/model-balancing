@@ -379,7 +379,7 @@ protein molecular mass	FUM_R01082		60000	Da	R01082
 protein molecular mass	MDH_R00342		32337	Da	R00342	
 protein molecular mass	PPC_R00345		198120	Da	R00345	
 						
-!!SBtab TableID='Layout' TableName='Layout' TableType='Position'						
+!!SBtab TableID='Position' TableName='Layout' TableType='Position'						
 
 !Element	!PositionX	!PositionY				
 _S__Malate	0.32772	0.095058				

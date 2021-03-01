@@ -41,25 +41,48 @@ if verbose,
   end
 end
 
-E(find(Aforward<0)) = inf;
-
+% Avoid zero enzyme levels (because of description on log scale)
+E(find(V==0)) = 10^-10;
+E(find([Aforward<0])) = inf;
 q_log_preposterior = - 0.5 *          [q - preposterior.q.mean]' * preposterior.q.cov_inv * [q - preposterior.q.mean];
 x_log_posterior    = - 0.5 * sum(sum([[X - preposterior.X.mean] ./ preposterior.X.std ].^2));
-e_log_posterior    = - 0.5 * sum(sum([[E - preposterior.E.mean] ./ preposterior.E.std ].^2));
+%e_log_posterior   = - 0.5 * sum(sum([[E - preposterior.E.mean] ./ preposterior.E.std ].^2));
 
-log_posterior = q_log_preposterior + x_log_posterior + e_log_posterior;
+ln_e_log_posterior_upper  = [[log(E) - preposterior.lnE.mean] ./ preposterior.lnE.std ].^2 .* double(log(E) >= preposterior.lnE.mean);
+ln_e_log_posterior_lower  = [[log(E) - preposterior.lnE.mean] ./ preposterior.lnE.std ].^2 .* double(log(E) < preposterior.lnE.mean);
+
+switch cmb_options.enzyme_likelihood_type,
+  case 'quadratic'
+    % normal quadratic likelihood term: with this option, MB is not guaranteed to be convex!
+    ln_e_log_posterior  = - 0.5 * sum(sum(ln_e_log_posterior_lower + ln_e_log_posterior_upper));
+  case 'monotonic',
+    % set likehood for E values below posterior mean to 0 
+    % -> makes -log likelihood monotonically increasing;
+    % and therefore overall MP problem convex
+    ln_e_log_posterior = - 0.5 * sum(sum(ln_e_log_posterior_upper));
+  case 'interpolated',
+    ln_e_log_posterior = - 0.5 * sum(sum(cmb_options.enzyme_likelihood_alpha * ln_e_log_posterior_lower + ln_e_log_posterior_upper));
+    otherwise('error');
+end
+
+log_posterior = q_log_preposterior + x_log_posterior + ln_e_log_posterior;
 
 if verbose,
   q_log_preposterior
   x_log_posterior
-  e_log_posterior
+  ln_e_log_posterior
 end
-
 
 % ---------------------------------------------------------------------------
 % Compute gradient
 
 if cmb_options.use_gradient,
+
+  switch cmb_options.enzyme_likelihood_type,
+  case 'quadratic',
+  otherwise,
+    error('Gradient not supported'); 
+end
 
   if ~strcmp(cmb_options.parameterisation, 'Keq_KV_KM_KA_KI'),
     error('Gradient not supported'); 
@@ -83,14 +106,17 @@ if cmb_options.use_gradient,
     %% Compute posterior terms due to enzyme levels
     de_dx  = - diag(e./v) * Eun_c * diag(c);
     de_dq  = - diag(e./v) * Eun_k * diag(k);
-    e_mean = preposterior.E.mean(:,it);
-    e_std  = preposterior.E.std(:,it);
-    log_preposterior_gradient_eX(:,it) = [[e - e_mean] ./ [e_std.^2]]' * de_dx;
-    log_preposterior_gradient_eq(:,it) = [[e - e_mean] ./ [e_std.^2]]' * de_dq;
+    %e_mean = preposterior.E.mean(:,it);
+    %e_std  = preposterior.E.std(:,it);
+    ln_e_mean = preposterior.lnE.mean(:,it);
+    ln_e_std  = preposterior.lnE.std(:,it);
+    %log_preposterior_gradient_eX(:,it) = [[e - e_mean] ./ [e_std.^2]]' * de_dx;
+    %log_preposterior_gradient_eq(:,it) = [[e - e_mean] ./ [e_std.^2]]' * de_dq;
+    log_preposterior_gradient_eX(:,it) = [[log(e) - ln_e_mean] ./ [ln_e_std.^2]]' * de_dx;
+    log_preposterior_gradient_eq(:,it) = [[log(e) - ln_e_mean] ./ [ln_e_std.^2]]' * de_dq;
   end
 
-  log_posterior_gradient_q = - preposterior.q.cov_inv   * [q-preposterior.q.mean] + sum(log_preposterior_gradient_eq')';
-  log_posterior_gradient_X = - 1./[preposterior.X.std.^2] .* [X-preposterior.X.mean] + log_preposterior_gradient_eX;
+  log_posterior_gradient_q = - preposterior.q.cov_inv * [q-preposterior.q.mean] + sum(log_preposterior_gradient_eq')';
+  log_posterior_gradient_X = - [X-preposterior.X.mean]./[preposterior.X.std.^2] + log_preposterior_gradient_eX;
   log_posterior_gradient   = cmb_qX_to_y(log_posterior_gradient_q,log_posterior_gradient_X,nm,ns);
-  
 end

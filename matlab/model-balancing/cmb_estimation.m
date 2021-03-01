@@ -150,21 +150,14 @@ end
 % y_mean = cmb_qX_to_y(preposterior.q.mean,preposterior.X.mean,nm,ns);
 % cmb_log_posterior(y_mean,pp,preposterior,V,cmb_options,q_info);
 
-switch cmb_options.score,
-  case 'log_neg_log_posterior',
-  otherwise
-    error('optimisation of neg_log_posterior not implemented')
-end
+opt = optimoptions('fmincon','MaxFunEvals',10^15,'MaxIter',10^15,'TolX',10^-5,'Display',...
+                   cmb_options.optim_display,'Algorithm','interior-point','SpecifyObjectiveGradient',false);
 
 if cmb_options.use_gradient,
-  opt = optimoptions('fmincon','MaxFunEvals',10^15,'MaxIter',10^15,'TolX',10^-5,'Display',...
-                     cmb_options.optim_display,'Algorithm','interior-point','SpecifyObjectiveGradient',true);
-  [y_opt,~,err] = fmincon(@(y) cmb_objective(y,pp,preposterior,V,cmb_options,q_info),y_init,y_ineq_A,y_ineq_b-epsilon,[],[],y_bound_min,y_bound_max,[],opt);
-else
-  opt = optimoptions('fmincon','MaxFunEvals',10^15,'MaxIter',10^15,'TolX',10^-5,'Display',...
-                     cmb_options.optim_display,'Algorithm','interior-point','SpecifyObjectiveGradient',false);
-  [y_opt,~,err] = fmincon(@(y) log(-cmb_log_posterior(y,pp,preposterior,V,cmb_options,q_info,cmb_options.verbose)),y_init,y_ineq_A,y_ineq_b-epsilon,[],[],y_bound_min,y_bound_max,[],opt);
+  opt.SpecifyObjectiveGradient = true;
 end
+
+[y_opt,~,err] = fmincon(@(y) cmb_objective(y,pp,preposterior,V,cmb_options,q_info,cmb_options.verbose),y_init,y_ineq_A,y_ineq_b-epsilon,[],[],y_bound_min,y_bound_max,[],opt);
 
 if err<0,
   error(sprintf('No feasible solution found. Error flag %d',err));
@@ -175,7 +168,7 @@ f_init = cmb_log_posterior(y_init,pp,preposterior,V,cmb_options,q_info);
 f_opt  = cmb_log_posterior(y_opt,pp,preposterior,V,cmb_options,q_info);
 if f_init>f_opt,
   if init_feasible,
-    display('Initial guess was better than optimised value ("THANK YOU" matlab); using initial value');
+    display('Optimised value is worse than initial guess ("THANK YOU" matlab); using initial value');
     y_opt = y_init;
   end
 end
@@ -188,10 +181,16 @@ optimal = cmb_qX_to_variables(q_opt,X_opt,V,network,cmb_options,q_info,cmb_optio
 % Gradient of enzyme posterior loss with respect to fluxes
 
 % CHECK ME AGAIN
-gradient_V = [[optimal.E - preposterior.E.mean] ./ preposterior.E.std] .* [optimal.E ./ V];
+%gradient_V = [[optimal.E - preposterior.E.mean] ./ preposterior.E.std] .* [optimal.E ./ V];
+gradient_V = [[log(optimal.E) - preposterior.lnE.mean] ./ preposterior.lnE.std] .* [optimal.E ./ V];
 gradient_V = nan; 
 
 time = toc(tstart);
 
 display(sprintf('Calculation time: %3.2f s',time));
 
+% --------------------------------------------------------------
+%% Clear global variables
+clearvars -global global_structure_matrices Mplus Mminus Wplus Wminus nm nr ind_M ind_Wp ind_Wm 
+%LP_info
+% --------------------------------------------------------------

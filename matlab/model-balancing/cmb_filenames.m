@@ -43,7 +43,9 @@ filenames.options_file   = [ out_DIR '/' run '/data/options'];
 filenames.options_tsv    = [ out_DIR '/' run '/data/options.tsv'];
 filenames.result_file    = [ out_DIR '/' run '/data/results'];
 filenames.kinetic_model    = 'kinetic_model';
-filenames.metabolic_states = 'metabolic_states';
+filenames.metabolic_states = 'state_results';
+filenames.cvxpy_json_file  = [filenames.run_dir filesep model_name '_' run '.json'];
 
 [~,~] = mkdir(filenames.graphics_dir);
 [~,~] = mkdir(filenames.data);
+

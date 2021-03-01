@@ -38,7 +38,8 @@ function cmb_options = cmb_default_options()
 %
 % cmb_options.metabolic_prior_c_geom_mean   = 1;     % mM
 % cmb_options.metabolic_prior_e_geom_mean   = 0.001; % mM
-% cmb_options.metabolic_prior_geom_std      = 10;    % for both c and e
+% cmb_options.metabolic_prior_c_geom_std      = 10;    % 
+% cmb_options.metabolic_prior_e_geom_std      = 10;    % 
 % 
 % cmb_options.data_kin_geom_std = 1.5;
 % cmb_options.data_V_geom_std   = 1.2; 
@@ -57,6 +58,8 @@ function cmb_options = cmb_default_options()
 % cmb_options.optim_display           = 'off';
 % cmb_options.initial_values_variant  = 'average_sample';
 %                            Variants : 'preposterior_mode', 'random', 'true_values', 'given_values', 'average_sample'
+% cmb_options.enzyme_likelihood_type  = 'interpolated'; % 'quadratic', 'interpolated' (only "monotonic" guarantees that MB is convex!)
+% cmb_options.enzyme_likelihood_alpha = 0.5; % interpolation parameter for enzyme_likelihood_type='interpolated'
 % 
 % cmb_options.use_artificial_noise    = 0; % use noise in artificial data 
 % cmb_options.use_kinetic_data_noise  = 1;
@@ -66,7 +69,7 @@ function cmb_options = cmb_default_options()
 % cmb_options.use_safe_optimisation   = 1;
 % cmb_options.use_gradient            = 0;
 % cmb_options.show_graphics           = 1;
-% cmb_options.score                   = 'log_neg_log_posterior'; 
+% cmb_options.score                   = 'neg_log_posterior'; % 'log_neg_log_posterior';
 % cmb_options.source_of_kinetic_data  = 'original'; % balanced
 % cmb_options.random_seed             = 1;
 % cmb_options.plot_true_vs_data       = 0;
@@ -134,7 +137,8 @@ cmb_options.quantities.Aforward.max = upper_bound(ind.A);
 
 cmb_options.metabolic_prior_c_geom_mean   = 1;     % mM
 cmb_options.metabolic_prior_e_geom_mean   = 0.001; % mM
-cmb_options.metabolic_prior_geom_std      = 10;    % for both c and e
+cmb_options.metabolic_prior_c_geom_std      = 10;    % 
+cmb_options.metabolic_prior_e_geom_std      = 10;    % 
 
 
 % ----------------------------------------------------
@@ -197,29 +201,31 @@ cmb_options.metabolic_artificial_e_geom_std = 1.5;
 % ---------------------------------------------------------
 % Other settings
 
- cmb_options.run                     = 'my_run';
-cmb_options.ecm_score                     = 'emc4cm'; 
+ cmb_options.run                   = 'my_run';
+cmb_options.ecm_score              = 'emc4cm'; 
 % note that artificial data are only generated for ecm_score = 'emc4cm'!
 
-cmb_options.optim_display                 = 'off';
+cmb_options.optim_display          = 'off';
 
 % Variants: 'preposterior_mode', 'random', 'true_values', 'given_values', 'average_sample'
-cmb_options.initial_values_variant        = 'average_sample';
+cmb_options.initial_values_variant = 'average_sample';
+cmb_options.enzyme_likelihood_type = 'interpolated'; % 'monotonic'; % 'quadratic' (only "monotonic" guarantees that MB is convex!)
+cmb_options.enzyme_likelihood_alpha= 0.5; % 'quadratic' (only "monotonic" guarantees that MB is convex!)
 
-cmb_options.use_artificial_noise          = 0; % use noise in artificial data 
-cmb_options.use_kinetic_data_noise        = 1;
-cmb_options.use_kinetic_data              = 'none';
-cmb_options.parameterisation              = 'Keq_KV_KM_KA_KI'; % 'KV_KM_KA_KI';
+cmb_options.use_artificial_noise   = 0; % use noise in artificial data 
+cmb_options.use_kinetic_data_noise = 1;
+cmb_options.use_kinetic_data       = 'none';
+cmb_options.parameterisation       = 'Keq_KV_KM_KA_KI'; % 'KV_KM_KA_KI';
 
 % used to modify prior for tests with artificial data (see cmb_model_artificial_data.m)
-cmb_options.prior_variant                 = 'original_prior'; 
-cmb_options.use_safe_optimisation         = 1;
-cmb_options.use_gradient                  = 0;
-cmb_options.show_graphics                 = 1;
+cmb_options.prior_variant          = 'original_prior'; 
+cmb_options.use_safe_optimisation  = 1;
+cmb_options.use_gradient           = 0;
+cmb_options.show_graphics          = 1;
 
-% also 'neg_log_posterior', see cmb_objective.m:
-cmb_options.score                         ='log_neg_log_posterior'; 
-cmb_options.source_of_kinetic_data        = 'original'; % balanced
+% also 'log_neg_log_posterior', see cmb_objective.m:
+cmb_options.score                  = 'neg_log_posterior'; 
+cmb_options.source_of_kinetic_data = 'original'; % balanced
 
 cmb_options.random_seed       = 1;
 cmb_options.plot_true_vs_data = 0;

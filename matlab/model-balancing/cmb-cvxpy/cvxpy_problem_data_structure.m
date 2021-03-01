@@ -1,6 +1,6 @@
-function problem = cvxpy_problem_data_structure(network,q_info,true,prior,data)
+function problem = cvxpy_problem_data_structure(network, q_info, prior, data, true)
 
-% problem = cvxpy_problem_data_structure(network,q_info,true,prior,data)
+% problem = cvxpy_problem_data_structure(network, q_info, prior, data, true)
 %
 % Convert a model balancing problem (network,q_info,true,prior,data) into a single data structure
 % to be used by Elad's model balancing tool in python (based on CVXpy)
@@ -15,12 +15,19 @@ function problem = cvxpy_problem_data_structure(network,q_info,true,prior,data)
 
 % for the time being, data sets with changing flux directions cannot be handled:   
 
-if norm(std( sign(data.V.mean)')),
+eval(default('true','[]'));  
+
+M_q_to_qall = q_info.M_q_to_qall;
+
+% If reactions need to be reoriented ..
+
+if size(data.V.mean,2)>1,
+if sum(max(sign(data.V.mean),2)-min(sign(data.V.mean),2)==2),
   error('data sets with changing flux directions cannot be handled');
 else
   % reorient reactions and change all input data structures accordingly
   ind_neg = find(data.V.mean(:,1)<0);
-  ind_pos = find(data.V.mean(:,1)>0);
+  ind_pos = find(data.V.mean(:,1)>=0);
   
   % matrix for changes in qall parameter vector, due to reorientation:
   dum(q_info.qall.index.Keq) = 1;
@@ -45,25 +52,33 @@ else
   network.kinetics.Kcatr(ind_neg) = dum; 
 
   % changes in true
-  true.V(ind_neg,:)               = - true.V(ind_neg,:);
-  true.A_forward(ind_neg,:)       = - true.A_forward(ind_neg,:);
-  true.kinetics.Keq(ind_neg)      = 1 ./ true.kinetics.Keq(ind_neg);
-  dum                             = true.kinetics.Kcatf(ind_neg);
-  true.kinetics.Kcatf(ind_neg)    = true.kinetics.Kcatr(ind_neg); 
-  true.kinetics.Kcatr(ind_neg)    = dum; 
+  if isempty(true),
+    true.X = [];
+    true.E = [];
+    true.V = [];
+    true.qall = nan * ones(q_info.qall.number,1);
+  else
+    true.V(ind_neg,:)               = - true.V(ind_neg,:);
+    true.A_forward(ind_neg,:)       = - true.A_forward(ind_neg,:);
+    true.kinetics.Keq(ind_neg)      = 1 ./ true.kinetics.Keq(ind_neg);
+    dum                             = true.kinetics.Kcatf(ind_neg);
+    true.kinetics.Kcatf(ind_neg)    = true.kinetics.Kcatr(ind_neg); 
+    true.kinetics.Kcatr(ind_neg)    = dum; 
+  end
   
   % changes in data
   data.V.mean(ind_neg,:)    = - data.V.mean(ind_neg,:);
   data.qall.mean = Mreorient * data.qall.mean;
   
 end
+end
 
 problem.standard_concentration        = '1 mM';
 problem.network.metabolite_names      = network.metabolites;
 problem.network.reaction_names        = network.actions;
-problem.network.stoichiometric_matrix = network.N;
-problem.network.activation_matrix     = [network.regulation_matrix .* [network.regulation_matrix >0]]';
-problem.network.inhibition_matrix     = -[network.regulation_matrix .* [network.regulation_matrix <0]]';
+problem.network.stoichiometric_matrix = full(network.N);
+problem.network.activation_matrix     = full([network.regulation_matrix .* [network.regulation_matrix >0]]');
+problem.network.inhibition_matrix     = full(-[network.regulation_matrix .* [network.regulation_matrix <0]]');
 
 index                             = q_info.qall.index;
 all_kinetic_constants.names       = q_info.qall.names;
@@ -146,7 +161,6 @@ met.prior_ln = prior.X;
 met.data_ln  = data.X;
 
 % combine prior and data
-
 [met_mean_ln, met_cov_ln] = cvxpy_combine_prior_and_likelihood(met.prior_ln.mean(:),diag(met.prior_ln.std(:).^2),met.data_ln.mean(:),met.data_ln.std(:));
 met.combined.geom_mean  = exp(reshape(met_mean_ln,nm,nc));
 met.combined.geom_std   = exp(reshape(sqrt(diag(met_cov_ln)),nm,nc));
@@ -156,16 +170,22 @@ problem.metabolite_concentrations = met;
 
 % --- Enzyme concentrations
 
-[nr,nc] = size(data.E.mean);
+[nr,nc] = size(data.lnE.mean);
 
 enz.unit         = 'mM';
 enz.true         = true.E;
-enz.prior        = prior.E;
+enz.prior_ln     = prior.lnE;
 
 % convert (non-logarithmic) enzyme arithmetic mean + std (for prior and data) to logarithmic mean + std
-[enz_prior_mean_ln,enz_prior_std_ln] = lognormal_normal2log(enz.prior.mean(:),enz.prior.std(:));
-enz.data         = data.E;
-[enz_data_mean_ln,enz_data_std_ln] = lognormal_normal2log(enz.data.mean(:),enz.data.std(:));
+% [enz_prior_mean_ln,enz_prior_std_ln] = lognormal_normal2log(enz.prior.mean(:),enz.prior.std(:));
+% enz.data_ln      = data.lnE;
+% [enz_data_mean_ln,enz_data_std_ln] = lognormal_normal2log(enz.data.mean(:),enz.data.std(:));
+
+enz_prior_mean_ln = enz.prior_ln.mean(:);
+enz_prior_std_ln  = enz.prior_ln.std(:);
+enz.data_ln       = data.lnE;
+enz_data_mean_ln  = enz.data_ln.mean(:);
+enz_data_std_ln   = enz.data_ln.std(:);
 
 % combine prior and data
 [enz_mean_ln, enz_cov_ln] = cvxpy_combine_prior_and_likelihood(enz_prior_mean_ln,diag(enz_prior_std_ln.^2),enz_data_mean_ln,enz_data_std_ln);

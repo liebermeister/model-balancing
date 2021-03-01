@@ -1,4 +1,4 @@
-function [kinetics, prior, bounds, data, true, kinetic_data, state_data] = cmb_generate_artificial_data(network, cmb_options, q_info, c_init)
+function [kinetics, prior, bounds, data, true, kinetic_data, state_data] = cmb_generate_artificial_data(network, cmb_options, q_info, c_init, conc_min, conc_max)
 
 % [kinetics, prior, bounds, data, true, kinetic_data, state_data] = cmb_generate_artificial_data(network, cmb_options, q_info)
 %
@@ -10,13 +10,14 @@ function [kinetics, prior, bounds, data, true, kinetic_data, state_data] = cmb_g
 %   q_info       struct describing the dependencies between model variables
 %   c_init       (optional) matrix; initial guess of (non-logarithmic) metabolite concentrations; 
 %                           also used for generating the artificial data 
+%   conc_min, conc_max vectors with minimal and maximal metabolite concentrations
 %
 %   prior        struct describing priors in the optimality problem (details see cmb_make_prior)
 %   bounds       struct describing bounds in the optimality problem (details see cmb_make_bounds)
 %   data         struct describing data used in the optimality problem
 %   true         struct describing true model variables (optional; only for models with artificial data)
 
-eval(default('c_init','[]'));
+eval(default('c_init','[]', 'conc_min','[]','conc_max','[]'));
 
 % --------------------------------------------------------------
 %% Set global variables to speed up function modular_velocities
@@ -77,8 +78,7 @@ modular_rate_law_haldane(network)
 
 % FIX: rather get these numbers from parameter prior table
 
-bounds = cmb_make_bounds(network,q_info,cmb_options);
-
+bounds = cmb_make_bounds(network, q_info, cmb_options, conc_min, conc_max);
 
 % --------------------------------------------------------------
 % Priors (kinetic constants)
@@ -125,7 +125,8 @@ x_ref  = log(c_ref);
 % perturb the reference state to obtain several steady states ("samples")
 
 X_init = repmat(x_ref,1,ns)  + log(cmb_options.metabolic_artificial_c_geom_std) * randn(nm,ns);
-true.E = repmat(e_ref,1,ns) .*    [cmb_options.metabolic_artificial_e_geom_std .^ randn(nr,ns)];
+%true.E = repmat(e_ref,1,ns) .*    [cmb_options.metabolic_artificial_e_geom_std .^ randn(nr,ns)];
+true.E = exp(repmat(log(e_ref),1,ns) + log(cmb_options.metabolic_artificial_e_geom_std) * randn(nr,ns));
 
 for j=1:ns,
   my_network = network;
@@ -149,10 +150,12 @@ end
 
 data.V.mean = true.V;
 data.X.mean = true.X;
-data.E.mean = true.E;
+%data.E.mean = true.E;
+data.lnE.mean = log(true.E);
 
 data.X.std  = log(cmb_options.data_C_geom_std)    * ones(size(data.X.mean));
-data.E.std  =    [cmb_options.data_E_geom_std-1]  * data.E.mean      + 0.01 * max(max(abs(data.E.mean)));
+%data.E.std  =    [cmb_options.data_E_geom_std-1]  * data.E.mean      + 0.01 * max(max(abs(data.E.mean)));
+data.lnE.std = log(cmb_options.data_E_geom_std)    * ones(size(data.lnE.mean));
 data.V.std  =    [cmb_options.data_V_geom_std-1]  * abs(data.V.mean) + 0.01 * max(max(abs(data.V.mean)));
 
 % noise in artificial data (NOTE: the resulting "states" may be thermo-physiologically infeasible!)
@@ -165,7 +168,8 @@ if cmb_options.use_artificial_noise,
   ind_wrong_sign = find(data.V.mean .* data.V.mean <0);
   data.V.mean(ind_wrong_sign) = -data.V.mean(ind_wrong_sign);
   data.X.mean = data.X.mean + data.X.std .* randn(nm,ns);
-  data.E.mean = data.E.mean + data.E.std .* randn(nr,ns);
+  %data.E.mean = data.E.mean + data.E.std .* randn(nr,ns);
+  data.lnE.mean = data.lnE.mean + data.lnE.std .* randn(nr,ns);
 else
   if cmb_options.verbose,
     display('Using artificial metabolic data without noise');
@@ -196,6 +200,8 @@ if find(true.q < bounds.q_min),                              warning('Lower boun
 if find(true.q > bounds.q_max),                              warning('Upper bounds for q violated'); flag_ok = 0; end
 if find(true.X < repmat(bounds.x_min,1,ns)),                 warning('Lower bounds for X violated'); flag_ok = 0; end
 if find(true.X > repmat(bounds.x_max,1,ns)),                 warning('Upper bounds for X violated'); flag_ok = 0; end
+%if find(true.E < repmat(bounds.e_min,1,ns)),                 warning('Lower bounds for E violated'); flag_ok = 0; end
+%if find(true.E > repmat(bounds.e_max,1,ns)),                 warning('Upper bounds for E violated'); flag_ok = 0; end
 if find(true.E < repmat(bounds.e_min,1,ns)),                 warning('Lower bounds for E violated'); flag_ok = 0; end
 if find(true.E > repmat(bounds.e_max,1,ns)),                 warning('Upper bounds for E violated'); flag_ok = 0; end
 if find(true.A_forward < repmat(bounds.a_forward_min,1,ns)), warning('Lower bounds for A violated'); flag_ok = 0; 

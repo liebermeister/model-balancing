@@ -28,8 +28,9 @@ filenames.Kappmaxr = [graphics_dir 'data_Kappmaxr.eps'];
 
 fit_color  = [1 0 0];
 pred_color = [1 0 1];
-met_color  = [0 0 1];
-enz_color  = [.7 0 .7];
+met_color  = [0 0 0.8];
+enz_color  = [.6 0.2 0.1];
+kapp_color = [.7 0 .7];
 
 switch cmb_options.use_kinetic_data,
   case 'all', 
@@ -40,13 +41,12 @@ switch cmb_options.use_kinetic_data,
     keq_color = pred_color; kcat_color = pred_color; km_color = pred_color;
 end
 
-
 figure(1); 
 scatter_plot(data.X.mean,optimal.X,[],met_color,'Metabolite levels [mM] (data)', 'Metabolite levels [mM] (fit)');
 
 figure(2); 
-optimal.E(optimal.E==0) = nan;
-scatter_plot(log(data.E.mean),log(optimal.E),[],enz_color,'Enzyme levels [mM] (data)', 'Enzyme levels [mM] (fit)');
+%scatter_plot(log(data.E.mean),log(optimal.E),[],enz_color,'Enzyme levels [mM] (data)', 'Enzyme levels [mM] (fit)');
+scatter_plot(data.lnE.mean,log(optimal.E),[],enz_color,'Enzyme levels [mM] (data)', 'Enzyme levels [mM] (fit)');
 
 print([filenames.x], '-f1', '-depsc'); 
 print([filenames.e], '-f2', '-depsc'); 
@@ -80,10 +80,10 @@ switch cmb_options.parameterisation,
     scatter_plot(qall_data(index.Kcatr),qall_optimal(index.Kcatr),qall_names(index.Kcatr),kcat_color,'k_{cat}^{-} values [1/s] (data)', 'k_{cat}^{-} values [1/s] (fit)');
       
     figure(8); 
-    scatter_plot(qall_data(index.Kcatf),log(kapp_max.forward),qall_names(index.Kcatf),pred_color,'k_{cat}^{+} values [1/s] (data)', 'k_{app,max}^{+} values [1/s] (fit)');
+    scatter_plot(qall_data(index.Kcatf),log(kapp_max.forward),qall_names(index.Kcatf),kapp_color,'k_{cat}^{+} values [1/s] (data)', 'k_{app,max}^{+} values [1/s] (fit)');
     
     figure(9); 
-    scatter_plot(qall_data(index.Kcatr),log(kapp_max.reverse),qall_names(index.Kcatr),pred_color,'k_{cat}^{-} values [1/s] (data)', 'k_{app,max}^{-} values [1/s] (fit)');
+    scatter_plot(qall_data(index.Kcatr),log(kapp_max.reverse),qall_names(index.Kcatr),kapp_color,'k_{cat}^{-} values [1/s] (data)', 'k_{app,max}^{-} values [1/s] (fit)');
       
     print([filenames.Keq],   '-f5', '-depsc'); 
     print([filenames.Kcatf], '-f6', '-depsc'); 
@@ -148,10 +148,10 @@ if length(true),
       scatter_plot(qall_true(index.Kcatr),qall_optimal(index.Kcatr),qall_names(index.Kcatr),kcat_color,'k_{cat}^{-} values [1/s] (true)', 'k_{cat}^{-} values [1/s] (fit)');
 
       figure(18); 
-      scatter_plot(qall_true(index.Kcatf),log(kapp_max.forward),qall_names(index.Kcatf),pred_color,'k_{cat}^{+} values [1/s] (true)', 'k_{app,max}^{+} values [1/s] (fit)');
+      scatter_plot(qall_true(index.Kcatf),log(kapp_max.forward),qall_names(index.Kcatf),kapp_color,'k_{cat}^{+} values [1/s] (true)', 'k_{app,max}^{+} values [1/s] (fit)');
       
       figure(19); 
-      scatter_plot(qall_true(index.Kcatr),log(kapp_max.reverse),qall_names(index.Kcatr),pred_color,'k_{cat}^{-} values [1/s] (true)', 'k_{app,max}^{-} values [1/s] (fit)');
+      scatter_plot(qall_true(index.Kcatr),log(kapp_max.reverse),qall_names(index.Kcatr),kapp_color,'k_{cat}^{-} values [1/s] (true)', 'k_{app,max}^{-} values [1/s] (fit)');
 
       print([filenames.Keq],   '-f15', '-depsc'); 
       print([filenames.Kcatf], '-f16', '-depsc'); 
@@ -188,7 +188,7 @@ if length(true),
       kin_color = pred_color;
       keq_color = pred_color;
   end
-      
+  
   qall_true = cmb_q_to_qall(true.q,q_info);
 
   figure(21); 

@@ -11,9 +11,13 @@ preposterior.V.mean = [];
 preposterior.V.std  = 1 ./ sqrt( 1./[data.V.std .^2] + 1./[prior.V.std .^2] );
 preposterior.V.mean = preposterior.V.std.^2 .* [ data.V.mean ./ data.V.std.^2 + prior.V.mean ./ prior.V.std.^2 ];
 
-preposterior.E.mean = [];
-preposterior.E.std  = 1 ./ sqrt( 1./[data.E.std .^2] + 1./[prior.E.std .^2] );
-preposterior.E.mean = preposterior.E.std.^2 .* [ data.E.mean ./ data.E.std.^2 + prior.E.mean ./ prior.E.std.^2 ];
+%preposterior.E.mean = [];
+%preposterior.E.std  = 1 ./ sqrt( 1./[data.E.std .^2] + 1./[prior.E.std .^2] );
+%preposterior.E.mean = preposterior.E.std.^2 .* [ data.E.mean ./ data.E.std.^2 + prior.E.mean ./ prior.E.std.^2 ];
+
+preposterior.lnE.mean = [];
+preposterior.lnE.std  = 1 ./ sqrt( 1./[data.lnE.std .^2] + 1./[prior.lnE.std .^2] );
+preposterior.lnE.mean = preposterior.lnE.std.^2 .* [ data.lnE.mean ./ data.lnE.std.^2 + prior.lnE.mean ./ prior.lnE.std.^2 ];
 
 % posterior, where data values are undefined
 preposterior.X.mean(isnan(preposterior.X.mean)) = prior.X.mean(isnan(preposterior.X.mean));
@@ -22,8 +26,11 @@ preposterior.X.std(isnan(preposterior.X.std))   = prior.X.std(isnan(preposterior
 preposterior.V.mean(isnan(preposterior.V.mean)) = prior.V.mean(isnan(preposterior.V.mean));
 preposterior.V.std(isnan(preposterior.V.std))   = prior.V.std(isnan(preposterior.V.std));
 
-preposterior.E.mean(isnan(preposterior.E.mean)) = prior.E.mean(isnan(preposterior.E.mean));
-preposterior.E.std(isnan(preposterior.E.std))   = prior.E.std(isnan(preposterior.E.std));
+%preposterior.E.mean(isnan(preposterior.E.mean)) = prior.E.mean(isnan(preposterior.E.mean));
+%preposterior.E.std(isnan(preposterior.E.std))   = prior.E.std(isnan(preposterior.E.std));
+
+preposterior.lnE.mean(isnan(preposterior.lnE.mean)) = prior.lnE.mean(isnan(preposterior.lnE.mean));
+preposterior.lnE.std(isnan(preposterior.lnE.std))   = prior.lnE.std(isnan(preposterior.lnE.std));
 
 %% infer multivariate gaussian for q from multivariate gaussian for qall 
 %% (e.g., from Eq 10 in Liebermeister 2006, "Bringing .. : Integration ...")

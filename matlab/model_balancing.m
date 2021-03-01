@@ -13,6 +13,7 @@ function [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max,
 %   prior        struct, priors in the optimality problem (details see cmb_make_prior)
 %   bounds       struct, bounds in the optimality problem (details see cmb_make_bounds)
 %   data         struct, data used in the optimality problem
+%                  flux maxtrix: data.V.mean
 %   true         struct, true model variables (optional; only for models with artificial data)
 %   init         struct, initial values
 %
@@ -37,12 +38,29 @@ global global_structure_matrices
 global_structure_matrices = 1;
 global Mplus Mminus Wplus Wminus nm nr ind_M ind_Wp ind_Wm
 global LP_info % variable used in cmb_log_posterior
+
 % --------------------------------------------------------------
 
 eval(default('true','[]'));
 
 ns = size(data.X.mean,2);
 cmb_options.ns = ns;
+
+% -----------------------------------------------
+
+switch cmb_options.enzyme_likelihood_type,
+  case 'quadratic'
+    % normal quadratic likelihood term: with this option, MB is not guaranteed to be convex!
+    display('model_balancing.m: Using normal quadratic formula for enzyme log posterior.');
+    display('  The optimality problem may be non-convex');
+  case 'monotonic'
+    display('model_balancing.m: Using monotonic (constant-quadratic) formula for enzyme log posterior.')
+    display('  The optimality problem is convex, but the enzyme levels may be underestimated!');
+  case 'interpolated'
+    display(sprintf('model_balancing.m: Using mixture of monotonic and quadratic formula for enzyme log posterior, alpha=%f',cmb_options.enzyme_likelihood_alpha))
+    display('  The optimality problem may be non-convex');
+end
+
 
 % -----------------------------------------------
 % Initialise some variables
@@ -69,6 +87,21 @@ if isempty(true),
     cmb_options.initial_values_variant = 'preposterior_mode';
   end
 end
+
+conc_min = bounds.conc_min;
+conc_max = bounds.conc_max;
+
+
+% check whether fluxes are thermodynamically feasible
+thermo_pb_options.c_min = conc_min;
+thermo_pb_options.c_max = conc_max;
+for it = 1:size(V,2),
+  [~,~,~, feasible] = thermo_pb(network.N, V(:,it), thermo_pb_options, 1);
+  if ~feasible,
+    error('Flux distribution is thermodynamically infeasible');
+  end
+end
+display('Flux distribution is thermo-physiologically feasible');
 
 % -----------------------------------------------
 % Initial values
@@ -99,19 +132,23 @@ switch cmb_options.initial_values_variant,
     my_cmb_options.verbose                = 0;
     my_cmb_options.display                = 0;
     my_q_info        = cmb_define_parameterisation(network, my_cmb_options); 
-    [~, my_prior, my_bounds, my_data] = cmb_generate_artificial_data(network, my_cmb_options, my_q_info,ones(size(network.metabolites)));
+    [~, my_prior, my_bounds, my_data] = cmb_generate_artificial_data(network, my_cmb_options, my_q_info,ones(size(network.metabolites)), conc_min, conc_max);
     my_data.V.mean = nanmean(data.V.mean,2);
     my_data.X.mean = nanmean(data.X.mean,2);
-    my_data.E.mean = exp(nanmean(log(data.E.mean),2));
+    %my_data.E.mean = exp(nanmean(log(data.E.mean),2));
+    my_data.E.mean = exp(nanmean(data.lnE.mean,2));
     %% taking the average over standard deviations is not ideal .. maybe change this?
     my_data.V.std  = nanmean(data.V.std,2); 
     my_data.X.std  = nanmean(data.X.std,2);
-    my_data.E.std  = exp(nanmean(log(data.E.std),2));
+    %my_data.E.std  = exp(nanmean(log(data.E.std),2));
+    my_data.E.std  = exp(nanmean(data.lnE.std,2));
     if length(true),
       my_true = true;
       my_true.V = nanmean(true.V,2);
       my_true.X = nanmean(true.X,2);
       my_true.E = exp(nanmean(log(true.E),2));
+    else
+      my_true = [];
     end
     my_optimal = model_balancing(filenames, my_cmb_options, network, my_q_info, my_prior, my_bounds, my_data, my_true);
     cmb_options.init.q = my_optimal.q;
@@ -136,7 +173,8 @@ if length(cmb_options.init),
   cmb_options.init.X(isnan(cmb_options.init.X)) = 0;
 end
 
-display(' '); display('Running optimisation ..');
+display(' '); 
+display('Running optimisation ..');
 
 [optimal, gradient_V, init] = cmb_estimation(network, q_info, bounds, data, prior, preposterior, pp, V, cmb_options);
 
@@ -147,7 +185,6 @@ optimal.A_forward = optimal.A .* sign(sign(V)+0.5);
 % Compare posterior loss scores for true values, 
 % initial guess, and predicted solution
 % -----------------------------------------------
-
 
 if cmb_options.display,
   cmb_display_scores(network, q_info, cmb_options, pp, preposterior, init, optimal, true, V, cmb_options.verbose);
@@ -175,8 +212,10 @@ end
 % Estimation of kcat values by maximal kapp values (as in Davidi et al)
 % ---------------------------------------------------------------------
 
-kapp_max.forward =  max([data.V.mean ./ data.E.mean],[],2); 
-kapp_max.reverse = -min([data.V.mean ./ data.E.mean],[],2);
+%kapp_max.forward =  max([data.V.mean ./ data.E.mean],[],2); 
+%kapp_max.reverse = -min([data.V.mean ./ data.E.mean],[],2);
+kapp_max.forward =  max([data.V.mean ./ exp(data.lnE.mean)],[],2); 
+kapp_max.reverse = -min([data.V.mean ./ exp(data.lnE.mean)],[],2);
 kapp_max.forward(kapp_max.forward<0) = nan;
 kapp_max.reverse(kapp_max.reverse<0) = nan;
 
@@ -200,7 +239,7 @@ end
 if cmb_options.save_results,
   display(' '); 
   
-  cmb_save_results(network, data, optimal, filenames, cmb_options, struct('calculation_time',calculation_time), true);
+  cmb_save_results(network, data, bounds, optimal, filenames, cmb_options, struct('calculation_time', calculation_time, 'consistent', 1), true);
 
   save(filenames.result_file,'optimal', 'calculation_time', 'gradient_V', 'init', 'cmb_options', 'V', 'kapp_max', 'preposterior', 'pp', 'filenames', 'cmb_options', 'network', 'q_info', 'prior', 'bounds', 'data', 'true');
 

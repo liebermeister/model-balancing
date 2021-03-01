@@ -67,6 +67,14 @@ product catalytic rate constant	E3		362.92479	1/s	E3
 product catalytic rate constant	E4		48.667054	1/s	E4	
 product catalytic rate constant	E5		527.50538	1/s	E5	
 
+!!SBtab TableID='Flux' TableType='Quantity' TableName='Metabolic flux' Unit='mM/s'			
+!QuantityType	!Reaction	!Reaction:Identifiers:kegg.reaction	!Mean	!Std
+rate of reaction	E1	E1	0.028308167	0.028308167
+rate of reaction	E2	E2	0.028308167	0.028308167
+rate of reaction	E3	E3	0.028308167	0.028308167
+rate of reaction	E4	E4	-0.01738812	0.01738812
+rate of reaction	E5	E5	0.045696293	0.045696293
+
 !!SBtab TableID='MetaboliteConcentration' TableType='Quantity' TableName='Metabolite concentrations' Unit='mM'
 !QuantityType	!Compound	!Compound:Identifiers:kegg.compound	!Mean	!Std
 concentration	X1	X1	9.3659498	9.3659498
@@ -76,14 +84,6 @@ concentration	S4	S4	0.44364711	0.44364711
 concentration	S5	S5	0.02725894	0.02725894
 concentration	X6	X6	0.67248978	0.67248978
 concentration	X7	X7	0.011862164	0.011862164
-
-!!SBtab TableID='Flux' TableType='Quantity' TableName='Metabolic flux' Unit='mM/s'			
-!QuantityType	!Reaction	!Reaction:Identifiers:kegg.reaction	!Mean	!Std
-rate of reaction	E1	E1	0.028308167	0.028308167
-rate of reaction	E2	E2	0.028308167	0.028308167
-rate of reaction	E3	E3	0.028308167	0.028308167
-rate of reaction	E4	E4	-0.01738812	0.01738812
-rate of reaction	E5	E5	0.045696293	0.045696293
 
 !!SBtab TableID='EnzymeConcentration' TableType='Quantity' TableName='Enzyme levels' Unit='mM'
 !QuantityType	!Reaction	!Reaction:Identifiers:kegg.reaction	!Mean	!Std

@@ -1,6 +1,6 @@
-function [network, kinetic_data, state_data] = cmb_load_model_and_data(model_file, kinetic_data_file, state_data_files, replace_ids_in_network,match_data_by)
+function [network, kinetic_data, state_data, conc_min, conc_max] = cmb_load_model_and_data(model_file, kinetic_data_file, state_data_files, replace_ids_in_network, match_data_by, constraint_sbtab_file)
 
-% [network, kinetic_data, state_data] = cmb_load_model_and_data(model_file, kinetic_data_file, metabolite_data_file, enzyme_data_file, flux_data_file)
+% [network, kinetic_data, state_data, conc_min, conc_max] = cmb_load_model_and_data(model_file, kinetic_data_file, state_data_files, replace_ids_in_network,match_data_by, constraint_sbtab_file)
 %
 % Load model and (kinetic and state) data from (SBML and SBtab) files
 %   1. load a model structure (from sbml or sbtab file) (possibly including default metabolite levels c_init)
@@ -21,7 +21,6 @@ function [network, kinetic_data, state_data] = cmb_load_model_and_data(model_fil
 %   network:        model data structure (as in MNT toolbox)
 %   kinetic_data:   kinetic data data structure (as in MNT toolbox, mnt_kinetic_data)
 %   state_data:     metabolite, enzyme, and flux data
-
 
 eval(default('kinetic_data_file', '[]', 'metabolite_data_file', '[]', 'enzyme_data_file', '[]', 'flux_data_file', '[]','replace_ids_in_network','[]','match_data_by','''KeggId'''));
   
@@ -68,4 +67,13 @@ if length(state_data_files),
   state_data.metabolite_data = load_network_state_data(network, sdf.metabolite.file, sdf.metabolite.type, sdf.metabolite);
   state_data.enzyme_data     = load_network_state_data(network, sdf.enzyme.file,     sdf.enzyme.type,     sdf.enzyme);
   state_data.flux_data       = load_network_state_data(network, sdf.flux.file,       sdf.flux.type,       sdf.flux);
+end
+
+% concentration bounds
+conc_min = [];
+conc_max = [];
+if length(constraint_sbtab_file),
+  constraint_sbtab = sbtab_document_load_from_one(constraint_sbtab_file);
+  conc_min  = sbtab_table_get_column(constraint_sbtab.tables.ConcentrationConstraint,'Min',1);
+  conc_max  = sbtab_table_get_column(constraint_sbtab.tables.ConcentrationConstraint,'Max',1);
 end

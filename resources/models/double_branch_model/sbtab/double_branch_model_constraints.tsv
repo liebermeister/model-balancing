@@ -1,0 +1,11 @@
+!!!SBtab Document='double_branch_model'
+				
+!!SBtab TableID='ConcentrationConstraint' TableType='Quantity' Unit='mM'
+!QuantityType	!Compound	!Min	!Max
+concentration	X1	0.000001	1000000
+concentration	S2	0.000001	1000000
+concentration	X3	0.000001	1000000
+concentration	S4	0.000001	1000000
+concentration	S5	0.000001	1000000
+concentration	X6	0.000001	1000000
+concentration	X7	0.000001	1000000

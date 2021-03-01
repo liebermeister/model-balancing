@@ -18,6 +18,7 @@ res.q        = q;
 res.X        = X;
 res.C        = exp(X);
 res.E        = E;
+res.E(find(V==0)) = 0;
 
 % reaction affinity in kJ/mol, with signs
 for it = 1:ns,

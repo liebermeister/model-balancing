@@ -14,9 +14,17 @@ function [posterior_mean, posterior_cov, posterior_std] = combine_prior_and_like
 %   posterior_mean: vector of posterior means
 %   posterior_cov:  posterior covariance matrix
 
+% projector matrix P (from all variables to those for which valid data values are available)
+is_ok = find(isfinite(data_mean).*isfinite(data_std));
+I = eye(length(data_mean));
+P = I(is_ok,:);
+
+data_mean = data_mean(is_ok);
+data_std  = data_std(is_ok);
+  
 prior_cov_inv     = inv(prior_cov);
 data_cov_inv      = diag(1./data_std.^2);
-posterior_cov_inv = prior_cov_inv + data_cov_inv;
+posterior_cov_inv = prior_cov_inv + P' * data_cov_inv * P;
 posterior_cov     = inv(posterior_cov_inv);
 posterior_std     = sqrt(diag(posterior_cov));
-posterior_mean    = posterior_cov_inv \ [prior_cov_inv * prior_mean + data_cov_inv * data_mean];
+posterior_mean    = posterior_cov_inv \ [prior_cov_inv * prior_mean + P' * data_cov_inv * data_mean];

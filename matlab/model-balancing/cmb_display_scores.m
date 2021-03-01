@@ -19,4 +19,8 @@ score_opt =  cmb_log_posterior(y_opt, pp, preposterior, V, cmb_options, q_info, 
 display(sprintf('log posterior OPTIMISED: %f', score_opt ));
 
 % did the last run improve the objective? (assuming that the scores are negative)
-improvement = [score_opt > 0.999999999 * score_init];
+if score_opt<0,
+  improvement = [score_opt > 0.999999999 * score_init];
+else
+  improvement = [score_opt > 1.000000001 * score_init];
+end

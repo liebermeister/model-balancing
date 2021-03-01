@@ -58,7 +58,7 @@ M_q6h2_m	Ubiquinol	C00390	True
 M_succ_m	Succinate	C00042	False			
 M_succoa_m	Succinyl-CoA	C00091	False			
 						
-!!SBtab Document='Model' TableID='Layout' TableType='Layout' TableName='Layout'						
+!!SBtab Document='Model' TableID='Position' TableType='Layout' TableName='Layout'						
 !Element	!PositionX	!PositionY				
 M_accoa_m	0.24638	0.44830269				
 M_accoa_c	0.39781461	0.45474277				

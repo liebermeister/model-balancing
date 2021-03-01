@@ -1,6 +1,6 @@
 !!!SBtab			
-			
-!!SBtab TableName='ConcentrationData' TableType='Quantity' TableID='Quantity' Unit='mM'			
+
+!!SBtab TableID='MetaboliteConcentration' TableType='Quantity' Unit='mM'			
 !QuantityType	!Compound	!Compound:Identifiers:kegg.compound	!Value
 concentration	M_accoa_m	C00024	0.018281061
 concentration	M_accoa_c	C00024	0.0054271079
@@ -35,8 +35,8 @@ concentration	M_q6_m	C17568	NaN
 concentration	M_q6h2_m	C00390	NaN
 concentration	M_succ_m	C00042	0.042307841
 concentration	M_succoa_m	C00091	NaN
-			
-!!SBtab TableName='EnzymeData' TableType='Quantity' TableID='Quantity' Unit='mM'			
+
+!!SBtab TableID='EnzymeConcentration' TableType='Quantity' Unit='mM'			
 !QuantityType	!Reaction	!Reaction:Identifiers:kegg.reaction	!Value
 concentration of enzyme	GLI_GLUNim		NaN
 concentration of enzyme	GTS_GLTEsy		0.00043894638
