@@ -140,6 +140,10 @@ class ModelBalancing(object):
                 ln_p, ln_p_gmean, p_inv_ln_cov
             )
 
+        # TODO: add an option to take a scaled version of the negative part of
+        #  the z-score of ln_conc_enz. (alpha = 0 would be convex, and alpha = 1
+        #  would be the true cost function)
+
         return total_z2_scores
 
     @property
