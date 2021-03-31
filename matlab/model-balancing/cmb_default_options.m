@@ -201,7 +201,7 @@ cmb_options.metabolic_artificial_e_geom_std = 1.5;
 % ---------------------------------------------------------
 % Other settings
 
- cmb_options.run                   = 'my_run';
+cmb_options.run                    = 'my_run';
 cmb_options.ecm_score              = 'emc4cm'; 
 % note that artificial data are only generated for ecm_score = 'emc4cm'!
 

@@ -1,0 +1,8 @@
+!!!SBtab Document='three_chain_model'
+				
+!!SBtab TableID='ConcentrationConstraint' TableType='Quantity' Unit='mM'
+!QuantityType	!Compound	!Min	!Max
+concentration	X1	0.000001	1000000
+concentration	S2	0.000001	1000000
+concentration	S3	0.000001	1000000
+concentration	X4	0.000001	1000000

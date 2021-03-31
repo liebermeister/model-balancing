@@ -1,0 +1,8 @@
+!!!SBtab Document='branch_point_model'
+				
+!!SBtab TableID='ConcentrationConstraint' TableType='Quantity' Unit='mM'
+!QuantityType	!Compound	!Min	!Max
+concentration	X1	0.000001	1000000
+concentration	X2	0.000001	1000000
+concentration	X3	0.000001	1000000
+concentration	S4	0.000001	1000000

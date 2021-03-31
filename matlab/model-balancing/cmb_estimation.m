@@ -168,7 +168,7 @@ f_init = cmb_log_posterior(y_init,pp,preposterior,V,cmb_options,q_info);
 f_opt  = cmb_log_posterior(y_opt,pp,preposterior,V,cmb_options,q_info);
 if f_init>f_opt,
   if init_feasible,
-    display('Optimised value is worse than initial guess ("THANK YOU" matlab); using initial value');
+    display('Optimised value is worse than initial guess ("THANK YOU" matlab); keeping initial value');
     y_opt = y_init;
   end
 end

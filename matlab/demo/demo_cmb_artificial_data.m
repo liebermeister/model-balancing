@@ -12,26 +12,72 @@
 % -------------------------------------------------------------
 
 % -------------------------------------------------------------
-% Small test model (network structure from SBML or SBtab file)
+% Small test model "branch_point_model" (network structure from SBML or SBtab file)
 %
 % Network structure
-% - \   /
-%     -
-% _ /   \
+% X
+%  \   
+%    O - X
+%  /  
+% X
 % -------------------------------------------------------------
 
+% % Note that either of the model files (SBML: .xml or SBtab: .tsv) can be used
+% 
+% model         = 'branch_point_model';
+% run           = 'test';
+% network_file  = [cmb_resourcedir '/models/branch_point_model/branch_point_model.xml'];
+% %network_file = [cmb_resourcedir '/models/branch_point_model/branch_point_model.tsv'];
+% position_file = [cmb_resourcedir '/models/branch_point_model/branch_point_model_Position.tsv'];
+% constraint_file = [cmb_resourcedir '/models/branch_point_model/branch_point_model_ConcentrationConstraint.tsv'];
+% result_dir    = tempdir;
+% c_init        = [1,1,0.1,0.5]'; 
+% ns            = 6;
 
-model        = 'double_branch_model';
-run          = 'test';
-result_dir   = tempdir;
-% Note that the network file can be either SBML or SBtab
-network_file = [cmb_resourcedir '/models/double_branch_model/sbml/double_branch_model.xml'];
-position_file  = [cmb_resourcedir '/models/double_branch_model/sbtab/multi/double_branch_model_POSITION.tsv'];
-constraint_sbtab_file = [];
-c_init       = [10,1,1,1,1,1,0.01]'; 
-ns           = 6;
 
-filenames = cmb_filenames(model, run, result_dir, network_file);
+% -------------------------------------------------------------
+% Small test model "three_chain_model" (network structure from SBML or SBtab file)
+%
+% Network structure
+% X - O - O - X
+%
+% -------------------------------------------------------------
+
+% Note that either of the model files (SBML: .xml or SBtab: .tsv) can be used
+
+% model         = 'three_chain_model';
+% run           = 'test';
+% network_file  = [cmb_resourcedir '/models/three_chain_model/three_chain_model.xml'];
+% %network_file  = [cmb_resourcedir '/models/three_chain_model/three_chain_model.tsv'];
+% position_file = [cmb_resourcedir '/models/three_chain_model/three_chain_model_Position.tsv'];
+% constraint_file = [cmb_resourcedir '/models/three_chain_model/three_chain_model_ConcentrationConstraint.tsv'];
+% result_dir    = tempdir;
+% c_init        = [10,1,1,1,1,1,0.01]'; 
+% ns            = 6;
+
+
+% -------------------------------------------------------------
+% Small test model "double_branch_model" (network structure from SBML or SBtab file)
+%
+% Network structure
+% X - O       X
+%      \     /
+%       O - O 
+%      /     \
+% X - O       X
+% -------------------------------------------------------------
+
+% Note that either of the model files (SBML: .xml or SBtab: .tsv) can be used
+%
+ model        = 'double_branch_model';
+ run          = 'test';
+ network_file = [cmb_resourcedir '/models/double_branch_model/double_branch_model.xml'];
+% network_file = [cmb_resourcedir '/models/double_branch_model/double_branch_model.tsv'];
+ position_file  = [cmb_resourcedir '/models/double_branch_model/double_branch_model_Position.tsv'];
+ constraint_file = [cmb_resourcedir '/models/double_branch_model/double_branch_model_ConcentrationConstraint.tsv'];
+ result_dir   = tempdir;
+ c_init       = [10,1,1,1,1,1,0.01]'; 
+ ns           = 6;
 
 
 % -------------------------------------------------------------
@@ -48,6 +94,9 @@ filenames = cmb_filenames(model, run, result_dir, network_file);
 % position_file  = [];
 % c_init       = cmb_e_coli_c_init(model,cmb_default_options);
 % ns           = 4;
+
+
+filenames = cmb_filenames(model, run, result_dir, network_file);
 
 
 % -------------------------------------------------------------
@@ -71,8 +120,9 @@ cmb_options.verbose                = 0;
 % generate "true" kinetic model, priors, and artificial data
 % -----------------------------------------------
 
-[network, bounds, prior, q_info, data, true, kinetic_data, state_data] = cmb_model_artificial_data(network_file, cmb_options, c_init, position_file, constraint_sbtab_file);
+[network, bounds, prior, q_info, data, true, kinetic_data, state_data] = cmb_model_artificial_data(network_file, cmb_options, c_init, position_file, constraint_file);
 
+save_kinetic_and_state_data(network, kinetic_data, state_data, filenames.kinetic_data, filenames.state_data, 0);
 
 % -----------------------------------------------
 % Run model balancing and save results to files 

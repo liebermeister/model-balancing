@@ -1,4 +1,4 @@
-function [network, data, kinetic_data] = cmb_read_prepared_model_and_data(data_set,version)
+function [network, data, kinetic_data] = cmb_read_prepared_model_and_data(data_set, version)
 
 % Wrapper function for older function 'es_load_data' - currently not working!
 %

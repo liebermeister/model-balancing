@@ -5,31 +5,81 @@
 % o model balancing is performed
 % -------------------------------------------------------------
 
-% -------------------------------------------------------------
-% Simple test model
-% 
-% Network structure
-% -\   /
-%    -
-% _/   \
-% -------------------------------------------------------------
-
 clear;
 
-model      = 'double_branch_model'; 
-run        = 'with_kinetic_data_balanced';
-result_dir = tempdir;
-filenames  = cmb_filenames(model, run, result_dir);
-sbtab_dir  = [cmb_basedir '/../resources/models/double_branch_model/sbtab'];
-sbtab_file = [sbtab_dir '/double_branch_model.tsv'];
+% -------------------------------------------------------------
+% Define model
+% -------------------------------------------------------------
 
-%% Alternative: use data from individual SBtab files
-%% file_network    = [dir '/multi/double_branch_model_NETWORK.tsv'];
-%% file_kinetic    = [dir '/multi/double_branch_model_KINETIC.tsv'];
-%% file_metabolite = [dir '/multi/double_branch_model_METABOLITE.tsv'];
-%% file_flux       = [dir '/multi/double_branch_model_FLUX.tsv'];
-%% file_enzyme     = [dir '/multi/double_branch_model_ENZYME.tsv'];
-%% sbtab_file      = {file_network, file_kinetic, file_metabolite, file_flux, file_enzyme};
+% -------------------------------------------------------------
+% Small test model "branch_point_model" (network structure from SBML or SBtab file)
+%
+% Network structure
+%
+% X
+%  \   
+%    O - X
+%  /  
+% X
+% 
+% Use pregenerated artificial data from folder ~/resources/models/branch_point_model/data/
+% -------------------------------------------------------------
+
+model       = 'branch_point_model'; 
+run         = 'with_kinetic_data_balanced';
+result_dir  = tempdir;
+filenames   = cmb_filenames(model, run, result_dir);
+sbtab_files = {[cmb_basedir '/../resources/models/branch_point_model/data/artificial_network_true.tsv'], ...
+               [cmb_basedir '/../resources/models/branch_point_model/data/artificial_data.tsv']};
+file_options.match_data_by = 'ModelElementId';
+file_options.columns_mean  = {'S1_Mean','S2_Mean','S3_Mean','S4_Mean','S5_Mean','S6_Mean'};
+file_options.columns_std   = {'S1_Std','S2_Std','S3_Std','S4_Std','S5_Std','S6_Std'};
+
+
+% -------------------------------------------------------------
+% Small test model "three_chain_model" (network structure from SBML or SBtab file)
+%
+% Network structure
+%
+% X - O - O - X
+%
+% Use pregenerated artificial data from folder ~/resources/models/three_chain_model/data/
+% -------------------------------------------------------------
+
+% model       = 'three_chain_model'; 
+% run         = 'with_kinetic_data_balanced';
+% result_dir  = tempdir;
+% filenames   = cmb_filenames(model, run, result_dir);
+% sbtab_files = {[cmb_basedir '/../resources/models/three_chain_model/data/artificial_network_true.tsv'], ...
+%                [cmb_basedir '/../resources/models/three_chain_model/data/artificial_data.tsv']};
+% file_options.match_data_by = 'ModelElementId';
+% file_options.columns_mean  = {'S1_Mean','S2_Mean','S3_Mean','S4_Mean','S5_Mean','S6_Mean'};
+% file_options.columns_std   = {'S1_Std','S2_Std','S3_Std','S4_Std','S5_Std','S6_Std'};
+
+
+% -------------------------------------------------------------
+% Small test model "double_branch_model" (network structure from SBML or SBtab file)
+%
+% Network structure
+%
+% X - O       X
+%      \     /
+%       O - O 
+%      /     \
+% X - O       X
+%
+% Use pregenerated artificial data from folder ~/resources/models/double_branch_model/data/
+% -------------------------------------------------------------
+
+% model       = 'double_branch_model'; 
+% run         = 'with_kinetic_data_balanced';
+% result_dir  = tempdir;
+% filenames   = cmb_filenames(model, run, result_dir);
+% sbtab_files = {[cmb_basedir '/../resources/models/double_branch_model/data/artificial_network_true.tsv'], ...
+%                [cmb_basedir '/../resources/models/double_branch_model/data/artificial_data.tsv']};
+% file_options.match_data_by = 'ModelElementId';
+% file_options.columns_mean  = {'S1_Mean','S2_Mean','S3_Mean','S4_Mean','S5_Mean','S6_Mean'};
+% file_options.columns_std   = {'S1_Std','S2_Std','S3_Std','S4_Std','S5_Std','S6_Std'};
 
 
 % -------------------------------------------------
@@ -76,7 +126,7 @@ end
 % Load model
 % -----------------------------------------------
 
-[network, q_info, data, c_init, kinetic_data, state_data] = cmb_read_model_and_data(cmb_options, sbtab_file);
+[network, q_info, data, c_init, kinetic_data, state_data] = cmb_load_and_convert_model_and_data(cmb_options, sbtab_files, file_options);
 
 
 % -----------------------------------------------

@@ -91,7 +91,6 @@ end
 conc_min = bounds.conc_min;
 conc_max = bounds.conc_max;
 
-
 % check whether fluxes are thermodynamically feasible
 thermo_pb_options.c_min = conc_min;
 thermo_pb_options.c_max = conc_max;

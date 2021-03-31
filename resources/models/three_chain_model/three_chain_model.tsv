@@ -1,0 +1,24 @@
+!!!SBtab Document='Model'			
+			
+!!SBtab TableID='Reaction' TableType='Reaction' TableName='Reaction'			
+!ID	!ReactionFormula	!Name	!IsReversible
+E1	X1 <=> S2	E1	True
+E2	S2 <=> X3	E2	True
+E3	X3 <=> X4	E3	True
+			
+!!SBtab TableID='Compound' TableType='Compound' TableName='Compound'			
+!ID	!Name	!IsConstant	
+X1	X1	True	
+S2	S2	False	
+X3	X3	False	
+X4	X4	True	
+			
+!!SBtab TableID='Position' TableType='Position' TableName='Network layout'			
+!Element	!PositionX	!PositionY	
+X1	-0.020036545	0.65039632	
+S2	0.055538435	0.65283945	
+X3	0.13432198	0.65039632	
+X4	0.20023357	0.65120613	
+E1	0.018871737	0.65039632	
+E2	0.094539984	0.65291567	
+E3	0.16845613	0.65057068	

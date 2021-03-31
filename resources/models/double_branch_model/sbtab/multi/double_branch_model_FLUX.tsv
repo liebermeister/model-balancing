@@ -1,9 +1,0 @@
-!!!SBtab Document='double_branch_model'
-
-!!SBtab TableID='Flux' TableType='Quantity' TableName='Metabolic flux' Unit='mM/s'			
-!QuantityType	!Reaction	!Reaction:Identifiers:kegg.reaction	!Mean	!Std
-rate of reaction	E1	E1	0.028308167	0.028308167
-rate of reaction	E2	E2	0.028308167	0.028308167
-rate of reaction	E3	E3	0.028308167	0.028308167
-rate of reaction	E4	E4	-0.01738812	0.01738812
-rate of reaction	E5	E5	0.045696293	0.045696293

@@ -1,8 +1,8 @@
 function [network, kinetic_data, state_data, conc_min, conc_max] = cmb_load_model_and_data(model_file, kinetic_data_file, state_data_files, replace_ids_in_network, match_data_by, constraint_sbtab_file)
 
-% [network, kinetic_data, state_data, conc_min, conc_max] = cmb_load_model_and_data(model_file, kinetic_data_file, state_data_files, replace_ids_in_network,match_data_by, constraint_sbtab_file)
+% [network, kinetic_data, state_data, conc_min, conc_max] = cmb_load_model_and_data(model_file, kinetic_data_file, state_data_files, replace_ids_in_network, match_data_by, constraint_sbtab_file)
 %
-% Load model and (kinetic and state) data from (SBML and SBtab) files
+% Load model and (kinetic and state) data from (SBML and SBtab) files into matlab data structures
 %   1. load a model structure (from sbml or sbtab file) (possibly including default metabolite levels c_init)
 %   2. load kinetic data and metabolic data (from sbtab files) and map them to the model via KEGG IDs
 %

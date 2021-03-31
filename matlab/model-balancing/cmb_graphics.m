@@ -81,15 +81,19 @@ switch cmb_options.parameterisation,
       
     figure(8); 
     scatter_plot(qall_data(index.Kcatf),log(kapp_max.forward),qall_names(index.Kcatf),kapp_color,'k_{cat}^{+} values [1/s] (data)', 'k_{app,max}^{+} values [1/s] (fit)');
+
     
-    figure(9); 
-    scatter_plot(qall_data(index.Kcatr),log(kapp_max.reverse),qall_names(index.Kcatr),kapp_color,'k_{cat}^{-} values [1/s] (data)', 'k_{app,max}^{-} values [1/s] (fit)');
-      
     print([filenames.Keq],   '-f5', '-depsc'); 
     print([filenames.Kcatf], '-f6', '-depsc'); 
     print([filenames.Kcatr], '-f7', '-depsc'); 
     print([filenames.Kappmaxf], '-f8', '-depsc'); 
-    print([filenames.Kappmaxr], '-f9', '-depsc'); 
+
+    %% only if some reverse kapp values have been determined:
+    if sum(isfinite(kapp_max.reverse)),
+      figure(9);
+      scatter_plot(qall_data(index.Kcatr),log(kapp_max.reverse),qall_names(index.Kcatr),kapp_color,'k_{cat}^{-} values [1/s] (data)', 'k_{app,max}^{-} values [1/s] (fit)');
+      print([filenames.Kappmaxr], '-f9', '-depsc'); 
+    end
 
 end
   
@@ -149,16 +153,19 @@ if length(true),
 
       figure(18); 
       scatter_plot(qall_true(index.Kcatf),log(kapp_max.forward),qall_names(index.Kcatf),kapp_color,'k_{cat}^{+} values [1/s] (true)', 'k_{app,max}^{+} values [1/s] (fit)');
-      
-      figure(19); 
-      scatter_plot(qall_true(index.Kcatr),log(kapp_max.reverse),qall_names(index.Kcatr),kapp_color,'k_{cat}^{-} values [1/s] (true)', 'k_{app,max}^{-} values [1/s] (fit)');
 
       print([filenames.Keq],   '-f15', '-depsc'); 
       print([filenames.Kcatf], '-f16', '-depsc'); 
       print([filenames.Kcatr], '-f17', '-depsc'); 
       print([filenames.Kappmaxf], '-f18', '-depsc'); 
-      print([filenames.Kappmaxr], '-f19', '-depsc'); 
 
+      %% only if some reverse kapp values have been determined
+      if sum(isfinite(kapp_max.reverse)),
+        figure(19); 
+        scatter_plot(qall_true(index.Kcatr),log(kapp_max.reverse),qall_names(index.Kcatr),kapp_color,'k_{cat}^{-} values [1/s] (true)', 'k_{app,max}^{-} values [1/s] (fit)');
+      print([filenames.Kappmaxr], '-f19', '-depsc'); 
+      end
+      
   end
 
 end

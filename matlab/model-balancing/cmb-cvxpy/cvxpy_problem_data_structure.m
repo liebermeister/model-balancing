@@ -12,7 +12,8 @@ function problem = cvxpy_problem_data_structure(network, q_info, prior, data, tr
 %   and following matlab's convention for indices in matrix elements (first column from top to bottom, then second column etc)
 %   in python this corrresponds to matrix formatted as #metabolites x #reactions, and using the opposite convetion for indices 
 %   (first row, then second row, etc)
-
+% fields called "combined" contain the preposterior distribution of the respective quantities
+  
 % for the time being, data sets with changing flux directions cannot be handled:   
 
 eval(default('true','[]'));  
@@ -193,7 +194,6 @@ enz.combined.geom_mean = exp(reshape(enz_mean_ln,nr,nc));
 enz.combined.geom_std  = exp(reshape(sqrt(diag(enz_cov_ln)),nr,nc));
 
 problem.enzyme_concentrations = enz;
-
 
 % --- Reaction fluxes
 

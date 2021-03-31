@@ -3,11 +3,8 @@ Simple test model
 
 Network structure:
 
-X - O       X
-     \     /
-      O - O 
-     /     \
-X - O       X
+X1 <-> S2 <-> S3 <-> X4
+
 
 SBML (model) and SBtab (model and data) files are provided
 

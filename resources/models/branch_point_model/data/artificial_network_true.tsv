@@ -1,0 +1,52 @@
+!!!SBtab Document='Model'					
+					
+!!SBtab TableID='Reaction' TableType='Reaction' TableName='Reaction'					
+!ID	!ReactionFormula	!Name	!IsReversible	!KineticLaw:Name	!KineticLaw:Formula
+E1	X1 <=> S4	E1	True	Common saturable (CM)	u_R1 * ( kC_R1 * sqrt( kEQ_R1  * kM_R1_X1 / kM_R1_S4 ) * ( X1 / kM_R1_X1 ) - kC_R1 / sqrt( kEQ_R1  * kM_R1_X1 / kM_R1_S4 ) * ( S4 / kM_R1_S4 ) ) / ( ( 1 + X1 / kM_R1_X1 ) + ( 1 + S4 / kM_R1_S4 ) - 1 )
+E2	X2 <=> S4	E2	True	Common saturable (CM)	u_R2 * ( kC_R2 * sqrt( kEQ_R2  * kM_R2_X2 / kM_R2_S4 ) * ( X2 / kM_R2_X2 ) - kC_R2 / sqrt( kEQ_R2  * kM_R2_X2 / kM_R2_S4 ) * ( S4 / kM_R2_S4 ) ) / ( ( 1 + X2 / kM_R2_X2 ) + ( 1 + S4 / kM_R2_S4 ) - 1 )
+E3	S4 <=> X3	E3	True	Common saturable (CM)	u_R3 * ( kC_R3 * sqrt( kEQ_R3  * kM_R3_S4 / kM_R3_X3 ) * ( S4 / kM_R3_S4 ) - kC_R3 / sqrt( kEQ_R3  * kM_R3_S4 / kM_R3_X3 ) * ( X3 / kM_R3_X3 ) ) / ( ( 1 + S4 / kM_R3_S4 ) + ( 1 + X3 / kM_R3_X3 ) - 1 )
+					
+!!SBtab TableID='Compound' TableType='Compound' TableName='Compound'					
+!ID	!Name	!IsConstant			
+X1	X1	True			
+X2	X2	True			
+X3	X3	True			
+S4	S4	False			
+					
+!!SBtab TableID='Position' TableType='Position' TableName='Network layout'					
+!Element	!PositionX	!PositionY			
+X1	-0.004722	0.7662			
+X2	-0.0029617664	0.53415257			
+X3	0.18547398	0.62960474			
+S4	0.081914709	0.63989778			
+E1	0.040403354	0.70055281			
+E2	0.039522267	0.58277287			
+E3	0.13882878	0.62931638			
+					
+!!SBtab TableID='Parameter' TableType='Quantity' TableName='Parameter' StandardConcentration='mM'					
+!QuantityType	!Reaction	!Compound	!Mode	!Unit	
+equilibrium constant	E1		2.0986745	dimensionless	
+equilibrium constant	E2		39.919571	dimensionless	
+equilibrium constant	E3		0.56826365	dimensionless	
+catalytic rate constant geometric mean	E1		51.287915	1/s	
+catalytic rate constant geometric mean	E2		79.57093	1/s	
+catalytic rate constant geometric mean	E3		81.382101	1/s	
+Michaelis constant	E1	X1	0.13325467	mM	
+Michaelis constant	E2	X2	0.36257693	mM	
+Michaelis constant	E3	X3	0.13079694	mM	
+Michaelis constant	E1	S4	0.0042289376	mM	
+Michaelis constant	E2	S4	0.012949655	mM	
+Michaelis constant	E3	S4	0.66284115	mM	
+substrate catalytic rate constant	E1		417.07404	1/s	
+substrate catalytic rate constant	E2		2660.2249	1/s	
+substrate catalytic rate constant	E3		138.10512	1/s	
+product catalytic rate constant	E1		6.3069143	1/s	
+product catalytic rate constant	E2		2.3800743	1/s	
+product catalytic rate constant	E3		47.95656	1/s	
+concentration		X1	1	mM	
+concentration		X2	1	mM	
+concentration		X3	0.1	mM	
+concentration		S4	0.5	mM	
+concentration of enzyme	E1		0.00076862472	mM	
+concentration of enzyme	E2		0.0016143326	mM	
+concentration of enzyme	E3		0.00073526349	mM	
