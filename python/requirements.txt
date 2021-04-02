@@ -5,3 +5,4 @@ scipy~=1.6
 pandas~=1.2
 Mosek~=9.2
 jupyterlab
+sbtab~=1.0.0
