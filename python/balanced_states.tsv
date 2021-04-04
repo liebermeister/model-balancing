@@ -1,4 +1,4 @@
-!!!SBtab DocumentName='state_results' SBtabVersion='1.0' Date='2021-4-2'
+!!!SBtab DocumentName='balanced_states' SBtabVersion='1.0' Date='2021-4-4'
 !!SBtab TableID='MetabolicFlux' TableType='QuantityMatrix' TableName='MetabolicFlux' SBtabVersion='1.0' Unit='mM/s'
 !QuantityType	!Reaction	S1	S2	S3	S4
 rate of reaction	E1	0.021387373764911267	0.01460085302465973	0.011737199044558173	0.009199216810779395
@@ -13,14 +13,38 @@ concentration	X3	1.1233078614881045	4.70311572244766	0.7065758144709312	1.166857
 concentration	X4	0.7973102897016721	0.7079450606200159	0.9062532262737979	1.6103653403747005
 
 !!SBtab TableID='EnzymeConcentrations' TableType='QuantityMatrix' TableName='Enzyme concentrations' SBtabVersion='1.0' Unit='mM'
-!QuantityType	!Compound	S1	S2	S3	S4
+!QuantityType	!Reaction	S1	S2	S3	S4
 concentration of enzyme	E1	0.0017481883921990488	0.0015805239586383216	0.0005016780227488157	0.00044120223604224616
 concentration of enzyme	E2	0.0014437261991103465	0.003313562246626576	0.0013629381026052689	0.001433748401756284
 concentration of enzyme	E3	0.00011643200933689904	7.563289940988996e-05	6.548284155579942e-05	5.0507094491179566e-05
 
 !!SBtab TableID='ReactionGibbsFreeEnergy' TableType='QuantityMatrix' TableName='Gibbs free energies of reaction' SBtabVersion='1.0' Unit='kJ/mol'
-!QuantityType	!Compound	S1	S2	S3	S4
+!QuantityType	!Reaction	S1	S2	S3	S4
 Gibbs energy of reaction	E1	-0.7404894163982689	-0.5165462806212577	-2.305080317224486	-1.7222374964821086
 Gibbs energy of reaction	E2	-1.1722560805322493	-0.48645538381991305	-0.8456306442200594	-0.6699852999437699
 Gibbs energy of reaction	E3	-6.434033287526614	-7.98485814849266	-5.842355893563589	-5.769097490319845
+
+!!SBtab TableID='CatalyticRateConstant' TableType='QuantityMatrix' TableName='Catalytic rate constant' SBtabVersion='1.0' Unit='1/s'
+!QuantityType	!Reaction	kcatf	kcatr
+catalytic rate constant	E1	26.95423717137073	97.63666356396651
+catalytic rate constant	E2	877.1127337849148	7.222195761705887
+catalytic rate constant	E3	190.99321091972476	34.68791767082239
+
+!!SBtab TableID='MichaelisConstant' TableType='QuantityMatrix' TableName='Michaelis-Menten constant' SBtabVersion='1.0' Unit='mM'
+!QuantityType	!Reaction	S1	S2	S3	S4
+Michaelis constant	E1	0.13323827253461432	0.025395450377093568	1000.0000000000001	1000.0000000000001
+Michaelis constant	E2	1000.0000000000001	0.36243680911922593	0.06766160423616625	1000.0000000000001
+Michaelis constant	E3	1000.0000000000001	1000.0000000000001	0.03285346132470942	2.6371519587288907
+
+!!SBtab TableID='ActivationConstant' TableType='QuantityMatrix' TableName='Activation constant' SBtabVersion='1.0' Unit='mM'
+!QuantityType	!Reaction	S1	S2	S3	S4
+activation constant	E1	1000.0000000000001	1000.0000000000001	1000.0000000000001	1000.0000000000001
+activation constant	E2	1000.0000000000001	1000.0000000000001	1000.0000000000001	1000.0000000000001
+activation constant	E3	1000.0000000000001	1000.0000000000001	1000.0000000000001	1000.0000000000001
+
+!!SBtab TableID='InhibitionConstant' TableType='QuantityMatrix' TableName='Inhibition constant' SBtabVersion='1.0' Unit='mM'
+!QuantityType	!Reaction	S1	S2	S3	S4
+inhibition constant	E1	1000.0000000000001	1000.0000000000001	1000.0000000000001	1000.0000000000001
+inhibition constant	E2	1000.0000000000001	1000.0000000000001	1000.0000000000001	1000.0000000000001
+inhibition constant	E3	1000.0000000000001	1000.0000000000001	1000.0000000000001	1000.0000000000001
 
