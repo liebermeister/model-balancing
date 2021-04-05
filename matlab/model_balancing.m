@@ -3,7 +3,7 @@ function [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max,
 % [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max, preposterior, pp] = model_balancing(filenames, cmb_options, network, q_info, prior, bounds, data, true, init)
 %
 % Convex model balancing
-% For input and output variables, see the demo files
+% For usage examples, see the demo files 'demo_cmb_artificial_data.m' and 'demo_cmb_experimental_data.m'
 %
 % Input variables:
 %   filenames    struct, (model- and run-specific) filenames for input and output files
