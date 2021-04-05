@@ -22,8 +22,8 @@ ns              = 6;
 filenames = cmb_filenames(model, run, result_dir, network_file);
 
 filenames.network_true = '/home/wolfram/projekte/model_balancing/github/model-balancing/resources/models/branch_point_model/data/artificial_network_true.tsv';
-filenames.kinetic_data = '/home/wolfram/projekte/model_balancing/github/model-balancing/resources/models/branch_point_model/data/artificial_kinetic.tsv';
-filenames.state_data = '/home/wolfram/projekte/model_balancing/github/model-balancing/resources/models/branch_point_model/data/artificial_data.tsv';
+filenames.kinetic_data = '/home/wolfram/projekte/model_balancing/github/model-balancing/resources/models/branch_point_model/data/artificial_kinetic_data.tsv';
+filenames.state_data = '/home/wolfram/projekte/model_balancing/github/model-balancing/resources/models/branch_point_model/data/artificial_state_data.tsv';
 
 
 % -------------------------------------------------------------
@@ -52,5 +52,4 @@ cmb_options.verbose                = 0;
 save_kinetic_and_state_data(network, kinetic_data, state_data, filenames.kinetic_data, filenames.state_data, 0);
 
 network.kinetics = true.kinetics; 
-network_to_sbtab(network,struct('filename', filenames.network_true));
-
+network_to_sbtab(network,struct('filename', [filenames.network_true]));

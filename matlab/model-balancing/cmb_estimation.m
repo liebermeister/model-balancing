@@ -10,6 +10,13 @@ function [optimal, gradient_V, init, time] = cmb_estimation(network, q_info, bou
 % X_init = argmin_X sum(sum( [ [X - preposterior.X.mean] ./ preposterior.X.std ] .^2));  WITHIN allowed polytopes!
 % q_init = argmin_X sum(sum( [ [q - preposterior.q.mean] ./ preposterior.q.std     ] .^2);   WITHIN allowed ranges!
 % --------------------------------------------------------
+% 
+% choice of initial values depends on cmb_options.initial_values_variant:
+%  'average_sample', 
+%  'preposterior_mode', 
+%  'random'
+%  'true_values'
+%  'given_values'
 
 % --------------------------------------------------------------
 %% Use global variables to speed up function modular_velocities

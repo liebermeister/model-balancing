@@ -22,17 +22,17 @@
 % X
 % -------------------------------------------------------------
 
-% % Note that either of the model files (SBML: .xml or SBtab: .tsv) can be used
-% 
-% model         = 'branch_point_model';
-% run           = 'test';
-% network_file  = [cmb_resourcedir '/models/branch_point_model/branch_point_model.xml'];
-% %network_file = [cmb_resourcedir '/models/branch_point_model/branch_point_model.tsv'];
-% position_file = [cmb_resourcedir '/models/branch_point_model/branch_point_model_Position.tsv'];
-% constraint_file = [cmb_resourcedir '/models/branch_point_model/branch_point_model_ConcentrationConstraint.tsv'];
-% result_dir    = tempdir;
-% c_init        = [1,1,0.1,0.5]'; 
-% ns            = 6;
+% Note that either of the model files (SBML: .xml or SBtab: .tsv) can be used
+
+model         = 'branch_point_model';
+run           = 'test';
+%network_file  = [cmb_resourcedir '/models/branch_point_model/branch_point_model.xml'];
+network_file  = [cmb_resourcedir '/models/branch_point_model/branch_point_model.tsv'];
+position_file = [cmb_resourcedir '/models/branch_point_model/branch_point_model_Position.tsv'];
+constraint_file = [cmb_resourcedir '/models/branch_point_model/branch_point_model_ConcentrationConstraint.tsv'];
+result_dir    = tempdir;
+c_init        = [1,1,0.1,0.5]'; 
+ns            = 6;
 
 
 % -------------------------------------------------------------
@@ -47,8 +47,8 @@
 
 % model         = 'three_chain_model';
 % run           = 'test';
-% network_file  = [cmb_resourcedir '/models/three_chain_model/three_chain_model.xml'];
-% %network_file  = [cmb_resourcedir '/models/three_chain_model/three_chain_model.tsv'];
+% %network_file  = [cmb_resourcedir '/models/three_chain_model/three_chain_model.xml'];
+% network_file  = [cmb_resourcedir '/models/three_chain_model/three_chain_model.tsv'];
 % position_file = [cmb_resourcedir '/models/three_chain_model/three_chain_model_Position.tsv'];
 % constraint_file = [cmb_resourcedir '/models/three_chain_model/three_chain_model_ConcentrationConstraint.tsv'];
 % result_dir    = tempdir;
@@ -67,17 +67,17 @@
 % X - O       X
 % -------------------------------------------------------------
 
-% Note that either of the model files (SBML: .xml or SBtab: .tsv) can be used
-%
- model        = 'double_branch_model';
- run          = 'test';
- network_file = [cmb_resourcedir '/models/double_branch_model/double_branch_model.xml'];
-% network_file = [cmb_resourcedir '/models/double_branch_model/double_branch_model.tsv'];
- position_file  = [cmb_resourcedir '/models/double_branch_model/double_branch_model_Position.tsv'];
- constraint_file = [cmb_resourcedir '/models/double_branch_model/double_branch_model_ConcentrationConstraint.tsv'];
- result_dir   = tempdir;
- c_init       = [10,1,1,1,1,1,0.01]'; 
- ns           = 6;
+% % Note that either of the model files (SBML: .xml or SBtab: .tsv) can be used
+% %
+%  model        = 'double_branch_model';
+%  run          = 'test';
+%  %network_file = [cmb_resourcedir '/models/double_branch_model/double_branch_model.xml'];
+%  network_file = [cmb_resourcedir '/models/double_branch_model/double_branch_model.tsv'];
+%  position_file  = [cmb_resourcedir '/models/double_branch_model/double_branch_model_Position.tsv'];
+%  constraint_file = [cmb_resourcedir '/models/double_branch_model/double_branch_model_ConcentrationConstraint.tsv'];
+%  result_dir   = tempdir;
+%  c_init       = [10,1,1,1,1,1,0.01]'; 
+%  ns           = 6;
 
 
 % -------------------------------------------------------------
@@ -95,6 +95,10 @@
 % c_init       = cmb_e_coli_c_init(model,cmb_default_options);
 % ns           = 4;
 
+
+% -------------------------------------------------------------
+% Generate default filenames for output files
+% -------------------------------------------------------------
 
 filenames = cmb_filenames(model, run, result_dir, network_file);
 

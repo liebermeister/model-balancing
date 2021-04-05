@@ -1,5 +1,7 @@
 function cmb_graphics(prior, data, optimal, true, cmb_options, q_info, graphics_dir, kapp_max)
 
+eval(default('graphics_dir','[]'));
+  
 % ---------------------
 % set some variables
   
@@ -14,17 +16,19 @@ nr           = length(index.KV);
 % ---------------------
 % Graphics: plot data vs fitted
 
-display(sprintf('Writing graphics files with basename %s',graphics_dir));
-
-filenames.x        = [graphics_dir 'data_x.eps'];
-filenames.e        = [graphics_dir 'data_e.eps'];
-filenames.KV       = [graphics_dir 'data_KV.eps'];
-filenames.KM       = [graphics_dir 'data_KM.eps'];
-filenames.Keq      = [graphics_dir 'data_Keq.eps'];
-filenames.Kcatf    = [graphics_dir 'data_Kcatf.eps'];
-filenames.Kcatr    = [graphics_dir 'data_Kcatr.eps'];
-filenames.Kappmaxf = [graphics_dir 'data_Kappmaxf.eps'];
-filenames.Kappmaxr = [graphics_dir 'data_Kappmaxr.eps'];
+if length(graphics_dir),
+  display(sprintf('Writing graphics files with basename %s',graphics_dir));
+  
+  filenames.x        = [graphics_dir 'data_x.eps'];
+  filenames.e        = [graphics_dir 'data_e.eps'];
+  filenames.KV       = [graphics_dir 'data_KV.eps'];
+  filenames.KM       = [graphics_dir 'data_KM.eps'];
+  filenames.Keq      = [graphics_dir 'data_Keq.eps'];
+  filenames.Kcatf    = [graphics_dir 'data_Kcatf.eps'];
+  filenames.Kcatr    = [graphics_dir 'data_Kcatr.eps'];
+  filenames.Kappmaxf = [graphics_dir 'data_Kappmaxf.eps'];
+  filenames.Kappmaxr = [graphics_dir 'data_Kappmaxr.eps'];
+end
 
 fit_color  = [1 0 0];
 pred_color = [1 0 1];
@@ -216,12 +220,13 @@ if length(true),
   % mark_indices = find(C_min_mat(q_info.KM_matrix_indices) > 2 * exp(qall_true(index.KM)));
 
   scatter_plot(qall_true(index.KM),qall_data(index.KM),qall_names(index.KM),kin_color,'K_{M} values [mM] (true)', 'K_{M} values [mM] (data)');
-  
-  print([filenames.x], '-f21', '-depsc'); 
-  print([filenames.e], '-f22', '-depsc'); 
-  print([filenames.KV], '-f23', '-depsc'); 
-  print([filenames.KM], '-f24', '-depsc'); 
-    
+
+  if length(graphics_dir),
+    print([filenames.x], '-f21', '-depsc'); 
+    print([filenames.e], '-f22', '-depsc'); 
+    print([filenames.KV], '-f23', '-depsc'); 
+    print([filenames.KM], '-f24', '-depsc'); 
+  end
 
   switch cmb_options.parameterisation,
     case 'Keq_KV_KM_KA_KI',
@@ -235,10 +240,12 @@ if length(true),
       figure(27); 
       scatter_plot(qall_true(index.Kcatr),qall_data(index.Kcatr),qall_names(index.Kcatr),kin_color,'k_{cat}^{-} values [1/s] (true)', 'k_{cat}^{-} values [1/s] (data)');
 
-      print([filenames.Keq],   '-f25', '-depsc'); 
-      print([filenames.Kcatf], '-f26', '-depsc'); 
-      print([filenames.Kcatr], '-f27', '-depsc'); 
-
+      if length(graphics_dir),
+        print([filenames.Keq],   '-f25', '-depsc'); 
+        print([filenames.Kcatf], '-f26', '-depsc'); 
+        print([filenames.Kcatr], '-f27', '-depsc'); 
+      end
+  
   end
 
 end

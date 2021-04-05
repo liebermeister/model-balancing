@@ -3,6 +3,15 @@ function cmb_save_results(network, data, bounds, optimal, filenames, cmb_options
 % cmb_save_results(network, data, optimal, filenames, cmb_options, options)
 %
 % save results of model balancing as SBtab files
+% 
+% filenames: struct with fields:
+%   .model_name            string (used in SBtab as "document_name")
+%   .parameters_out        SBtab balanced kinetic parameters
+%   .true                  SBtab model and data (true)     - basename
+%   .balanced              SBtab model and data (balanced) - basename
+%   .extension_model_state SBtab model - extension for model file
+%   .extension_state_runs  SBtab model - extension for state data file
+%   .options_sbtab         options output file (SBtab) 
 
 eval(default('true','[]','options','struct'));
 
@@ -27,7 +36,8 @@ sbtab_options = struct('use_sbml_ids',0,'verbose',0,'modular_rate_law_kinetics',
 
 % Omitted, because redundant with files written below
 % sbtab_document = network_to_sbtab(network_optimal, sbtab_options);
-% sbtab_document_save_to_one(sbtab_document,filenames.model_balanced);
+% sbtab_document_save_to_one(sbtab_document,[filenames.balanced '_' filenames.extension_model_state]);
+
 
 % -----------------------------------------
 % Save metabolic states as SBtab
@@ -74,4 +84,6 @@ end
 
 cmb_options_sbtab = options_to_sbtab(cmb_options,struct('TableName','Options for convex model balancing','TableID','ConfigureModelBalancing','Method','convex-model-balancing'));
 
-sbtab_table_save(cmb_options_sbtab,struct('filename',filenames.options_tsv));
+if length(filenames.options_sbtab)
+  sbtab_table_save(cmb_options_sbtab,struct('filename',filenames.options_sbtab));
+end

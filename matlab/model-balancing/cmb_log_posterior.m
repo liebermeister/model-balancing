@@ -51,17 +51,17 @@ x_log_posterior    = - 0.5 * sum(sum([[X - preposterior.X.mean] ./ preposterior.
 ln_e_log_posterior_upper  = [[log(E) - preposterior.lnE.mean] ./ preposterior.lnE.std ].^2 .* double(log(E) >= preposterior.lnE.mean);
 ln_e_log_posterior_lower  = [[log(E) - preposterior.lnE.mean] ./ preposterior.lnE.std ].^2 .* double(log(E) < preposterior.lnE.mean);
 
-switch cmb_options.enzyme_likelihood_type,
+switch cmb_options.enzyme_score_type,
   case 'quadratic'
-    % normal quadratic likelihood term: with this option, MB is not guaranteed to be convex!
+    % normal quadratic term: with this option, MB is not guaranteed to be convex!
     ln_e_log_posterior  = - 0.5 * sum(sum(ln_e_log_posterior_lower + ln_e_log_posterior_upper));
   case 'monotonic',
     % set likehood for E values below posterior mean to 0 
-    % -> makes -log likelihood monotonically increasing;
+    % -> makes enzyme posterior score monotonically increasing;
     % and therefore overall MP problem convex
     ln_e_log_posterior = - 0.5 * sum(sum(ln_e_log_posterior_upper));
   case 'interpolated',
-    ln_e_log_posterior = - 0.5 * sum(sum(cmb_options.enzyme_likelihood_alpha * ln_e_log_posterior_lower + ln_e_log_posterior_upper));
+    ln_e_log_posterior = - 0.5 * sum(sum(cmb_options.enzyme_score_alpha * ln_e_log_posterior_lower + ln_e_log_posterior_upper));
     otherwise('error');
 end
 
@@ -78,7 +78,7 @@ end
 
 if cmb_options.use_gradient,
 
-  switch cmb_options.enzyme_likelihood_type,
+  switch cmb_options.enzyme_score_type,
   case 'quadratic',
   otherwise,
     error('Gradient not supported'); 

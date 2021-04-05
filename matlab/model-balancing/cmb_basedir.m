@@ -1,3 +1,3 @@
 function d = cmb_basedir()
 
-d = [fileparts(which(mfilename)) filesep '..' ];
+d = [fileparts(which(mfilename)) filesep '..' filesep '..' ];

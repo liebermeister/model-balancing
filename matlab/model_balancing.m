@@ -7,6 +7,9 @@ function [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max,
 %
 % Input variables:
 %   filenames    struct, (model- and run-specific) filenames for input and output files
+%     .graphics_dir optional; output directory for saving graphics
+%     .report_txt   optional; output report file (.txt)
+%     .results_mat  optional;  output results file (.mat)
 %   cmb_options  struct, options 
 %   network      struct, metabolic network (format as in Metabolic Network Toolbox)
 %   q_info       struct, the dependencies between model variables
@@ -30,6 +33,9 @@ function [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max,
 %
 % For generating the input data, see 'cmb_model_and_data' and 'cmb_model_artificial_data'
 
+filenames_default = struct('graphics_dir',[],'report_txt',[],'results_mat',[]);
+filenames = join_struct(filenames_default,filenames);
+  
 tic
 
   % --------------------------------------------------------------
@@ -48,16 +54,19 @@ cmb_options.ns = ns;
 
 % -----------------------------------------------
 
-switch cmb_options.enzyme_likelihood_type,
+switch cmb_options.enzyme_score_type,
   case 'quadratic'
     % normal quadratic likelihood term: with this option, MB is not guaranteed to be convex!
-    display('model_balancing.m: Using normal quadratic formula for enzyme log posterior.');
+    display('model_balancing.m:');
+    display('  Using quadratic formula for enzyme posterior score.');
     display('  The optimality problem may be non-convex');
   case 'monotonic'
-    display('model_balancing.m: Using monotonic (constant-quadratic) formula for enzyme log posterior.')
-    display('  The optimality problem is convex, but the enzyme levels may be underestimated!');
+    display('model_balancing.m:')
+    display('  Using monotonic (constant-quadratic) formula for enzyme posterior score.')
+    display('  The optimality problem is convex, but enzyme levels may be underestimated!');
   case 'interpolated'
-    display(sprintf('model_balancing.m: Using mixture of monotonic and quadratic formula for enzyme log posterior, alpha=%f',cmb_options.enzyme_likelihood_alpha))
+    display(sprintf('model_balancing.m:'))
+    display(sprintf('  Using relaxed quadratic formula for enzyme posterior score, alpha=%f',cmb_options.enzyme_score_alpha))
     display('  The optimality problem may be non-convex');
 end
 
@@ -95,12 +104,12 @@ conc_max = bounds.conc_max;
 thermo_pb_options.c_min = conc_min;
 thermo_pb_options.c_max = conc_max;
 for it = 1:size(V,2),
-  [~,~,~, feasible] = thermo_pb(network.N, V(:,it), thermo_pb_options, 1);
+  [~,~,~, feasible] = thermo_pb(network.N, V(:,it), thermo_pb_options, 0);
   if ~feasible,
     error('Flux distribution is thermodynamically infeasible');
   end
 end
-display('Flux distribution is thermo-physiologically feasible');
+display('Flux distributions are thermo-physiologically feasible');
 
 % -----------------------------------------------
 % Initial values
@@ -239,9 +248,11 @@ if cmb_options.save_results,
   display(' '); 
   
   cmb_save_results(network, data, bounds, optimal, filenames, cmb_options, struct('calculation_time', calculation_time, 'consistent', 1), true);
-
-  save(filenames.result_file,'optimal', 'calculation_time', 'gradient_V', 'init', 'cmb_options', 'V', 'kapp_max', 'preposterior', 'pp', 'filenames', 'cmb_options', 'network', 'q_info', 'prior', 'bounds', 'data', 'true');
-
+  
+  if length(filenames.results_mat)
+    save(filenames.results_mat,'optimal', 'calculation_time', 'gradient_V', 'init', 'cmb_options', 'V', 'kapp_max', 'preposterior', 'pp', 'filenames', 'cmb_options', 'network', 'q_info', 'prior', 'bounds', 'data', 'true');
+  end
+  
 end
 
 
@@ -255,7 +266,9 @@ if cmb_options.display + cmb_options.save_results,
 end
 
 if cmb_options.save_results,
-  mytable(report,0,filenames.report);
+  if ~isempty(filenames.report_txt),
+    mytable(report,0,filenames.report_txt);
+  end
 end
 
 % --------------------------------------------------------------
