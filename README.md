@@ -4,11 +4,14 @@ Model balancing
 [Model balancing](https://www.metabolic-economics.de/model-balancing/index.html) is a computational method to determine plausible kinetic constants and metabolic states in kinetic metabolic models. It integrates flux, metabolite, protein, and kinetic constant data, using prior distributions for all these variables, and computes the joint posterior mode.
 Model balancing can be run in matlab or python. Data tables can be provided in [SBtab](https://www.sbtab.net) format, models can be provided in  [SBML](http://sbml.org) or  [SBtab](https://www.sbtab.net) format.
 
-Matlab: To run model balancing in matlab, please have a look at the demo scripts in matlab/demo and adjust them to your model and data. For help in matlab, see 'help model-balancing'. For HTML documentation of the matlab code, see matlab/doc.
+### Matlab
+To run model balancing in matlab, please have a look at the demo scripts in matlab/demo and adjust them to your model and data. For help in matlab, see 'help model-balancing'. For HTML documentation of the matlab code, see matlab/doc.
 
-Python: To run model balancing in python, your model and input data need to be encoded in a JSON file. To generate this file format from model and data files (in SBML / SBtab formats), you can use the matlab function cvxpy_problem_data_structure.m (as shown in the demo script matlab/demo/demo_cmb_experimental_data.m). For a description of the JSON format structure, see 'help matlab/model-balancing/cmb-cvxpy/cvxpy_problem_data_structure' in matlab.
+### Python
+To run model balancing in python, your model and input data need to be encoded in a JSON file. To generate this file format from model and data files (in SBML / SBtab formats), you can use the matlab function cvxpy_problem_data_structure.m (as shown in the demo script matlab/demo/demo_cmb_experimental_data.m). For a description of the JSON format structure, see 'help matlab/model-balancing/cmb-cvxpy/cvxpy_problem_data_structure' in matlab.
 
-Example data and model files can be found in the folder "resources".
+### Example models
+Example model and data files can be found in the folder "resources".
 
 ## Dependencies
 ### Matlab
