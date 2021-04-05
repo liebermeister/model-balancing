@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of Contents</title>
+  <meta name="keywords" content="Contents">
+  <meta name="description" content="======================">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">matlab</a> &gt; Contents.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for matlab&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>Contents
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>======================</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> ======================
+ Convex model balancing
+ ======================
+ 
+ Matlab files for convex model balancing
+ Main function: convex_model_balancing.m
+
+ For an example, see 'demo_cmb_artificial_data.m'
+ 
+ ------------
+ Input data
+ ------------
+ 
+ Model
+ 
+ Model structures must be given as SBtab or SBML files
+ 
+ Kinetic data
+ 
+ Kinetic data must be given as SBtab files
+ o Metabolites must be annotated with KEGG Compound IDs
+ o Reactions and Enzymes must be annotated with KEGG Reaction IDs
+ 
+ Metabolic state data
+ 
+ Metabolite, flux, and enzyme data must be given as SBtab files
+ o Metabolites must be annotated with KEGG Compound IDs
+ o Reactions and Enzymes must be annotated with KEGG Reaction IDs
+ 
+ The columns containing the data can carry arbitrary names 
+ (which must be declared within matlab, for parsing the files)
+ 
+ ------------
+ Result files
+ ------------
+ 
+ kinetic_model.tsv    SBtab - Metabolic network and kinetic constants (optionally: include kinetic rate law formulae)
+ metabolic_states.tsv SBtab - Predicted metabolite concentrations, enzyme concentrations, Gibbs free energies, fluxes (for all states)
+ report.txt           Number of data points / of fitted variables (by category), and calculation time
+ 
+ options.mat      .mat  Options
+ results.mat      .mat  Results</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Mon 05-Apr-2021 09:54:02 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>
