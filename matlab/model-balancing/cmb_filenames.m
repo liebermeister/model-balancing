@@ -26,25 +26,26 @@ else
   display(sprintf('No output directory specified. I will use the directory %s',out_DIR));
 end
 
-filenames.model_name     = model_name;
-filenames.network_sbml   = network_sbml_file;
-filenames.run_dir        = [ out_DIR '/' run ];
-filenames.graphics_dir   = [ out_DIR '/' run '/ps-files/' ];
-filenames.data           = [ out_DIR '/' run '/data/' ];
-%filenames.kinetic_true   = [ out_DIR '/' run '/data/kinetic_true.tsv'];
-filenames.state_true     = [ out_DIR '/' run '/data/true'];
-filenames.kinetic_data   = [ out_DIR '/' run '/data/kinetic_data.tsv'];
-filenames.state_data     = [ out_DIR '/' run '/data/state_data.tsv'];
-filenames.parameters_out = [ out_DIR '/' run '/data/parameters.tsv'];
-filenames.states_out     = [ out_DIR '/' run '/data/'];
-filenames.model_out      = [ out_DIR '/' run '/data/model.tsv'];
-filenames.report         = [ out_DIR '/' run '/data/report.txt'];
-filenames.options_file   = [ out_DIR '/' run '/data/options'];
-filenames.options_tsv    = [ out_DIR '/' run '/data/options.tsv'];
-filenames.result_file    = [ out_DIR '/' run '/data/results'];
-filenames.kinetic_model    = 'kinetic_model';
-filenames.metabolic_states = 'state_results';
-filenames.cvxpy_json_file  = [filenames.run_dir filesep model_name '_' run '.json'];
+filenames.model_name          = model_name;
+filenames.network_sbml        = network_sbml_file;
+filenames.run_dir             = [ out_DIR '/' run ];
+filenames.graphics_dir        = [ out_DIR '/' run '/ps-files/' ];
+filenames.data                = [ out_DIR '/' run '/data/' ];
+filenames.model_true          = [ out_DIR '/' run '/data/model_true.tsv'];
+filenames.true                = [ out_DIR '/' run '/data/true'];
+filenames.kinetic_data        = [ out_DIR '/' run '/data/data_kinetic.tsv'];
+filenames.state_data          = [ out_DIR '/' run '/data/data_states.tsv'];
+filenames.parameters_balanced = [ out_DIR '/' run '/data/parameters_balanced.tsv'];
+filenames.balanced            = [ out_DIR '/' run '/data/balanced'];
+filenames.extension_model_state = 'model';
+filenames.extension_state_runs  = 'states';
+%filenames.balanced_model      = [ out_DIR '/' run '/data/balanced_model.tsv'];
+%filenames.balanced_states     = [ out_DIR '/' run '/data/balanced_states.tsv'];
+filenames.result_file         = [ out_DIR '/' run '/data/results.mat'];
+filenames.report              = [ out_DIR '/' run '/data/report.txt'];
+filenames.options_file        = [ out_DIR '/' run '/data/options.mat'];
+filenames.options_tsv         = [ out_DIR '/' run '/data/options.tsv'];
+filenames.cvxpy_json_file     = [ out_DIR '/' run '/' filesep model_name '_' run '.json'];
 
 [~,~] = mkdir(filenames.graphics_dir);
 [~,~] = mkdir(filenames.data);

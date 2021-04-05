@@ -27,7 +27,7 @@ sbtab_options = struct('use_sbml_ids',0,'verbose',0,'modular_rate_law_kinetics',
 
 % Omitted, because redundant with files written below
 % sbtab_document = network_to_sbtab(network_optimal, sbtab_options);
-% sbtab_document_save_to_one(sbtab_document,filenames.model_out);
+% sbtab_document_save_to_one(sbtab_document,filenames.model_balanced);
 
 % -----------------------------------------
 % Save metabolic states as SBtab
@@ -37,13 +37,13 @@ clear result
 for it = 1:ns,
   result.C.(data.samples{it}) = optimal.C(:,it);
   result.E.(data.samples{it}) = optimal.E(:,it);
-  result.A.(data.samples{it}) = optimal.A(:,it);
+  result.DeltaG.(data.samples{it}) = -optimal.A(:,it);
   result.V.(data.samples{it}) = data.V.mean(:,it);
 end
 
-ecm_sbtab_options = struct('r', optimal.kinetics,'method','emc4cm','document_name',filenames.model_name, 'save_tolerance_ranges',0,'sbtab_attributes',struct('DocumentName', 'CMB result', 'Document', 'CMBresult', 'CalculationTime', sprintf('%f s',options.calculation_time)),'filename_model_state', filenames.kinetic_model, 'filename_state_runs',filenames.metabolic_states);
+ecm_sbtab_options = struct('r', optimal.kinetics,'method','emc4cm','document_name',filenames.model_name, 'save_tolerance_ranges',0,'sbtab_attributes',struct('DocumentName', 'CMB result', 'Document', 'CMBresult', 'CalculationTime', sprintf('%f s',options.calculation_time)),'filename_model_state', filenames.extension_model_state, 'filename_state_runs',filenames.extension_state_runs);
 
-ecm_save_result_sbtab(filenames.states_out, network_optimal, result.C, result.E, result.A, ecm_sbtab_options,bounds.conc_min, bounds.conc_max,[],[],[],[],[],result.V);
+ecm_save_result_sbtab(filenames.balanced, network_optimal, result.C, result.E, result.DeltaG, ecm_sbtab_options,bounds.conc_min, bounds.conc_max,[],[],[],[],[],result.V);
 
 
 % -----------------------------------------
@@ -63,9 +63,9 @@ if length(true),
     result.V.(data.samples{it}) = true.V(:,it);
   end
   
-  ecm_sbtab_options = struct('r', optimal.kinetics,'method','emc4cm','document_name',filenames.model_name, 'save_tolerance_ranges',0,'sbtab_attributes',struct('DocumentName', 'CMB result', 'Document', 'CMBresult', 'CalculationTime', sprintf('%f s',options.calculation_time)),'filename_model_state', filenames.kinetic_model, 'filename_state_runs','metabolic_states');
+  ecm_sbtab_options = struct('r', optimal.kinetics,'method','emc4cm','document_name',filenames.model_name, 'save_tolerance_ranges',0,'sbtab_attributes',struct('DocumentName', 'CMB result', 'Document', 'CMBresult', 'CalculationTime', sprintf('%f s',options.calculation_time)),'filename_model_state', filenames.extension_model_state, 'filename_state_runs', filenames.extension_state_runs);
 
-  ecm_save_result_sbtab(filenames.state_true, network_true, result.C, result.E, result.A, ecm_sbtab_options, bounds.conc_min, bounds.conc_max,[],[],[],[],[],result.V);
+  ecm_save_result_sbtab(filenames.true, network_true, result.C, result.E, result.A, ecm_sbtab_options, bounds.conc_min, bounds.conc_max,[],[],[],[],[],result.V);
 
 end
 
