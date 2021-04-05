@@ -32,3 +32,5 @@ Please contact [Wolfram Liebermeister](mailto:wolfram.liebermeister@gmail.com) a
 ## References
 Liebermeister W. and Noor E. (2021), *Model balancing: in search of consistent metabolic states and in-vivo kinetic constants*
 [bioRxiv doi:10.1101/2019.12.23.887166v2](https://www.biorxiv.org/content/10.1101/2019.12.23.887166v2)
+
+[www.metabolic-economics.de/model-balancing/](https://www.metabolic-economics.de/model-balancing/index.html)
