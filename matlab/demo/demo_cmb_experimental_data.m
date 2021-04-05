@@ -14,6 +14,23 @@ clear;
 % Define model
 % -------------------------------------------------------------
 
+% Settings:
+%
+% Files that define model and data: 
+%   sbtab_network       (SBtab) with tables 'Reaction', 'Compound', 'Position' (optional), 'Parameter' (optional)
+%   sbtab_kinetic_data  (SBtab) with table 'ParameterData' (optional; if sbtab_kinetic_data == [], kinetic data 
+%                                                           are read from table 'Parameter' in file sbtab_network)
+%   sbtab_state_data    (SBtab) with tables 'MetabolicFluxData', 'MetaboliteConcentrationData', 'EnzymeConcentrationData'
+%
+% Other settings:
+%   model                       (string) model name (can be freely chosen)
+%   run                         (string) estimation scenario name (can be freely chosen)
+%   file_options.match_data_by  'ModelElementId' (default) or 'KeggId'
+%   file_options.columns_mean   (cell array) column names for mean data values in metabolite, flux, and enzyme table
+%   file_options.columns_std    (cell array) column names for std deviations   in metabolite, flux, and enzyme table
+%   result_dir                  (directory name) directory for output files (default = matlab's tempdir) 
+
+
 % -------------------------------------------------------------
 % Small test model "branch_point_model" (network structure from SBML or SBtab file)
 %
@@ -92,8 +109,7 @@ filenames = cmb_filenames(model, run, result_dir);
 
 
 % -------------------------------------------------
-% Set options
-% (for a list of all options, type 'help cmb_default_options')
+% Set options (for other options, see 'help cmb_default_options')
 % -------------------------------------------------
 
 cmb_options                          = cmb_default_options;
@@ -108,6 +124,7 @@ cmb_options.save_graphics            = 0;  % set to 1 to save graphics files
 
 % -------------------------------------------------
 % Set specific options for different estimation scenarios
+% (please modify for your own estimation scenarios; 'run' can be freely defined)
 % -------------------------------------------------
 
 switch run, 

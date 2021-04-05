@@ -1,44 +1,42 @@
 % ======================
-% Convex model balancing
+% Model balancing
 % ======================
 % 
-% Matlab files for convex model balancing
+% Matlab files for model balancing
 %
-% Main function: convex_model_balancing.m
-% For algorithm options, see 'help cmb_default_options'
-% 
-% For an example, see 'demo_cmb_artificial_data.m' and 'demo_cmb_experimental_data.m' 
+% o Main function: model_balancing.m
+% o For usage examples, see m-files 'demo_cmb_artificial_data' and 'demo_cmb_experimental_data' 
+% o For algorithm options, see 'cmb_default_options'
 % 
 % ------------
 % Input data
 % ------------
 % 
-% Model
+% Model:
+%
+%  Model structures are read from SBtab or SBML files
 % 
-% Model structures must be given as SBtab or SBML files
+% Kinetic data:
 % 
-% Kinetic data
+%  Kinetic data are read from SBtab files
+%  o Metabolites must carry the same IDs as in the model (or KEGG Compound IDs)
+%  o Reactions and Enzymes must carry the same IDs as in the model (or KEGG Reaction IDs)
 % 
-% Kinetic data must be given as SBtab files
-% o Metabolites must be annotated with KEGG Compound IDs
-% o Reactions and Enzymes must be annotated with KEGG Reaction IDs
+% Metabolic state data:
 % 
-% Metabolic state data
-% 
-% Metabolite, flux, and enzyme data must be given as SBtab files
-% o Metabolites must be annotated with KEGG Compound IDs
-% o Reactions and Enzymes must be annotated with KEGG Reaction IDs
-% 
-% The columns containing the data can carry arbitrary names 
-% (which must be declared within matlab, for parsing the files)
+%  Metabolite, flux, and enzyme data are read from SBtab files
+%  o Metabolites must carry the same IDs as in the model (or KEGG Compound IDs)
+%  o Reactions and Enzymes must carry the same IDs as in the model (or KEGG Reaction IDs)
+%  
+%  The columns containing the data can carry arbitrary names 
+%    (which must be declared within matlab, for parsing the files)
 % 
 % ------------
-% Result files
+% Output files
 % ------------
 % 
 % kinetic_model.tsv    SBtab - Metabolic network and kinetic constants (optionally: include kinetic rate law formulae)
 % metabolic_states.tsv SBtab - Predicted metabolite concentrations, enzyme concentrations, Gibbs free energies, fluxes (for all states)
-% report.txt           Number of data points / of fitted variables (by category), and calculation time
-% 
-% options.mat      .mat  Options
-% results.mat      .mat  Results
+% report.txt           text  - Number of data points / of fitted variables (by category), and calculation time
+% options.tsv          SBtab - Options
+% results.mat          .mat  - Results

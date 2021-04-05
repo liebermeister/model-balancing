@@ -9,11 +9,12 @@ function [network, q_info, data, c_init, kinetic_data, state_data] = cmb_load_an
 % 'cmb_options':  see cmb_default_options.m
 % 'file':         either a single sbtab filename or a cell array of such filenames (files to be combined)
 % 'file_options': struct with (optional) fields
+%      file_options.match_data_by       'ModelElementId' or 'KeggId';
 %      file_options.metabolite_table_id (default 'MetaboliteConcentration')
 %      file_options.flux_table_id       (default 'Flux')
 %      file_options.enzyme_table_id     (default 'EnzymeConcentration')
 %      file_options.columns_mean:       cell array of column names for mean data values
-%                                  (same columns names in metabolite, flux, and enzyme table!)
+%                                       (same columns names in metabolite, flux, and enzyme table!)
 %      file_options.columns_std:        same, for std dev columns
 
 eval(default('file_options','struct'));
