@@ -5,7 +5,7 @@ Model balancing
 
 ## Dependencies
 ### Matlab
-- [SBML toolbox](http://sbml.org/Software/SBMLToolbox) (optional - not necessary if models are encoded in SBtab format)
+- [SBML toolbox](http://sbml.org/Software/SBMLToolbox) (optional - necessary only if SBML models are used)
 - Clone the following [GitHub](https://github.com/liebermeister) repositories
     - [`matlab-utils`](https://github.com/liebermeister/matlab-utils) - utility functions
     - [`metabolic-network-toolbox`](https://github.com/liebermeister/metabolic-network-toolbox) - metabolic network toolbox
