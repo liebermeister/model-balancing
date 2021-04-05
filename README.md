@@ -8,6 +8,8 @@ Matlab: To run model balancing in matlab, please have a look at the demo scripts
 
 Python: To run model balancing in python, your model and input data need to be encoded in a json file format. To convert model and data files (in SBML / SBtab formats) into this json file format, you can use a matlab function (see the demo script matlab/demo/demo_cmb_experimental_data.m).
 
+Example data and model files can be found in the folder "resources".
+
 ## Dependencies
 ### Matlab
 - [SBML toolbox](http://sbml.org/Software/SBMLToolbox) (optional - needed only if SBML files are used)
