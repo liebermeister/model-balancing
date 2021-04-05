@@ -36,7 +36,14 @@
  
  X_init = argmin_X sum(sum( [ [X - preposterior.X.mean] ./ preposterior.X.std ] .^2));  WITHIN allowed polytopes!
  q_init = argmin_X sum(sum( [ [q - preposterior.q.mean] ./ preposterior.q.std     ] .^2);   WITHIN allowed ranges!
- --------------------------------------------------------</pre></div>
+ --------------------------------------------------------
+ 
+ choice of initial values depends on cmb_options.initial_values_variant:
+  'average_sample', 
+  'preposterior_mode', 
+  'random'
+  'true_values'
+  'given_values'</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
@@ -51,6 +58,6 @@ This function is called by:
 
 
 
-<hr><address>Generated on Mon 05-Apr-2021 09:54:02 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+<hr><address>Generated on Mon 05-Apr-2021 13:14:36 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
 </body>
 </html>

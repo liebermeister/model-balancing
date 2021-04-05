@@ -29,7 +29,16 @@
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
 <div class="fragment"><pre class="comment"> cmb_save_results(network, data, optimal, filenames, cmb_options, options)
 
- save results of model balancing as SBtab files</pre></div>
+ save results of model balancing as SBtab files
+ 
+ filenames: struct with fields:
+   .model_name            string (used in SBtab as &quot;document_name&quot;)
+   .parameters_out        SBtab balanced kinetic parameters
+   .true                  SBtab model and data (true)     - basename
+   .balanced              SBtab model and data (balanced) - basename
+   .extension_model_state SBtab model - extension for model file
+   .extension_state_runs  SBtab model - extension for state data file
+   .options_sbtab         options output file (SBtab)</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
@@ -44,6 +53,6 @@ This function is called by:
 
 
 
-<hr><address>Generated on Mon 05-Apr-2021 09:54:02 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+<hr><address>Generated on Mon 05-Apr-2021 13:14:36 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
 </body>
 </html>
