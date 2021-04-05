@@ -2,17 +2,66 @@ function problem = cvxpy_problem_data_structure(network, q_info, prior, data, tr
 
 % problem = cvxpy_problem_data_structure(network, q_info, prior, data, true_model)
 %
-% Convert a model balancing problem (network,q_info,true_model,prior,data) into a single data structure
-% to be used by Elad's model balancing tool in python (based on CVXpy)
-  
+% Convert a model balancing problem (data structures: network, q_info, true_model, prior, data) 
+% into a single data structure, exported to json and then used by python model balancing tool (based on CVXpy)
+%
+% Structure, default values, and matrix sizes for a network with nr reactions and nm metabolites:
+%   .standard_concentration: '1 mM'
+%
+%   .network
+%   .network.metabolite_names:      {nm x 1 cell}
+%   .network.reaction_names:        {nr x 1 cell}
+%   .network.stoichiometric_matrix: [nm x nr double]  (sparse matrix)
+%   .network.activation_matrix:     [nm x nr double]  (sparse matrix)
+%   .network.inhibition_matrix:     [nm x nr double]  (sparse matrix)
+%
+%   .kinetic_constants
+%   .kinetic_constants.Keq
+%   .kinetic_constants.Kcatf
+%   .kinetic_constants.Kcatr
+%   .kinetic_constants.KM
+%   .kinetic_constants.KA
+%   .kinetic_constants.KI
+%
+%     .. where each subfield of .kinetic_constants is a struct of the form
+%       .unit:              string, typically 'mM' and '1/s'
+%       .true:              (column vector or matrix; true values in the case of artificial data; otherwise empty)
+%       .prior_ln.mean      prior mean vector of log values
+%       .prior_ln.cov       prior covariance matrix of log values
+%       .data_ln.mean       data mean vector of log values
+%       .data_ln.cov        data covariance matrix of log values
+%       .combined_ln.mean   preposterior mean vector of log values
+%       .combined_ln.cov    preposterior covariance matrix of log values
+%
+%   .metabolite_concentrations
+%   .metabolite_concentrations.unit:         string, default 'mM'
+%   .metabolite_concentrations.true:         (matrix of true values in the case of artificial data; otherwise empty)
+%   .metabolite_concentrations.prior_ln.mean matrix of prior mean values for metabolite concentrations
+%   .metabolite_concentrations.prior_ln.std  matrix of prior std values for metabolite concentrations
+%   .metabolite_concentrations.data_ln.mean  matrix of data mean values for metabolite concentrations
+%   .metabolite_concentrations.data_ln.std   matrix of data std values for metabolite concentrations
+%   .metabolite_concentrations.combined.mean matrix of preposterior mean values for metabolite concentrations
+%   .metabolite_concentrations.combined.std  matrix of preposterior std values for metabolite concentrations
+%
+%   .enzyme_concentrations
+%    ...
+%    (structure analogous to .metabolite_concentrations)
+%
+%   .reaction_fluxes
+%   .reaction_fluxes.unit:          string, default 'mM/s'
+%   .reaction_fluxes.true:          (matrix of true values in the case of artificial data; otherwise empty)
+%   .reaction_fluxes.data.mean      matrix of flux data mean values
+%   .reaction_fluxes.data.std       matrix of flux data std values
+%
+% 
 % Note:
-% o activations and inhibitions are described by separate (positive) matrices of the shape #metabolites x #reactions
-% o convention for order of KM, KA, and KI entries (in vectors) + their relation to entries in the matrix:
-%   vector elements are ordered by their appearance in the respective (stoichiometric or regulation) matrix, in the format #reactions x # metabolites,
-%   and following matlab's convention for indices in matrix elements (first column from top to bottom, then second column etc)
-%   in python this corrresponds to matrix formatted as #metabolites x #reactions, and using the opposite convetion for indices 
-%   (first row, then second row, etc)
-% fields called "combined" contain the preposterior distribution of the respective quantities
+%   o activations and inhibitions are described by separate (positive) matrices of the shape #metabolites x #reactions
+%   o convention for order of KM, KA, and KI entries (in vectors) + their relation to entries in the matrix:
+%     vector elements are ordered by their appearance in the respective (stoichiometric or regulation) matrix, in the format #reactions x # metabolites,
+%     and following matlab's convention for indices in matrix elements (first column from top to bottom, then second column etc)
+%     in python this corrresponds to matrix formatted as #metabolites x #reactions, and using the opposite convetion for indices 
+%     (first row, then second row, etc)
+%   fields called "combined" contain the preposterior distribution of the respective quantities
   
 % for the time being, data sets with changing flux directions cannot be handled:   
 

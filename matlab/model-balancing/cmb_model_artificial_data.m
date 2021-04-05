@@ -5,11 +5,13 @@ function [network, bounds, prior, q_info, data, true, kinetic_data, state_data, 
 % Generate input data for a Convex Model Balancing problem with artifical data
 % 
 % Input variables
-%   network_file filename of SBML or SBtab network model 
+%   network_file filename of SBML or SBtab network model
+%                an SBtab file must contain tables "Reaction", "Compound" (and optionally "Position")
 %   cmb_options  struct containing options
 %   c_init       (optional) matrix; initial guess of (non-logarithmic) metabolite concentrations; 
 %                           also used for generating the artificial data 
-%   position_sbtab_file (optional) filename of SBtab file (table "Position") for network layout
+%   position_sbtab_file (optional) filename of SBtab file (table "Position") for network layout 
+%                                  (overrides an existing table "Position" in network_file)
 %   constraint_sbtab_file (optional) filename of SBtab file (tables "Position") 
 % 
 % Output variables
@@ -41,6 +43,7 @@ end
 % concentration bounds
 conc_min = [];
 conc_max = [];
+
 if length(constraint_sbtab_file),
   constraint_sbtab = sbtab_document_load_from_one(constraint_sbtab_file);
   conc_min  = sbtab_table_get_column(constraint_sbtab.tables.ConcentrationConstraint,'Min',1);

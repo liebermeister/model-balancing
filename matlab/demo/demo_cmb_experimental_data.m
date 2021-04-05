@@ -17,18 +17,21 @@ clear;
 % Settings:
 %
 % Files that define model and data: 
-%   sbtab_network       (SBtab) with tables 'Reaction', 'Compound', 'Position' (optional), 'Parameter' (optional)
-%   sbtab_kinetic_data  (SBtab) with table 'ParameterData' (optional; if sbtab_kinetic_data == [], kinetic data 
-%                                                           are read from table 'Parameter' in file sbtab_network)
-%   sbtab_state_data    (SBtab) with tables 'MetabolicFluxData', 'MetaboliteConcentrationData', 'EnzymeConcentrationData'
+%   network_file       (SBtab filename) SBtab file with tables 'Reaction', 'Compound', 
+%                                          'Position' (optional), 'Parameter' (optional)
+%   kinetic_data_file  (SBtab filename) SBtab file with table  'ParameterData' (optional; if kinetic_data_file == [],
+%                                          kinetic data are read from table 'Parameter' in file network_file)
+%   state_data_file    (SBtab filename) SBtab file with tables 'MetabolicFluxData', 
+%                                          'MetaboliteConcentrationData', 'EnzymeConcentrationData'
 %
 % Other settings:
-%   model                       (string) model name (can be freely chosen)
-%   run                         (string) estimation scenario name (can be freely chosen)
-%   file_options.match_data_by  'ModelElementId' (default) or 'KeggId'
-%   file_options.columns_mean   (cell array) column names for mean data values in metabolite, flux, and enzyme table
-%   file_options.columns_std    (cell array) column names for std deviations   in metabolite, flux, and enzyme table
-%   result_dir                  (directory name) directory for output files (default = matlab's tempdir) 
+%   model                        (string) model name (freely chosen by the user)
+%   run                          (string) estimation scenario name (freely chosen by the user)
+%   file_options.match_data_by   'ModelElementId' (default) or 'KeggId'
+%   file_options.columns_mean    (cell array of strings) column names for mean data values in metabolite, flux, and enzyme table
+%   file_options.columns_std     (cell array of strings) column names for std deviations   in metabolite, flux, and enzyme table
+%   file_options.constraint_file (SBtab filename): file with metabolite bounds (optional; set to [] to use default constraints)
+%   result_dir                   (directory name) directory for output files (default = matlab's tempdir) 
 
 
 % -------------------------------------------------------------
@@ -45,15 +48,16 @@ clear;
 % Use model and artificial data from folder ~/resources/models/branch_point_model/data/
 % -------------------------------------------------------------
 
-model                      = 'branch_point_model'; 
-run                        = 'with_kinetic_data';
-sbtab_network              = [cmb_resourcedir '/models/branch_point_model/data/artificial_network_true.tsv'];
-sbtab_kinetic_data         = [cmb_resourcedir '/models/branch_point_model/data/artificial_kinetic_data.tsv'];
-sbtab_state_data           = [cmb_resourcedir '/models/branch_point_model/data/artificial_state_data.tsv'];
-file_options.match_data_by = 'ModelElementId';
-file_options.columns_mean  = {'S1_Mean','S2_Mean','S3_Mean','S4_Mean','S5_Mean','S6_Mean'};
-file_options.columns_std   = {'S1_Std','S2_Std','S3_Std','S4_Std','S5_Std','S6_Std'};
-result_dir                 = tempdir; % replace by your desired output directory
+model                        = 'branch_point_model'; 
+run                          = 'with_kinetic_data';
+network_file                = [cmb_resourcedir '/models/branch_point_model/data/artificial_network_true.tsv'];
+kinetic_data_file           = [cmb_resourcedir '/models/branch_point_model/data/artificial_kinetic_data.tsv'];
+state_data_file             = [cmb_resourcedir '/models/branch_point_model/data/artificial_state_data.tsv'];
+file_options.constraint_file = [cmb_resourcedir '/models/branch_point_model/branch_point_model_ConcentrationConstraint.tsv'];
+file_options.match_data_by   = 'ModelElementId';
+file_options.columns_mean    = {'S1_Mean','S2_Mean','S3_Mean','S4_Mean','S5_Mean','S6_Mean'};
+file_options.columns_std     = {'S1_Std','S2_Std','S3_Std','S4_Std','S5_Std','S6_Std'};
+result_dir                   = tempdir; % replace by your desired output directory
 
 filenames = cmb_filenames(model, run, result_dir);
 
@@ -70,9 +74,10 @@ filenames = cmb_filenames(model, run, result_dir);
 
 % model                      = 'three_chain_model'; 
 % run                        = 'with_kinetic_data';
-% sbtab_network              = [cmb_resourcedir '/models/three_chain_model/data/artificial_network_true.tsv'];
-% sbtab_kinetic_data         = [cmb_resourcedir '/models/three_chain_model/data/artificial_kinetic_data.tsv'];
-% sbtab_state_data           = [cmb_resourcedir '/models/three_chain_model/data/artificial_state_data.tsv'];
+% network_file              = [cmb_resourcedir '/models/three_chain_model/data/artificial_network_true.tsv'];
+% kinetic_data_file         = [cmb_resourcedir '/models/three_chain_model/data/artificial_kinetic_data.tsv'];
+% state_data_file           = [cmb_resourcedir '/models/three_chain_model/data/artificial_state_data.tsv'];
+% file_options.constraint_file = [cmb_resourcedir '/models/branch_point_model/three_chain_model_ConcentrationConstraint.tsv'];
 % file_options.match_data_by = 'ModelElementId';
 % file_options.columns_mean  = {'S1_Mean','S2_Mean','S3_Mean','S4_Mean','S5_Mean','S6_Mean'};
 % file_options.columns_std   = {'S1_Std','S2_Std','S3_Std','S4_Std','S5_Std','S6_Std'};
@@ -97,14 +102,37 @@ filenames = cmb_filenames(model, run, result_dir);
 
 % model                      = 'double_branch_model'; 
 % run                        = 'with_kinetic_data';
-% sbtab_network              = [cmb_resourcedir '/models/double_branch_model/data/artificial_network_true.tsv'];
-% sbtab_kinetic_data         = [cmb_resourcedir '/models/double_branch_model/data/artificial_kinetic_data.tsv'];
-% sbtab_state_data           = [cmb_resourcedir '/models/double_branch_model/data/artificial_state_data.tsv'];
+% network_file              = [cmb_resourcedir '/models/double_branch_model/data/artificial_network_true.tsv'];
+% kinetic_data_file         = [cmb_resourcedir '/models/double_branch_model/data/artificial_kinetic_data.tsv'];
+% state_data_file           = [cmb_resourcedir '/models/double_branch_model/data/artificial_state_data.tsv'];
+% file_options.constraint_file = [cmb_resourcedir '/models/branch_point_model/double_branch_model_ConcentrationConstraint.tsv'];
 % file_options.match_data_by = 'ModelElementId';
 % file_options.columns_mean  = {'S1_Mean','S2_Mean','S3_Mean','S4_Mean','S5_Mean','S6_Mean'};
 % file_options.columns_std   = {'S1_Std','S2_Std','S3_Std','S4_Std','S5_Std','S6_Std'};
 % result_dir                 = tempdir; % replace by your desired output directory
 %
+% filenames   = cmb_filenames(model, run, result_dir);
+
+
+% -------------------------------------------------------------
+% E. coli CCM model (network structure from SBML file)
+% (calculation time: a few minutes)
+% -------------------------------------------------------------
+
+% % To use this example model, please uncomment the following lines
+% 
+% model                     = 'e_coli_noor_2016';  
+% run                       = 'test';
+% network_file              = [cmb_resourcedir '/models/e_coli_noor_2016/e_coli_noor_2016.tsv'];
+% kinetic_data_file         = [cmb_resourcedir '/models/e_coli_noor_2016/e_coli_ccm_kinetic_data.tsv'];
+% state_data_file           = [cmb_resourcedir '/models/e_coli_noor_2016/e_coli_ccm_state_data.tsv'];
+% %% Concentration constraint table is part of the model file:
+% file_options.constraint_file = [cmb_resourcedir '/models/e_coli_noor_2016/ecoli_ccm_ProteinComposition_Network.xml'];
+% file_options.match_data_by = 'ModelElementId';
+% file_options.columns_mean  = {'S_1_Mean'};
+% file_options.columns_std   = {};
+% result_dir                 = tempdir; % replace by your desired output directory
+% 
 % filenames   = cmb_filenames(model, run, result_dir);
 
 
@@ -145,7 +173,7 @@ end
 % Load model and data
 % -----------------------------------------------
 
-[network, q_info, data, c_init, kinetic_data, state_data] = cmb_load_and_convert_model_and_data(cmb_options, {sbtab_network, sbtab_kinetic_data, sbtab_state_data}, file_options);
+[network, q_info, data, c_init, kinetic_data, state_data, conc_min, conc_max] = cmb_load_and_convert_model_and_data(cmb_options, {network_file, kinetic_data_file, state_data_file}, file_options);
 
 % Save model and data to SBtab files (in result directory)
 
@@ -174,7 +202,7 @@ end
 % Generate data structures for bounds and priors
 % -----------------------------------------------
 
-[bounds, prior, init] = cmb_model_and_data(model, network, data, q_info, c_init, cmb_options);
+[bounds, prior, init] = cmb_model_and_data(model, network, data, q_info, c_init, cmb_options, conc_min, conc_max);
 
 
 % --------------------------------------------------------------

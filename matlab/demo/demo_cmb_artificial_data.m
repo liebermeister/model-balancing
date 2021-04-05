@@ -15,9 +15,10 @@
 % Settings: 
 %
 % Files that define a model: 
-%   network_file    (SBML format(.xml) or SBtab format (.tsv))
-%   position_file   (SBtab): graphics coordinates (optional; set to [] to use default positions)
-%   constraint_file (SBtab): metabolite bounds    (optional; set to [] to use default constraints)
+%   network_file    (filename)        network file in SBML format(.xml) or SBtab format (.tsv)
+%   constraint_file (SBtab filename): metabolite bounds    (optional; set to [] to use default constraints)
+%   position_file   (SBtab filename): coordinates for network graphics (optional, othewise set to []); needed to 
+%                                     defined layout for SBML network files; overrides a Position table in SBtab network file
 %
 % Other settings:
 %   model           (string) model name (can be freely chosen)
@@ -42,8 +43,8 @@ model           = 'branch_point_model';
 run             = 'test';
 network_file    = [cmb_resourcedir '/models/branch_point_model/branch_point_model.xml'];
 %network_file   = [cmb_resourcedir '/models/branch_point_model/branch_point_model.tsv'];
-position_file   = [cmb_resourcedir '/models/branch_point_model/branch_point_model_Position.tsv'];
 constraint_file = [cmb_resourcedir '/models/branch_point_model/branch_point_model_ConcentrationConstraint.tsv'];
+position_file   = [cmb_resourcedir '/models/branch_point_model/branch_point_model_Position.tsv'];
 c_init          = [1,1,0.1,0.5]'; 
 ns              = 6;
 result_dir      = tempdir;
@@ -61,8 +62,8 @@ result_dir      = tempdir;
 % run             = 'test';
 % network_file   = [cmb_resourcedir '/models/three_chain_model/three_chain_model.xml'];
 % %network_file    = [cmb_resourcedir '/models/three_chain_model/three_chain_model.tsv'];
-% position_file   = [cmb_resourcedir '/models/three_chain_model/three_chain_model_Position.tsv'];
 % constraint_file = [cmb_resourcedir '/models/three_chain_model/three_chain_model_ConcentrationConstraint.tsv'];
+% position_file   = [cmb_resourcedir '/models/three_chain_model/three_chain_model_Position.tsv'];
 % c_init          = [10,1,1,1,1,1,0.01]'; 
 % ns              = 6;
 % result_dir      = tempdir;
@@ -83,8 +84,8 @@ result_dir      = tempdir;
 %  run          = 'test';
 %  network_file   = [cmb_resourcedir '/models/double_branch_model/double_branch_model.xml'];
 %  %network_file    = [cmb_resourcedir '/models/double_branch_model/double_branch_model.tsv'];
-%  position_file   = [cmb_resourcedir '/models/double_branch_model/double_branch_model_Position.tsv'];
 %  constraint_file = [cmb_resourcedir '/models/double_branch_model/double_branch_model_ConcentrationConstraint.tsv'];
+%  position_file   = [cmb_resourcedir '/models/double_branch_model/double_branch_model_Position.tsv'];
 %  c_init       = [10,1,1,1,1,1,0.01]'; 
 %  ns           = 6;
 %  result_dir   = tempdir;
