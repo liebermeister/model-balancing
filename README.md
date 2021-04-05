@@ -1,7 +1,7 @@
 Model balancing
 ===============
 
-[Model balancing](https://www.metabolic-economics.de/model-balancing/index.html) is a computational method to determine plausible kinetic constants and metabolic states for a given kinetic metabolic models. To do so, it integrates flux, metabolite, protein, and kinetic constant data, using prior distributions for all of these variables and computes the joint posterior mode. Model balancing can be run in matlab or python. Data tables can be provided in [SBtab](https://www.sbtab.net) format, models can be provided in  [SBML](https://sbml.org) or  [SBtab](https://www.sbtab.net) format.
+[Model balancing](https://www.metabolic-economics.de/model-balancing/index.html) is a computational method to determine plausible kinetic constants and metabolic states for a given kinetic metabolic models. To do so, it integrates flux, metabolite, protein, and kinetic constant data, using prior distributions for all of these variables and computes the joint posterior mode. Model balancing can be run in matlab or python. Data tables can be provided in [SBtab](https://www.sbtab.net) format, models can be provided in  [SBML](sbml.org) or  [SBtab](https://www.sbtab.net) format.
 
 ## Dependencies
 ### Matlab
