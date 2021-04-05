@@ -3,9 +3,11 @@
 % ======================
 % 
 % Matlab files for convex model balancing
-% Main function: convex_model_balancing.m
 %
-% For an example, see 'demo_cmb_artificial_data.m'
+% Main function: convex_model_balancing.m
+% For algorithm options, see 'help cmb_default_options'
+% 
+% For an example, see 'demo_cmb_artificial_data.m' and 'demo_cmb_experimental_data.m' 
 % 
 % ------------
 % Input data
