@@ -64,9 +64,9 @@ if length(state_data_files),
   sdf.enzyme.match_data_by              = match_data_by;
   sdf.flux.match_data_by                = match_data_by;
 
-  state_data.metabolite_data = load_network_state_data(network, sdf.metabolite.file, sdf.metabolite.type, sdf.metabolite);
-  state_data.enzyme_data     = load_network_state_data(network, sdf.enzyme.file,     sdf.enzyme.type,     sdf.enzyme);
-  state_data.flux_data       = load_network_state_data(network, sdf.flux.file,       sdf.flux.type,       sdf.flux);
+  state_data.metabolite_data = load_state_data_for_network(network, sdf.metabolite.file, sdf.metabolite.type, sdf.metabolite);
+  state_data.enzyme_data     = load_state_data_for_network(network, sdf.enzyme.file,     sdf.enzyme.type,     sdf.enzyme);
+  state_data.flux_data       = load_state_data_for_network(network, sdf.flux.file,       sdf.flux.type,       sdf.flux);
 end
 
 % concentration bounds

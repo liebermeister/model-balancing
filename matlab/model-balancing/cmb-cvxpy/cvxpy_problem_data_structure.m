@@ -1,8 +1,8 @@
-function problem = cvxpy_problem_data_structure(network, q_info, prior, data, true)
+function problem = cvxpy_problem_data_structure(network, q_info, prior, data, true_model)
 
-% problem = cvxpy_problem_data_structure(network, q_info, prior, data, true)
+% problem = cvxpy_problem_data_structure(network, q_info, prior, data, true_model)
 %
-% Convert a model balancing problem (network,q_info,true,prior,data) into a single data structure
+% Convert a model balancing problem (network,q_info,true_model,prior,data) into a single data structure
 % to be used by Elad's model balancing tool in python (based on CVXpy)
   
 % Note:
@@ -16,7 +16,14 @@ function problem = cvxpy_problem_data_structure(network, q_info, prior, data, tr
   
 % for the time being, data sets with changing flux directions cannot be handled:   
 
-eval(default('true','[]'));  
+eval(default('true_model','[]'));  
+
+if isempty(true_model),
+  true_model.X = [];
+  true_model.E = [];
+  true_model.V = [];
+  true_model.qall = nan * ones(q_info.qall.number,1);
+end
 
 M_q_to_qall = q_info.M_q_to_qall;
 
@@ -52,19 +59,14 @@ else
   network.kinetics.Kcatf(ind_neg) = network.kinetics.Kcatr(ind_neg); 
   network.kinetics.Kcatr(ind_neg) = dum; 
 
-  % changes in true
-  if isempty(true),
-    true.X = [];
-    true.E = [];
-    true.V = [];
-    true.qall = nan * ones(q_info.qall.number,1);
-  else
-    true.V(ind_neg,:)               = - true.V(ind_neg,:);
-    true.A_forward(ind_neg,:)       = - true.A_forward(ind_neg,:);
-    true.kinetics.Keq(ind_neg)      = 1 ./ true.kinetics.Keq(ind_neg);
-    dum                             = true.kinetics.Kcatf(ind_neg);
-    true.kinetics.Kcatf(ind_neg)    = true.kinetics.Kcatr(ind_neg); 
-    true.kinetics.Kcatr(ind_neg)    = dum; 
+  % changes in true_model
+  if ~isempty(true_model.V),
+    true_model.V(ind_neg,:)               = - true_model.V(ind_neg,:);
+    true_model.A_forward(ind_neg,:)       = - true_model.A_forward(ind_neg,:);
+    true_model.kinetics.Keq(ind_neg)      = 1 ./ true_model.kinetics.Keq(ind_neg);
+    dum                                   = true_model.kinetics.Kcatf(ind_neg);
+    true_model.kinetics.Kcatf(ind_neg)    = true_model.kinetics.Kcatr(ind_neg); 
+    true_model.kinetics.Kcatr(ind_neg)    = dum; 
   end
   
   % changes in data
@@ -83,7 +85,7 @@ problem.network.inhibition_matrix     = full(-[network.regulation_matrix .* [net
 
 index                             = q_info.qall.index;
 all_kinetic_constants.names       = q_info.qall.names;
-all_kinetic_constants.true        = true.qall;
+all_kinetic_constants.true        = true_model.qall;
 all_kinetic_constants.prior.mean  = M_q_to_qall * prior.q.mean;
 all_kinetic_constants.prior.cov   = M_q_to_qall * inv(prior.q.cov_inv) * M_q_to_qall';
 all_kinetic_constants.prior.std   = sqrt(diag(all_kinetic_constants.prior.cov));
@@ -157,7 +159,7 @@ problem.kinetic_constants.KI    = KI;
 [nm,nc] = size(data.X.mean);
 
 met.unit     = 'mM'; 
-met.true     = exp(true.X);
+met.true     = exp(true_model.X);
 met.prior_ln = prior.X; 
 met.data_ln  = data.X;
 
@@ -174,7 +176,7 @@ problem.metabolite_concentrations = met;
 [nr,nc] = size(data.lnE.mean);
 
 enz.unit         = 'mM';
-enz.true         = true.E;
+enz.true         = true_model.E;
 enz.prior_ln     = prior.lnE;
 
 % convert (non-logarithmic) enzyme arithmetic mean + std (for prior and data) to logarithmic mean + std
@@ -198,5 +200,5 @@ problem.enzyme_concentrations = enz;
 % --- Reaction fluxes
 
 problem.reaction_fluxes.unit      = 'mM/s';
-problem.reaction_fluxes.true      = true.V;
+problem.reaction_fluxes.true      = true_model.V;
 problem.reaction_fluxes.data      = data.V;
