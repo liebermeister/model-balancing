@@ -46,7 +46,7 @@ clear;
 % -------------------------------------------------------------
 
 model                      = 'branch_point_model'; 
-run                        = 'with_kinetic_data_balanced';
+run                        = 'with_kinetic_data';
 sbtab_network              = [cmb_resourcedir '/models/branch_point_model/data/artificial_network_true.tsv'];
 sbtab_kinetic_data         = [cmb_resourcedir '/models/branch_point_model/data/artificial_kinetic_data.tsv'];
 sbtab_state_data           = [cmb_resourcedir '/models/branch_point_model/data/artificial_state_data.tsv'];
@@ -69,7 +69,7 @@ filenames = cmb_filenames(model, run, result_dir);
 % -------------------------------------------------------------
 
 % model                      = 'three_chain_model'; 
-% run                        = 'with_kinetic_data_balanced';
+% run                        = 'with_kinetic_data';
 % sbtab_network              = [cmb_resourcedir '/models/three_chain_model/data/artificial_network_true.tsv'];
 % sbtab_kinetic_data         = [cmb_resourcedir '/models/three_chain_model/data/artificial_kinetic_data.tsv'];
 % sbtab_state_data           = [cmb_resourcedir '/models/three_chain_model/data/artificial_state_data.tsv'];
@@ -96,7 +96,7 @@ filenames = cmb_filenames(model, run, result_dir);
 % -------------------------------------------------------------
 
 % model                      = 'double_branch_model'; 
-% run                        = 'with_kinetic_data_balanced';
+% run                        = 'with_kinetic_data';
 % sbtab_network              = [cmb_resourcedir '/models/double_branch_model/data/artificial_network_true.tsv'];
 % sbtab_kinetic_data         = [cmb_resourcedir '/models/double_branch_model/data/artificial_kinetic_data.tsv'];
 % sbtab_state_data           = [cmb_resourcedir '/models/double_branch_model/data/artificial_state_data.tsv'];
@@ -129,29 +129,14 @@ cmb_options.save_graphics            = 0;  % set to 1 to save graphics files
 
 switch run, 
   
-  case 'with_kinetic_data_original',
-    cmb_options.use_kinetic_data       = 'all';
-    cmb_options.kinetic_data_set = 'original';
+  case 'with_kinetic_data',
+    cmb_options.use_kinetic_data = 'all';
   
-  case 'with_Keq_data_original',
-    cmb_options.use_kinetic_data       = 'only_Keq_data';
-    cmb_options.kinetic_data_set = 'original';
+  case 'with_Keq_data',
+    cmb_options.use_kinetic_data = 'only_Keq_data';
   
-  case 'no_kinetic_data_original',
-    cmb_options.use_kinetic_data       = 'none';
-    cmb_options.kinetic_data_set = 'original';
-  
-  case 'with_kinetic_data_balanced',    
-    cmb_options.use_kinetic_data       = 'all';
-    cmb_options.kinetic_data_set = 'balanced';
-  
-  case 'with_Keq_data_balanced',
-    cmb_options.use_kinetic_data       = 'only_Keq_data';
-    cmb_options.kinetic_data_set = 'balanced';
-  
-  case 'no_kinetic_data_balanced',
-    cmb_options.use_kinetic_data       = 'none';
-    cmb_options.kinetic_data_set = 'balanced';
+  case 'no_kinetic_data',
+    cmb_options.use_kinetic_data = 'none';
 
 end
 

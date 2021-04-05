@@ -98,7 +98,7 @@ result_dir      = tempdir;
 % To use this example model, please uncomment the following lines
 
 % model         = 'e_coli_artificial';  
-% run           = 'no_noise_with_noisefree_kinetic_data';
+% run           = 'test';
 % result_dir    = tempdir;
 % network_file  = [cmb_resourcedir '/models/e_coli_noor_2016/ecoli_ccm_ProteinComposition_Network.xml'];
 % position_file = [];
