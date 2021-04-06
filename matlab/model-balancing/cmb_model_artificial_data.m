@@ -8,6 +8,14 @@ function [network, bounds, prior, q_info, data, true, kinetic_data, state_data, 
 %   network_file filename of SBML or SBtab network model
 %                an SBtab file must contain tables "Reaction", "Compound" (and optionally "Position")
 %   cmb_options  struct containing options
+%   .use_artificial_noise    = 0;                   % flag: generate artificial state data with noise
+%   .use_kinetic_data_noise  = 1;                   % flag: generate artificial kinetic data with noise
+%   .prior_variant           = 'original_prior';                original prior
+%                              'broad_prior'                    broad prior around original prior means
+%                              'broad_prior_around_zero'        broad prior around 0 values
+%                              'prior_around_true_values'       prior around true values (only for artificial data)
+%                              'broad_prior_around_true_values' broad prior around true values (only for artificial data)
+
 %   c_init       (optional) matrix; initial guess of (non-logarithmic) metabolite concentrations; 
 %                           also used for generating the artificial data 
 %   position_sbtab_file (optional) filename of SBtab file (table "Position") for network layout 

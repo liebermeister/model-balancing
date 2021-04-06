@@ -161,7 +161,7 @@ switch run,
     cmb_options.use_kinetic_data = 'all';
   
   case 'with_Keq_data',
-    cmb_options.use_kinetic_data = 'only_Keq_data';
+    cmb_options.use_kinetic_data = 'only_Keq';
   
   case 'no_kinetic_data',
     cmb_options.use_kinetic_data = 'none';

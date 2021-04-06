@@ -39,7 +39,7 @@ kapp_color = [.7 0 .7];
 switch cmb_options.use_kinetic_data,
   case 'all', 
     keq_color = fit_color; kcat_color = fit_color; km_color = fit_color;
-  case 'only_Keq_data',
+  case 'only_Keq',
     keq_color = fit_color; kcat_color = pred_color; km_color = pred_color;
   case 'none',
     keq_color = pred_color; kcat_color = pred_color; km_color = pred_color;
@@ -192,7 +192,7 @@ if length(true),
     case 'all',
       kin_color = fit_color;
       keq_color = fit_color;
-    case 'only_Keq_data'
+    case 'only_Keq'
       kin_color = pred_color;
       keq_color = fit_color;
     case 'none'

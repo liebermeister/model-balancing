@@ -33,6 +33,11 @@ function [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max,
 %
 % For generating the input data, see 'cmb_model_and_data' and 'cmb_model_artificial_data'
 
+display(sprintf('\n-------------------'));
+display(sprintf('| Model balancing |'));
+display(sprintf('-------------------\n'));
+
+  
 filenames_default = struct('graphics_dir',[],'report_txt',[],'results_mat',[]);
 filenames = join_struct(filenames_default,filenames);
   

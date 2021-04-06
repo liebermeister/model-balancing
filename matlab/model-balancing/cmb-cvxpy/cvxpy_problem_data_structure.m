@@ -5,8 +5,9 @@ function problem = cvxpy_problem_data_structure(network, q_info, prior, data, tr
 % Convert a model balancing problem (data structures: network, q_info, true_model, prior, data) 
 % into a single data structure, exported to json and then used by python model balancing tool (based on CVXpy)
 %
-% Structure, default values, and matrix sizes for a network with nr reactions and nm metabolites:
+% Structure, default values, and matrix sizes for a network with nr reactions and nm metabolites (and ns metabolic states)
 %   .standard_concentration: '1 mM'
+%   .state_names:            {ns x 1 cell}
 %
 %   .network
 %   .network.metabolite_names:      {nm x 1 cell}
@@ -30,18 +31,19 @@ function problem = cvxpy_problem_data_structure(network, q_info, prior, data, tr
 %       .prior_ln.cov       prior covariance matrix of log values
 %       .data_ln.mean       data mean vector of log values
 %       .data_ln.cov        data covariance matrix of log values
-%       .combined_ln.mean   preposterior mean vector of log values
-%       .combined_ln.cov    preposterior covariance matrix of log values
+%       .combined.mean_ln   preposterior mean vector of log values
+%       .combined.cov_ln    preposterior covariance matrix of log values
+%       .geom_mean          preposterior geometric mean vector
 %
 %   .metabolite_concentrations
-%   .metabolite_concentrations.unit:         string, default 'mM'
-%   .metabolite_concentrations.true:         (matrix of true values in the case of artificial data; otherwise empty)
-%   .metabolite_concentrations.prior_ln.mean matrix of prior mean values for metabolite concentrations
-%   .metabolite_concentrations.prior_ln.std  matrix of prior std values for metabolite concentrations
-%   .metabolite_concentrations.data_ln.mean  matrix of data mean values for metabolite concentrations
-%   .metabolite_concentrations.data_ln.std   matrix of data std values for metabolite concentrations
-%   .metabolite_concentrations.combined.mean matrix of preposterior mean values for metabolite concentrations
-%   .metabolite_concentrations.combined.std  matrix of preposterior std values for metabolite concentrations
+%   .metabolite_concentrations.unit:              string, default 'mM'
+%   .metabolite_concentrations.true:              matrix of true values (only in models with artificial data; otherwise [])
+%   .metabolite_concentrations.prior_ln.mean      matrix of prior mean values for metabolite log-concentrations
+%   .metabolite_concentrations.prior_ln.std       matrix of prior std dev for metabolite log-concentrations
+%   .metabolite_concentrations.data_ln.mean       matrix of data  mean values for metabolite log-concentrations
+%   .metabolite_concentrations.data_ln.std        matrix of data  std dev for metabolite log-concentrations
+%   .metabolite_concentrations.combined.geom_mean matrix of preposterior geom mean for metabolite concentrations
+%   .metabolite_concentrations.combined.geom_mean matrix of preposterior geom std  for metabolite concentrations
 %
 %   .enzyme_concentrations
 %    ...
@@ -126,6 +128,7 @@ end
 end
 
 problem.standard_concentration        = '1 mM';
+problem.state_names                   = data.samples;
 problem.network.metabolite_names      = network.metabolites;
 problem.network.reaction_names        = network.actions;
 problem.network.stoichiometric_matrix = full(network.N);

@@ -6,7 +6,7 @@ r = network.kinetics;
 
 switch cmb_options.parameterisation,
   case 'Keq_KV_KM_KA_KI',
-    r.Keq = exp(q_info.M_qKeqind_to_qallKeq * q(q_info.q.index.Keq) );
+    r.Keq = exp(q_info.M_qKeqind_to_qallKeq * q(q_info.q.index.Keq));
 end
 
 r.KV         = exp(q(q_info.q.index.KV));

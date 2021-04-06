@@ -57,7 +57,7 @@ switch cmb_options.use_kinetic_data,
     preposterior.q.mean    = q_mean;
     preposterior.q.cov_inv = q_cov_inv;
   
-  case 'only_Keq_data',
+  case 'only_Keq',
     display('Using only equilibrium constant data');
 
     qall_mean           = data.qall.mean(q_info.qall.index.Keq);
@@ -81,6 +81,6 @@ switch cmb_options.use_kinetic_data,
     preposterior.q = prior.q;
     
   otherwise,
-    error('');
+    error('incorrect option');
 
 end

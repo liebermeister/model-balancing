@@ -145,7 +145,7 @@ true.kinetics = network.kinetics;
 % Data matrices
 
 for it = 1:ns,
-  data.samples{it,1} = ['S' num2str(it)];
+  data.samples{it,1} = ['state_' num2str(it)];
 end
 
 data.V.mean = true.V;

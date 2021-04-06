@@ -10,14 +10,14 @@ function cmb_options = cmb_default_options()
 %   .run                     = 'my_run';            % name of estimation scenario (freely chosen by the user)
 %   .kinetic_data_set        = 'original';          % name of kinetic data set    (freely chosen by the user)
 %   .ecm_score               = 'emc4cm';            % ECM score function, see 'help ecm_scores'
-%   .initial_values_variant  = 'average_sample';    % strategy for choosing initial values (see 'help cmb_estimation')
+%   .initial_values_variant  = 'average_sample';    % strategy for choosing initial values (see below and 'help cmb_estimation')
 %                                                     possible choices: 'average_sample', 'preposterior_mode', 
 %                                                     'random', 'true_values', 'given_values'
 %   .enzyme_score_type       = 'interpolated';      % 'quadratic' (alpha=1), 'monotonic' (alpha =0), 'interpolated'
 %                                                     (only "monotonic" guarantees that MB is convex!)
 %   .enzyme_score_alpha      = 0.5;                 % interpolation parameter for enzyme_score_type='interpolated'
 %   .parameterisation        = 'Keq_KV_KM_KA_KI';   % options: 'Keq_KV_KM_KA_KI', 'KV_KM_KA_KI';
-%   .use_kinetic_data        = 'all';               % 'all', 'only_Keq_data', 'none'
+%   .use_kinetic_data        = 'all';               % 'all', 'only_Keq', 'none'
 %   .score                   = 'neg_log_posterior'; % options: 'neg_log_posterior', 'log_neg_log_posterior';
 %   .use_gradient            = 0;                   % flag: set opt.SpecifyObjectiveGradient = true in fmincon optimisation
 %   .use_safe_optimisation   = 1;                   % flag: run several rounds of optimisation (until convergence)
@@ -38,11 +38,9 @@ function cmb_options = cmb_default_options()
 %
 %   .use_artificial_noise    = 0;                   % flag: generate artificial state data with noise
 %   .use_kinetic_data_noise  = 1;                   % flag: generate artificial kinetic data with noise
-%   .prior_variant           = 'original_prior';                original prior
-%                              'broad_prior'                    broad prior around original prior means
-%                              'broad_prior_around_zero'        broad prior around 0 values
-%                              'prior_around_true_values'       prior around true values (only for artificial data)
-%                              'broad_prior_around_true_values' broad prior around true values (only for artificial data)
+%   .prior_variant           = 'original_prior';    % prior variants (see cmb_model_artificial_data)
+%                                                   % also 'broad_prior', 'broad_prior_around_zero', 
+%                                                   % 'prior_around_true_values', 'broad_prior_around_true_values'
 %
 % Bounds and distributions for model variables
 %   (Options to override the default values set in the prior table file)
@@ -92,7 +90,13 @@ function cmb_options = cmb_default_options()
 %   .metabolic_artificial_c_geom_std   default 1.5;
 %   .metabolic_artificial_e_geom_std   default 1.5;
 % 
-
+% Possible initial value variants: 
+%  'preposterior_mode' (default: use preposterior mode for kinetic constants and metabolite levels)
+%  'random'            (initialise parameter vector with random values)
+%  'true_values'       (true values: only with artificial data)
+%  'given_values'      (use existing cmb_options.init)
+%  'average_sample'    (first run a model balancing with concentrations and fluxes averaged over all samples; 
+%                       and using initial value option "preposterior_mode"; use result to initialise values)
 
 % ---------------------------------------------------------
 % Algorithm settings
