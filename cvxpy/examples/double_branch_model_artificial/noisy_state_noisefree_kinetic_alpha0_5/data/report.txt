@@ -1,0 +1,15 @@
+Metabolic states:    4
+Metabolites:         7
+Reactions:           5
+KM values:           11
+KA values:           0
+KI values:           0
+Data (kinetic):      31
+Data (metabolite):   28
+Data (enzyme):       20
+Fitted (metabolite): 28
+Fitted (enzyme):     20
+Fitted (kinetic):    21
+Fitted (TOTAL):      69
+Relaxation alpha:    0.500000
+Calculation time:    11.3 s
