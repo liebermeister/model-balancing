@@ -1,8 +1,0 @@
-cvxpy~=1.1
-pint~=0.16
-numpy~=1.20
-scipy~=1.6
-pandas~=1.2
-Mosek~=9.2
-jupyterlab
-sbtab~=1.0.0

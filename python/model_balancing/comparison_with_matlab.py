@@ -1,0 +1,199 @@
+
+import json
+import numpy as np
+from model_balancing import ModelBalancing, Q_
+import cvxpy as cp
+import pandas as pd
+from sbtab import SBtab
+
+import importlib.resources
+
+importlib.resources.files(
+    "cvxpy.examples.json.three_chain_model_artificial_no_noise_with_noisefree_kinetic_data.json")
+
+with open("../cvxpy/examples/json/three_chain_model_artificial_no_noise_with_noisefree_kinetic_data.json", "rt") as fp:
+    data = json.load(fp)
+
+keq_standard_concentration = Q_(data["standard_concentration"])
+
+args = {}
+args["S"] = np.array(data["network"]["stoichiometric_matrix"])
+args["A_act"] = np.array(data["network"]["activation_matrix"])
+args["A_inh"] = np.array(data["network"]["inhibition_matrix"])
+args["fluxes"] = Q_(data["reaction_fluxes"]["data"]["mean"], data["reaction_fluxes"]["unit"])
+
+args["Keq_gmean"] = Q_(data["kinetic_constants"]["Keq"]["combined"]["geom_mean"], "")
+
+# "fix" the standard concentration (to a convention where it is 1 M which is used internally)
+args["Keq_gmean"] *= np.power(keq_standard_concentration.m_as("M"), args["S"].sum(axis=0))
+
+args["Keq_ln_cov"] = np.array(data["kinetic_constants"]["Keq"]["combined"]["cov_ln"])
+
+args["kcatf_gmean"] = Q_(data["kinetic_constants"]["Kcatf"]["combined"]["geom_mean"], data["kinetic_constants"]["Kcatf"]["unit"])
+args["kcatf_ln_cov"] = np.array(data["kinetic_constants"]["Kcatf"]["combined"]["cov_ln"])
+
+args["kcatr_gmean"] = Q_(data["kinetic_constants"]["Kcatr"]["combined"]["geom_mean"], data["kinetic_constants"]["Kcatr"]["unit"])
+args["kcatr_ln_cov"] = np.array(data["kinetic_constants"]["Kcatr"]["combined"]["cov_ln"])
+
+args["Km_gmean"] = Q_(data["kinetic_constants"]["KM"]["combined"]["geom_mean"], "mM") #data["kinetic_constants"]["KM"]["unit"])
+args["Km_ln_cov"] = np.array(data["kinetic_constants"]["KM"]["combined"]["cov_ln"])
+
+args["Ka_gmean"] = Q_(data["kinetic_constants"]["KA"]["combined"]["geom_mean"], "mM") #data["kinetic_constants"]["KA"]["unit"])
+args["Ka_ln_cov"] = np.array(data["kinetic_constants"]["KA"]["combined"]["cov_ln"])
+
+args["Ki_gmean"] = Q_(data["kinetic_constants"]["KI"]["combined"]["geom_mean"], "mM") #data["kinetic_constants"]["KI"]["unit"])
+args["Ki_ln_cov"] = np.array(data["kinetic_constants"]["KI"]["combined"]["cov_ln"])
+
+args["conc_met_gmean"] = Q_(data["metabolite_concentrations"]["combined"]["geom_mean"], data["metabolite_concentrations"]["unit"])
+args["conc_met_gstd"] = np.array(data["metabolite_concentrations"]["combined"]["geom_std"])
+
+args["conc_enz_gmean"] = Q_(data["enzyme_concentrations"]["combined"]["geom_mean"], data["metabolite_concentrations"]["unit"])
+args["conc_enz_gstd"] = np.array(data["enzyme_concentrations"]["combined"]["geom_std"])
+
+args["rate_law"] = "CM"
+
+metabolite_names = data["network"]["metabolite_names"]
+reaction_names = data["network"]["reaction_names"]
+
+
+mb = ModelBalancing(**args)
+
+assert mb.is_gmean_feasible()
+for a in [0.0, 0.5, 1.0]:
+    mb.alpha = a
+    mb.solve()
+    print(f"α = {a:.1f} - optimized total squared Z-scores = {mb.objective_value:.3f}")
+
+
+
+condition_names = ["S1", "S2", "S3", "S4"]
+
+
+sbtabdoc = SBtab.SBtabDocument(name="balanced_states")
+
+flux_df = pd.DataFrame(
+    mb.fluxes.m_as("mM/s"),
+    columns=condition_names
+)
+flux_df.insert(0, "!QuantityType", "rate of reaction")
+flux_df.insert(1, "!Reaction", reaction_names)
+flux_sbtab = SBtab.SBtabTable.from_data_frame(
+    flux_df.astype(str),
+    table_id="MetabolicFlux",
+    table_name="MetabolicFlux",
+    table_type="QuantityMatrix",
+    unit="mM/s",
+)
+sbtabdoc.add_sbtab(flux_sbtab)
+
+c = Q_(np.exp(mb.ln_conc_met), "M")
+conc_met_df = pd.DataFrame(
+    c.m_as("mM"),
+    columns=condition_names
+)
+conc_met_df.insert(0, "!QuantityType", "concentration")
+conc_met_df.insert(1, "!Compound", ["X1", "S2", "X3", "X4"])
+conc_met_sbtab = SBtab.SBtabTable.from_data_frame(
+    conc_met_df.astype(str),
+    table_id="MetaboliteConcentrations",
+    table_name="Metabolite concentrations",
+    table_type="QuantityMatrix",
+    unit="mM",
+)
+sbtabdoc.add_sbtab(conc_met_sbtab)
+
+e = Q_(np.exp(mb.ln_conc_enz), "M")
+conc_enz_df = pd.DataFrame(
+    e.m_as("mM"),
+    columns=condition_names
+)
+conc_enz_df.insert(0, "!QuantityType", "concentration of enzyme")
+conc_enz_df.insert(1, "!Reaction", reaction_names)
+conc_enz_sbtab = SBtab.SBtabTable.from_data_frame(
+    conc_enz_df.astype(str),
+    table_id="EnzymeConcentrations",
+    table_name="Enzyme concentrations",
+    table_type="QuantityMatrix",
+    unit="mM",
+)
+sbtabdoc.add_sbtab(conc_enz_sbtab)
+
+gibbs_energy_df = pd.DataFrame(
+    -mb.driving_forces,
+    columns=condition_names
+)
+gibbs_energy_df.insert(0, "!QuantityType", "Gibbs energy of reaction")
+gibbs_energy_df.insert(1, "!Reaction", reaction_names)
+gibbs_energy_sbtab = SBtab.SBtabTable.from_data_frame(
+    gibbs_energy_df.astype(str),
+    table_id="ReactionGibbsFreeEnergy",
+    table_name="Gibbs free energies of reaction",
+    table_type="QuantityMatrix",
+    unit="kJ/mol",
+)
+sbtabdoc.add_sbtab(gibbs_energy_sbtab)
+
+kcatf = Q_(np.exp(mb.ln_kcatf), "1/s")
+kcatr = Q_(np.exp(mb.ln_kcatr), "1/s")
+kcat_df = pd.DataFrame(
+    np.vstack([kcatf.m_as("1/s"), kcatr.m_as("1/s")]).T,
+    columns=["kcatf", "kcatr"]
+)
+kcat_df.insert(0, "!QuantityType", "catalytic rate constant")
+kcat_df.insert(1, "!Reaction", reaction_names)
+kcat_sbtab = SBtab.SBtabTable.from_data_frame(
+    kcat_df.astype(str),
+    table_id="CatalyticRateConstant",
+    table_name="Catalytic rate constant",
+    table_type="QuantityMatrix",
+    unit="1/s",
+)
+sbtabdoc.add_sbtab(kcat_sbtab)
+
+Km = Q_(np.exp(mb._create_dense_matrix(mb.S, mb.ln_Km)), "M")
+Km_df = pd.DataFrame(
+    Km.m_as("mM").T,
+    columns=metabolite_names
+)
+Km_df.insert(0, "!QuantityType", "Michaelis constant")
+Km_df.insert(1, "!Reaction", reaction_names)
+Km_sbtab = SBtab.SBtabTable.from_data_frame(
+    Km_df.astype(str),
+    table_id="MichaelisConstant",
+    table_name="Michaelis-Menten constant",
+    table_type="QuantityMatrix",
+    unit="mM",
+)
+sbtabdoc.add_sbtab(Km_sbtab)
+
+Ka = Q_(np.exp(mb._create_dense_matrix(mb.S, mb.ln_Ka)), "M")
+Ka_df = pd.DataFrame(
+    Ka.m_as("mM").T,
+    columns=metabolite_names
+)
+Ka_df.insert(0, "!QuantityType", "activation constant")
+Ka_df.insert(1, "!Reaction", reaction_names)
+Ka_sbtab = SBtab.SBtabTable.from_data_frame(
+    Ka_df.astype(str),
+    table_id="ActivationConstant",
+    table_name="Activation constant",
+    table_type="QuantityMatrix",
+    unit="mM",
+)
+sbtabdoc.add_sbtab(Ka_sbtab)
+
+Ki = Q_(np.exp(mb._create_dense_matrix(mb.S, mb.ln_Ki)), "M")
+Ki_df = pd.DataFrame(
+    Ki.m_as("mM").T,
+    columns=metabolite_names
+)
+Ki_df.insert(0, "!QuantityType", "inhibition constant")
+Ki_df.insert(1, "!Reaction", reaction_names)
+Ki_sbtab = SBtab.SBtabTable.from_data_frame(
+    Ki_df.astype(str),
+    table_id="InhibitionConstant",
+    table_name="Inhibition constant",
+    table_type="QuantityMatrix",
+    unit="mM",
+)
+sbtabdoc.add_sbtab(Ki_sbtab)

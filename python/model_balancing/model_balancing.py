@@ -3,7 +3,7 @@ import os
 import warnings
 from scipy.optimize import minimize
 
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Optional
 import numpy as np
 import scipy.special
 import pint
@@ -49,49 +49,58 @@ class ModelBalancing(object):
         Ki_ln_cov: np.array,
         rate_law: str = "CM",
         solver: str = "SLSQP",
+        alpha: float = 1.0,
     ) -> None:
-        assert fluxes.shape[0] == S.shape[1]
-        assert A_act.shape == S.shape
-        assert A_inh.shape == S.shape
-        assert Keq_ln_cov.shape == (S.shape[1], S.shape[1])
-        assert conc_enz_gstd.shape == (S.shape[1], fluxes.shape[1])
-        assert conc_met_gstd.shape == (S.shape[0], fluxes.shape[1])
-
         self.S = S
         self.fluxes = fluxes
         self.A_act = A_act
         self.A_inh = A_inh
 
-        self.Nc, self.Nr = self.S.shape
+        self.Nc, self.Nr = S.shape
+        assert self.fluxes.shape[0] == self.Nr
         self.Ncond = self.fluxes.shape[1]
+        assert self.A_act.shape == (self.Nc, self.Nr)
+        assert self.A_inh.shape == (self.Nc, self.Nr)
 
-        self.conc_enz_ln_gmean = np.log(conc_enz_gmean.m_as("M"))
-        self.conc_enz_inv_ln_cov = np.diag(1.0 / np.log(conc_enz_gstd.T.flatten()))
-        self.conc_met_ln_gmean = np.log(conc_met_gmean.m_as("M"))
-        self.conc_met_inv_ln_cov = np.diag(1.0 / np.log(conc_met_gstd.T.flatten()))
+        self.ln_Keq_gmean = np.log(Keq_gmean.m_as(""))
+        self.ln_Keq_precision = np.linalg.pinv(Keq_ln_cov)
+        self.ln_kcatf_gmean = np.log(kcatf_gmean.m_as("1/s"))
+        self.ln_kcatf_precision = np.linalg.pinv(kcatf_ln_cov)
+        self.ln_kcatr_gmean = np.log(kcatr_gmean.m_as("1/s"))
+        self.ln_kcatr_precision = np.linalg.pinv(kcatr_ln_cov)
 
-        self.Keq_ln_gmean = np.log(Keq_gmean.m_as(""))
-        self.Keq_inv_ln_cov = np.linalg.pinv(Keq_ln_cov)
-        self.kcatf_ln_gmean = np.log(kcatf_gmean.m_as("1/s"))
-        self.kcatf_inv_ln_cov = np.linalg.pinv(kcatf_ln_cov)
-        self.kcatr_ln_gmean = np.log(kcatr_gmean.m_as("1/s"))
-        self.kcatr_inv_ln_cov = np.linalg.pinv(kcatr_ln_cov)
-        self.Km_ln_gmean = np.log(Km_gmean.m_as("M"))
-        self.Km_inv_ln_cov = np.linalg.pinv(Km_ln_cov)
-        self.Ka_ln_gmean = np.log(Ka_gmean.m_as("M"))
-        self.Ka_inv_ln_cov = np.linalg.pinv(Ka_ln_cov)
-        self.Ki_ln_gmean = np.log(Ki_gmean.m_as("M"))
-        self.Ki_inv_ln_cov = np.linalg.pinv(Ki_ln_cov)
+        self.ln_Km_gmean = np.log(Km_gmean.m_as("M"))
+        self.ln_Ka_gmean = np.log(Ka_gmean.m_as("M"))
+        self.ln_Ki_gmean = np.log(Ki_gmean.m_as("M"))
+
+        self.ln_Km_precision = np.linalg.pinv(Km_ln_cov)
+        if Ka_ln_cov.size == 0:
+            self.ln_Ka_precision = None
+        else:
+            self.ln_Ka_precision = np.linalg.pinv(Ka_ln_cov)
+        if Ki_ln_cov.size == 0:
+            self.ln_Ki_precision = None
+        else:
+            self.ln_Ki_precision = np.linalg.pinv(Ki_ln_cov)
+
+        self.ln_conc_enz_gmean = np.log(conc_enz_gmean.m_as("M"))
+        self.ln_conc_enz_precision = np.diag(1.0 / np.log(conc_enz_gstd.T.flatten()))
+        self.ln_conc_met_gmean = np.log(conc_met_gmean.m_as("M"))
+        self.ln_conc_met_precision = np.diag(1.0 / np.log(conc_met_gstd.T.flatten()))
 
         self.rate_law = rate_law
         self.solver = solver
+        self.alpha = alpha
 
-        self.ln_conc_met = np.zeros((self.Nc, self.Ncond))
-        self.ln_Keq = np.zeros(self.Nr)
-        self.ln_kcatf = np.zeros(self.Nr)
-        self.ln_Ka = np.zeros(Ka_gmean.shape)
-        self.ln_Ki = np.zeros(Ki_gmean.shape)
-        self.ln_Km = np.zeros(Km_gmean.shape)
+#         self.ln_conc_met = np.zeros((self.Nc, self.Ncond))
+#         self.ln_Keq = np.zeros(self.Nr)
+#         self.ln_kcatf = np.zeros(self.Nr)
+#         self.ln_Ka = np.zeros(Ka_gmean.shape)
+#         self.ln_Ki = np.zeros(Ki_gmean.shape)
+#         self.ln_Km = np.zeros(Km_gmean.shape)
+
+        for p in self.INDEPENDENT_VARIABLES:
+            self.__setattr__(f"ln_{p}", self.__getattribute__(f"ln_{p}_gmean"))
 
     def _get_variable_shape(self, p: str) -> int:
         return self.__getattribute__(f"ln_{p}").shape
@@ -99,8 +108,10 @@ class ModelBalancing(object):
     def _get_variable_size(self, p: str) -> int:
         return self.__getattribute__(f"ln_{p}").size
 
-    def _variable_vector_to_dict(self, x: np.ndarray) -> Dict[str, np.ndarray]:
+    def _variable_vector_to_dict(self, x: Optional[np.ndarray] = None) -> Dict[str, np.ndarray]:
         """Convert the variable vector into a dictionary."""
+        if x is None:
+            x = self._get_variable_vector()
         var_dict = {}
         i = 0
         for p in self.INDEPENDENT_VARIABLES:
@@ -119,48 +130,64 @@ class ModelBalancing(object):
             x0.append(self.__getattribute__(f"ln_{p}").T.flatten())
         return np.hstack(x0).flatten()
 
-    def objective_function(self, x: np.ndarray) -> float:
-        """Calculate the sum of squares of all Z-scores.
-
-        The input (x) is a stacked version of all the independent variables, assuming
-        the following order: Km, Ka, Ki, Keq, kcatf, conc_met
-        """
+    def _get_full_variable_dictionary(self, x: Optional[np.ndarray] = None) -> Dict[str, np.ndarray]:
+        """Get a dictionary with all dependent and independent variable values."""
         var_dict = self._variable_vector_to_dict(x)
         var_dict["ln_conc_enz"] = self._ln_conc_enz(**var_dict).T.flatten()
         var_dict["ln_kcatr"] = ModelBalancing._ln_kcatr(
             self.S, var_dict["ln_kcatf"], var_dict["ln_Km"], var_dict["ln_Keq"]
         )
+        return var_dict
+    
+    def objective_function(self, x: Optional[np.ndarray] = None) -> float:
+        """Calculate the sum of squares of all Z-scores.
+
+        The input (x) is a stacked version of all the independent variables, assuming
+        the following order: Km, Ka, Ki, Keq, kcatf, conc_met
+        """
+        var_dict = self._get_full_variable_dictionary(x)
 
         total_z2_scores = 0.0
         for p in (self.INDEPENDENT_VARIABLES + self.DEPENDENT_VARIABLES):
-            ln_p_gmean = self.__getattribute__(f"{p}_ln_gmean")
-            p_inv_ln_cov = self.__getattribute__(f"{p}_inv_ln_cov")
+            ln_p_gmean = self.__getattribute__(f"ln_{p}_gmean")
+            ln_p_precision = self.__getattribute__(f"ln_{p}_precision")
             ln_p = var_dict[f"ln_{p}"]
-            total_z2_scores += ModelBalancing._z_score(
-                ln_p, ln_p_gmean, p_inv_ln_cov
-            )
+            
+            if p == "conc_enz":
+                # take a scaled version of the negative part of
+                # the z-score of ln_conc_enz. (alpha = 0 would be convex, and alpha = 1
+                # would be the true cost function)
+                total_z2_scores += ModelBalancing._z_score(
+                    ln_p, ln_p_gmean, ln_p_precision, self.alpha
+                )
+            else:
+                total_z2_scores += ModelBalancing._z_score(
+                    ln_p, ln_p_gmean, ln_p_precision
+                )
 
-        # TODO: add an option to take a scaled version of the negative part of
-        #  the z-score of ln_conc_enz. (alpha = 0 would be convex, and alpha = 1
-        #  would be the true cost function)
 
         return total_z2_scores
 
     @property
     def objective_value(self) -> float:
-        return self.objective_function(self._get_variable_vector())
+        return self.objective_function()
 
     @staticmethod
     def _z_score(
         x: np.array,
         mu: np.array,
-        inv_cov: np.array,
+        precision: np.array,
+        alpha: float = 1,
     ) -> float:
         """Calculates the sum of squared Z-scores (with a covariance mat)."""
         if x.size == 0:
             return 0.0
-        normed = (x.T.flatten() - mu.T.flatten()) @ inv_cov
-        return sum(map(np.square, normed.flat))
+        normed = (x.T.flatten() - mu.T.flatten()) @ precision
+
+        if alpha == 1:
+            return sum(map(np.square, normed.flat))
+        else:
+            return sum([a**2 if a > 0 else alpha * a**2 for a in normed.flat])
 
     @staticmethod
     def _B_matrix(Nc: int, col_subs: np.ndarray, col_prod: np.ndarray) -> np.ndarray:
@@ -385,7 +412,7 @@ class ModelBalancing(object):
 
     def is_gmean_feasible(self) -> bool:
         return (
-            self._driving_forces(self.Keq_ln_gmean, self.conc_met_ln_gmean)
+            self._driving_forces(self.ln_Keq_gmean, self.ln_conc_met_gmean)
             >= self.MIN_DRIVING_FORCE
         ).all()
 
@@ -421,12 +448,12 @@ class ModelBalancing(object):
     def initialize_with_gmeans(self) -> None:
         # set the independent parameters values to the geometric means
         for p in self.INDEPENDENT_VARIABLES:
-            self.__setattr__(f"ln_{p}", self.__getattribute__(f"{p}_ln_gmean"))
+            self.__setattr__(f"ln_{p}", self.__getattribute__(f"ln_{p}_gmean"))
 
         # set the geometric means of the dependent parameters (kcatr and conc_enz)
         # to the values calculated using all the independent parameters
         for p in self.DEPENDENT_VARIABLES:
-            self.__setattr__(f"{p}_ln_gmean", self.__getattribute__(f"ln_{p}"))
+            self.__setattr__(f"ln_{p}_gmean", self.__getattribute__(f"ln_{p}"))
 
     def solve(self) -> None:
 
@@ -448,15 +475,15 @@ class ModelBalancing(object):
         for key, val in self._variable_vector_to_dict(r.x).items():
             self.__setattr__(key, val)
 
-    def print_z_scores(self, precision: int = 2) -> None:
+    def print_z_scores(self) -> None:
         for p in (self.INDEPENDENT_VARIABLES + self.DEPENDENT_VARIABLES):
-            ln_p_gmean = self.__getattribute__(f"{p}_ln_gmean")
-            p_inv_ln_cov = self.__getattribute__(f"{p}_inv_ln_cov")
+            ln_p_gmean = self.__getattribute__(f"ln_{p}_gmean")
+            ln_p_precision = self.__getattribute__(f"ln_{p}_precision")
             ln_p = self.__getattribute__(f"ln_{p}")
             z = ModelBalancing._z_score(
-                ln_p, ln_p_gmean, p_inv_ln_cov
+                ln_p, ln_p_gmean, ln_p_precision
             )
-            print(f"{p} = {z.round(precision)}")
+            print(f"{p} = {z:.2f}")
 
     def print_status(self) -> None:
         print("\nMetabolite concentrations (M) =\n", np.exp(self.ln_conc_met))
