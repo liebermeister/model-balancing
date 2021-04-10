@@ -11,7 +11,9 @@ To run model balancing in matlab, please have a look at the demo scripts in matl
 To run model balancing in python, your model and input data need to be encoded in a JSON file. To generate this file format from model and data files (in SBML / SBtab formats), you can use the matlab function cvxpy_problem_data_structure.m (as shown in the demo script matlab/demo/demo_cmb_experimental_data.m). For a description of the JSON format structure, see 'help matlab/model-balancing/cmb-cvxpy/cvxpy_problem_data_structure' in matlab.
 
 ### Example models
-Example model and data files can be found in the folder "resources". The folder resources/models contains files for four different example models.
+Example model and data files can be found in the folder "resources". The folder resources/models contains files for four different example models. Each model comes as an SBML (.xml) and an SBtab (.tsv) file.
+
+The matlab script emo_cmb_artificial_data.m uses the SBML model by default; if desired, extra information (about metabolite ranges and network layout) can be provided in optional SBtab files .._ConcentrationConstraint.tsv and .._Position.tsv).
 
 ## Dependencies
 ### Matlab
