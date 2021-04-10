@@ -1,0 +1,26 @@
+!!!SBtab DocumentName='CMB result' Document='CMBresult' RelaxationAlpha='0.001000' CalculationTime='9.124281 s'					
+					
+!!SBtab TableName='Metabolic fluxes' TableID='MetabolicFlux' TableType='QuantityMatrix' Unit='mM/s'					
+!QuantityType	!Reaction	state_1	state_2	state_3	state_4
+rate of reaction	E1	-0.00020049526	-0.0044663662	0.0077923079	0.0052511394
+rate of reaction	E2	0.072057592	0.051827238	0.064785054	0.058460774
+rate of reaction	E3	0.061101081	0.033202961	0.05399568	0.067911667
+					
+!!SBtab TableName='Metabolite concentrations' TableID='MetaboliteConcentration' TableType='QuantityMatrix' Unit='mM'					
+!QuantityType	!Compound	state_1	state_2	state_3	state_4
+concentration	X1	0.67241922	0.94892249	1.3920149	1.2311065
+concentration	X2	0.63409263	1.0929017	0.41427905	0.48708325
+concentration	X3	0.072337988	0.096832488	0.14957527	0.047412662
+concentration	S4	1.176004	5.1076772	0.76903248	0.70842265
+					
+!!SBtab TableName='Enzyme concentrations' TableID='EnzymeConcentration' TableType='QuantityMatrix' Unit='mM'					
+!QuantityType	!Reaction	state_1	state_2	state_3	state_4
+concentration of enzyme	E1	0.0019518986	0.00093238273	0.00054756883	0.00039150019
+concentration of enzyme	E2	0.001478681	0.0029078741	0.0013373223	0.00093812328
+concentration of enzyme	E3	0.00077140428	0.00025446588	0.0011981794	0.0010759189
+					
+!!SBtab TableName='Gibbs free energies of reaction' TableID='ReactionGibbsFreeEnergy' TableType='QuantityMatrix' Unit='kJ/mol'					
+!QuantityType	!Reaction	state_1	state_2	state_3	state_4
+Gibbs energy of reaction	E1	0.036900169	2.8236874	-2.819775	-2.718766
+Gibbs energy of reaction	E2	-7.0599753	-4.768859	-7.0577171	-7.6625518
+Gibbs energy of reaction	E3	-6.4595645	-9.3772704	-3.6058027	-6.2503987

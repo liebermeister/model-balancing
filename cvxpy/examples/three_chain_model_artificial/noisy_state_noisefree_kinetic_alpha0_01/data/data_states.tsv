@@ -1,0 +1,20 @@
+!!!SBtab									
+									
+!!SBtab TableName='Metabolic fluxes' TableID='MetabolicFluxData' TableType='QuantityMatrix' Unit='mM/s'									
+!QuantityType	!Reaction	state_1_Mean	state_1_Std	state_2_Mean	state_2_Std	state_3_Mean	state_3_Std	state_4_Mean	state_4_Std
+rate of reaction	E1	0.021683845	0.0044913485	0.017071762	0.0031340444	0.016340393	0.0025613136	0.01043832	0.0020537171
+rate of reaction	E2	0.023414274	0.0044913483	0.017497022	0.0031315935	0.013250158	0.0025613136	0.008099953	0.0020537136
+rate of reaction	E3	0.019940219	0.0044913487	0.012803657	0.003076598	0.010108752	0.0025613136	0.0088807278	0.0020537176
+									
+!!SBtab TableName='Metabolite concentrations' TableID='MetaboliteConcentrationData' TableType='QuantityMatrix' Unit='mM'									
+!QuantityType	!Compound	state_1_Mean	state_1_Std	state_2_Mean	state_2_Std	state_3_Mean	state_3_Std	state_4_Mean	state_4_Std
+concentration	X1	7.24926	1.3327565	9.6459234	1.7733765	13.992482	2.5724793	11.282577	2.0742707
+concentration	S2	0.13445677	0.024719507	0.40612216	0.074664442	0.056385331	0.010366288	0.11049949	0.020315026
+concentration	X3	1.0723903	0.19715599	3.6504832	0.67113128	0.75312807	0.13846052	0.94120675	0.17303827
+concentration	X4	0.65476602	0.12037693	0.65016062	0.11953024	0.63770914	0.11724107	1.4987713	0.27554498
+									
+!!SBtab TableName='Enzyme concentrations' TableID='EnzymeConcentrationData' TableType='QuantityMatrix' Unit='mM'									
+!QuantityType	!Reaction	state_1_Mean	state_1_Std	state_2_Mean	state_2_Std	state_3_Mean	state_3_Std	state_4_Mean	state_4_Std
+concentration of enzyme	E1	0.0019829326	0.00036455671	0.0016211402	0.00029804216	0.00055228257	0.00010153563	0.00037064688	6.8142408e-05
+concentration of enzyme	E2	0.0013959428	0.00025664024	0.0035476674	0.00065222889	0.0014969129	0.00027520331	0.0010525629	0.0001935108
+concentration of enzyme	E3	0.00068057262	0.0001251214	0.00035502775	6.5270875e-05	0.0016728924	0.00030755667	0.0014523184	0.00026700474
