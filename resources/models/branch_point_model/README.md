@@ -3,13 +3,15 @@ Simple test model
 
 Network structure:
 
-` X1               `
-`   \v1            `
-`    \    v3       ` 
-`      S4 --> X3   `
-`    /             ` 
-`   /v2            ` 
-` X2               `
+`
+  X1              
+   \v1            
+    \    v3        
+      S4 --> X3   
+    /              
+   /v2             
+ X2
+`
 
 SBML (model) and SBtab (model and data) files are provided
 
