@@ -6,18 +6,6 @@ from scipy.optimize import minimize
 from typing import Dict, Tuple, Optional
 import numpy as np
 import scipy.special
-import pint
-
-# Disable Pint's old fallback behavior (must come before importing Pint)
-os.environ["PINT_ARRAY_PROTOCOL_FALLBACK"] = "0"
-
-ureg = pint.UnitRegistry(system="mks")
-Q_ = ureg.Quantity
-
-with warnings.catch_warnings():
-    warnings.simplefilter("ignore")
-    Q_([])
-
 
 class ModelBalancing(object):
 

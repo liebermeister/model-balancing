@@ -2,21 +2,9 @@ import itertools
 import os
 import warnings
 from typing import Union
-
 import numpy as np
-import pint
-
 import cvxpy as cp
-
-# Disable Pint's old fallback behavior (must come before importing Pint)
-os.environ["PINT_ARRAY_PROTOCOL_FALLBACK"] = "0"
-
-ureg = pint.UnitRegistry(system="mks")
-Q_ = ureg.Quantity
-
-with warnings.catch_warnings():
-    warnings.simplefilter("ignore")
-    Q_([])
+from . import Q_
 
 
 class ModelBalancingConvex(object):
@@ -62,7 +50,7 @@ class ModelBalancingConvex(object):
         self.ln_Keq_gmean = cp.Parameter(
             shape=(self.Nr,), value=np.log(Keq_gmean.m_as(""))
         )
-        self.Keq_ln_cov = Keq_ln_cov
+        self.ln_Keq_precision = np.linalg.pinv(Keq_ln_cov)
         self.ln_conc_enz_gmean = cp.Parameter(
             shape=(self.Nr, self.Ncond), value=np.log(conc_enz_gmean.m_as("M"))
         )
@@ -74,21 +62,33 @@ class ModelBalancingConvex(object):
         self.ln_kcatf_gmean = cp.Parameter(
             shape=(self.Nr,), value=np.log(kcatf_gmean.m_as("1/s"))
         )
-        self.kcatf_ln_cov = kcatf_ln_cov
+        self.ln_kcatf_precision = np.linalg.pinv(kcatf_ln_cov)
         self.ln_kcatr_gmean = cp.Parameter(
             shape=(self.Nr,), value=np.log(kcatr_gmean.m_as("1/s"))
         )
-        self.kcatr_ln_cov = kcatr_ln_cov
+        self.ln_kcatr_precision = np.linalg.pinv(kcatr_ln_cov)
         self.ln_Km_gmean = np.log(Km_gmean.m_as("M"))
-        self.Km_ln_cov = Km_ln_cov
+        if self.ln_Km_gmean.size != 0:
+            self.ln_Km_precision = np.linalg.pinv(Km_ln_cov)
+        else:
+            self.ln_Km_precision = None
+
         self.ln_Ka_gmean = np.log(Ka_gmean.m_as("M"))
-        self.Ka_ln_cov = Ka_ln_cov
+        if self.ln_Ka_gmean.size != 0:
+            self.ln_Ka_precision = np.linalg.pinv(Ka_ln_cov)
+        else:
+            self.ln_Ka_precision = None
+
         self.ln_Ki_gmean = np.log(Ki_gmean.m_as("M"))
-        self.Ki_ln_cov = Ki_ln_cov
+        if self.ln_Ki_gmean.size != 0:
+            self.ln_Ki_precision = np.linalg.pinv(Ki_ln_cov)
+        else:
+            self.ln_Ki_precision = None
+
         self.rate_law = rate_law
         self.solver = solver
 
-        assert self.Keq_ln_cov.shape == (self.Nr, self.Nr)
+        assert self.ln_Keq_precision.shape == (self.Nr, self.Nr)
         assert self.ln_conc_enz_gstd.shape == (self.Nr, self.Ncond)
         assert self.ln_conc_met_gstd.shape == (self.Nc, self.Ncond)
 
@@ -98,30 +98,30 @@ class ModelBalancingConvex(object):
 
         for p in ["Km", "Ka", "Ki"]:
             ln_gmean = self.__getattribute__(f"ln_{p}_gmean")
-            ln_cov = self.__getattribute__(f"{p}_ln_cov")
+            ln_precision = self.__getattribute__(f"ln_{p}_precision")
             if ln_gmean.size == 0:
                 self.__setattr__(f"ln_{p}", np.array([]))
                 self.__setattr__(f"z2_scores_{p}", cp.Constant(0))
             else:
                 ln_p = cp.Variable(shape=ln_gmean.size)
                 self.__setattr__(
-                    f"z2_scores_{p}", ModelBalancingConvex._z_score(ln_p, ln_gmean, ln_cov)
+                    f"z2_scores_{p}", ModelBalancingConvex._z_score(ln_p, ln_gmean, ln_precision)
                 )
                 self.__setattr__(f"ln_{p}", ln_p)
 
         for p in ["Keq", "kcatf", "kcatr"]:
             ln_p = self.__getattribute__(f"ln_{p}")
             ln_gmean = self.__getattribute__(f"ln_{p}_gmean")
-            ln_cov = self.__getattribute__(f"{p}_ln_cov")
+            ln_precision = self.__getattribute__(f"ln_{p}_precision")
             self.__setattr__(
-                f"z2_scores_{p}", ModelBalancingConvex._z_score(ln_p, ln_gmean, ln_cov)
+                f"z2_scores_{p}", ModelBalancingConvex._z_score(ln_p, ln_gmean, ln_precision)
             )
 
         # conc_met is given as a matrix (with conditions as columns) and therefore
         # we assume a diagonal covariance matrix (for simplicity). Instead of a
         # ln_cov matrix, we simply have the geometric means and stds arranged in
         # the same shape as the variables.
-        self.z2_scores_met = sum(
+        self.z2_scores_conc_met = sum(
             cp.square(
                 (self.ln_conc_met - self.ln_conc_met_gmean) / self.ln_conc_met_gstd
             ).flatten()
@@ -130,7 +130,7 @@ class ModelBalancingConvex(object):
         # ln enzyme concentrations are convex functions of the ln metabolite concentrations
         # but, since the z-scores use the square function, we have to take only the positive
         # values (otherwise the result is not convex).
-        self.z2_scores_enz = sum(
+        self.z2_scores_conc_enz = sum(
             cp.square(
                 cp.pos(self.ln_conc_enz - self.ln_conc_enz_gmean)
                 / self.ln_conc_enz_gstd
@@ -140,7 +140,7 @@ class ModelBalancingConvex(object):
         total_z2_scores = sum(
             [
                 self.__getattribute__(f"z2_scores_{p}")
-                for p in ["Km", "Ka", "Ki", "Keq", "kcatf", "kcatr", "met", "enz"]
+                for p in ["Km", "Ka", "Ki", "Keq", "kcatf", "kcatr", "conc_met", "conc_enz"]
             ]
         )
         self.objective = cp.Minimize(total_z2_scores)
@@ -214,10 +214,10 @@ class ModelBalancingConvex(object):
 
     @staticmethod
     def _z_score(
-        x: Union[np.array, cp.Expression], mu: np.array, cov: np.array,
+        x: Union[np.array, cp.Expression], mu: np.array, precision: np.array,
     ) -> cp.Expression:
         """Calculates the sum of squared Z-scores (with a covariance mat)."""
-        return cp.quad_form(x - mu, np.linalg.pinv(cov))
+        return cp.quad_form(x - mu, precision)
 
     def _driving_forces(
         self,
@@ -393,7 +393,7 @@ class ModelBalancingConvex(object):
         return self.objective.value
 
     def print_z_scores(self, precision: int = 2) -> None:
-        for p in ["enz", "met", "Keq", "kcatf", "kcatr", "Km", "Ka", "Ki"]:
+        for p in ["Km", "Ka", "Ki", "Keq", "kcatf", "conc_met", "kcatr", "conc_enz"]:
             z = self.__getattribute__(f"z2_scores_{p}").value
             print(f"{p} = {z.round(precision)}")
 
