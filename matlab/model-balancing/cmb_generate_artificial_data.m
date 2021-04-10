@@ -59,7 +59,8 @@ kinetics.c       = c_init;
 kinetics.u       = kinetics.u .* exp(0.5*randn(nr,1));
 network.kinetics = kinetics;
 
-modular_rate_law_haldane(network)
+% check haldane relationships for sampled kinetic constants
+% modular_rate_law_haldane(network)
 
 
 % -------------------------------------------------------------
@@ -204,10 +205,10 @@ if find(true.X > repmat(bounds.x_max,1,ns)),                 warning('Upper boun
 %if find(true.E > repmat(bounds.e_max,1,ns)),                 warning('Upper bounds for E violated'); flag_ok = 0; end
 if find(true.E < repmat(bounds.e_min,1,ns)),                 warning('Lower bounds for E violated'); flag_ok = 0; end
 if find(true.E > repmat(bounds.e_max,1,ns)),                 warning('Upper bounds for E violated'); flag_ok = 0; end
-if find(true.A_forward < repmat(bounds.a_forward_min,1,ns)), warning('Lower bounds for A violated'); flag_ok = 0; 
+if find(true.A_forward < repmat(bounds.a_forward_min,1,ns)), warning('Sampled states violate lower bound for reaction affinity A - please consider using a different initial concentration profile'); flag_ok = 0; 
   display(sprintf('### Lowest A value: %4f ###',min(min(true.A_forward))));
 end
-if find(true.A_forward > repmat(bounds.a_forward_max,1,ns)), warning('Upper bounds for A violated'); flag_ok = 0; end
+if find(true.A_forward > repmat(bounds.a_forward_max,1,ns)), warning('Sampled states violate lower bound for reaction affinity A - please consider using a different initial concentration profile'); flag_ok = 0; end
 
 
 %if flag_ok == 0;     

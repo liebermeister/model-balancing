@@ -34,9 +34,9 @@ function [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max,
 % For generating the input data, see 'cmb_model_and_data' and 'cmb_model_artificial_data'
 
 if cmb_options.display,
-  display(sprintf('\n-------------------'));
-  display(sprintf('| Model balancing |'));
-  display(sprintf('-------------------\n'));
+  display(sprintf('\n---------------'));
+  display(sprintf('Model balancing'));
+  display(sprintf('---------------\n'));
 end
   
 filenames_default = struct('graphics_dir',[],'report_txt',[],'results_mat',[]);
@@ -63,17 +63,17 @@ cmb_options.ns = ns;
 switch cmb_options.enzyme_score_type,
   case 'quadratic'
     % normal quadratic likelihood term: with this option, MB is not guaranteed to be convex!
-    display('model_balancing.m:');
-    display('  Using quadratic formula for enzyme posterior score.');
-    display('  The optimality problem may be non-convex');
+    %display('model_balancing.m:');
+    display('Using quadratic formula for enzyme posterior score.');
+    %display('  The optimality problem may be non-convex');
   case 'monotonic'
-    display('model_balancing.m:')
-    display('  Using monotonic (constant-quadratic) formula for enzyme posterior score.')
-    display('  The optimality problem is convex, but enzyme levels may be underestimated!');
+    %display('model_balancing.m:')
+    display('Using convex formula for enzyme posterior score - enzyme levels may be underestimated.')
+    %display('  The optimality problem is convex, but enzyme levels may be underestimated!');
   case 'interpolated'
-    display(sprintf('model_balancing.m:'))
-    display(sprintf('  Using relaxed quadratic formula for enzyme posterior score, alpha=%f',cmb_options.enzyme_score_alpha))
-    display('  The optimality problem may be non-convex');
+    %display(sprintf('model_balancing.m:'))
+    display(sprintf('Using softening parameter alpha=%f',cmb_options.enzyme_score_alpha))
+    display('The optimality problem may be non-convex, and enzyme levels may be underestimated.');
 end
 
 
