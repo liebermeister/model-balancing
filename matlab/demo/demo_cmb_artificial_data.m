@@ -22,7 +22,8 @@
 %
 % Other settings:
 %   model           (string) model name (can be freely chosen)
-%   run             (string) estimation scenario name (can be freely chosen)
+%   prb             (string) estimation scenario name (chosen by the user, should not refer to optimisation settings)
+%   run             (string) estimation scenario name (chosen by the user, may refer to optimisation settings)
 %   c_init          (column vector) metabolite concentration profile (optional; set to [] to use default vector of 1's) 
 %   ns              number of metabolic states
 %   result_dir      (directory name) directory for output files (default = matlab's tempdir) 
@@ -40,13 +41,15 @@
 % -------------------------------------------------------------
 
 model           = 'branch_point_model';
-run             = 'test';
+prb             = 'test';
+run             = 'test_alpha_0_5';
 network_file    = [cmb_resourcedir '/models/branch_point_model/branch_point_model.xml'];
 %network_file   = [cmb_resourcedir '/models/branch_point_model/branch_point_model.tsv'];
 constraint_file = [cmb_resourcedir '/models/branch_point_model/branch_point_model_ConcentrationConstraint.tsv'];
 position_file   = [cmb_resourcedir '/models/branch_point_model/branch_point_model_Position.tsv'];
 c_init          = [1,1,0.1,0.5]'; 
 ns              = 6;
+alpha           = 0.5;
 result_dir      = tempdir;
 
 
@@ -59,13 +62,15 @@ result_dir      = tempdir;
 % -------------------------------------------------------------
 
 % model           = 'three_chain_model';
-% run             = 'test';
-% network_file   = [cmb_resourcedir '/models/three_chain_model/three_chain_model.xml'];
-% %network_file    = [cmb_resourcedir '/models/three_chain_model/three_chain_model.tsv'];
+% prb             = 'test';
+% run             = 'test_alpha_0_5';
+% network_file    = [cmb_resourcedir '/models/three_chain_model/three_chain_model.xml'];
+% %network_file   = [cmb_resourcedir '/models/three_chain_model/three_chain_model.tsv'];
 % constraint_file = [cmb_resourcedir '/models/three_chain_model/three_chain_model_ConcentrationConstraint.tsv'];
 % position_file   = [cmb_resourcedir '/models/three_chain_model/three_chain_model_Position.tsv'];
 % c_init          = [10,1,1,1,1,1,0.01]'; 
 % ns              = 6;
+% alpha           = 0.5;
 % result_dir      = tempdir;
 
 
@@ -80,15 +85,17 @@ result_dir      = tempdir;
 % X - O       X
 % -------------------------------------------------------------
 
-%  model        = 'double_branch_model';
-%  run          = 'test';
-%  network_file   = [cmb_resourcedir '/models/double_branch_model/double_branch_model.xml'];
-%  %network_file    = [cmb_resourcedir '/models/double_branch_model/double_branch_model.tsv'];
-%  constraint_file = [cmb_resourcedir '/models/double_branch_model/double_branch_model_ConcentrationConstraint.tsv'];
-%  position_file   = [cmb_resourcedir '/models/double_branch_model/double_branch_model_Position.tsv'];
-%  c_init       = [10,1,1,1,1,1,0.01]'; 
-%  ns           = 6;
-%  result_dir   = tempdir;
+% model           = 'double_branch_model';
+% prb             = 'test';
+% run             = 'test_alpha_0_5';
+% network_file    = [cmb_resourcedir '/models/double_branch_model/double_branch_model.xml'];
+% %network_file   = [cmb_resourcedir '/models/double_branch_model/double_branch_model.tsv'];
+% constraint_file = [cmb_resourcedir '/models/double_branch_model/double_branch_model_ConcentrationConstraint.tsv'];
+% position_file   = [cmb_resourcedir '/models/double_branch_model/double_branch_model_Position.tsv'];
+% c_init          = [10,1,1,1,1,1,0.01]'; 
+% ns              = 6;
+% alpha           = 0.5;
+% result_dir      = tempdir;
 
 
 % -------------------------------------------------------------
@@ -98,20 +105,23 @@ result_dir      = tempdir;
 
 % To use this example model, please uncomment the following lines
 
-% model         = 'e_coli_artificial';  
-% run           = 'test';
-% result_dir    = tempdir;
-% network_file  = [cmb_resourcedir '/models/e_coli_noor_2016/ecoli_ccm_ProteinComposition_Network.xml'];
-% position_file = [];
-% c_init        = cmb_e_coli_c_init(model,cmb_default_options);
-% ns            = 4;
+% model           = 'e_coli_artificial';  
+% prb             = 'test';
+% run             = 'test_alpha_0_5';
+% result_dir      = tempdir;
+% network_file    = [cmb_resourcedir '/models/e_coli_noor_2016/e_coli_noor_2016.tsv'];
+% constraint_file = [cmb_resourcedir '/models/e_coli_noor_2016/e_coli_noor_2016.tsv'];
+% position_file   = [cmb_resourcedir '/models/e_coli_noor_2016/e_coli_noor_2016.tsv'];
+% c_init          = cmb_e_coli_c_init(model,cmb_default_options);
+% alpha           = 0.5;
+% ns              = 4;
 
 
 % -------------------------------------------------------------
 % Generate default filenames for output files
 % -------------------------------------------------------------
 
-filenames = cmb_filenames(model, run, result_dir, network_file);
+filenames = cmb_filenames(model, prb, run, result_dir, network_file);
 
 
 % -------------------------------------------------------------
@@ -125,6 +135,7 @@ cmb_options.prior_variant          = 'broad_prior';
 cmb_options.use_kinetic_data       = 'all';
 cmb_options.use_artificial_noise   = 0;
 cmb_options.use_kinetic_data_noise = 0;
+cmb_options.enzyme_score_alpha     = alpha; 
 cmb_options.initial_values_variant = 'average_sample';
 cmb_options.show_graphics          = 1;
 cmb_options.verbose                = 0;

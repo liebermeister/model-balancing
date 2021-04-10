@@ -33,10 +33,11 @@ function [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max,
 %
 % For generating the input data, see 'cmb_model_and_data' and 'cmb_model_artificial_data'
 
-display(sprintf('\n-------------------'));
-display(sprintf('| Model balancing |'));
-display(sprintf('-------------------\n'));
-
+if cmb_options.display,
+  display(sprintf('\n-------------------'));
+  display(sprintf('| Model balancing |'));
+  display(sprintf('-------------------\n'));
+end
   
 filenames_default = struct('graphics_dir',[],'report_txt',[],'results_mat',[]);
 filenames = join_struct(filenames_default,filenames);
@@ -144,16 +145,15 @@ switch cmb_options.initial_values_variant,
     my_cmb_options.show_graphics          = 0;
     my_cmb_options.verbose                = 0;
     my_cmb_options.display                = 0;
+    my_cmb_options.save_results           = 0;
     my_q_info        = cmb_define_parameterisation(network, my_cmb_options); 
     [~, my_prior, my_bounds, my_data] = cmb_generate_artificial_data(network, my_cmb_options, my_q_info,ones(size(network.metabolites)), conc_min, conc_max);
     my_data.V.mean = nanmean(data.V.mean,2);
     my_data.X.mean = nanmean(data.X.mean,2);
-    %my_data.E.mean = exp(nanmean(log(data.E.mean),2));
     my_data.E.mean = exp(nanmean(data.lnE.mean,2));
     %% taking the average over standard deviations is not ideal .. maybe change this?
     my_data.V.std  = nanmean(data.V.std,2); 
     my_data.X.std  = nanmean(data.X.std,2);
-    %my_data.E.std  = exp(nanmean(log(data.E.std),2));
     my_data.E.std  = exp(nanmean(data.lnE.std,2));
     if length(true),
       my_true = true;
@@ -241,7 +241,9 @@ calculation_time = toc;
 
 if cmb_options.show_graphics,
   display(' '); ca;
-  cmb_graphics(prior, data, optimal, true, cmb_options, q_info, filenames.graphics_dir, kapp_max)
+  [res, res_true, res_true_data] = cmb_graphics(prior, data, optimal, true, cmb_options, q_info, filenames.graphics_dir, kapp_max);
+else
+  res = []; res_true = []; res_true_data = [];
 end
 
 
@@ -255,7 +257,7 @@ if cmb_options.save_results,
   cmb_save_results(network, data, bounds, optimal, filenames, cmb_options, struct('calculation_time', calculation_time, 'consistent', 1), true);
   
   if length(filenames.results_mat)
-    save(filenames.results_mat,'optimal', 'calculation_time', 'gradient_V', 'init', 'cmb_options', 'V', 'kapp_max', 'preposterior', 'pp', 'filenames', 'cmb_options', 'network', 'q_info', 'prior', 'bounds', 'data', 'true');
+    save(filenames.results_mat,'optimal', 'calculation_time', 'gradient_V', 'init', 'cmb_options', 'V', 'kapp_max', 'preposterior', 'pp', 'filenames', 'cmb_options', 'network', 'q_info', 'prior', 'bounds', 'data', 'true', 'res', 'res_true', 'res_true_data');
   end
   
 end
@@ -267,7 +269,7 @@ end
 
 if cmb_options.display + cmb_options.save_results,
   display(' '); 
-  report = cmb_statistics(network,cmb_options,prior,data,optimal,calculation_time);
+  report = cmb_statistics(network,cmb_options,prior,data,optimal,calculation_time, res, res_true);
 end
 
 if cmb_options.save_results,
