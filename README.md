@@ -5,13 +5,13 @@ Model balancing
 Model balancing can be run in matlab or python. Data tables can be provided in [SBtab](https://www.sbtab.net) format, models can be provided in  [SBML](http://sbml.org) or  [SBtab](https://www.sbtab.net) format.
 
 ### Matlab
-To run model balancing in matlab, please have a look at the demo scripts in matlab/demo and adjust them to your model and data. For help in matlab, see 'help model-balancing'. For HTML documentation of the matlab code, see matlab/doc.
+To run model balancing in matlab, please have a look at the demo scripts in matlab/demo and adjust them to your model and data. For HTML documentation of the matlab code, see matlab/doc. For help in matlab, please type 'help model-balancing'.
 
 ### Python
 To run model balancing in python, your model and input data need to be encoded in a JSON file. To generate this file format from model and data files (in SBML / SBtab formats), you can use the matlab function cvxpy_problem_data_structure.m (as shown in the demo script matlab/demo/demo_cmb_experimental_data.m). For a description of the JSON format structure, see 'help matlab/model-balancing/cmb-cvxpy/cvxpy_problem_data_structure' in matlab.
 
 ### Example models
-Example model and data files can be found in the folder "resources".
+Example model and data files can be found in the folder "resources". The folder resources/models contains files for four different example models.
 
 ## Dependencies
 ### Matlab
