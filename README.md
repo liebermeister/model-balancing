@@ -13,7 +13,10 @@ To run model balancing in python, your model and input data need to be encoded i
 ### Example models
 Example model and data files can be found in the folder "resources". The folder resources/models contains files for four different example models. Each model comes as an SBML (.xml) and an SBtab (.tsv) file.
 
-The matlab script emo_cmb_artificial_data.m uses the SBML model by default; if desired, extra information (about metabolite ranges and network layout) can be provided in optional SBtab files .._ConcentrationConstraint.tsv and .._Position.tsv).
+### How to balance your own model
+To balance your own model, we recommend to first get acquainted with the matlab demo script demo_cmb_experimental_data.m and read the instructions there. You need to provide your model and data in the form of three input files (in SBtab format), describing (i) the network structure and metabolite constraints (SBtab file with tables 'Reaction', 'Compound', 'Position' (optional), 'Parameter' (optional)); (ii) kinetic data (SBtab file with table 'ParameterData'); and (iii) state data (SBtab file with tables 'MetabolicFluxData', 'MetaboliteConcentrationData', 'EnzymeConcentrationData'). Please have a look at the files 'artificial_network_true.tsv', 'artificial_kinetic_data.tsv', and 'artificial_state_data.tsv' in the folder ./resourcedir/models/branch_point_model/data/ for an example.
+
+To run model balancing in python, you first need to convert your model and data into a JSON file. This is demonstrated in the m
 
 ## Dependencies
 ### Matlab
