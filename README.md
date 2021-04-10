@@ -16,11 +16,11 @@ Example model and data files can be found in the folder "resources". The folder 
 ### How to balance your own model
 To balance your own model, we recommend to get acquainted with the matlab demo script demo_cmb_experimental_data.m. You need to prepare three input files in SBtab format, describing
 
-(i) the network structure and metabolite constraints (SBtab file with tables 'Reaction', 'Compound', 'Position' (optional), 'Parameter' (optional));
+1. the network structure and metabolite constraints (SBtab file with tables 'Reaction', 'Compound', 'Position' (optional), 'Parameter' (optional));
 
-(ii) kinetic data (SBtab file with table 'ParameterData'); and
+2. kinetic data (SBtab file with table 'ParameterData'); and
 
-(iii) state data (SBtab file with tables 'MetabolicFluxData', 'MetaboliteConcentrationData', 'EnzymeConcentrationData').
+3. state data (SBtab file with tables 'MetabolicFluxData', 'MetaboliteConcentrationData', 'EnzymeConcentrationData').
 
 For an example, please have a look at the files 'artificial_network_true.tsv', 'artificial_kinetic_data.tsv', and 'artificial_state_data.tsv' in the folder ./resourcedir/models/branch_point_model/data/.
 
