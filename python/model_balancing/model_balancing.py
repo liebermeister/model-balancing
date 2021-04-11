@@ -72,20 +72,13 @@ class ModelBalancing(object):
             self.ln_Ki_precision = np.linalg.pinv(Ki_ln_cov)
 
         self.ln_conc_enz_gmean = np.log(conc_enz_gmean.m_as("M"))
-        self.ln_conc_enz_precision = np.diag(1.0 / np.log(conc_enz_gstd.T.flatten()))
+        self.ln_conc_enz_precision = np.diag(np.log(conc_enz_gstd.T.flatten())**(-2.0))
         self.ln_conc_met_gmean = np.log(conc_met_gmean.m_as("M"))
-        self.ln_conc_met_precision = np.diag(1.0 / np.log(conc_met_gstd.T.flatten()))
+        self.ln_conc_met_precision = np.diag(np.log(conc_met_gstd.T.flatten())**(-2.0))
 
         self.rate_law = rate_law
         self.solver = solver
         self.alpha = alpha
-
-#         self.ln_conc_met = np.zeros((self.Nc, self.Ncond))
-#         self.ln_Keq = np.zeros(self.Nr)
-#         self.ln_kcatf = np.zeros(self.Nr)
-#         self.ln_Ka = np.zeros(Ka_gmean.shape)
-#         self.ln_Ki = np.zeros(Ki_gmean.shape)
-#         self.ln_Km = np.zeros(Km_gmean.shape)
 
         for p in self.INDEPENDENT_VARIABLES:
             self.__setattr__(f"ln_{p}", self.__getattribute__(f"ln_{p}_gmean"))
@@ -121,7 +114,7 @@ class ModelBalancing(object):
     def _get_full_variable_dictionary(self, x: Optional[np.ndarray] = None) -> Dict[str, np.ndarray]:
         """Get a dictionary with all dependent and independent variable values."""
         var_dict = self._variable_vector_to_dict(x)
-        var_dict["ln_conc_enz"] = self._ln_conc_enz(**var_dict).T.flatten()
+        var_dict["ln_conc_enz"] = self._ln_conc_enz(**var_dict).flatten()
         var_dict["ln_kcatr"] = ModelBalancing._ln_kcatr(
             self.S, var_dict["ln_kcatf"], var_dict["ln_Km"], var_dict["ln_Keq"]
         )
@@ -145,14 +138,14 @@ class ModelBalancing(object):
                 # take a scaled version of the negative part of
                 # the z-score of ln_conc_enz. (alpha = 0 would be convex, and alpha = 1
                 # would be the true cost function)
-                total_z2_scores += ModelBalancing._z_score(
+                z2_score = ModelBalancing._z_score(
                     ln_p, ln_p_gmean, ln_p_precision, self.alpha
                 )
             else:
-                total_z2_scores += ModelBalancing._z_score(
+                z2_score = ModelBalancing._z_score(
                     ln_p, ln_p_gmean, ln_p_precision
                 )
-
+            total_z2_scores += z2_score
 
         return total_z2_scores
 
@@ -170,12 +163,18 @@ class ModelBalancing(object):
         """Calculates the sum of squared Z-scores (with a covariance mat)."""
         if x.size == 0:
             return 0.0
-        normed = (x.T.flatten() - mu.T.flatten()) @ precision
+
+        diff = x.flatten() - mu.flatten()
+
+        full_z_score = diff.T @ precision @ diff
 
         if alpha == 1:
-            return sum(map(np.square, normed.flat))
+            return full_z_score
         else:
-            return sum([a**2 if a > 0 else alpha * a**2 for a in normed.flat])
+            pos_diff = np.array(diff)
+            pos_diff[pos_diff < 0.0] = 0.0
+            pos_z_score = pos_diff.T @ precision @ pos_diff
+            return (1 - alpha) * pos_z_score + alpha * full_z_score
 
     @staticmethod
     def _B_matrix(Nc: int, col_subs: np.ndarray, col_prod: np.ndarray) -> np.ndarray:
@@ -468,9 +467,15 @@ class ModelBalancing(object):
             ln_p_gmean = self.__getattribute__(f"ln_{p}_gmean")
             ln_p_precision = self.__getattribute__(f"ln_{p}_precision")
             ln_p = self.__getattribute__(f"ln_{p}")
-            z = ModelBalancing._z_score(
-                ln_p, ln_p_gmean, ln_p_precision
-            )
+
+            if p == "conc_enz":
+                # take a scaled version of the negative part of
+                # the z-score of ln_conc_enz. (alpha = 0 would be convex, and alpha = 1
+                # would be the true cost function)
+                z = ModelBalancing._z_score(ln_p, ln_p_gmean, ln_p_precision, self.alpha)
+            else:
+                z = ModelBalancing._z_score(ln_p, ln_p_gmean, ln_p_precision)
+
             print(f"{p} = {z:.2f}")
 
     def print_status(self) -> None:

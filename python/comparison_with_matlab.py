@@ -1,3 +1,4 @@
+import os
 from typing import Union
 import json
 import numpy as np
@@ -178,7 +179,7 @@ def to_sbtab(mb: Union[ModelBalancing, ModelBalancingConvex]) -> SBtab.SBtabDocu
     return sbtabdoc
 
 #%%
-
+os.chdir("/home/eladn/git/model-balancing/python")
 config_fname = "three_chain_model_artificial_noisy_state_noisy_kinetic"
 
 with open(f"../cvxpy/examples/JSON/{config_fname}.json", "rt") as fp:
@@ -232,6 +233,20 @@ mbc.solve()
 print(f"Convex optimization (equivalent to α = 1) - optimized total squared Z-scores = {mbc.objective_value:.3f}")
 mbc.print_z_scores()
 to_sbtab(mbc).write(f"../res/{config_fname}_convex.tsv")
+
+mb = ModelBalancing(**args)
+mb.alpha = 0.0
+for p in mb.INDEPENDENT_VARIABLES:
+    ln_p = mbc.__getattribute__(f"ln_{p}")
+    if ln_p.size != 0:
+        mb.__setattr__(f"ln_{p}", ln_p.value)
+
+print(mbc.ln_conc_enz.value)
+print(mb.ln_conc_enz)
+print(mb._ln_conc_enz(**mb._variable_vector_to_dict()).flatten())
+print(f"After copying the parameters to a non-convex solver - total squared Z-scores ="
+      f" {mb.objective_value:.3f}")
+mb.print_z_scores()
 
 #%%
 mb = ModelBalancing(**args)
