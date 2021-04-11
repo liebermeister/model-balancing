@@ -1,5 +1,6 @@
 import os
-from typing import Union
+import warnings
+from typing import Union, List
 import json
 import numpy as np
 from model_balancing import ModelBalancing, ModelBalancingConvex, Q_
@@ -7,7 +8,12 @@ import cvxpy as cp
 import pandas as pd
 from sbtab import SBtab
 
-def to_sbtab(mb: Union[ModelBalancing, ModelBalancingConvex]) -> SBtab.SBtabDocument:
+def to_sbtab(
+        mb: Union[ModelBalancing, ModelBalancingConvex],
+        metabolite_names: List[str],
+        reaction_names: List[str],
+        state_names: List[str],
+) -> SBtab.SBtabDocument:
     condition_names = ["S1", "S2", "S3", "S4"]
 
     sbtabdoc = SBtab.SBtabDocument(name="balanced_states")
@@ -225,36 +231,22 @@ args["rate_law"] = "CM"
 
 metabolite_names = data["network"]["metabolite_names"]
 reaction_names = data["network"]["reaction_names"]
+state_names = data["state_names"]
 
 #%%
 mbc = ModelBalancingConvex(**args)
 assert mbc.is_gmean_feasible()
 mbc.solve()
-print(f"Convex optimization (equivalent to α = 1) - optimized total squared Z-scores = {mbc.objective_value:.3f}")
-mbc.print_z_scores()
-to_sbtab(mbc).write(f"../res/{config_fname}_convex.tsv")
-
-mb = ModelBalancing(**args)
-mb.alpha = 0.0
-for p in mb.INDEPENDENT_VARIABLES:
-    ln_p = mbc.__getattribute__(f"ln_{p}")
-    if ln_p.size != 0:
-        mb.__setattr__(f"ln_{p}", ln_p.value)
-
-print(mbc.ln_conc_enz.value)
-print(mb.ln_conc_enz)
-print(mb._ln_conc_enz(**mb._variable_vector_to_dict()).flatten())
-print(f"After copying the parameters to a non-convex solver - total squared Z-scores ="
-      f" {mb.objective_value:.3f}")
-mb.print_z_scores()
+print(f"Convex optimization (equivalent to α = 0.0) ... optimized total squared Z-scores = {mbc.objective_value:.3f}")
+to_sbtab(mbc, metabolite_names, reaction_names, state_names).write(f"../res/{config_fname}_convex.tsv")
 
 #%%
 mb = ModelBalancing(**args)
 assert mb.is_gmean_feasible()
 for a in [0., 0.001, 0.01, 0.1, 0.5, 1.0]:
+    warnings.filterwarnings(RuntimeWarning)
+    print(f"Solving using non-convex solver, α = {a:5.1g} ... ", end="")
     mb.alpha = a
     mb.solve()
-    print(f"α = {a:5.1g} - optimized total squared Z-scores = {mb.objective_value:.3f}")
-    to_sbtab(mb).write(f"../res/{config_fname}_alpha_{a:.1g}.tsv")
-
-mb.print_z_scores()
+    print(f"optimized total squared Z-scores = {mb.objective_value:.3f}")
+    to_sbtab(mb, metabolite_names, reaction_names, state_names).write(f"../res/{config_fname}_alpha_{a:.1g}.tsv")
