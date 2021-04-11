@@ -237,14 +237,14 @@ state_names = data["state_names"]
 mbc = ModelBalancingConvex(**args)
 assert mbc.is_gmean_feasible()
 mbc.solve()
-print(f"Convex optimization (equivalent to α = 0.0) ... optimized total squared Z-scores = {mbc.objective_value:.3f}")
+print(f"Convex optimization (equivalent to α = 0) ... optimized total squared Z-scores = {mbc.objective_value:.3f}")
 to_sbtab(mbc, metabolite_names, reaction_names, state_names).write(f"../res/{config_fname}_convex.tsv")
 
 #%%
 mb = ModelBalancing(**args)
 assert mb.is_gmean_feasible()
 for a in [0., 0.001, 0.01, 0.1, 0.5, 1.0]:
-    warnings.filterwarnings(RuntimeWarning)
+    warnings.filterwarnings("ignore", category=RuntimeWarning)
     print(f"Solving using non-convex solver, α = {a:5.1g} ... ", end="")
     mb.alpha = a
     mb.solve()
