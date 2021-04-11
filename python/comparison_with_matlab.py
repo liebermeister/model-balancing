@@ -15,11 +15,10 @@ def to_sbtab(
     reaction_names: List[str],
     state_names: List[str],
 ) -> SBtab.SBtabDocument:
-    condition_names = ["S1", "S2", "S3", "S4"]
 
     sbtabdoc = SBtab.SBtabDocument(name="balanced_states")
 
-    flux_df = pd.DataFrame(mb.fluxes.m_as("mM/s"), columns=condition_names)
+    flux_df = pd.DataFrame(mb.fluxes.m_as("mM/s"), columns=state_names)
     flux_df.insert(0, "!QuantityType", "rate of reaction")
     flux_df.insert(1, "!Reaction", reaction_names)
     flux_sbtab = SBtab.SBtabTable.from_data_frame(
@@ -61,7 +60,7 @@ def to_sbtab(
         Ka = Q_(np.exp(mb._create_dense_matrix(mb.A_act, mb.ln_Ka)), "M")
         Ki = Q_(np.exp(mb._create_dense_matrix(mb.A_inh, mb.ln_Ki)), "M")
 
-    conc_met_df = pd.DataFrame(c.m_as("mM"), columns=condition_names)
+    conc_met_df = pd.DataFrame(c.m_as("mM"), columns=state_names)
     conc_met_df.insert(0, "!QuantityType", "concentration")
     conc_met_df.insert(1, "!Compound", ["X1", "S2", "X3", "X4"])
     conc_met_sbtab = SBtab.SBtabTable.from_data_frame(
@@ -73,7 +72,7 @@ def to_sbtab(
     )
     sbtabdoc.add_sbtab(conc_met_sbtab)
 
-    conc_enz_df = pd.DataFrame(e.m_as("mM"), columns=condition_names)
+    conc_enz_df = pd.DataFrame(e.m_as("mM"), columns=state_names)
     conc_enz_df.insert(0, "!QuantityType", "concentration of enzyme")
     conc_enz_df.insert(1, "!Reaction", reaction_names)
     conc_enz_sbtab = SBtab.SBtabTable.from_data_frame(
@@ -97,7 +96,7 @@ def to_sbtab(
     )
     sbtabdoc.add_sbtab(gibbs_energy_sbtab)
 
-    gibbs_energy_df = pd.DataFrame(driving_forces, columns=condition_names)
+    gibbs_energy_df = pd.DataFrame(driving_forces, columns=state_names)
     gibbs_energy_df.insert(0, "!QuantityType", "Gibbs energy of reaction")
     gibbs_energy_df.insert(1, "!Reaction", reaction_names)
     gibbs_energy_sbtab = SBtab.SBtabTable.from_data_frame(
