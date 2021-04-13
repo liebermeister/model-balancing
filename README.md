@@ -34,7 +34,8 @@ To balance your model in python, you first need to convert your model and data i
     - [`metabolic-network-toolbox`](https://github.com/liebermeister/metabolic-network-toolbox) - metabolic network toolbox
     - [`sbtab-matlab`](https://github.com/liebermeister/sbtab-matlab) - SBtab toolbox
     - [`enzyme-cost-minimization`](https://github.com/liebermeister/enzyme-cost-minimization) - enzyme cost minimization toolbox
--  Make sure all the directories and subdirectories are included in your Matlab path
+    
+Make sure all the directories and subdirectories are included in your Matlab path.
 The code was tested with Matlab R2019b on Linux. 
 ### Python
 - Install using `pip`:
