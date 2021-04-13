@@ -28,6 +28,7 @@ To balance your model in python, you first need to convert your model and data i
 
 ## Dependencies
 ### Matlab
+The code was tested with Matlab R2019b on Linux. 
 - [SBML toolbox](http://sbml.org/Software/SBMLToolbox) (optional - needed only if SBML files are used; version needs to match your matlab version and  requires a matching version of libSBML)
 - Clone the following [GitHub](https://github.com/liebermeister) repositories
     - [`matlab-utils`](https://github.com/liebermeister/matlab-utils) - utility functions
