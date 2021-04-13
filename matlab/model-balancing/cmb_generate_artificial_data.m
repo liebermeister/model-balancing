@@ -196,7 +196,7 @@ end
 % check whether true values satisfy bounds
 
 flag_ok = 1;
-
+%log10(exp(true.X))
 if find(true.q < bounds.q_min),                              warning('Lower bounds for q violated'); flag_ok = 0; end
 if find(true.q > bounds.q_max),                              warning('Upper bounds for q violated'); flag_ok = 0; end
 if find(true.X < repmat(bounds.x_min,1,ns)),                 warning('Lower bounds for X violated'); flag_ok = 0; end

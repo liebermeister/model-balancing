@@ -85,6 +85,9 @@ switch cmb_options.parameterisation,
 
 end
 
+              
+% ---------------------------------------------------
+              
 q.number    = length(q.names);
 qall.number = length(qall.names);
 
@@ -125,9 +128,31 @@ switch cmb_options.parameterisation,
     
 end
 
+% ------------------------------------------
+% dependent q variables
+
+qdep.names = [repmat({'Kcatf'},nr,1); ...
+              repmat({'Kcatr'},nr,1)];
+qdep.index.Kcatf = [1:nr];
+qdep.index.Kcatr = nr + [1:nr];    
+qdep.number = length(qdep.names);
+
+M_q_to_qdep = zeros(qdep.number, q.number);
+M_q_to_qdep(qdep.index.Kcatf, q.index.KV)  = eye(nr);
+M_q_to_qdep(qdep.index.Kcatf, q.index.Keq) =  0.5 * diag(h) * Bt;
+M_q_to_qdep(qdep.index.Kcatf, q.index.KM)  = -0.5 * diag(h) * stoich_matrix_reaction_KM;
+M_q_to_qdep(qdep.index.Kcatr, q.index.KV)  = eye(nr);                                               
+M_q_to_qdep(qdep.index.Kcatr, q.index.Keq) = -0.5 * diag(h) * Bt;
+M_q_to_qdep(qdep.index.Kcatr, q.index.KM)  =  0.5 * diag(h) * stoich_matrix_reaction_KM;
+
+
+% ------------------------------------------
+% Put together data structure q_info 
+
 q_info.q           = q;            % independent parameters
 q_info.qall        = qall;         % all parameters
 q_info.M_q_to_qall = M_q_to_qall;  % conversion independent -> all
+q_info.M_q_to_qdep = M_q_to_qdep;  % conversion independent -> dependent
 q_info.M_qall_to_q = M_qall_to_q;  % conversion all -> independent
 
 switch cmb_options.parameterisation,  
@@ -136,8 +161,8 @@ switch cmb_options.parameterisation,
     q_info.M_qKeqind_to_qallKeq = q_info.M_q_to_qall(q_info.qall.index.Keq,q_info.q.index.Keq);
 end
 
+% plot conversion matrices
 if 0,
-  % plot conversion matrices
   figure(1); im(q_info.M_qall_to_q,[],q_info.q.names,q_info.qall.names)   
   figure(2); im(q_info.M_q_to_qall,[],q_info.qall.names,q_info.q.names)
 end

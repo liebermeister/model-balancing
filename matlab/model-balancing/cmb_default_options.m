@@ -64,6 +64,14 @@ function cmb_options = cmb_default_options()
 %   .quantities.KI.max           new value for upper_bound(ind.KI);
 %   .quantities.KI.mean_ln       new value for prior_median_ln(ind.KI);
 %   .quantities.KI.std_ln        new value for prior_geostd_ln(ind.KI);
+%   .quantities.Kcatf.min           new value for lower_bound(ind.Kcatf);
+%   .quantities.Kcatf.max           new value for upper_bound(ind.Kcatf);
+%   .quantities.Kcatf.mean_ln       new value for prior_median_ln(ind.Kcatf);
+%   .quantities.Kcatf.std_ln        new value for prior_geostd_ln(ind.Kcatf);
+%   .quantities.Kcatr.min           new value for lower_bound(ind.Kcatr);
+%   .quantities.Kcatr.max           new value for upper_bound(ind.Kcatr);
+%   .quantities.Kcatr.mean_ln       new value for prior_median_ln(ind.Kcatr);
+%   .quantities.Kcatr.std_ln        new value for prior_geostd_ln(ind.Kcatr);
 %   .quantities.v.max            new value for upper_bound(v), default 100 mM/s
 %   .quantities.c.min            new value for lower_bound(ind.c);
 %   .quantities.c.max            new value for upper_bound(ind.c);
@@ -92,6 +100,7 @@ function cmb_options = cmb_default_options()
 % 
 % Possible initial value variants: 
 %  'preposterior_mode' (default: use preposterior mode for kinetic constants and metabolite levels)
+%  'flat_objective'    (pick a point in the solution space by using matlab's fmincon with a uniform objective function)
 %  'random'            (initialise parameter vector with random values)
 %  'true_values'       (true values: only with artificial data)
 %  'given_values'      (use existing cmb_options.init)
@@ -181,6 +190,16 @@ cmb_options.quantities.KI.min       = lower_bound(ind.KI);
 cmb_options.quantities.KI.max       = upper_bound(ind.KI);
 cmb_options.quantities.KI.mean_ln   = prior_median_ln(ind.KI);
 cmb_options.quantities.KI.std_ln    = prior_geostd_ln(ind.KI);
+
+cmb_options.quantities.Kcatf.min       = lower_bound(ind.Kcatf);
+cmb_options.quantities.Kcatf.max       = upper_bound(ind.Kcatf);
+cmb_options.quantities.Kcatf.mean_ln   = prior_median_ln(ind.Kcatf);
+cmb_options.quantities.Kcatf.std_ln    = prior_geostd_ln(ind.Kcatf);
+
+cmb_options.quantities.Kcatr.min       = lower_bound(ind.Kcatr);
+cmb_options.quantities.Kcatr.max       = upper_bound(ind.Kcatr);
+cmb_options.quantities.Kcatr.mean_ln   = prior_median_ln(ind.Kcatr);
+cmb_options.quantities.Kcatr.std_ln    = prior_geostd_ln(ind.Kcatr);
 
 cmb_options.quantities.v.max        = 100;                % mM/s
 

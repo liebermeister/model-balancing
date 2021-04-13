@@ -7,8 +7,10 @@ network    = network_import_model(model_file, struct('load_quantity_table',0));
 
 % set simple default concentrations
 
-c_init       = 0.01 * ones(length(network.metabolites),1);
-ind_glucose  = label_names('D_Glucose',network.metabolites);
-ind_products = label_names({'CO2','Ubiquinone'},network.metabolites);
-c_init(ind_glucose)  = 10;
-c_init(ind_products) = 0.00001;
+c_init       = 0.1 * ones(length(network.metabolites),1);
+ind_high     = label_names({'D_Glucose','Ubiquinol','Acetyl_CoA'},network.metabolites);
+ind_low      = label_names({'ADP','Orthophosphate','NADH'},network.metabolites);
+ind_very_low = label_names({'CO2','Ubiquinone'},network.metabolites);
+c_init(ind_high)     = 10;
+c_init(ind_low)      = 0.01;
+c_init(ind_very_low) = 0.0001;

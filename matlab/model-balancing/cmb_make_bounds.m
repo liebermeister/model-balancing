@@ -31,6 +31,16 @@ switch cmb_options.parameterisation
   otherwise error('Ce_Options.Parameterisation not supported');
 end
 
+bounds.q_dep_min = [log(cmb_options.quantities.Kcatf.min) * ones(nr,1); ...
+                    log(cmb_options.quantities.Kcatf.min) * ones(nr,1)];
+bounds.q_dep_max = [log(cmb_options.quantities.Kcatf.max) * ones(nr,1); ...
+                    log(cmb_options.quantities.Kcatf.max) * ones(nr,1)];
+
+bounds.q_all_min = [bounds.q_min; ...
+                    bounds.q_dep_min];
+bounds.q_all_max = [bounds.q_max; ...
+                    bounds.q_dep_max];
+
 bounds.x_min = log(cmb_options.quantities.c.min * ones(nm,1));
 bounds.x_max = log(cmb_options.quantities.c.max * ones(nm,1));
 

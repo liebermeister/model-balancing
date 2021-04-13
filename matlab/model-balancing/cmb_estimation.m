@@ -33,7 +33,7 @@ N = network.N; W = network.regulation_matrix; ind_ext = find(network.external); 
 % --------------------------------------------------------
 % Initialise some variables
 
-tstart = tic;
+tstart_cmb_estimation = tic;
 
 epsilon = 10^-15;
 
@@ -59,11 +59,12 @@ end
 % Build matrix describing the flux sign constraints for y. 
 %
 % consists of vertically stacked blocks; each block describes the flux sign constraints for one state
-% in each block: put subblocks blocks together horizontally: first X then q, as in cmb_qX_to_y
+% in each block: put sub-blocks together horizontally: first X then q, as in cmb_qX_to_y
 
 block_X = -network.N';
 block_q = q_info.M_q_to_qall(q_info.qall.index.Keq,:);
 y_ineq_A = [];
+
 for it = 1:ns,
   y_ineq_A = matrix_add_block(y_ineq_A, block_X);
 end
@@ -76,6 +77,17 @@ ind_finite_flux = find(V(:)~=0);
 y_ineq_A = y_ineq_A(ind_finite_flux,:);
 y_ineq_b = y_ineq_b(ind_finite_flux,:);
 
+% add constraints for bounds on dependent kinetic constants
+
+nq = q_info.q.number;
+M_y_to_q = [zeros(nq,nm*ns), eye(nq)];
+YY_A = [-q_info.M_q_to_qdep * M_y_to_q; ...
+         q_info.M_q_to_qdep * M_y_to_q];
+YY_b = [-bounds.q_dep_min; bounds.q_dep_max];
+
+y_ineq_A = [y_ineq_A; YY_A];
+y_ineq_b = [y_ineq_b; YY_b];
+
 
 % --------------------------------------------------
 % Set initial values
@@ -83,11 +95,11 @@ y_ineq_b = y_ineq_b(ind_finite_flux,:);
 switch cmb_options.initial_values_variant,
   case {'given_values','true_values','random'},
 
-    y_init = cmb_qX_to_y(cmb_options.init.q, cmb_options.init.X, nm,ns);
     init   = cmb_options.init;
-  
+    y_init = cmb_qX_to_y(init.q, init.X, nm,ns);
+
   otherwise,
-    %% if y_preposterior_mean satisfies all constraints, use it
+    % if y_preposterior_mean satisfies all constraints, use it
     if 0 == sum(y_preposterior_mean < y_bound_min) ...
           + sum(y_preposterior_mean > y_bound_max)  ...
           + sum(y_ineq_A * y_preposterior_mean > y_ineq_b),
@@ -103,19 +115,50 @@ switch cmb_options.initial_values_variant,
 
 end
 
+switch cmb_options.initial_values_variant,
+  case 'flat_objective',
+    %% find initial point using fmincon with a flat objective function
+    opt = optimoptions('fmincon','MaxFunEvals',10^15,'MaxIter',10^15,'TolX',10^-5,'Display',...
+                       cmb_options.optim_display,'Algorithm','interior-point','SpecifyObjectiveGradient',false);
+    [y_init,~,err] = fmincon(@(y) 1,y_init,y_ineq_A,y_ineq_b-epsilon,[],[],y_bound_min,y_bound_max,[],opt);
+    [init.q, init.X] = cmb_y_to_qX(y_init, nm, ns);
+end    
+
+% -----------------------------------------------
+% Check feasibility of initial point (check explicitly with init.q and init.X)
+
+% Kinetic constants, bounds 
+
+if sum(q_info.M_q_to_qall * init.q < bounds.q_all_min), error('Infeasible initial point'); end
+if sum(q_info.M_q_to_qall * init.q > bounds.q_all_max), error('Infeasible initial point'); end
+
+% Metabolite data, bounds 
+
+if sum(sum(init.X < repmat(bounds.x_min,1,ns))), error('Infeasible initial point'); end
+if sum(sum(init.X > repmat(bounds.x_max,1,ns))), error('Infeasible initial point'); end
+
+% Thermodynamic forces, directions
+
+my_ln_Keq       = init.q(q_info.q.index.Keq);
+my_theta_matrix = repmat(my_ln_Keq,1,ns) - network.N' * init.X;
+
+if sum(sum(my_theta_matrix .* data.V.mean < 0)),          error('Infeasible initial point'); end
+if sum(sum([my_theta_matrix == 0] .* [data.V.mean ~=0])), error('Infeasible initial point'); end
+
+
 % ------------------------------------------------------
-% Check whether initial values satify all constraints
+% Check whether initial values satify all constraints (check with vector y_init)
 
 init_feasible = 1;
 
 if sum(y_init < y_bound_min) + sum(y_init > y_bound_max) ~= 0,
-  warning('Initial point violates some bounds');
+  error('Initial point violates some bounds');
   init_feasible = 0;
 end
 
 if length(y_ineq_b),
   if sum(y_ineq_A * y_init > y_ineq_b-epsilon) ~=0,
-    warning('Initial point violates some constraints; please change the initial state (or possibly Aforward_min)');
+    error('Initial point violates some constraints; please change the initial state (or possibly Aforward_min)');
     occuring_values_and_constraints = [y_ineq_A * y_init, y_ineq_b]
     init_feasible = 0;
   end
@@ -192,9 +235,8 @@ optimal = cmb_qX_to_variables(q_opt,X_opt,V,network,cmb_options,q_info,cmb_optio
 gradient_V = [[log(optimal.E) - preposterior.lnE.mean] ./ preposterior.lnE.std] .* [optimal.E ./ V];
 gradient_V = nan; 
 
-time = toc(tstart);
-
-display(sprintf('Calculation time: %3.2f s',time));
+time = toc(tstart_cmb_estimation);
+display(sprintf('\nCalculation time: %3.2f s',time));
 
 % --------------------------------------------------------------
 %% Clear global variables

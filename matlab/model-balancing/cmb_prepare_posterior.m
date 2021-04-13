@@ -41,7 +41,7 @@ data.qall.std(isnan(data.qall.std)) = nanmean(data.qall.std);
 switch cmb_options.use_kinetic_data,
   
   case 'all',
-    display('Using kinetic constant data');
+    display('Using kinetic and equilibrium constants data');
 
     qall_mean           = data.qall.mean;
     qall_cov_inv        = diag(1./[data.qall.std.^2]);
@@ -58,7 +58,7 @@ switch cmb_options.use_kinetic_data,
     preposterior.q.cov_inv = q_cov_inv;
   
   case 'only_Keq',
-    display('Using only equilibrium constant data');
+    display('Using equilibrium constants data');
 
     qall_mean           = data.qall.mean(q_info.qall.index.Keq);
     %% use narrow standard deviation for the given equilibrium constants
@@ -77,7 +77,7 @@ switch cmb_options.use_kinetic_data,
     preposterior.q.cov_inv = q_cov_inv;
   
   case 'none',
-    display('Using no kinetic data');
+    display('Not using kinetic or equilibrium constants data');
     preposterior.q = prior.q;
     
   otherwise,

@@ -51,7 +51,7 @@ for it = 1:ns,
   result.V.(data.samples{it}) = data.V.mean(:,it);
 end
 
-ecm_sbtab_options = struct('r', optimal.kinetics,'method','emc4cm','document_name',filenames.model_name, 'save_tolerance_ranges',0,'sbtab_attributes',struct('DocumentName', 'CMB result', 'Document', 'CMBresult', 'RelaxationAlpha', sprintf('%f',cmb_options.enzyme_score_alpha), 'CalculationTime', sprintf('%f s',options.calculation_time)),'filename_model_state', filenames.extension_model_state, 'filename_state_runs',filenames.extension_state_runs);
+ecm_sbtab_options = struct('r', optimal.kinetics,'method','emc4cm','document_name',filenames.model_name, 'save_tolerance_ranges',0,'sbtab_attributes',struct('DocumentName', 'MB result', 'Document', 'MBresult', 'RelaxationAlpha', sprintf('%f.2',cmb_options.enzyme_score_alpha), 'CalculationTime', sprintf('%f s',options.calculation_time)),'filename_model_state', filenames.extension_model_state, 'filename_state_runs',filenames.extension_state_runs);
 
 ecm_save_result_sbtab(filenames.balanced, network_optimal, result.C, result.E, result.DeltaG, ecm_sbtab_options,bounds.conc_min, bounds.conc_max,[],[],[],[],[],result.V);
 
@@ -73,7 +73,7 @@ if length(true),
     result.V.(data.samples{it}) = true.V(:,it);
   end
   
-  ecm_sbtab_options = struct('r', optimal.kinetics,'method','emc4cm','document_name',filenames.model_name, 'save_tolerance_ranges',0,'sbtab_attributes',struct('DocumentName', 'CMB result', 'Document', 'CMBresult', 'CalculationTime', sprintf('%f s',options.calculation_time)),'filename_model_state', filenames.extension_model_state, 'filename_state_runs', filenames.extension_state_runs);
+  ecm_sbtab_options = struct('r', optimal.kinetics,'method','emc4cm','document_name',filenames.model_name, 'save_tolerance_ranges',0,'sbtab_attributes',struct('DocumentName', 'MB result', 'Document', 'MBresult', 'CalculationTime', sprintf('%f s',options.calculation_time)),'filename_model_state', filenames.extension_model_state, 'filename_state_runs', filenames.extension_state_runs);
 
   ecm_save_result_sbtab(filenames.true, network_true, result.C, result.E, result.A, ecm_sbtab_options, bounds.conc_min, bounds.conc_max,[],[],[],[],[],result.V);
 

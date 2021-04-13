@@ -42,7 +42,7 @@ end
 filenames_default = struct('graphics_dir',[],'report_txt',[],'results_mat',[]);
 filenames = join_struct(filenames_default,filenames);
   
-tic
+tstart_model_balancing = tic;
 
   % --------------------------------------------------------------
 %% Set global variables to speed up function modular_velocities
@@ -72,7 +72,7 @@ switch cmb_options.enzyme_score_type,
     %display('  The optimality problem is convex, but enzyme levels may be underestimated!');
   case 'interpolated'
     %display(sprintf('model_balancing.m:'))
-    display(sprintf('Using softening parameter alpha=%f',cmb_options.enzyme_score_alpha))
+    display(sprintf('Using enzyme fit stiffness alpha=%f',cmb_options.enzyme_score_alpha))
     display('The optimality problem may be non-convex, and enzyme levels may be underestimated.');
 end
 
@@ -117,27 +117,32 @@ for it = 1:size(V,2),
 end
 display('Flux distributions are thermo-physiologically feasible');
 
+
 % -----------------------------------------------
 % Initial values
 
-
 switch cmb_options.initial_values_variant,
+  case 'flat_objective';
+    display(sprintf('Using fmincon solution with flat objective (under constraints) as the initial point'));
+    cmb_options.init = [];
   case 'preposterior_mode';
-    cmb_options.init = []; % DEFAULT: use preposterior mode (of q alone) as starting point
+    display(sprintf('Using preposterior mode (under constraints) as the initial point'));
+    cmb_options.init = [];
   case 'random',
-    display('Using random initial values; please note that these values may violate the constraints');
-    cmb_options.init.q = 0.1*randn(nq,1);
-    cmb_options.init.X = 0.1*randn(size(data.X.mean));
+    display('Using random values close to zero as the initial point; these values may violate the constraints');
+    cmb_options.init.q = 0.01 * randn(nq,1);
+    cmb_options.init.X = 0.01 * randn(size(data.X.mean));
   case 'true_values',
+    display('Using true values as the initial point');
     cmb_options.init.q = true.q;
     cmb_options.init.X = true.X;
   case 'given_values';
+    display('Using given initial values');
     if ~isfield(cmb_options,'init'), 
       error('missing options field "cmb_options.init", required by "cmb_options.initial_values_variant=given_values"'); 
     end
-    %% existing cmb_options.init is used 
   case 'average_sample';
-    display(sprintf('\n-------------------\nFinding initial point by running model balancing on average state data'));
+    display(sprintf('Using model-balancing random data as the initial point'));
 
     my_cmb_options                        = cmb_options;
     my_cmb_options.ns                     = 1;
@@ -146,8 +151,10 @@ switch cmb_options.initial_values_variant,
     my_cmb_options.verbose                = 0;
     my_cmb_options.display                = 0;
     my_cmb_options.save_results           = 0;
+    
     my_q_info        = cmb_define_parameterisation(network, my_cmb_options); 
     [~, my_prior, my_bounds, my_data] = cmb_generate_artificial_data(network, my_cmb_options, my_q_info,ones(size(network.metabolites)), conc_min, conc_max);
+    
     my_data.V.mean = nanmean(data.V.mean,2);
     my_data.X.mean = nanmean(data.X.mean,2);
     my_data.E.mean = exp(nanmean(data.lnE.mean,2));
@@ -155,20 +162,30 @@ switch cmb_options.initial_values_variant,
     my_data.V.std  = nanmean(data.V.std,2); 
     my_data.X.std  = nanmean(data.X.std,2);
     my_data.E.std  = exp(nanmean(data.lnE.std,2));
+    
     if length(true),
-      my_true = true;
+      my_true   = true;
       my_true.V = nanmean(true.V,2);
       my_true.X = nanmean(true.X,2);
       my_true.E = exp(nanmean(log(true.E),2));
     else
       my_true = [];
     end
+    
     my_optimal = model_balancing(filenames, my_cmb_options, network, my_q_info, my_prior, my_bounds, my_data, my_true);
     cmb_options.init.q = my_optimal.q;
     cmb_options.init.X = repmat(my_optimal.X,1,cmb_options.ns);
-    display(sprintf('Initial point found\n-------------------'));
-
+    %display(sprintf('Initial point found\n-------------------'));
+  
+  otherwise 
+    error('unknown option');
 end
+
+if length(cmb_options.init),
+  cmb_options.init.q(isnan(cmb_options.init.q)) = 0;
+  cmb_options.init.X(isnan(cmb_options.init.X)) = 0;
+end
+
 
 % -----------------------------------------------
 % Compute the optimum state and parameter values
@@ -181,10 +198,6 @@ if cmb_options.verbose,
   end
 end
 
-if length(cmb_options.init),
-  cmb_options.init.q(isnan(cmb_options.init.q)) = 0;
-  cmb_options.init.X(isnan(cmb_options.init.X)) = 0;
-end
 
 display(' '); 
 display('Running optimisation ..');
@@ -232,7 +245,7 @@ kapp_max.reverse = -min([data.V.mean ./ exp(data.lnE.mean)],[],2);
 kapp_max.forward(kapp_max.forward<0) = nan;
 kapp_max.reverse(kapp_max.reverse<0) = nan;
 
-calculation_time = toc;
+calculation_time = toc(tstart_model_balancing);
 
 
 % -----------------------------------------------
