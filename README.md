@@ -28,7 +28,7 @@ To balance your model in python, you first need to convert your model and data i
 
 ## Dependencies
 ### Matlab
-- [SBML toolbox](http://sbml.org/Software/SBMLToolbox) (optional - needed only if SBML files are used)
+- [SBML toolbox](http://sbml.org/Software/SBMLToolbox) (optional - needed only if SBML files are used; version needs to match your matlab version and  requires a matching version of libSBML)
 - Clone the following [GitHub](https://github.com/liebermeister) repositories
     - [`matlab-utils`](https://github.com/liebermeister/matlab-utils) - utility functions
     - [`metabolic-network-toolbox`](https://github.com/liebermeister/metabolic-network-toolbox) - metabolic network toolbox
