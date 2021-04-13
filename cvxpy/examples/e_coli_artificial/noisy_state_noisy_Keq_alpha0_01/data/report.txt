@@ -12,6 +12,7 @@ Fitted (enzyme):     120
 Fitted (kinetic):    167
 Fitted (TOTAL):      447
 Relaxation alpha:    0.010000
-Geom. std errors:    c:2.08 e:4.71 Keq:1.63 Kcatf:142.94 Kcatr:122.73 KM:177.60
-Corr. on log scale:  c:0.963 e:0.449 Keq:0.988 Kcatf:-0.352 Kcatr:0.232 KM:-0.034
-Calculation time:    1446.1 s
+Initial values type: flat_objective
+Geom. std errors:    c:2.64 e:3.90 Keq:2.26 Kcatf:86.91 Kcatr:105.68 KM:135.23
+Corr. on log scale:  c:0.965 e:0.580 Keq:0.967 Kcatf:-0.255 Kcatr:0.301 KM:-0.066
+Calculation time:    2468.1 s

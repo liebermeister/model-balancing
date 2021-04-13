@@ -14,4 +14,4 @@ Fitted (TOTAL):      40
 Relaxation alpha:    0.010000
 Geom. std errors:    c:1.05 e:1.25 Keq:1.18 Kcatf:1.66 Kcatr:1.22 KM:1.34
 Corr. on log scale:  c:0.999 e:0.959 Keq:1.000 Kcatf:0.992 Kcatr:0.994 KM:0.996
-Calculation time:    6.5 s
+Calculation time:    6.2 s

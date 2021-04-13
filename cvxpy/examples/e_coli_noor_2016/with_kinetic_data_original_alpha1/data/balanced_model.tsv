@@ -1,4 +1,4 @@
-!!!SBtab Document='CMBresult' DocumentName='CMB result' RelaxationAlpha='1.000000' CalculationTime='125.650576 s'						
+!!!SBtab Document='MBresult' DocumentName='MB result' RelaxationAlpha='1.000000.2' CalculationTime='128.255657 s'						
 						
 !!SBtab TableID='Reaction' TableType='Reaction' TableName='Reaction'						
 !ID	!ReactionFormula	!Name	!NameForPlots	!Identifiers:kegg.reaction	!IsReversible	!Gene
@@ -151,233 +151,233 @@ PPC_R00345	0.40095304	0.50690003
 						
 !!SBtab TableID='Parameter' TableType='Quantity' TableName='Parameter' StandardConcentration='mM'						
 !QuantityType	!Reaction	!Compound	!Mode	!Unit		
-equilibrium constant	PTS_RPTSsy		42461168	dimensionless		
-equilibrium constant	PGI_R02740		0.79727441	dimensionless		
-equilibrium constant	PFK_R04779		1585.6866	dimensionless		
-equilibrium constant	ALD_R01070		0.26666691	dimensionless		
-equilibrium constant	TIM_R01015		3.1633232	dimensionless		
-equilibrium constant	GAP_R01061		0.0092884631	dimensionless		
-equilibrium constant	PGK_R01512		1004.4635	dimensionless		
-equilibrium constant	PGM_R01518		2.3433519	dimensionless		
-equilibrium constant	PGH_R00658		4.650385	dimensionless		
-equilibrium constant	PYK_R00200		15434698	dimensionless		
-equilibrium constant	PDH_R00209		1175079.7	dimensionless		
-equilibrium constant	ZWF_R00835		35.195462	dimensionless		
-equilibrium constant	GLH_R02035		16956.877	dimensionless		
-equilibrium constant	PGD_R01528		8.4902127	dimensionless		
-equilibrium constant	RPI_R01056		1.8355666	dimensionless		
-equilibrium constant	RPE_R01529		1.7796209	dimensionless		
-equilibrium constant	TXT_R01641		5.150069	dimensionless		
-equilibrium constant	TAL_R08575		1.7134004	dimensionless		
-equilibrium constant	TXT_R01067		55.445353	dimensionless		
-equilibrium constant	FBP_R00762		36589496	dimensionless		
-equilibrium constant	CSN_R00351		2025655	dimensionless		
-equilibrium constant	ACN_R01325		0.048961278	dimensionless		
-equilibrium constant	ACN_R01900		2.16716	dimensionless		
-equilibrium constant	ICD_R00709		84.806978	dimensionless		
-equilibrium constant	KGD_R08549		64625752	dimensionless		
-equilibrium constant	SCS_R00405		1.1750865	dimensionless		
-equilibrium constant	SDH_R02164		3348.4958	dimensionless		
-equilibrium constant	FUM_R01082		19.623519	dimensionless		
-equilibrium constant	MDH_R00342		0.0044350164	dimensionless		
-equilibrium constant	PPC_R00345		6.5591307e-07	dimensionless		
-catalytic rate constant geometric mean	PTS_RPTSsy		1.179726	1/s		
-catalytic rate constant geometric mean	PGI_R02740		519.91399	1/s		
-catalytic rate constant geometric mean	PFK_R04779		40.982911	1/s		
-catalytic rate constant geometric mean	ALD_R01070		2522.8841	1/s		
-catalytic rate constant geometric mean	TIM_R01015		1365.29	1/s		
-catalytic rate constant geometric mean	GAP_R01061		600.91474	1/s		
-catalytic rate constant geometric mean	PGK_R01512		209.63397	1/s		
-catalytic rate constant geometric mean	PGM_R01518		249.23791	1/s		
-catalytic rate constant geometric mean	PGH_R00658		36.906038	1/s		
-catalytic rate constant geometric mean	PYK_R00200		0.0998396	1/s		
-catalytic rate constant geometric mean	PDH_R00209		72.574841	1/s		
-catalytic rate constant geometric mean	ZWF_R00835		2018.1698	1/s		
-catalytic rate constant geometric mean	GLH_R02035		3.7644076	1/s		
-catalytic rate constant geometric mean	PGD_R01528		40.789705	1/s		
+equilibrium constant	PTS_RPTSsy		42514598	dimensionless		
+equilibrium constant	PGI_R02740		0.79727865	dimensionless		
+equilibrium constant	PFK_R04779		1585.693	dimensionless		
+equilibrium constant	ALD_R01070		0.26666619	dimensionless		
+equilibrium constant	TIM_R01015		3.1633199	dimensionless		
+equilibrium constant	GAP_R01061		0.0092884524	dimensionless		
+equilibrium constant	PGK_R01512		1004.4654	dimensionless		
+equilibrium constant	PGM_R01518		2.3447195	dimensionless		
+equilibrium constant	PGH_R00658		4.6906524	dimensionless		
+equilibrium constant	PYK_R00200		2933616.2	dimensionless		
+equilibrium constant	PDH_R00209		1175047.6	dimensionless		
+equilibrium constant	ZWF_R00835		35.195551	dimensionless		
+equilibrium constant	GLH_R02035		16956.794	dimensionless		
+equilibrium constant	PGD_R01528		8.4901984	dimensionless		
+equilibrium constant	RPI_R01056		1.8355682	dimensionless		
+equilibrium constant	RPE_R01529		1.7796217	dimensionless		
+equilibrium constant	TXT_R01641		5.1500597	dimensionless		
+equilibrium constant	TAL_R08575		1.7134027	dimensionless		
+equilibrium constant	TXT_R01067		55.445421	dimensionless		
+equilibrium constant	FBP_R00762		36589404	dimensionless		
+equilibrium constant	CSN_R00351		2025651	dimensionless		
+equilibrium constant	ACN_R01325		0.04896133	dimensionless		
+equilibrium constant	ACN_R01900		2.167164	dimensionless		
+equilibrium constant	ICD_R00709		84.807194	dimensionless		
+equilibrium constant	KGD_R08549		63709787	dimensionless		
+equilibrium constant	SCS_R00405		1.1750896	dimensionless		
+equilibrium constant	SDH_R02164		3348.4964	dimensionless		
+equilibrium constant	FUM_R01082		19.62355	dimensionless		
+equilibrium constant	MDH_R00342		0.0044350647	dimensionless		
+equilibrium constant	PPC_R00345		7.8383288e-07	dimensionless		
+catalytic rate constant geometric mean	PTS_RPTSsy		1.2279749	1/s		
+catalytic rate constant geometric mean	PGI_R02740		519.91584	1/s		
+catalytic rate constant geometric mean	PFK_R04779		40.983046	1/s		
+catalytic rate constant geometric mean	ALD_R01070		2522.8998	1/s		
+catalytic rate constant geometric mean	TIM_R01015		1365.2906	1/s		
+catalytic rate constant geometric mean	GAP_R01061		600.9151	1/s		
+catalytic rate constant geometric mean	PGK_R01512		209.6343	1/s		
+catalytic rate constant geometric mean	PGM_R01518		249.2683	1/s		
+catalytic rate constant geometric mean	PGH_R00658		35.028649	1/s		
+catalytic rate constant geometric mean	PYK_R00200		0.93206203	1/s		
+catalytic rate constant geometric mean	PDH_R00209		72.550741	1/s		
+catalytic rate constant geometric mean	ZWF_R00835		2018.1727	1/s		
+catalytic rate constant geometric mean	GLH_R02035		3.7644234	1/s		
+catalytic rate constant geometric mean	PGD_R01528		40.789732	1/s		
 catalytic rate constant geometric mean	RPI_R01056		1065.2575	1/s		
-catalytic rate constant geometric mean	RPE_R01529		433.19733	1/s		
-catalytic rate constant geometric mean	TXT_R01641		314.46662	1/s		
-catalytic rate constant geometric mean	TAL_R08575		13.569659	1/s		
-catalytic rate constant geometric mean	TXT_R01067		65.944405	1/s		
-catalytic rate constant geometric mean	FBP_R00762		9999.9682	1/s		
-catalytic rate constant geometric mean	CSN_R00351		36.275152	1/s		
-catalytic rate constant geometric mean	ACN_R01325		57.938674	1/s		
+catalytic rate constant geometric mean	RPE_R01529		433.19778	1/s		
+catalytic rate constant geometric mean	TXT_R01641		314.46704	1/s		
+catalytic rate constant geometric mean	TAL_R08575		13.569637	1/s		
+catalytic rate constant geometric mean	TXT_R01067		65.944121	1/s		
+catalytic rate constant geometric mean	FBP_R00762		9999.9984	1/s		
+catalytic rate constant geometric mean	CSN_R00351		36.275163	1/s		
+catalytic rate constant geometric mean	ACN_R01325		57.938621	1/s		
 catalytic rate constant geometric mean	ACN_R01900		158.32098	1/s		
-catalytic rate constant geometric mean	ICD_R00709		78.213861	1/s		
-catalytic rate constant geometric mean	KGD_R08549		0.19566019	1/s		
-catalytic rate constant geometric mean	SCS_R00405		98.123019	1/s		
-catalytic rate constant geometric mean	SDH_R02164		30.468038	1/s		
-catalytic rate constant geometric mean	FUM_R01082		296.38661	1/s		
-catalytic rate constant geometric mean	MDH_R00342		502.62335	1/s		
-catalytic rate constant geometric mean	PPC_R00345		432.46217	1/s		
-Michaelis constant	FUM_R01082	_S__Malate	0.65985873	mM		
-Michaelis constant	MDH_R00342	_S__Malate	0.83180725	mM		
-Michaelis constant	PDH_R00209	Acetyl_CoA	0.041270991	mM		
-Michaelis constant	CSN_R00351	Acetyl_CoA	0.026159031	mM		
-Michaelis constant	SDH_R02164	Fumarate	0.14611835	mM		
-Michaelis constant	FUM_R01082	Fumarate	0.13751661	mM		
-Michaelis constant	ACN_R01325	cis_Aconitate	0.016147962	mM		
-Michaelis constant	ACN_R01900	cis_Aconitate	0.0189014	mM		
-Michaelis constant	GLH_R02035	_6_Phospho_D_gluconate	0.021565169	mM		
-Michaelis constant	PGD_R01528	_6_Phospho_D_gluconate	0.016581991	mM		
-Michaelis constant	GAP_R01061	Orthophosphate	2.5058307	mM		
-Michaelis constant	FBP_R00762	Orthophosphate	1.190355	mM		
-Michaelis constant	SCS_R00405	Orthophosphate	1.3494895	mM		
-Michaelis constant	PPC_R00345	Orthophosphate	89.388312	mM		
-Michaelis constant	PTS_RPTSsy	Pyruvate	1.3034837	mM		
-Michaelis constant	PYK_R00200	Pyruvate	0.40862162	mM		
-Michaelis constant	PDH_R00209	Pyruvate	0.0090211399	mM		
-Michaelis constant	ZWF_R00835	NADPplus	0.58999659	mM		
-Michaelis constant	PGD_R01528	NADPplus	0.016540768	mM		
-Michaelis constant	ZWF_R00835	NADPH	2.4690565	mM		
-Michaelis constant	PGD_R01528	NADPH	0.0010685515	mM		
-Michaelis constant	GAP_R01061	NADH	3.881028	mM		
-Michaelis constant	PDH_R00209	NADH	4.6431065	mM		
-Michaelis constant	ICD_R00709	NADH	0.82951523	mM		
-Michaelis constant	KGD_R08549	NADH	3.1971146	mM		
-Michaelis constant	MDH_R00342	NADH	0.018218099	mM		
-Michaelis constant	GAP_R01061	NADplus	0.2585346	mM		
-Michaelis constant	PDH_R00209	NADplus	0.033854589	mM		
-Michaelis constant	ICD_R00709	NADplus	0.068019881	mM		
-Michaelis constant	KGD_R08549	NADplus	0.0031981078	mM		
-Michaelis constant	MDH_R00342	NADplus	0.19601039	mM		
-Michaelis constant	PFK_R04779	ATP	0.10767967	mM		
-Michaelis constant	PGK_R01512	ATP	0.74731727	mM		
-Michaelis constant	PYK_R00200	ATP	0.36932641	mM		
-Michaelis constant	SCS_R00405	ATP	0.058751992	mM		
-Michaelis constant	ICD_R00709	_2_Oxoglutarate	1.0374181	mM		
-Michaelis constant	KGD_R08549	_2_Oxoglutarate	3.7801691	mM		
-Michaelis constant	CSN_R00351	Oxaloacetate	0.017283563	mM		
-Michaelis constant	MDH_R00342	Oxaloacetate	0.02343035	mM		
-Michaelis constant	PPC_R00345	Oxaloacetate	131.52462	mM		
-Michaelis constant	SDH_R02164	Ubiquinone	0.052488367	mM		
-Michaelis constant	TAL_R08575	D_Erythrose_4_phosphate	0.043652804	mM		
-Michaelis constant	TXT_R01067	D_Erythrose_4_phosphate	0.37526276	mM		
-Michaelis constant	SDH_R02164	Ubiquinol	388.01448	mM		
-Michaelis constant	PFK_R04779	ADP	0.77031351	mM		
-Michaelis constant	PGK_R01512	ADP	0.11636863	mM		
-Michaelis constant	PYK_R00200	ADP	0.14603863	mM		
-Michaelis constant	SCS_R00405	ADP	0.097440294	mM		
-Michaelis constant	ACN_R01900	Isocitrate	0.16495416	mM		
-Michaelis constant	ICD_R00709	Isocitrate	1.0159096	mM		
-Michaelis constant	PGD_R01528	D_Ribulose_5_phosphate	0.16953317	mM		
-Michaelis constant	RPI_R01056	D_Ribulose_5_phosphate	2.2720164	mM		
-Michaelis constant	RPE_R01529	D_Ribulose_5_phosphate	0.75675222	mM		
-Michaelis constant	RPE_R01529	D_Xylulose_5_phosphate	0.16077196	mM		
-Michaelis constant	TXT_R01641	D_Xylulose_5_phosphate	0.38528569	mM		
-Michaelis constant	TXT_R01067	D_Xylulose_5_phosphate	0.50052446	mM		
-Michaelis constant	PTS_RPTSsy	D_Glucose_6_phosphate	0.50057973	mM		
-Michaelis constant	PGI_R02740	D_Glucose_6_phosphate	0.045323782	mM		
-Michaelis constant	ZWF_R00835	D_Glucose_6_phosphate	11.805874	mM		
-Michaelis constant	GAP_R01061	_3_Phospho_D_glyceroyl_phosphate	0.013669775	mM		
-Michaelis constant	PGK_R01512	_3_Phospho_D_glyceroyl_phosphate	0.0013388017	mM		
-Michaelis constant	PDH_R00209	CoA	0.0033616113	mM		
-Michaelis constant	CSN_R00351	CoA	999.99927	mM		
-Michaelis constant	KGD_R08549	CoA	0.0031981222	mM		
-Michaelis constant	SCS_R00405	CoA	0.056765643	mM		
-Michaelis constant	PDH_R00209	CO2	4.643113	mM		
-Michaelis constant	PGD_R01528	CO2	40.241364	mM		
-Michaelis constant	ICD_R00709	CO2	0.81573252	mM		
-Michaelis constant	KGD_R08549	CO2	3.1971643	mM		
-Michaelis constant	PPC_R00345	CO2	0.17504852	mM		
-Michaelis constant	RPI_R01056	D_Ribose_5_phosphate	2.071035	mM		
-Michaelis constant	TXT_R01641	D_Ribose_5_phosphate	0.41853441	mM		
-Michaelis constant	ALD_R01070	Glycerone_phosphate	0.15394184	mM		
-Michaelis constant	TIM_R01015	Glycerone_phosphate	1.1238067	mM		
-Michaelis constant	PTS_RPTSsy	D_Glucose	0.01884457	mM		
-Michaelis constant	PFK_R04779	D_Fructose_1_6_bisphosphate	0.27343774	mM		
-Michaelis constant	ALD_R01070	D_Fructose_1_6_bisphosphate	0.089145476	mM		
-Michaelis constant	FBP_R00762	D_Fructose_1_6_bisphosphate	0.0132626	mM		
-Michaelis constant	ALD_R01070	D_Glyceraldehyde_3_phosphate	0.12826954	mM		
-Michaelis constant	TIM_R01015	D_Glyceraldehyde_3_phosphate	0.55440853	mM		
-Michaelis constant	GAP_R01061	D_Glyceraldehyde_3_phosphate	0.47388563	mM		
-Michaelis constant	TXT_R01641	D_Glyceraldehyde_3_phosphate	3.8711194	mM		
-Michaelis constant	TAL_R08575	D_Glyceraldehyde_3_phosphate	0.064858094	mM		
-Michaelis constant	TXT_R01067	D_Glyceraldehyde_3_phosphate	3.9730521	mM		
-Michaelis constant	PTS_RPTSsy	Phosphoenolpyruvate	0.0046525471	mM		
-Michaelis constant	PGH_R00658	Phosphoenolpyruvate	0.25232454	mM		
-Michaelis constant	PYK_R00200	Phosphoenolpyruvate	0.17259257	mM		
-Michaelis constant	PPC_R00345	Phosphoenolpyruvate	0.29574944	mM		
-Michaelis constant	CSN_R00351	Citrate	1.9349289	mM		
-Michaelis constant	ACN_R01325	Citrate	0.67932842	mM		
-Michaelis constant	KGD_R08549	Succinyl_CoA	0.096715648	mM		
-Michaelis constant	SCS_R00405	Succinyl_CoA	0.046458644	mM		
-Michaelis constant	PGK_R01512	_3_Phospho_D_glycerate	1.0514591	mM		
-Michaelis constant	PGM_R01518	_3_Phospho_D_glycerate	2.0567149	mM		
-Michaelis constant	ZWF_R00835	D_Glucono_1_5_lactone_6_phosphate	47.396799	mM		
-Michaelis constant	GLH_R02035	D_Glucono_1_5_lactone_6_phosphate	0.022495013	mM		
-Michaelis constant	PGI_R02740	D_Fructose_6_phosphate	0.1749885	mM		
-Michaelis constant	PFK_R04779	D_Fructose_6_phosphate	0.021167557	mM		
-Michaelis constant	TAL_R08575	D_Fructose_6_phosphate	0.54120275	mM		
-Michaelis constant	TXT_R01067	D_Fructose_6_phosphate	5.5763704	mM		
-Michaelis constant	FBP_R00762	D_Fructose_6_phosphate	1.1903096	mM		
-Michaelis constant	PGM_R01518	_2_Phospho_D_glycerate	4.1699778	mM		
-Michaelis constant	PGH_R00658	_2_Phospho_D_glycerate	0.37822763	mM		
-Michaelis constant	SCS_R00405	Succinate	1.2283981	mM		
-Michaelis constant	SDH_R02164	Succinate	0.11987551	mM		
-Michaelis constant	TXT_R01641	Sedoheptulose_7_phosphate	3.2095112	mM		
-Michaelis constant	TAL_R08575	Sedoheptulose_7_phosphate	0.19891852	mM		
-substrate catalytic rate constant	PTS_RPTSsy		89.109948	1/s		
-substrate catalytic rate constant	PGI_R02740		236.26192	1/s		
-substrate catalytic rate constant	PFK_R04779		169.76601	1/s		
-substrate catalytic rate constant	ALD_R01070		2768.1614	1/s		
-substrate catalytic rate constant	TIM_R01015		3457.2243	1/s		
-substrate catalytic rate constant	GAP_R01061		139.31654	1/s		
-substrate catalytic rate constant	PGK_R01512		93.552652	1/s		
-substrate catalytic rate constant	PGM_R01518		267.94954	1/s		
-substrate catalytic rate constant	PGH_R00658		97.440332	1/s		
-substrate catalytic rate constant	PYK_R00200		160.29905	1/s		
-substrate catalytic rate constant	PDH_R00209		84.508733	1/s		
-substrate catalytic rate constant	ZWF_R00835		2921.0221	1/s		
-substrate catalytic rate constant	GLH_R02035		500.65237	1/s		
-substrate catalytic rate constant	PGD_R01528		23.053911	1/s		
-substrate catalytic rate constant	RPI_R01056		1511.6515	1/s		
-substrate catalytic rate constant	RPE_R01529		1253.7796	1/s		
-substrate catalytic rate constant	TXT_R01641		81.301839	1/s		
-substrate catalytic rate constant	TAL_R08575		13.125987	1/s		
-substrate catalytic rate constant	TXT_R01067		45.211923	1/s		
-substrate catalytic rate constant	FBP_R00762		5852251.2	1/s		
-substrate catalytic rate constant	CSN_R00351		24.956697	1/s		
-substrate catalytic rate constant	ACN_R01325		83.152624	1/s		
-substrate catalytic rate constant	ACN_R01900		78.894969	1/s		
-substrate catalytic rate constant	ICD_R00709		225.98624	1/s		
-substrate catalytic rate constant	KGD_R08549		9.8366001	1/s		
-substrate catalytic rate constant	SCS_R00405		129.88814	1/s		
-substrate catalytic rate constant	SDH_R02164		18.57333	1/s		
-substrate catalytic rate constant	FUM_R01082		599.37568	1/s		
-substrate catalytic rate constant	MDH_R00342		654.18451	1/s		
-substrate catalytic rate constant	PPC_R00345		166.90678	1/s		
-product catalytic rate constant	PTS_RPTSsy		0.015618384	1/s		
-product catalytic rate constant	PGI_R02740		1144.1139	1/s		
-product catalytic rate constant	PFK_R04779		9.893612	1/s		
-product catalytic rate constant	ALD_R01070		2299.34	1/s		
-product catalytic rate constant	TIM_R01015		539.16573	1/s		
-product catalytic rate constant	GAP_R01061		2591.9286	1/s		
-product catalytic rate constant	PGK_R01512		469.75045	1/s		
-product catalytic rate constant	PGM_R01518		231.83295	1/s		
-product catalytic rate constant	PGH_R00658		13.978356	1/s		
-product catalytic rate constant	PYK_R00200		6.2183434e-05	1/s		
-product catalytic rate constant	PDH_R00209		62.326192	1/s		
-product catalytic rate constant	ZWF_R00835		1394.3782	1/s		
-product catalytic rate constant	GLH_R02035		0.028304599	1/s		
-product catalytic rate constant	PGD_R01528		72.169969	1/s		
-product catalytic rate constant	RPI_R01056		750.6846	1/s		
-product catalytic rate constant	RPE_R01529		149.67537	1/s		
-product catalytic rate constant	TXT_R01641		1216.3225	1/s		
-product catalytic rate constant	TAL_R08575		14.028327	1/s		
-product catalytic rate constant	TXT_R01067		96.184021	1/s		
-product catalytic rate constant	FBP_R00762		17.087333	1/s		
-product catalytic rate constant	CSN_R00351		52.726796	1/s		
-product catalytic rate constant	ACN_R01325		40.370222	1/s		
-product catalytic rate constant	ACN_R01900		317.70763	1/s		
-product catalytic rate constant	ICD_R00709		27.069825	1/s		
-product catalytic rate constant	KGD_R08549		0.0038918845	1/s		
-product catalytic rate constant	SCS_R00405		74.126298	1/s		
-product catalytic rate constant	SDH_R02164		49.980341	1/s		
-product catalytic rate constant	FUM_R01082		146.56087	1/s		
-product catalytic rate constant	MDH_R00342		386.17581	1/s		
-product catalytic rate constant	PPC_R00345		1120.5269	1/s		
+catalytic rate constant geometric mean	ICD_R00709		78.214001	1/s		
+catalytic rate constant geometric mean	KGD_R08549		0.31137604	1/s		
+catalytic rate constant geometric mean	SCS_R00405		98.122991	1/s		
+catalytic rate constant geometric mean	SDH_R02164		30.468014	1/s		
+catalytic rate constant geometric mean	FUM_R01082		296.38648	1/s		
+catalytic rate constant geometric mean	MDH_R00342		502.62323	1/s		
+catalytic rate constant geometric mean	PPC_R00345		1504.6097	1/s		
+Michaelis constant	FUM_R01082	_S__Malate	0.65986197	mM		
+Michaelis constant	MDH_R00342	_S__Malate	0.83181069	mM		
+Michaelis constant	PDH_R00209	Acetyl_CoA	0.041272132	mM		
+Michaelis constant	CSN_R00351	Acetyl_CoA	0.026159049	mM		
+Michaelis constant	SDH_R02164	Fumarate	0.14611801	mM		
+Michaelis constant	FUM_R01082	Fumarate	0.13751676	mM		
+Michaelis constant	ACN_R01325	cis_Aconitate	0.016148055	mM		
+Michaelis constant	ACN_R01900	cis_Aconitate	0.018901406	mM		
+Michaelis constant	GLH_R02035	_6_Phospho_D_gluconate	0.021565133	mM		
+Michaelis constant	PGD_R01528	_6_Phospho_D_gluconate	0.016581953	mM		
+Michaelis constant	GAP_R01061	Orthophosphate	2.5058335	mM		
+Michaelis constant	FBP_R00762	Orthophosphate	1.1903398	mM		
+Michaelis constant	SCS_R00405	Orthophosphate	1.3494872	mM		
+Michaelis constant	PPC_R00345	Orthophosphate	0.57344402	mM		
+Michaelis constant	PTS_RPTSsy	Pyruvate	1.2780709	mM		
+Michaelis constant	PYK_R00200	Pyruvate	1.6717547	mM		
+Michaelis constant	PDH_R00209	Pyruvate	0.009024464	mM		
+Michaelis constant	ZWF_R00835	NADPplus	0.58999533	mM		
+Michaelis constant	PGD_R01528	NADPplus	0.016540838	mM		
+Michaelis constant	ZWF_R00835	NADPH	2.4690543	mM		
+Michaelis constant	PGD_R01528	NADPH	0.001068552	mM		
+Michaelis constant	GAP_R01061	NADH	3.8810256	mM		
+Michaelis constant	PDH_R00209	NADH	4.6452424	mM		
+Michaelis constant	ICD_R00709	NADH	0.82949826	mM		
+Michaelis constant	KGD_R08549	NADH	4.010696	mM		
+Michaelis constant	MDH_R00342	NADH	0.018218121	mM		
+Michaelis constant	GAP_R01061	NADplus	0.25853424	mM		
+Michaelis constant	PDH_R00209	NADplus	0.03385451	mM		
+Michaelis constant	ICD_R00709	NADplus	0.068019847	mM		
+Michaelis constant	KGD_R08549	NADplus	0.002537768	mM		
+Michaelis constant	MDH_R00342	NADplus	0.19600967	mM		
+Michaelis constant	PFK_R04779	ATP	0.10767951	mM		
+Michaelis constant	PGK_R01512	ATP	0.74732129	mM		
+Michaelis constant	PYK_R00200	ATP	1.1909126	mM		
+Michaelis constant	SCS_R00405	ATP	0.058752325	mM		
+Michaelis constant	ICD_R00709	_2_Oxoglutarate	1.0373991	mM		
+Michaelis constant	KGD_R08549	_2_Oxoglutarate	3.7261389	mM		
+Michaelis constant	CSN_R00351	Oxaloacetate	0.017283482	mM		
+Michaelis constant	MDH_R00342	Oxaloacetate	0.023430459	mM		
+Michaelis constant	PPC_R00345	Oxaloacetate	999.99979	mM		
+Michaelis constant	SDH_R02164	Ubiquinone	0.052488193	mM		
+Michaelis constant	TAL_R08575	D_Erythrose_4_phosphate	0.043652724	mM		
+Michaelis constant	TXT_R01067	D_Erythrose_4_phosphate	0.37526157	mM		
+Michaelis constant	SDH_R02164	Ubiquinol	388.01423	mM		
+Michaelis constant	PFK_R04779	ADP	0.77031598	mM		
+Michaelis constant	PGK_R01512	ADP	0.11636883	mM		
+Michaelis constant	PYK_R00200	ADP	0.053933164	mM		
+Michaelis constant	SCS_R00405	ADP	0.097440582	mM		
+Michaelis constant	ACN_R01900	Isocitrate	0.16495469	mM		
+Michaelis constant	ICD_R00709	Isocitrate	1.0159073	mM		
+Michaelis constant	PGD_R01528	D_Ribulose_5_phosphate	0.16953355	mM		
+Michaelis constant	RPI_R01056	D_Ribulose_5_phosphate	2.2720186	mM		
+Michaelis constant	RPE_R01529	D_Ribulose_5_phosphate	0.75675123	mM		
+Michaelis constant	RPE_R01529	D_Xylulose_5_phosphate	0.16077176	mM		
+Michaelis constant	TXT_R01641	D_Xylulose_5_phosphate	0.38528471	mM		
+Michaelis constant	TXT_R01067	D_Xylulose_5_phosphate	0.50052617	mM		
+Michaelis constant	PTS_RPTSsy	D_Glucose_6_phosphate	0.50001375	mM		
+Michaelis constant	PGI_R02740	D_Glucose_6_phosphate	0.045322886	mM		
+Michaelis constant	ZWF_R00835	D_Glucose_6_phosphate	11.80582	mM		
+Michaelis constant	GAP_R01061	_3_Phospho_D_glyceroyl_phosphate	0.013669781	mM		
+Michaelis constant	PGK_R01512	_3_Phospho_D_glyceroyl_phosphate	0.0013388071	mM		
+Michaelis constant	PDH_R00209	CoA	0.0033615318	mM		
+Michaelis constant	CSN_R00351	CoA	999.99996	mM		
+Michaelis constant	KGD_R08549	CoA	0.0025377299	mM		
+Michaelis constant	SCS_R00405	CoA	0.056765426	mM		
+Michaelis constant	PDH_R00209	CO2	4.6452382	mM		
+Michaelis constant	PGD_R01528	CO2	40.24133	mM		
+Michaelis constant	ICD_R00709	CO2	0.81576494	mM		
+Michaelis constant	KGD_R08549	CO2	4.0104979	mM		
+Michaelis constant	PPC_R00345	CO2	0.17175717	mM		
+Michaelis constant	RPI_R01056	D_Ribose_5_phosphate	2.0710357	mM		
+Michaelis constant	TXT_R01641	D_Ribose_5_phosphate	0.41853518	mM		
+Michaelis constant	ALD_R01070	Glycerone_phosphate	0.15394202	mM		
+Michaelis constant	TIM_R01015	Glycerone_phosphate	1.1238077	mM		
+Michaelis constant	PTS_RPTSsy	D_Glucose	0.018865733	mM		
+Michaelis constant	PFK_R04779	D_Fructose_1_6_bisphosphate	0.27344496	mM		
+Michaelis constant	ALD_R01070	D_Fructose_1_6_bisphosphate	0.089145941	mM		
+Michaelis constant	FBP_R00762	D_Fructose_1_6_bisphosphate	0.013262563	mM		
+Michaelis constant	ALD_R01070	D_Glyceraldehyde_3_phosphate	0.12826931	mM		
+Michaelis constant	TIM_R01015	D_Glyceraldehyde_3_phosphate	0.55440831	mM		
+Michaelis constant	GAP_R01061	D_Glyceraldehyde_3_phosphate	0.4738866	mM		
+Michaelis constant	TXT_R01641	D_Glyceraldehyde_3_phosphate	3.8711317	mM		
+Michaelis constant	TAL_R08575	D_Glyceraldehyde_3_phosphate	0.064858057	mM		
+Michaelis constant	TXT_R01067	D_Glyceraldehyde_3_phosphate	3.9730392	mM		
+Michaelis constant	PTS_RPTSsy	Phosphoenolpyruvate	0.0042275217	mM		
+Michaelis constant	PGH_R00658	Phosphoenolpyruvate	0.25995731	mM		
+Michaelis constant	PYK_R00200	Phosphoenolpyruvate	0.10931578	mM		
+Michaelis constant	PPC_R00345	Phosphoenolpyruvate	0.32925219	mM		
+Michaelis constant	CSN_R00351	Citrate	1.9349175	mM		
+Michaelis constant	ACN_R01325	Citrate	0.67933302	mM		
+Michaelis constant	KGD_R08549	Succinyl_CoA	0.098033477	mM		
+Michaelis constant	SCS_R00405	Succinyl_CoA	0.046458627	mM		
+Michaelis constant	PGK_R01512	_3_Phospho_D_glycerate	1.0514598	mM		
+Michaelis constant	PGM_R01518	_3_Phospho_D_glycerate	2.0564463	mM		
+Michaelis constant	ZWF_R00835	D_Glucono_1_5_lactone_6_phosphate	47.396638	mM		
+Michaelis constant	GLH_R02035	D_Glucono_1_5_lactone_6_phosphate	0.022494919	mM		
+Michaelis constant	PGI_R02740	D_Fructose_6_phosphate	0.17498729	mM		
+Michaelis constant	PFK_R04779	D_Fructose_6_phosphate	0.021167931	mM		
+Michaelis constant	TAL_R08575	D_Fructose_6_phosphate	0.54120326	mM		
+Michaelis constant	TXT_R01067	D_Fructose_6_phosphate	5.5763503	mM		
+Michaelis constant	FBP_R00762	D_Fructose_6_phosphate	1.1903034	mM		
+Michaelis constant	PGM_R01518	_2_Phospho_D_glycerate	4.1708577	mM		
+Michaelis constant	PGH_R00658	_2_Phospho_D_glycerate	0.37750284	mM		
+Michaelis constant	SCS_R00405	Succinate	1.2283976	mM		
+Michaelis constant	SDH_R02164	Succinate	0.11987534	mM		
+Michaelis constant	TXT_R01641	Sedoheptulose_7_phosphate	3.2094914	mM		
+Michaelis constant	TAL_R08575	Sedoheptulose_7_phosphate	0.19891887	mM		
+substrate catalytic rate constant	PTS_RPTSsy		89.447834	1/s		
+substrate catalytic rate constant	PGI_R02740		236.26187	1/s		
+substrate catalytic rate constant	PFK_R04779		169.76576	1/s		
+substrate catalytic rate constant	ALD_R01070		2768.183	1/s		
+substrate catalytic rate constant	TIM_R01015		3457.2262	1/s		
+substrate catalytic rate constant	GAP_R01061		139.31668	1/s		
+substrate catalytic rate constant	PGK_R01512		93.55288	1/s		
+substrate catalytic rate constant	PGM_R01518		268.01462	1/s		
+substrate catalytic rate constant	PGH_R00658		91.42166	1/s		
+substrate catalytic rate constant	PYK_R00200		86.873963	1/s		
+substrate catalytic rate constant	PDH_R00209		84.454059	1/s		
+substrate catalytic rate constant	ZWF_R00835		2921.0265	1/s		
+substrate catalytic rate constant	GLH_R02035		500.65261	1/s		
+substrate catalytic rate constant	PGD_R01528		23.053908	1/s		
+substrate catalytic rate constant	RPI_R01056		1511.6526	1/s		
+substrate catalytic rate constant	RPE_R01529		1253.7812	1/s		
+substrate catalytic rate constant	TXT_R01641		81.301965	1/s		
+substrate catalytic rate constant	TAL_R08575		13.125989	1/s		
+substrate catalytic rate constant	TXT_R01067		45.211917	1/s		
+substrate catalytic rate constant	FBP_R00762		5852305.7	1/s		
+substrate catalytic rate constant	CSN_R00351		24.956695	1/s		
+substrate catalytic rate constant	ACN_R01325		83.152633	1/s		
+substrate catalytic rate constant	ACN_R01900		78.894926	1/s		
+substrate catalytic rate constant	ICD_R00709		225.98652	1/s		
+substrate catalytic rate constant	KGD_R08549		9.6955001	1/s		
+substrate catalytic rate constant	SCS_R00405		129.88824	1/s		
+substrate catalytic rate constant	SDH_R02164		18.573301	1/s		
+substrate catalytic rate constant	FUM_R01082		599.37476	1/s		
+substrate catalytic rate constant	MDH_R00342		654.18615	1/s		
+substrate catalytic rate constant	PPC_R00345		134.1403	1/s		
+product catalytic rate constant	PTS_RPTSsy		0.016858119	1/s		
+product catalytic rate constant	PGI_R02740		1144.1223	1/s		
+product catalytic rate constant	PFK_R04779		9.8936912	1/s		
+product catalytic rate constant	ALD_R01070		2299.3506	1/s		
+product catalytic rate constant	TIM_R01015		539.16589	1/s		
+product catalytic rate constant	GAP_R01061		2591.9291	1/s		
+product catalytic rate constant	PGK_R01512		469.75081	1/s		
+product catalytic rate constant	PGM_R01518		231.83319	1/s		
+product catalytic rate constant	PGH_R00658		13.421395	1/s		
+product catalytic rate constant	PYK_R00200		0.01	1/s		
+product catalytic rate constant	PDH_R00209		62.325127	1/s		
+product catalytic rate constant	ZWF_R00835		1394.3801	1/s		
+product catalytic rate constant	GLH_R02035		0.028304823	1/s		
+product catalytic rate constant	PGD_R01528		72.170073	1/s		
+product catalytic rate constant	RPI_R01056		750.68402	1/s		
+product catalytic rate constant	RPE_R01529		149.67549	1/s		
+product catalytic rate constant	TXT_R01641		1216.3238	1/s		
+product catalytic rate constant	TAL_R08575		14.028281	1/s		
+product catalytic rate constant	TXT_R01067		96.183205	1/s		
+product catalytic rate constant	FBP_R00762		17.087277	1/s		
+product catalytic rate constant	CSN_R00351		52.726833	1/s		
+product catalytic rate constant	ACN_R01325		40.370145	1/s		
+product catalytic rate constant	ACN_R01900		317.70779	1/s		
+product catalytic rate constant	ICD_R00709		27.069889	1/s		
+product catalytic rate constant	KGD_R08549		0.010000004	1/s		
+product catalytic rate constant	SCS_R00405		74.1262	1/s		
+product catalytic rate constant	SDH_R02164		49.980339	1/s		
+product catalytic rate constant	FUM_R01082		146.56097	1/s		
+product catalytic rate constant	MDH_R00342		386.17465	1/s		
+product catalytic rate constant	PPC_R00345		16876.734	1/s		
 protein molecular mass	PTS_RPTSsy		255848	Da		
 protein molecular mass	PGI_R02740		61530	Da		
 protein molecular mass	PFK_R04779		139360	Da		
