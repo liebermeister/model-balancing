@@ -9,7 +9,8 @@ function [network, kinetic_data, state_data, conc_min, conc_max] = cmb_load_mode
 % Input:
 %   model_file:           model file (SBML or SBtab format)
 %   kinetic_data_file:    one (filename) or several (list of filenames) kinetic data files (SBtab format)
-%                         instead of a filename, one may directly rovide a kinetic data structure from which data will be selected
+%                         instead of a filename, one may directly rovide a kinetic data structure 
+%                         from which data will be selected
 %   metabolite_data_file: metabolite data (filename)
 %   enzyme_data_file:     enzyme data (filename)
 %   flux_data_file:       flux data (filename)
@@ -28,14 +29,13 @@ options.use_sbml_ids         = 0;
 options.use_kegg_ids         = 1;
 options.parameter_prior_file = cmb_prior_file;
   
-network = network_import_model(model_file);
-if ~isfield(network,'metabolite_KEGGID'),
-  network.metabolite_KEGGID = {};
-end
+display(sprintf('Importing model and data from file %s',model_file));
 
-if ~isfield(network,'reaction_KEGGID'),
-  network.reaction_KEGGID = {};
-end
+network          = network_import_model(model_file, struct('load_quantity_table',0));
+network.kinetics = set_kinetics(network,'cs');
+
+if ~isfield(network,'metabolite_KEGGID'), network.metabolite_KEGGID = {}; end
+if ~isfield(network,'reaction_KEGGID'),   network.reaction_KEGGID = {};   end
 
 if length(kinetic_data_file),
   parameter_prior = parameter_balancing_prior([],options.parameter_prior_file,0); 
@@ -64,9 +64,12 @@ if length(state_data_files),
   sdf.enzyme.match_data_by              = match_data_by;
   sdf.flux.match_data_by                = match_data_by;
 
-  state_data.metabolite_data = load_state_data_for_network(network, sdf.metabolite.file, sdf.metabolite.type, sdf.metabolite);
-  state_data.enzyme_data     = load_state_data_for_network(network, sdf.enzyme.file,     sdf.enzyme.type,     sdf.enzyme);
-  state_data.flux_data       = load_state_data_for_network(network, sdf.flux.file,       sdf.flux.type,       sdf.flux);
+  state_data.metabolite_data = load_state_data_for_network(network, sdf.metabolite.file, sdf.metabolite.type, sdf.metabolite, sdf.metabolite.table);
+  state_data.enzyme_data     = load_state_data_for_network(network, sdf.enzyme.file, sdf.enzyme.type, sdf.enzyme, sdf.enzyme.table);
+  state_data.flux_data       = load_state_data_for_network(network, sdf.flux.file, sdf.flux.type, sdf.flux, sdf.flux.table);
+  if isfield(sdf,'delta_g'), 
+    state_data.delta_g_data  = load_state_data_for_network(network, sdf.delta_g.file, sdf.delta_g.type, sdf.delta_g, sdf.delta_g.table);
+  end
 end
 
 % concentration bounds

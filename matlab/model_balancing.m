@@ -72,7 +72,7 @@ switch cmb_options.enzyme_score_type,
     %display('  The optimality problem is convex, but enzyme levels may be underestimated!');
   case 'interpolated'
     %display(sprintf('model_balancing.m:'))
-    display(sprintf('Using enzyme fit stiffness alpha=%f',cmb_options.enzyme_score_alpha))
+    display(sprintf('Using enzyme fit stringency alpha=%f ',cmb_options.enzyme_score_alpha))
     display('The optimality problem may be non-convex, and enzyme levels may be underestimated.');
 end
 
@@ -88,8 +88,8 @@ nq = length(prior.q.mean);
 % Prepare the preposterior distributions (individual terms)
 preposterior = cmb_prepare_posterior(prior, data, cmb_options, q_info);
 
-if sum(isnan(data.V.mean)),
-  error('Some flux values are unknown');
+if sum(isnan(data.V.mean(:))),
+  error('Some fluxes are unknown');
 end
 
 V = data.V.mean;
@@ -122,6 +122,9 @@ display('Flux distributions are thermo-physiologically feasible');
 % Initial values
 
 switch cmb_options.initial_values_variant,
+  case 'polytope center';
+    display(sprintf('Using center of mass of random LP solutions as the initial point'));
+    cmb_options.init = [];
   case 'flat_objective';
     display(sprintf('Using fmincon solution with flat objective (under constraints) as the initial point'));
     cmb_options.init = [];

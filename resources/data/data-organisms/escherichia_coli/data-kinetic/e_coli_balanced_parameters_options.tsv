@@ -1,18 +1,19 @@
 !!SBtab TableName='Options for parameter balancing' TableID='OptionsPB' TableType='Config' Method='parameter-balancing'	
 !Option	!Value
+verbose	0
 parameter_prior_file	/home/wolfram/matlab/wolf_packages/model-balancing/matlab/model-balancing/../../resources/data/data-prior/cmb_prior.tsv
 kinetics	cs
 parametrisation	all
 reaction_units	concentration per time
-conc_min_default	0.001
-conc_max_default	10
-conc_min	1E-5
-conc_max	100
+conc_min	0.001
+conc_max	10
 kcat_usage	use
+use_data	1
 use_pseudo_values	1
 insert_pseudo_values	0
-use_bounds_from_prior_table	1
+use_deltaG0_data	1
 include_metabolic	1
+include_enzyme_conc	0
 enzymes_explicit	1
 enforce_flux_directions	0
 adjust_to_fluxes	0
@@ -25,7 +26,7 @@ complete_std_by_DataGeomStd	1
 use_python_version_defaults	0
 write_log_file	0
 flag_check	1
-use_data	1
+fix_irreversible_reactions	0
 set_water_conc_to_one	1
 data_refer_to_molar	0
 sigma_mu0	3

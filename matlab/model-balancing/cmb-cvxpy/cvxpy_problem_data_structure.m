@@ -150,6 +150,7 @@ Keq.prior_ln.mean = all_kinetic_constants.prior.mean(index.Keq);
 Keq.prior_ln.cov  = all_kinetic_constants.prior.cov(index.Keq,index.Keq);
 Keq.data_ln.mean  = all_kinetic_constants.data.mean(index.Keq);
 Keq.data_ln.std   = all_kinetic_constants.data.std(index.Keq);
+
 [Keq.combined.mean_ln, Keq.combined.cov_ln] = cvxpy_combine_prior_and_likelihood(Keq.prior_ln.mean,Keq.prior_ln.cov,Keq.data_ln.mean,Keq.data_ln.std);
 Keq.combined.geom_mean = exp(Keq.combined.mean_ln);
 

@@ -43,6 +43,7 @@
 model           = 'branch_point_model';
 prb             = 'test';
 run             = 'test_alpha_0_5';
+flag_artificial = 1;
 network_file    = [cmb_resourcedir '/models/branch_point_model/branch_point_model.xml'];
 %network_file   = [cmb_resourcedir '/models/branch_point_model/branch_point_model.tsv'];
 constraint_file = [cmb_resourcedir '/models/branch_point_model/branch_point_model_ConcentrationConstraint.tsv'];
@@ -51,7 +52,6 @@ c_init          = [1,1,0.1,0.5]';
 ns              = 6;
 alpha           = 0.5;
 result_dir      = tempdir;
-
 
 % -------------------------------------------------------------
 % Small test model "three_chain_model" (network structure from SBML or SBtab file)
@@ -64,6 +64,7 @@ result_dir      = tempdir;
 % model           = 'three_chain_model';
 % prb             = 'test';
 % run             = 'test_alpha_0_5';
+% flag_artificial = 1;
 % network_file    = [cmb_resourcedir '/models/three_chain_model/three_chain_model.xml'];
 % %network_file   = [cmb_resourcedir '/models/three_chain_model/three_chain_model.tsv'];
 % constraint_file = [cmb_resourcedir '/models/three_chain_model/three_chain_model_ConcentrationConstraint.tsv'];
@@ -88,6 +89,7 @@ result_dir      = tempdir;
 % model           = 'double_branch_model';
 % prb             = 'test';
 % run             = 'test_alpha_0_5';
+% flag_artificial = 1;
 % network_file    = [cmb_resourcedir '/models/double_branch_model/double_branch_model.xml'];
 % %network_file   = [cmb_resourcedir '/models/double_branch_model/double_branch_model.tsv'];
 % constraint_file = [cmb_resourcedir '/models/double_branch_model/double_branch_model_ConcentrationConstraint.tsv'];
@@ -108,6 +110,7 @@ result_dir      = tempdir;
 % model           = 'e_coli_artificial';  
 % prb             = 'test';
 % run             = 'test_alpha_0_5';
+% flag_artificial = 1;
 % result_dir      = tempdir;
 % network_file    = [cmb_resourcedir '/models/e_coli_noor_2016/e_coli_noor_2016.tsv'];
 % constraint_file = [cmb_resourcedir '/models/e_coli_noor_2016/e_coli_noor_2016.tsv'];
@@ -121,14 +124,14 @@ result_dir      = tempdir;
 % Generate default filenames for output files
 % -------------------------------------------------------------
 
-filenames = cmb_filenames(model, prb, run, result_dir, network_file);
+filenames = cmb_filenames(model, prb, run, result_dir, network_file,flag_artificial);
 
 
 % -------------------------------------------------------------
 % Set options (for other options, see 'help cmb_default_options')
 % -------------------------------------------------------------
 
-cmb_options                        = cmb_default_options;
+cmb_options                        = cmb_default_options(flag_artificial);
 cmb_options.run                    = run;
 cmb_options.ns                     = ns;
 cmb_options.prior_variant          = 'broad_prior';

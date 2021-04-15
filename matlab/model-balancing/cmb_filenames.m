@@ -1,6 +1,6 @@
-function filenames = cmb_filenames(model_name, prb, run, result_dir, network_sbml_file)
+function filenames = cmb_filenames(model_name, prb, run, result_dir, network_sbml_file, flag_artificial)
 
-% filenames = cmb_filenames(model_name, prb, run, result_dir, network_sbml_file)
+% filenames = cmb_filenames(model_name, prb, run, result_dir, network_sbml_file, flag_artificial)
 %
 % Filenames for convex estimation runs
 %
@@ -13,7 +13,7 @@ function filenames = cmb_filenames(model_name, prb, run, result_dir, network_sbm
 % Output variables
 %   filenames struct describing filenames used (constructed using [result_dir] and [run])
 
-eval(default('result_dir','[]','network_sbml_file','[]'));
+eval(default('result_dir','[]','network_sbml_file','[]','flag_artificial','0'));
 
 % set filenames
 
@@ -32,8 +32,10 @@ filenames.network_sbml          = network_sbml_file;
 run_dir                         = [ out_DIR '/' run ];
 data_dir                        = [ out_DIR '/' run '/data/' ];
 filenames.graphics_dir          = [ out_DIR '/' run '/ps-files/' ];
-%filenames.model_true           = [ out_DIR '/' run '/data/model_true.tsv'];
-filenames.true                  = [ out_DIR '/' run '/data/true'];
+if flag_artificial,
+  %filenames.model_true           = [ out_DIR '/' run '/data/model_true.tsv'];
+  filenames.true                  = [ out_DIR '/' run '/data/true'];
+end
 %filenames.parameters_balanced  = [ out_DIR '/' run '/data/balanced_parameters.tsv'];
 filenames.balanced              = [ out_DIR '/' run '/data/balanced'];
 filenames.extension_model_state = 'model';

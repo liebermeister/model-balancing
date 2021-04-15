@@ -1,0 +1,49 @@
+!!!SBtab Document='E. coli central carbon metabolism - concentration constraints' SBtabVersion='1.0'
+% lower bound on NADplus was relaxed from 0.1 to 0.0000001 (because it had a fixed values that contradicted some data)
+% lower bounds on Ubinquinone and Ubiquinol were relaxed from 0.1 to 0.001 (because they had fixed values that may not be realistic)
+
+!!SBtab TableID='ConcentrationConstraint' TableName='ConcentrationConstraint' TableType='Quantity' Unit='mM'						
+!QuantityType	!Compound	!Compound:Identifiers:kegg.compound	!Min	!Max		
+concentration	_S__Malate	C00149	0.001	10		
+concentration	Acetyl_CoA	C00024	0.001	10		
+concentration	Fumarate	C00122	0.001	10		
+concentration	cis_Aconitate	C00417	0.001	10		
+concentration	_6_Phospho_D_gluconate	C00345	0.001	10		
+concentration	Orthophosphate	C00009	10	10		
+concentration	Pyruvate	C00022	0.001	10		
+concentration	NADPplus	C00006	0.0000001	0.1		
+%OLD: concentration	NADPplus	C00006	0.1	0.1		
+concentration	NADPH	C00005	0.11389157	0.11389157		
+concentration	NADH	C00004	0.02741513	0.02741513		
+concentration	NADplus	C00003	1	1		
+concentration	ATP	C00002	3.4491395	3.4491395		
+concentration	H2O	C00001	1	1		
+concentration	_2_Oxoglutarate	C00026	0.001	10		
+concentration	Oxaloacetate	C00036	0.001	10		
+concentration	Ubiquinone	C00399	0.0001	0.1		
+%OLD: concentration	Ubiquinone	C00399	0.1	0.1		
+concentration	D_Erythrose_4_phosphate	C00279	0.001	10		
+concentration	Ubiquinol	C00390	0.0001	0.1		
+%OLD: concentration	Ubiquinol	C00390	0.1	0.1		
+concentration	ADP	C00008	0.60461237	0.60461237		
+concentration	Isocitrate	C00311	0.001	10		
+concentration	D_Ribulose_5_phosphate	C00199	0.001	10		
+concentration	D_Xylulose_5_phosphate	C00231	0.001	10		
+concentration	D_Glucose_6_phosphate	C00092	0.001	10		
+concentration	_3_Phospho_D_glyceroyl_phosphate	C00236	0.001	10		
+concentration	CoA	C00010	1	1		
+concentration	CO2	C00011	0.01	0.01		
+concentration	D_Ribose_5_phosphate	C00117	0.001	10		
+concentration	Glycerone_phosphate	C00111	0.001	10		
+concentration	D_Glucose	C00031	12	12		
+concentration	D_Fructose_1_6_bisphosphate	C00354	0.001	10		
+concentration	D_Glyceraldehyde_3_phosphate	C00118	0.001	10		
+concentration	Phosphoenolpyruvate	C00074	0.001	10		
+concentration	Citrate	C00158	0.001	10		
+concentration	Succinyl_CoA	C00091	0.001	10		
+concentration	_3_Phospho_D_glycerate	C00197	0.001	10		
+concentration	D_Glucono_1_5_lactone_6_phosphate	C01236	0.001	10		
+concentration	D_Fructose_6_phosphate	C00085	0.001	10		
+concentration	_2_Phospho_D_glycerate	C00631	0.001	10		
+concentration	Succinate	C00042	0.001	10		
+concentration	Sedoheptulose_7_phosphate	C05382	0.001	10		

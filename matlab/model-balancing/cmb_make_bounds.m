@@ -44,6 +44,11 @@ bounds.q_all_max = [bounds.q_max; ...
 bounds.x_min = log(cmb_options.quantities.c.min * ones(nm,1));
 bounds.x_max = log(cmb_options.quantities.c.max * ones(nm,1));
 
+% make sure that conc_min < conc_max holds strictly 
+epsilon = 10^-5;
+ind = find(conc_min == conc_max);
+conc_max(ind) = conc_max(ind) * exp(epsilon);
+
 if length(conc_min),
   bounds.x_min = log(conc_min);
   bounds.x_max = log(conc_max);
@@ -60,3 +65,15 @@ bounds.a_forward_max = cmb_options.quantities.Aforward.max * ones(nr,1);
 
 bounds.conc_min = conc_min;
 bounds.conc_max = conc_max;
+
+% check for identical lower and upper bounds
+if sum(bounds.q_min==bounds.q_max),
+  warning('Some lower and upper bounds on q are identical or in the wrong order. This may cause numerical problems later on.');
+  equal_q_bounds = find(bounds.q_min>=bounds.q_max)
+  [bounds.q_min,bounds.q_max]
+end
+if sum(bounds.x_min==bounds.x_max),
+  warning('Some lower and upper bounds on x are identical or in the wrong order. This may cause numerical problems later on.');
+  equal_x_bounds = find(bounds.x_min>=bounds.x_max)
+  [bounds.x_min,bounds.x_max]
+end

@@ -49,6 +49,8 @@ Aforward_min = cmb_options.quantities.Aforward.min * ones(nr,ns);
 
 y_bound_min            = cmb_qX_to_y(bounds.q_min, repmat(bounds.x_min,1,ns), nm,ns);
 y_bound_max            = cmb_qX_to_y(bounds.q_max, repmat(bounds.x_max,1,ns), nm,ns);
+
+
 y_preposterior_mean    = cmb_qX_to_y(preposterior.q.mean, preposterior.X.mean, nm, ns);
 y_preposterior_cov_inv = preposterior.q.cov_inv; 
 for it = 1:ns,
@@ -77,14 +79,14 @@ ind_finite_flux = find(V(:)~=0);
 y_ineq_A = y_ineq_A(ind_finite_flux,:);
 y_ineq_b = y_ineq_b(ind_finite_flux,:);
 
-% add constraints for bounds on dependent kinetic constants
+% constraints for bounds on dependent kinetic constants
 
-nq = q_info.q.number;
+nq       = q_info.q.number;
 M_y_to_q = [zeros(nq,nm*ns), eye(nq)];
-YY_A = [-q_info.M_q_to_qdep * M_y_to_q; ...
-         q_info.M_q_to_qdep * M_y_to_q];
-YY_b = [-bounds.q_dep_min; bounds.q_dep_max];
-
+YY_A     = [-q_info.M_q_to_qdep * M_y_to_q; ...
+             q_info.M_q_to_qdep * M_y_to_q];
+YY_b     = [-bounds.q_dep_min; ...
+             bounds.q_dep_max];
 y_ineq_A = [y_ineq_A; YY_A];
 y_ineq_b = [y_ineq_b; YY_b];
 
@@ -93,8 +95,31 @@ y_ineq_b = [y_ineq_b; YY_b];
 % Set initial values
 
 switch cmb_options.initial_values_variant,
+  
+  case 'polytope center',
+    %% find initial point using linprog
+    nn = 5;
+    clear y_init_list
+    for it =1:nn;
+      f = randn(size(y_bound_min));
+      opt = optimoptions('linprog','Display','none');
+      [y_init_list(:,it), ~,exitflag] = linprog( f,y_ineq_A,y_ineq_b-epsilon,[],[],y_bound_min,y_bound_max,[],opt);
+      [y_init_list(:,it+nn),~,exitflag] = linprog(-f,y_ineq_A,y_ineq_b-epsilon,[],[],y_bound_min,y_bound_max,[],opt);
+    end
+    y_init = mean(y_init_list,2);
+    if prod(y_ineq_A * y_init < y_ineq_b) * prod(y_init >= y_bound_min) * prod(y_init <= y_bound_max) ==0,
+      error('Infeasible solution');
+    end
+    [init.q, init.X] = cmb_y_to_qX(y_init, nm, ns);
+  
+  case 'flat_objective',
+    %% find initial point using fmincon with a flat objective function
+    opt = optimoptions('fmincon','MaxFunEvals',10^15,'MaxIter',10^15,'TolX',10^-5,'Display',...
+                       cmb_options.optim_display,'Algorithm','interior-point','SpecifyObjectiveGradient',false);
+    [y_init,~,err] = fmincon(@(y) 1,y_init,y_ineq_A,y_ineq_b-epsilon,[],[],y_bound_min,y_bound_max,[],opt);
+    [init.q, init.X] = cmb_y_to_qX(y_init, nm, ns);
+    
   case {'given_values','true_values','random'},
-
     init   = cmb_options.init;
     y_init = cmb_qX_to_y(init.q, init.X, nm,ns);
 
@@ -106,7 +131,7 @@ switch cmb_options.initial_values_variant,
       y_init = y_preposterior_mean;
     else
       %% find preposterior mode under constraints
-      %% FIX ME, use cplexqp (to account for constraints)
+      %% in the future, use cplexqp (to account for constraints)
       opt_quadprog = struct('Algorithm','interior-point-convex','MaxFunEvals',10^10,'MaxIter',10^10,'TolX',10^-5,'Display','off','OptimalityTolerance', 10^-5,'StepTolerance', 10^-10);
       [y_init,~,err] = quadprog(y_preposterior_cov_inv, -y_preposterior_cov_inv * y_preposterior_mean, y_ineq_A, y_ineq_b-epsilon,[],[], y_bound_min, y_bound_max,[],opt_quadprog);
       if err<0, error(sprintf('Error in computing initial values: quadprog error flag %d',err)); end
@@ -114,15 +139,6 @@ switch cmb_options.initial_values_variant,
     [init.q, init.X] = cmb_y_to_qX(y_init, nm, ns);
 
 end
-
-switch cmb_options.initial_values_variant,
-  case 'flat_objective',
-    %% find initial point using fmincon with a flat objective function
-    opt = optimoptions('fmincon','MaxFunEvals',10^15,'MaxIter',10^15,'TolX',10^-5,'Display',...
-                       cmb_options.optim_display,'Algorithm','interior-point','SpecifyObjectiveGradient',false);
-    [y_init,~,err] = fmincon(@(y) 1,y_init,y_ineq_A,y_ineq_b-epsilon,[],[],y_bound_min,y_bound_max,[],opt);
-    [init.q, init.X] = cmb_y_to_qX(y_init, nm, ns);
-end    
 
 % -----------------------------------------------
 % Check feasibility of initial point (check explicitly with init.q and init.X)

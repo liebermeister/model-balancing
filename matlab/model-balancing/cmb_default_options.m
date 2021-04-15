@@ -1,9 +1,13 @@
-function cmb_options = cmb_default_options()
+function cmb_options = cmb_default_options(flag_artificial)
 
-% cmb_options = cmb_default_options()
+% cmb_options = cmb_default_options(flag_artificial)
 %
+% flag_artificial (Boolean, default 0) options for model with artificial data
+% 
 % Returns matlab struct with default options for model balancing
 % Fields and default values are shown below
+% Note that this function reads information about priors from the prior table (see 'cmb_prior_file')
+% and stores them in cmb_options.quantities; there they can be modified by the user
 %
 % Algorithm settings
 % 
@@ -15,7 +19,7 @@ function cmb_options = cmb_default_options()
 %                                                     'random', 'true_values', 'given_values'
 %   .enzyme_score_type       = 'interpolated';      % 'quadratic' (alpha=1), 'monotonic' (alpha =0), 'interpolated'
 %                                                     (only "monotonic" guarantees that MB is convex!)
-%   .enzyme_score_alpha      = 0.5;                 % interpolation parameter for enzyme_score_type='interpolated'
+%   .enzyme_score_alpha      = 0.5;                 % stringency parameter alpha for enzyme_score_type='interpolated'
 %   .parameterisation        = 'Keq_KV_KM_KA_KI';   % options: 'Keq_KV_KM_KA_KI', 'KV_KM_KA_KI';
 %   .use_kinetic_data        = 'all';               % 'all', 'only_Keq', 'none'
 %   .score                   = 'neg_log_posterior'; % options: 'neg_log_posterior', 'log_neg_log_posterior';
@@ -43,7 +47,7 @@ function cmb_options = cmb_default_options()
 %                                                   % 'prior_around_true_values', 'broad_prior_around_true_values'
 %
 % Bounds and distributions for model variables
-%   (Options to override the default values set in the prior table file)
+%   Default values are taken from the prior file, see 'cmb_prior_file'
 %
 %   .quantities.Keq.max          new value for upper_bound(ind.Keq);
 %   .quantities.Keq.mean_ln      new value for prior_median_ln(ind.Keq);
@@ -79,34 +83,50 @@ function cmb_options = cmb_default_options()
 %   .quantities.Aforward.min     new value for lower_bound(ind.A), default 0.0001 kJ/Mol
 %   .quantities.Aforward.max     new value for upper_bound(ind.A);
 % 
-% Distributions from which "true values" are drawn
-%
-%   .quantities.mu0.std            default RT * log(5);
-%                                  
-%   .metabolic_prior_c_geom_mean   default 1 mM
-%   .metabolic_prior_e_geom_mean   default 0.001 mM
-%   .metabolic_prior_c_geom_std    default 10
-%   .metabolic_prior_e_geom_std    default 10
-%                                  
-%   .data_kin_geom_std             default 1.5
-%   .data_V_geom_std               default 1.2 
-%   .data_C_geom_std               default 1.2 
-%   .data_E_geom_std               default 1.2 
+% Geometric standard deviations for priors 
+%   (also used for sampling "true" values, in the case of artificial data)
+%   default values are taken from the prior file, see 'cmb_prior_file'
+%   .metabolic_prior_c_geom_mean   
+%   .metabolic_prior_e_geom_mean   
+%   .metabolic_prior_c_geom_std    
+%   .metabolic_prior_e_geom_std    
+%                           
+% Geometric standard deviations for data values (describing measurement uncertainties)
+%   - used in 'state_data_to_data', to complete standard deviations not given in the data files
+%   - also used in 'cmb_generate_artificial_data', for generating noise in artificial data
+%   .data_C_geom_std     default from prior table
+%   .data_E_geom_std     default from prior table
+%   .data_V_geom_std     default 1.2 % currently not used
+%   .data_kin_geom_std   default 1.5 
 % 
-% Distributions for noise in artificial data
-% 
+% Distributions for "true values" inartificial data (in 'cmb_generate_artificial_data')
 %   .metabolic_artificial_c_geom_std   default 1.5;
 %   .metabolic_artificial_e_geom_std   default 1.5;
+%  also used in 'cmb_generate_artificial_data':
+%   .quantities.mu0.std                default RT * log(5);
+%   .quantities.KV.mean_ln
+%   .quantities.KV.std_ln
+%   .quantities.KV.min
+%   .quantities.KV.max
+%   .quantities.KM.mean_ln
+%   .quantities.KM.std_ln
+%   .quantities.KM.min
+%   .quantities.KM.max
+%
+% Possible initial value variants (option 'cmb_options.initial_values_variant'):
 % 
-% Possible initial value variants: 
-%  'preposterior_mode' (default: use preposterior mode for kinetic constants and metabolite levels)
-%  'flat_objective'    (pick a point in the solution space by using matlab's fmincon with a uniform objective function)
-%  'random'            (initialise parameter vector with random values)
-%  'true_values'       (true values: only with artificial data)
-%  'given_values'      (use existing cmb_options.init)
-%  'average_sample'    (first run a model balancing with concentrations and fluxes averaged over all samples; 
-%                       and using initial value option "preposterior_mode"; use result to initialise values)
+%  'polytope center'   (default) center of mass of some random LP solutions
+%  'preposterior_mode' use preposterior mode for kinetic constants and metabolite levels
+%  'flat_objective'    pick a point in the solution space by using matlab's fmincon with a uniform objective function
+%  'random'            initialise parameter vector with random values
+%  'true_values'       true values: only with artificial data
+%  'given_values'      use existing cmb_options.init
+%  'average_sample'    first run a model balancing with concentrations and fluxes averaged over all samples; 
+%                      and using initial value option "preposterior_mode"; use result to initialise values
 
+eval(default('flag_artificial','0'));
+
+  
 % ---------------------------------------------------------
 % Algorithm settings
 
@@ -116,7 +136,7 @@ cmb_options.ecm_score              = 'emc4cm';
 
 
 % Variants: 'preposterior_mode', 'random', 'true_values', 'given_values', 'average_sample'
-cmb_options.initial_values_variant = 'average_sample';
+cmb_options.initial_values_variant = 'polytope center';
 cmb_options.enzyme_score_type      = 'interpolated'; % 'monotonic'; % 'quadratic' (only "monotonic" guarantees that MB is convex!)
 cmb_options.enzyme_score_alpha     = 0.5; % 'quadratic' (only "monotonic" guarantees that MB is convex!)
 
@@ -156,6 +176,7 @@ upper_bound     = cell_string2num(parameter_prior.UpperBound);
 lower_bound     = cell_string2num(parameter_prior.LowerBound);
 prior_median_ln = log(cell_string2num(parameter_prior.PriorMedian));
 prior_geostd_ln = log(cell_string2num(parameter_prior.PriorGeometricStd));
+data_geom_std   = cell_string2num(parameter_prior.DataGeometricStd);
 
 for it = 1:length(parameter_prior.Symbol),
   ind.(parameter_prior.Symbol{it}) = it;
@@ -172,14 +193,12 @@ cmb_options.quantities.Keq.std_ln   = prior_geostd_ln(ind.Keq);
 cmb_options.quantities.KV.min       = lower_bound(ind.KV);
 cmb_options.quantities.KV.max       = upper_bound(ind.KV);
 cmb_options.quantities.KV.mean_ln   = prior_median_ln(ind.KV);
-%cmb_options.quantities.KV.std_ln    = prior_geostd_ln(ind.KV);
-cmb_options.quantities.KV.std_ln     = log(5);
+cmb_options.quantities.KV.std_ln    = prior_geostd_ln(ind.KV);
 
 cmb_options.quantities.KM.min       = lower_bound(ind.KM);
 cmb_options.quantities.KM.max       = upper_bound(ind.KM);
 cmb_options.quantities.KM.mean_ln   = prior_median_ln(ind.KM);
-% cmb_options.quantities.KM.std_ln    = prior_geostd_ln(ind.KM);
-cmb_options.quantities.KM.std_ln    = log(5);
+cmb_options.quantities.KM.std_ln    = prior_geostd_ln(ind.KM);
  
 cmb_options.quantities.KA.min       = lower_bound(ind.KA);
 cmb_options.quantities.KA.max       = upper_bound(ind.A);
@@ -191,32 +210,38 @@ cmb_options.quantities.KI.max       = upper_bound(ind.KI);
 cmb_options.quantities.KI.mean_ln   = prior_median_ln(ind.KI);
 cmb_options.quantities.KI.std_ln    = prior_geostd_ln(ind.KI);
 
-cmb_options.quantities.Kcatf.min       = lower_bound(ind.Kcatf);
-cmb_options.quantities.Kcatf.max       = upper_bound(ind.Kcatf);
-cmb_options.quantities.Kcatf.mean_ln   = prior_median_ln(ind.Kcatf);
-cmb_options.quantities.Kcatf.std_ln    = prior_geostd_ln(ind.Kcatf);
+cmb_options.quantities.Kcatf.min     = lower_bound(ind.Kcatf);
+cmb_options.quantities.Kcatf.max     = upper_bound(ind.Kcatf);
+cmb_options.quantities.Kcatf.mean_ln = prior_median_ln(ind.Kcatf);
+cmb_options.quantities.Kcatf.std_ln  = prior_geostd_ln(ind.Kcatf);
 
-cmb_options.quantities.Kcatr.min       = lower_bound(ind.Kcatr);
-cmb_options.quantities.Kcatr.max       = upper_bound(ind.Kcatr);
-cmb_options.quantities.Kcatr.mean_ln   = prior_median_ln(ind.Kcatr);
-cmb_options.quantities.Kcatr.std_ln    = prior_geostd_ln(ind.Kcatr);
+cmb_options.quantities.Kcatr.min     = lower_bound(ind.Kcatr);
+cmb_options.quantities.Kcatr.max     = upper_bound(ind.Kcatr);
+cmb_options.quantities.Kcatr.mean_ln = prior_median_ln(ind.Kcatr);
+cmb_options.quantities.Kcatr.std_ln  = prior_geostd_ln(ind.Kcatr);
 
-cmb_options.quantities.v.max        = 100;                % mM/s
+cmb_options.quantities.v.max        = 100; % mM/s
 
 cmb_options.quantities.c.min        = lower_bound(ind.c);
 cmb_options.quantities.c.max        = upper_bound(ind.c);
+cmb_options.quantities.c.mean_ln    = prior_median_ln(ind.c);
+cmb_options.quantities.c.std_ln     = prior_geostd_ln(ind.c);
+cmb_options.quantities.c.data_geom_std = data_geom_std(ind.c);
 
 cmb_options.quantities.e.max        = upper_bound(ind.u);
+cmb_options.quantities.e.mean_ln    = prior_median_ln(ind.u);
+cmb_options.quantities.e.std_ln     = prior_geostd_ln(ind.u);
+cmb_options.quantities.e.data_geom_std = data_geom_std(ind.u);
 
 cmb_options.quantities.Aforward.min = 0.0001; % kJ/Mol
-%cmb_options.quantities.Aforward.min = 0.1; % kJ/Mol
+%cmb_options.quantities.Aforward.min = 0.1;    % kJ/Mol
+%cmb_options.quantities.Aforward.min = lower_bound(ind.A);
 cmb_options.quantities.Aforward.max = upper_bound(ind.A);
 
-cmb_options.metabolic_prior_c_geom_mean   = 1;     % mM
-cmb_options.metabolic_prior_e_geom_mean   = 0.001; % mM
-cmb_options.metabolic_prior_c_geom_std      = 10;    % 
-cmb_options.metabolic_prior_e_geom_std      = 10;    % 
-
+cmb_options.metabolic_prior_c_geom_mean   = exp(cmb_options.quantities.c.mean_ln);   % mM
+cmb_options.metabolic_prior_c_geom_std    = exp(cmb_options.quantities.c.std_ln);    % dimensionless 
+cmb_options.metabolic_prior_e_geom_mean   = exp(cmb_options.quantities.e.mean_ln);   % mM
+cmb_options.metabolic_prior_e_geom_std    = exp(cmb_options.quantities.e.std_ln);    % dimensionless
 
 % ----------------------------------------------------
 % Manual choice
@@ -256,21 +281,24 @@ cmb_options.metabolic_prior_e_geom_std      = 10;    %
 % = noise level used when generating artificial data with noise
 
 % relatively high noise level, assuming deviation between in vitro and in vivo data 
-cmb_options.data_kin_geom_std = 1.5;
 
-cmb_options.data_V_geom_std   = 1.2; 
-cmb_options.data_C_geom_std   = 1.2; 
-cmb_options.data_E_geom_std   = 1.2; 
+  cmb_options.data_C_geom_std   = cmb_options.quantities.c.data_geom_std;
+  cmb_options.data_E_geom_std   = cmb_options.quantities.e.data_geom_std; 
+  cmb_options.data_V_geom_std   = 1.2;
+  cmb_options.data_kin_geom_std = 1.5;
 
 % ---------------------------------------------------------
 % distributions for artificial data
 
-% distributions from which "true values" are drawn
+if flag_artificial,
 
-cmb_options.quantities.mu0.std = RT * log(5);
+  %% distributions from which "true values" are drawn
+  
+  cmb_options.quantities.mu0.std = RT * log(5);
+  
+  %% distributions for noise in artificial data
+  
+  cmb_options.metabolic_artificial_c_geom_std = 1.5;
+  cmb_options.metabolic_artificial_e_geom_std = 1.5;
 
-% distributions for noise in artificial data
-
-cmb_options.metabolic_artificial_c_geom_std = 1.5;
-cmb_options.metabolic_artificial_e_geom_std = 1.5;
-
+end
