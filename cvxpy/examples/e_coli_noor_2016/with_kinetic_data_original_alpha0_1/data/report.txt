@@ -11,8 +11,8 @@ Fitted (metabolite): 40
 Fitted (enzyme):     30
 Fitted (kinetic):    167
 Fitted (TOTAL):      237
-Relaxation alpha:    0.100000.2
-Initial values type: average_sample
-Geom. std errors:    c:2.37 e:1.83 Keq:4.55 Kcatf:2.40 Kcatr:2.42 KM:2.13
-Corr. on log scale:  c:0.906 e:0.824 Keq:0.989 Kcatf:0.851 Kcatr:0.788 KM:0.952
-Calculation time:    177.7 s
+Stringency alpha:    0.100000.2
+Initial values type: polytope center
+Geom. std errors:    c:1.33 e:1.12 Keq:5.81 Kcatf:3.51 Kcatr:2.82 KM:3.03
+Corr. on log scale:  c:0.991 e:0.992 Keq:0.985 Kcatf:0.707 Kcatr:0.758 KM:0.891
+Calculation time:    120.2 s

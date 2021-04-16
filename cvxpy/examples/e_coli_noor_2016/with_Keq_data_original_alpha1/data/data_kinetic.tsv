@@ -1,22 +1,5 @@
 !!SBtab TableID='ParameterData' TableType='Quantity'										
 !QuantityType	!Compound	!Reaction	!Unit	!Median	!Mean	!Std	!Lower	!Upper	!Compound:Identifiers:kegg.compound	!Reaction:Identifiers:kegg.reaction
-catalytic rate constant geometric mean		TIM_R01015	1/s	1060.6602	1078.4363	198.26754	NaN	NaN		R01015
-catalytic rate constant geometric mean		GAP_R01061	1/s	172.08719	174.97128	32.167988	NaN	NaN		R01061
-catalytic rate constant geometric mean		PGK_R01512	1/s	236.52354	240.48755	44.212974	NaN	NaN		R01512
-catalytic rate constant geometric mean		PGM_R01518	1/s	117.66974	119.64182	21.99582	NaN	NaN		R01518
-catalytic rate constant geometric mean		PDH_R00209	1/s	1.7083032	1.7369335	0.31933045	NaN	NaN		R00209
-catalytic rate constant geometric mean		ZWF_R00835	1/s	315.2047	320.48736	58.920719	NaN	NaN		R00835
-catalytic rate constant geometric mean		PGD_R01528	1/s	51.87217	52.74152	9.6963832	NaN	NaN		R01528
-catalytic rate constant geometric mean		RPI_R01056	1/s	1128.6376	1147.553	210.97445	NaN	NaN		R01056
-catalytic rate constant geometric mean		RPE_R01529	1/s	487.01987	495.18206	91.037859	NaN	NaN		R01529
-catalytic rate constant geometric mean		CSN_R00351	1/s	69.518014	70.683099	12.994893	NaN	NaN		R00351
-catalytic rate constant geometric mean		ACN_R01325	1/s	24.2873	24.694342	4.5399868	NaN	NaN		R01325
-catalytic rate constant geometric mean		ACN_R01900	1/s	137.8083	140.11789	25.760289	NaN	NaN		R01900
-catalytic rate constant geometric mean		ICD_R00709	1/s	56.471232	57.41766	10.556079	NaN	NaN		R00709
-catalytic rate constant geometric mean		SCS_R00405	1/s	95.468278	97.068275	17.845735	NaN	NaN		R00405
-catalytic rate constant geometric mean		SDH_R02164	1/s	82.509888	83.89271	15.423444	NaN	NaN		R02164
-catalytic rate constant geometric mean		FUM_R01082	1/s	217.26756	220.90885	40.613483	NaN	NaN		R01082
-catalytic rate constant geometric mean		MDH_R00342	1/s	485.6488	493.78801	90.781567	NaN	NaN		R00342
 Michaelis constant	_S__Malate	FUM_R01082	mM	0.64666009	0.65749777	0.12087915	NaN	NaN	C00149	R01082
 Michaelis constant	_S__Malate	MDH_R00342	mM	0.59870169	0.60873561	0.11191437	NaN	NaN	C00149	R00342
 Michaelis constant	Acetyl_CoA	PDH_R00209	mM	0.030581258	0.031093784	0.0057165065	NaN	NaN	C00024	R00209

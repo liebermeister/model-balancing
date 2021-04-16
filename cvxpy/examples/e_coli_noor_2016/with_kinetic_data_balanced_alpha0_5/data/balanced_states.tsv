@@ -1,4 +1,4 @@
-!!!SBtab DocumentName='MB result' Document='MBresult' RelaxationAlpha='0.500000.2' CalculationTime='138.328301 s'		
+!!!SBtab DocumentName='MB result' Document='MBresult' StringencyAlpha='0.500000.2' CalculationTime='55.946309 s'		
 		
 !!SBtab TableName='Metabolic fluxes' TableID='MetabolicFlux' TableType='QuantityMatrix' Unit='mM/s'		
 !QuantityType	!Reaction	S1
@@ -35,109 +35,109 @@ rate of reaction	PPC_R00345	-0.133
 		
 !!SBtab TableName='Metabolite concentrations' TableID='MetaboliteConcentration' TableType='QuantityMatrix' Unit='mM'		
 !QuantityType	!Compound	S1
-concentration	_S__Malate	2.3184914
-concentration	Acetyl_CoA	0.34515961
-concentration	Fumarate	0.17344906
-concentration	cis_Aconitate	0.017707213
-concentration	_6_Phospho_D_gluconate	3.7482105
+concentration	_S__Malate	1.2730768
+concentration	Acetyl_CoA	0.34887014
+concentration	Fumarate	0.11811012
+concentration	cis_Aconitate	0.016460205
+concentration	_6_Phospho_D_gluconate	3.8694596
 concentration	Orthophosphate	10
-concentration	Pyruvate	0.4009502
-concentration	NADPplus	0.1
-concentration	NADPH	0.11389157
-concentration	NADH	0.02741513
-concentration	NADplus	1
-concentration	ATP	3.4491395
+concentration	Pyruvate	0.38947912
+concentration	NADPplus	0.0023795794
+concentration	NADPH	0.11389261
+concentration	NADH	0.027415403
+concentration	NADplus	1.0000099
+concentration	ATP	3.44914
 concentration	H2O	1
-concentration	_2_Oxoglutarate	0.20780314
-concentration	Oxaloacetate	0.37043087
-concentration	Ubiquinone	0.1
-concentration	D_Erythrose_4_phosphate	0.83596864
-concentration	Ubiquinol	0.1
-concentration	ADP	0.60461237
-concentration	Isocitrate	0.022432684
-concentration	D_Ribulose_5_phosphate	0.84022997
-concentration	D_Xylulose_5_phosphate	1.2245049
-concentration	D_Glucose_6_phosphate	1.9262323
-concentration	_3_Phospho_D_glyceroyl_phosphate	0.68581562
-concentration	CoA	1
-concentration	CO2	0.01
-concentration	D_Ribose_5_phosphate	1.4003518
-concentration	Glycerone_phosphate	0.31605722
-concentration	D_Glucose	12
-concentration	D_Fructose_1_6_bisphosphate	2.4378953
-concentration	D_Glyceraldehyde_3_phosphate	0.82096564
-concentration	Phosphoenolpyruvate	0.10985582
-concentration	Citrate	9.9999999
-concentration	Succinyl_CoA	0.24777819
-concentration	_3_Phospho_D_glycerate	1.9496584
-concentration	D_Glucono_1_5_lactone_6_phosphate	0.95644416
-concentration	D_Fructose_6_phosphate	0.74321761
-concentration	_2_Phospho_D_glycerate	0.84382741
-concentration	Succinate	0.49890435
-concentration	Sedoheptulose_7_phosphate	1.1518437
+concentration	_2_Oxoglutarate	0.45633786
+concentration	Oxaloacetate	0.2818015
+concentration	Ubiquinone	0.099999996
+concentration	D_Erythrose_4_phosphate	0.29659096
+concentration	Ubiquinol	0.099999996
+concentration	ADP	0.60461833
+concentration	Isocitrate	0.020485879
+concentration	D_Ribulose_5_phosphate	0.29835415
+concentration	D_Xylulose_5_phosphate	0.30715382
+concentration	D_Glucose_6_phosphate	0.86867443
+concentration	_3_Phospho_D_glyceroyl_phosphate	0.29305036
+concentration	CoA	1.0000099
+concentration	CO2	0.0100001
+concentration	D_Ribose_5_phosphate	1.2970693
+concentration	Glycerone_phosphate	0.20836578
+concentration	D_Glucose	12.000119
+concentration	D_Fructose_1_6_bisphosphate	1.8961495
+concentration	D_Glyceraldehyde_3_phosphate	0.30543615
+concentration	Phosphoenolpyruvate	0.19566259
+concentration	Citrate	9.9999983
+concentration	Succinyl_CoA	0.23458233
+concentration	_3_Phospho_D_glycerate	1.5463547
+concentration	D_Glucono_1_5_lactone_6_phosphate	0.29090662
+concentration	D_Fructose_6_phosphate	0.29406391
+concentration	_2_Phospho_D_glycerate	0.29741388
+concentration	Succinate	0.56067826
+concentration	Sedoheptulose_7_phosphate	0.30491904
 		
 !!SBtab TableName='Enzyme concentrations' TableID='EnzymeConcentration' TableType='QuantityMatrix' Unit='mM'		
 !QuantityType	!Reaction	S1
-concentration of enzyme	PTS_RPTSsy	0.0073865116
-concentration of enzyme	PGI_R02740	0.005207467
-concentration of enzyme	PFK_R04779	0.0033041655
-concentration of enzyme	ALD_R01070	0.001472231
-concentration of enzyme	TIM_R01015	0.0069077703
-concentration of enzyme	GAP_R01061	0.039808459
-concentration of enzyme	PGK_R01512	0.013154914
-concentration of enzyme	PGM_R01518	0.010780541
-concentration of enzyme	PGH_R00658	0.016111327
-concentration of enzyme	PYK_R00200	0.0044264968
-concentration of enzyme	PDH_R00209	0.01097282
-concentration of enzyme	ZWF_R00835	0.0030190602
-concentration of enzyme	GLH_R02035	0.0016898615
-concentration of enzyme	PGD_R01528	0.010860202
-concentration of enzyme	RPI_R01056	0.0035847864
-concentration of enzyme	RPE_R01529	0.0021350678
-concentration of enzyme	TXT_R01641	0.0011517553
-concentration of enzyme	TAL_R08575	0.011623936
-concentration of enzyme	TXT_R01067	0.0014209149
+concentration of enzyme	PTS_RPTSsy	0.005390873
+concentration of enzyme	PGI_R02740	0.0044697368
+concentration of enzyme	PFK_R04779	0.0025106796
+concentration of enzyme	ALD_R01070	0.0010235757
+concentration of enzyme	TIM_R01015	0.006168883
+concentration of enzyme	GAP_R01061	0.024938698
+concentration of enzyme	PGK_R01512	0.014356364
+concentration of enzyme	PGM_R01518	0.0082107162
+concentration of enzyme	PGH_R00658	0.024432352
+concentration of enzyme	PYK_R00200	0.0069965143
+concentration of enzyme	PDH_R00209	0.0078233413
+concentration of enzyme	ZWF_R00835	0.0015244569
+concentration of enzyme	GLH_R02035	0.0016867033
+concentration of enzyme	PGD_R01528	0.013644052
+concentration of enzyme	RPI_R01056	0.0036215551
+concentration of enzyme	RPE_R01529	0.0023286568
+concentration of enzyme	TXT_R01641	0.0010166381
+concentration of enzyme	TAL_R08575	0.010034395
+concentration of enzyme	TXT_R01067	0.0018020862
 concentration of enzyme	FBP_R00762	0
-concentration of enzyme	CSN_R00351	0.0036712356
-concentration of enzyme	ACN_R01325	0.001394821
-concentration of enzyme	ACN_R01900	0.0063012505
-concentration of enzyme	ICD_R00709	0.020844598
-concentration of enzyme	KGD_R08549	0.00099013083
-concentration of enzyme	SCS_R00405	0.0075192618
-concentration of enzyme	SDH_R02164	0.0014928439
-concentration of enzyme	FUM_R01082	0.0018160914
-concentration of enzyme	MDH_R00342	0.024283199
-concentration of enzyme	PPC_R00345	0.0023096944
+concentration of enzyme	CSN_R00351	0.0058396382
+concentration of enzyme	ACN_R01325	0.0010229813
+concentration of enzyme	ACN_R01900	0.0060349302
+concentration of enzyme	ICD_R00709	0.018023294
+concentration of enzyme	KGD_R08549	0.0048864983
+concentration of enzyme	SCS_R00405	0.0075765504
+concentration of enzyme	SDH_R02164	0.0030041694
+concentration of enzyme	FUM_R01082	0.0016104788
+concentration of enzyme	MDH_R00342	0.02406796
+concentration of enzyme	PPC_R00345	0.0061710845
 		
 !!SBtab TableName='Gibbs free energies of reaction' TableID='ReactionGibbsFreeEnergy' TableType='QuantityMatrix' Unit='kJ/mol'		
 !QuantityType	!Reaction	S1
-Gibbs energy of reaction	PTS_RPTSsy	-45.536143
-Gibbs energy of reaction	PGI_R02740	-1.9485397
-Gibbs energy of reaction	PFK_R04779	-20.179117
-Gibbs energy of reaction	ALD_R01070	-4.0177566
-Gibbs energy of reaction	TIM_R01015	-0.55583274
-Gibbs energy of reaction	GAP_R01061	-3.6298113
-Gibbs energy of reaction	PGK_R01512	-10.212378
-Gibbs energy of reaction	PGM_R01518	-4.1891508
-Gibbs energy of reaction	PGH_R00658	-8.3144566
-Gibbs energy of reaction	PYK_R00200	-29.598202
-Gibbs energy of reaction	PDH_R00209	-56.172406
-Gibbs energy of reaction	ZWF_R00835	-10.198731
-Gibbs energy of reaction	GLH_R02035	-20.84695
-Gibbs energy of reaction	PGD_R01528	-20.155718
-Gibbs energy of reaction	RPI_R01056	-0.31402105
-Gibbs energy of reaction	RPE_R01529	-0.66819652
-Gibbs energy of reaction	TXT_R01641	-5.7709455
-Gibbs energy of reaction	TAL_R08575	-3.2296616
-Gibbs energy of reaction	TXT_R01067	-10.875085
-Gibbs energy of reaction	FBP_R00762	-40.461604
-Gibbs energy of reaction	CSN_R00351	-25.128833
-Gibbs energy of reaction	ACN_R01325	-8.2430231
-Gibbs energy of reaction	ACN_R01900	-1.3884604
-Gibbs energy of reaction	ICD_R00709	-26.558527
-Gibbs energy of reaction	KGD_R08549	-62.527622
-Gibbs energy of reaction	SCS_R00405	-0.098791263
-Gibbs energy of reaction	SDH_R02164	-22.673904
-Gibbs energy of reaction	FUM_R01082	-0.96429523
-Gibbs energy of reaction	MDH_R00342	-0.064516173
-Gibbs energy of reaction	PPC_R00345	13.218307
+Gibbs energy of reaction	PTS_RPTSsy	-49.116385
+Gibbs energy of reaction	PGI_R02740	-2.3312145
+Gibbs energy of reaction	PFK_R04779	-18.619439
+Gibbs energy of reaction	ALD_R01070	-6.1356418
+Gibbs energy of reaction	TIM_R01015	-0.82452802
+Gibbs energy of reaction	GAP_R01061	-4.1069695
+Gibbs energy of reaction	PGK_R01512	-8.6634358
+Gibbs energy of reaction	PGM_R01518	-6.1325676
+Gibbs energy of reaction	PGH_R00658	-4.299027
+Gibbs energy of reaction	PYK_R00200	-28.437553
+Gibbs energy of reaction	PDH_R00209	-55.857444
+Gibbs energy of reaction	ZWF_R00835	-6.6705814
+Gibbs energy of reaction	GLH_R02035	-11.842729
+Gibbs energy of reaction	PGD_R01528	-15.391702
+Gibbs energy of reaction	RPI_R01056	-0.42628731
+Gibbs energy of reaction	RPE_R01529	-1.0267864
+Gibbs energy of reaction	TXT_R01641	-8.3829912
+Gibbs energy of reaction	TAL_R08575	-3.4028199
+Gibbs energy of reaction	TXT_R01067	-10.242569
+Gibbs energy of reaction	FBP_R00762	-42.104907
+Gibbs energy of reaction	CSN_R00351	-25.306791
+Gibbs energy of reaction	ACN_R01325	-8.610672
+Gibbs energy of reaction	ACN_R01900	-1.4693139
+Gibbs energy of reaction	ICD_R00709	-24.547104
+Gibbs energy of reaction	KGD_R08549	-64.953541
+Gibbs energy of reaction	SCS_R00405	-0.090813023
+Gibbs energy of reaction	SDH_R02164	-23.446093
+Gibbs energy of reaction	FUM_R01082	-1.1654424
+Gibbs energy of reaction	MDH_R00342	-0.074463447
+Gibbs energy of reaction	PPC_R00345	17.949813
