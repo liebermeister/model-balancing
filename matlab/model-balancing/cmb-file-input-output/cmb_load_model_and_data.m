@@ -72,6 +72,16 @@ if length(state_data_files),
   end
 end
 
+% project fluxes or complete missing fluxes by projections
+% NOTE THAT PROJECTION REQUIRES ASSUMES THAT ALL FLUXES MUST BE IN FORWARD DIRECTION
+
+if find(isnan(state_data.flux_data.Mean)),
+  display('- (cmb_load_model_and_data.m): projecting fluxes to complete missing values');
+  flag_project_fluxes = 'missing'; % 'all', 'missing', 'none'
+  [state_data.flux_data.Mean, state_data.flux_data.Std] = cmb_project_fluxes(state_data.flux_data.Mean,state_data.flux_data.Std,network,flag_project_fluxes);
+end
+
+
 % concentration bounds
 conc_min = [];
 conc_max = [];

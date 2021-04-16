@@ -4,31 +4,31 @@ catalytic rate constant geometric mean		PTS_RPTSsy	1/s	NaN	NaN	NaN	1e-07	10000		
 catalytic rate constant geometric mean		PGI_R02740	1/s	NaN	NaN	NaN	1e-07	10000		R02740
 catalytic rate constant geometric mean		PFK_R04779	1/s	NaN	NaN	NaN	1e-07	10000		R04779
 catalytic rate constant geometric mean		ALD_R01070	1/s	NaN	NaN	NaN	1e-07	10000		R01070
-catalytic rate constant geometric mean		TIM_R01015	1/s	1060.6602	1078.4363	198.26754	1e-07	10000		R01015
-catalytic rate constant geometric mean		GAP_R01061	1/s	172.08719	174.97128	32.167988	1e-07	10000		R01061
-catalytic rate constant geometric mean		PGK_R01512	1/s	236.52354	240.48755	44.212974	1e-07	10000		R01512
-catalytic rate constant geometric mean		PGM_R01518	1/s	117.66974	119.64182	21.99582	1e-07	10000		R01518
+catalytic rate constant geometric mean		TIM_R01015	1/s	NaN	NaN	NaN	1e-07	10000		R01015
+catalytic rate constant geometric mean		GAP_R01061	1/s	NaN	NaN	NaN	1e-07	10000		R01061
+catalytic rate constant geometric mean		PGK_R01512	1/s	NaN	NaN	NaN	1e-07	10000		R01512
+catalytic rate constant geometric mean		PGM_R01518	1/s	NaN	NaN	NaN	1e-07	10000		R01518
 catalytic rate constant geometric mean		PGH_R00658	1/s	NaN	NaN	NaN	1e-07	10000		R00658
 catalytic rate constant geometric mean		PYK_R00200	1/s	NaN	NaN	NaN	1e-07	10000		R00200
-catalytic rate constant geometric mean		PDH_R00209	1/s	1.7083033	1.7369335	0.31933045	1e-07	10000		R00209
-catalytic rate constant geometric mean		ZWF_R00835	1/s	315.2047	320.48736	58.920719	1e-07	10000		R00835
+catalytic rate constant geometric mean		PDH_R00209	1/s	NaN	NaN	NaN	1e-07	10000		R00209
+catalytic rate constant geometric mean		ZWF_R00835	1/s	NaN	NaN	NaN	1e-07	10000		R00835
 catalytic rate constant geometric mean		GLH_R02035	1/s	NaN	NaN	NaN	1e-07	10000		R02035
-catalytic rate constant geometric mean		PGD_R01528	1/s	51.87217	52.74152	9.6963832	1e-07	10000		R01528
-catalytic rate constant geometric mean		RPI_R01056	1/s	1128.6376	1147.553	210.97445	1e-07	10000		R01056
-catalytic rate constant geometric mean		RPE_R01529	1/s	487.01987	495.18206	91.037859	1e-07	10000		R01529
+catalytic rate constant geometric mean		PGD_R01528	1/s	NaN	NaN	NaN	1e-07	10000		R01528
+catalytic rate constant geometric mean		RPI_R01056	1/s	NaN	NaN	NaN	1e-07	10000		R01056
+catalytic rate constant geometric mean		RPE_R01529	1/s	NaN	NaN	NaN	1e-07	10000		R01529
 catalytic rate constant geometric mean		TXT_R01641	1/s	NaN	NaN	NaN	1e-07	10000		R01641
 catalytic rate constant geometric mean		TAL_R08575	1/s	NaN	NaN	NaN	1e-07	10000		R08575
 catalytic rate constant geometric mean		TXT_R01067	1/s	NaN	NaN	NaN	1e-07	10000		R01067
 catalytic rate constant geometric mean		FBP_R00762	1/s	NaN	NaN	NaN	1e-07	10000		R00762
-catalytic rate constant geometric mean		CSN_R00351	1/s	69.518014	70.683099	12.994893	1e-07	10000		R00351
-catalytic rate constant geometric mean		ACN_R01325	1/s	24.2873	24.694342	4.5399868	1e-07	10000		R01325
-catalytic rate constant geometric mean		ACN_R01900	1/s	137.8083	140.11789	25.760289	1e-07	10000		R01900
-catalytic rate constant geometric mean		ICD_R00709	1/s	56.471232	57.41766	10.556079	1e-07	10000		R00709
+catalytic rate constant geometric mean		CSN_R00351	1/s	NaN	NaN	NaN	1e-07	10000		R00351
+catalytic rate constant geometric mean		ACN_R01325	1/s	NaN	NaN	NaN	1e-07	10000		R01325
+catalytic rate constant geometric mean		ACN_R01900	1/s	NaN	NaN	NaN	1e-07	10000		R01900
+catalytic rate constant geometric mean		ICD_R00709	1/s	NaN	NaN	NaN	1e-07	10000		R00709
 catalytic rate constant geometric mean		KGD_R08549	1/s	NaN	NaN	NaN	1e-07	10000		R08549
-catalytic rate constant geometric mean		SCS_R00405	1/s	95.468278	97.068275	17.845735	1e-07	10000		R00405
-catalytic rate constant geometric mean		SDH_R02164	1/s	82.509888	83.89271	15.423444	1e-07	10000		R02164
-catalytic rate constant geometric mean		FUM_R01082	1/s	217.26756	220.90885	40.613483	1e-07	10000		R01082
-catalytic rate constant geometric mean		MDH_R00342	1/s	485.6488	493.78801	90.781567	1e-07	10000		R00342
+catalytic rate constant geometric mean		SCS_R00405	1/s	NaN	NaN	NaN	1e-07	10000		R00405
+catalytic rate constant geometric mean		SDH_R02164	1/s	NaN	NaN	NaN	1e-07	10000		R02164
+catalytic rate constant geometric mean		FUM_R01082	1/s	NaN	NaN	NaN	1e-07	10000		R01082
+catalytic rate constant geometric mean		MDH_R00342	1/s	NaN	NaN	NaN	1e-07	10000		R00342
 catalytic rate constant geometric mean		PPC_R00345	1/s	NaN	NaN	NaN	1e-07	10000		R00345
 Michaelis constant	_S__Malate	FUM_R01082	mM	0.64666009	0.65749777	0.12087915	0.0001	10000	C00149	R01082
 Michaelis constant	_S__Malate	MDH_R00342	mM	0.59870169	0.60873561	0.11191437	0.0001	10000	C00149	R00342
@@ -207,66 +207,66 @@ equilibrium constant		SDH_R02164	dimensionless	6026.7589	6127.7642	1126.5726	1e-
 equilibrium constant		FUM_R01082	dimensionless	4.0148279	4.0821143	0.75048547	1e-10	1e+08		R01082
 equilibrium constant		MDH_R00342	dimensionless	1.940976e-05	1.9735057e-05	3.6282359e-06	1e-10	1e+08		R00342
 equilibrium constant		PPC_R00345	dimensionless	3.7190993e-07	3.7814294e-07	6.9520539e-08	1e-10	1e+08		R00345
-substrate catalytic rate constant		PTS_RPTSsy	1/s	15	15.251392	2.8039264	0.1	10000000		RPTSsy
-substrate catalytic rate constant		PGI_R02740	1/s	125.62172	127.72707	23.482271	0.1	10000000		R02740
-substrate catalytic rate constant		PFK_R04779	1/s	41.75	42.449708	7.8042619	0.1	10000000		R04779
-substrate catalytic rate constant		ALD_R01070	1/s	NaN	NaN	NaN	0.1	10000000		R01070
-substrate catalytic rate constant		TIM_R01015	1/s	4500	4575.4176	841.17793	0.1	10000000		R01015
-substrate catalytic rate constant		GAP_R01061	1/s	134	136.24577	25.048409	0.1	10000000		R01061
-substrate catalytic rate constant		PGK_R01512	1/s	67.158925	68.284473	12.553912	0.1	10000000		R01512
-substrate catalytic rate constant		PGM_R01518	1/s	530	538.88252	99.072067	0.1	10000000		R01518
-substrate catalytic rate constant		PGH_R00658	1/s	197.83576	201.15138	36.981128	0.1	10000000		R00658
-substrate catalytic rate constant		PYK_R00200	1/s	67	68.122884	12.524205	0.1	10000000		R00200
-substrate catalytic rate constant		PDH_R00209	1/s	37.9	38.535184	7.0845874	0.1	10000000		R00209
-substrate catalytic rate constant		ZWF_R00835	1/s	174	176.91615	32.525546	0.1	10000000		R00835
-substrate catalytic rate constant		GLH_R02035	1/s	468	475.84343	87.482504	0.1	10000000		R02035
-substrate catalytic rate constant		PGD_R01528	1/s	27.456347	27.916501	5.1323718	0.1	10000000		R01528
-substrate catalytic rate constant		RPI_R01056	1/s	1405.8805	1429.4423	262.79903	0.1	10000000		R01056
-substrate catalytic rate constant		RPE_R01529	1/s	1300	1321.7873	243.00696	0.1	10000000		R01529
-substrate catalytic rate constant		TXT_R01641	1/s	45	45.754176	8.4117793	0.1	10000000		R01641
-substrate catalytic rate constant		TAL_R08575	1/s	6.44	6.547931	1.2038191	0.1	10000000		R08575
-substrate catalytic rate constant		TXT_R01067	1/s	69	70.156403	12.898062	0.1	10000000		R01067
-substrate catalytic rate constant		FBP_R00762	1/s	NaN	NaN	NaN	0.1	10000000		R00762
-substrate catalytic rate constant		CSN_R00351	1/s	40.499408	41.178156	7.5704907	0.1	10000000		R00351
-substrate catalytic rate constant		ACN_R01325	1/s	19.6	19.928486	3.6637972	0.1	10000000		R01325
-substrate catalytic rate constant		ACN_R01900	1/s	71	72.189922	13.271918	0.1	10000000		R01900
-substrate catalytic rate constant		ICD_R00709	1/s	106.3	108.08153	19.870492	0.1	10000000		R00709
-substrate catalytic rate constant		KGD_R08549	1/s	NaN	NaN	NaN	0.1	10000000		R08549
-substrate catalytic rate constant		SCS_R00405	1/s	201	204.36865	37.572614	0.1	10000000		R00405
-substrate catalytic rate constant		SDH_R02164	1/s	85.572486	87.006635	15.99593	0.1	10000000		R02164
-substrate catalytic rate constant		FUM_R01082	1/s	409.59643	416.46105	76.565217	0.1	10000000		R01082
-substrate catalytic rate constant		MDH_R00342	1/s	1034.7807	1052.1231	193.42993	0.1	10000000		R00342
-substrate catalytic rate constant		PPC_R00345	1/s	270	274.52506	50.470676	0.1	10000000		R00345
-product catalytic rate constant		PTS_RPTSsy	1/s	NaN	NaN	NaN	0.1	10000000		RPTSsy
-product catalytic rate constant		PGI_R02740	1/s	NaN	NaN	NaN	0.1	10000000		R02740
-product catalytic rate constant		PFK_R04779	1/s	NaN	NaN	NaN	0.1	10000000		R04779
-product catalytic rate constant		ALD_R01070	1/s	NaN	NaN	NaN	0.1	10000000		R01070
-product catalytic rate constant		TIM_R01015	1/s	250	254.18987	46.732107	0.1	10000000		R01015
-product catalytic rate constant		GAP_R01061	1/s	221	224.70384	41.311183	0.1	10000000		R01061
-product catalytic rate constant		PGK_R01512	1/s	833	846.96063	155.71138	0.1	10000000		R01512
-product catalytic rate constant		PGM_R01518	1/s	26.124843	26.562681	4.8834758	0.1	10000000		R01518
-product catalytic rate constant		PGH_R00658	1/s	NaN	NaN	NaN	0.1	10000000		R00658
-product catalytic rate constant		PYK_R00200	1/s	NaN	NaN	NaN	0.1	10000000		R00200
-product catalytic rate constant		PDH_R00209	1/s	77	78.290479	14.393489	0.1	10000000		R00209
-product catalytic rate constant		ZWF_R00835	1/s	571	580.56965	106.73613	0.1	10000000		R00835
-product catalytic rate constant		GLH_R02035	1/s	NaN	NaN	NaN	0.1	10000000		R02035
-product catalytic rate constant		PGD_R01528	1/s	98	99.642428	18.318986	0.1	10000000		R01528
-product catalytic rate constant		RPI_R01056	1/s	906.06764	921.25285	169.3698	0.1	10000000		R01056
-product catalytic rate constant		RPE_R01529	1/s	182.45258	185.51039	34.105574	0.1	10000000		R01529
-product catalytic rate constant		TXT_R01641	1/s	NaN	NaN	NaN	0.1	10000000		R01641
-product catalytic rate constant		TAL_R08575	1/s	NaN	NaN	NaN	0.1	10000000		R08575
-product catalytic rate constant		TXT_R01067	1/s	NaN	NaN	NaN	0.1	10000000		R01067
-product catalytic rate constant		FBP_R00762	1/s	23.4	23.792171	4.3741252	0.1	10000000		R00762
-product catalytic rate constant		CSN_R00351	1/s	119.32901	121.3289	22.305984	0.1	10000000		R00351
-product catalytic rate constant		ACN_R01325	1/s	30.0955	30.599884	5.6257045	0.1	10000000		R01325
-product catalytic rate constant		ACN_R01900	1/s	267.4806	271.96343	49.999728	0.1	10000000		R01900
-product catalytic rate constant		ICD_R00709	1/s	30	30.502784	5.6078528	0.1	10000000		R00709
-product catalytic rate constant		KGD_R08549	1/s	NaN	NaN	NaN	0.1	10000000		R08549
-product catalytic rate constant		SCS_R00405	1/s	45.344239	46.104184	8.4761273	0.1	10000000		R00405
-product catalytic rate constant		SDH_R02164	1/s	79.556898	80.890229	14.871446	0.1	10000000		R02164
-product catalytic rate constant		FUM_R01082	1/s	115.24806	117.17956	21.543139	0.1	10000000		R01082
-product catalytic rate constant		MDH_R00342	1/s	227.92729	231.74723	42.60609	0.1	10000000		R00342
-product catalytic rate constant		PPC_R00345	1/s	NaN	NaN	NaN	0.1	10000000		R00345
+substrate catalytic rate constant		PTS_RPTSsy	1/s	15	15.251392	2.8039264	1	10000000		RPTSsy
+substrate catalytic rate constant		PGI_R02740	1/s	125.62172	127.72707	23.482271	1	10000000		R02740
+substrate catalytic rate constant		PFK_R04779	1/s	41.75	42.449708	7.8042619	1	10000000		R04779
+substrate catalytic rate constant		ALD_R01070	1/s	NaN	NaN	NaN	1	10000000		R01070
+substrate catalytic rate constant		TIM_R01015	1/s	4500	4575.4176	841.17793	1	10000000		R01015
+substrate catalytic rate constant		GAP_R01061	1/s	134	136.24577	25.048409	1	10000000		R01061
+substrate catalytic rate constant		PGK_R01512	1/s	67.158925	68.284473	12.553912	1	10000000		R01512
+substrate catalytic rate constant		PGM_R01518	1/s	530	538.88252	99.072067	1	10000000		R01518
+substrate catalytic rate constant		PGH_R00658	1/s	197.83576	201.15138	36.981128	1	10000000		R00658
+substrate catalytic rate constant		PYK_R00200	1/s	67	68.122884	12.524205	1	10000000		R00200
+substrate catalytic rate constant		PDH_R00209	1/s	37.9	38.535184	7.0845874	1	10000000		R00209
+substrate catalytic rate constant		ZWF_R00835	1/s	174	176.91615	32.525546	1	10000000		R00835
+substrate catalytic rate constant		GLH_R02035	1/s	468	475.84343	87.482504	1	10000000		R02035
+substrate catalytic rate constant		PGD_R01528	1/s	27.456347	27.916501	5.1323718	1	10000000		R01528
+substrate catalytic rate constant		RPI_R01056	1/s	1405.8805	1429.4423	262.79903	1	10000000		R01056
+substrate catalytic rate constant		RPE_R01529	1/s	1300	1321.7873	243.00696	1	10000000		R01529
+substrate catalytic rate constant		TXT_R01641	1/s	45	45.754176	8.4117793	1	10000000		R01641
+substrate catalytic rate constant		TAL_R08575	1/s	6.44	6.547931	1.2038191	1	10000000		R08575
+substrate catalytic rate constant		TXT_R01067	1/s	69	70.156403	12.898062	1	10000000		R01067
+substrate catalytic rate constant		FBP_R00762	1/s	NaN	NaN	NaN	1	10000000		R00762
+substrate catalytic rate constant		CSN_R00351	1/s	40.499408	41.178156	7.5704907	1	10000000		R00351
+substrate catalytic rate constant		ACN_R01325	1/s	19.6	19.928486	3.6637972	1	10000000		R01325
+substrate catalytic rate constant		ACN_R01900	1/s	71	72.189922	13.271918	1	10000000		R01900
+substrate catalytic rate constant		ICD_R00709	1/s	106.3	108.08153	19.870492	1	10000000		R00709
+substrate catalytic rate constant		KGD_R08549	1/s	NaN	NaN	NaN	1	10000000		R08549
+substrate catalytic rate constant		SCS_R00405	1/s	201	204.36865	37.572614	1	10000000		R00405
+substrate catalytic rate constant		SDH_R02164	1/s	85.572486	87.006635	15.99593	1	10000000		R02164
+substrate catalytic rate constant		FUM_R01082	1/s	409.59643	416.46105	76.565217	1	10000000		R01082
+substrate catalytic rate constant		MDH_R00342	1/s	1034.7807	1052.1231	193.42993	1	10000000		R00342
+substrate catalytic rate constant		PPC_R00345	1/s	270	274.52506	50.470676	1	10000000		R00345
+product catalytic rate constant		PTS_RPTSsy	1/s	NaN	NaN	NaN	1	10000000		RPTSsy
+product catalytic rate constant		PGI_R02740	1/s	NaN	NaN	NaN	1	10000000		R02740
+product catalytic rate constant		PFK_R04779	1/s	NaN	NaN	NaN	1	10000000		R04779
+product catalytic rate constant		ALD_R01070	1/s	NaN	NaN	NaN	1	10000000		R01070
+product catalytic rate constant		TIM_R01015	1/s	250	254.18987	46.732107	1	10000000		R01015
+product catalytic rate constant		GAP_R01061	1/s	221	224.70384	41.311183	1	10000000		R01061
+product catalytic rate constant		PGK_R01512	1/s	833	846.96063	155.71138	1	10000000		R01512
+product catalytic rate constant		PGM_R01518	1/s	26.124843	26.562681	4.8834758	1	10000000		R01518
+product catalytic rate constant		PGH_R00658	1/s	NaN	NaN	NaN	1	10000000		R00658
+product catalytic rate constant		PYK_R00200	1/s	NaN	NaN	NaN	1	10000000		R00200
+product catalytic rate constant		PDH_R00209	1/s	77	78.290479	14.393489	1	10000000		R00209
+product catalytic rate constant		ZWF_R00835	1/s	571	580.56965	106.73613	1	10000000		R00835
+product catalytic rate constant		GLH_R02035	1/s	NaN	NaN	NaN	1	10000000		R02035
+product catalytic rate constant		PGD_R01528	1/s	98	99.642428	18.318986	1	10000000		R01528
+product catalytic rate constant		RPI_R01056	1/s	906.06764	921.25285	169.3698	1	10000000		R01056
+product catalytic rate constant		RPE_R01529	1/s	182.45258	185.51039	34.105574	1	10000000		R01529
+product catalytic rate constant		TXT_R01641	1/s	NaN	NaN	NaN	1	10000000		R01641
+product catalytic rate constant		TAL_R08575	1/s	NaN	NaN	NaN	1	10000000		R08575
+product catalytic rate constant		TXT_R01067	1/s	NaN	NaN	NaN	1	10000000		R01067
+product catalytic rate constant		FBP_R00762	1/s	23.4	23.792171	4.3741252	1	10000000		R00762
+product catalytic rate constant		CSN_R00351	1/s	119.32901	121.3289	22.305984	1	10000000		R00351
+product catalytic rate constant		ACN_R01325	1/s	30.0955	30.599884	5.6257045	1	10000000		R01325
+product catalytic rate constant		ACN_R01900	1/s	267.4806	271.96343	49.999728	1	10000000		R01900
+product catalytic rate constant		ICD_R00709	1/s	30	30.502784	5.6078528	1	10000000		R00709
+product catalytic rate constant		KGD_R08549	1/s	NaN	NaN	NaN	1	10000000		R08549
+product catalytic rate constant		SCS_R00405	1/s	45.344239	46.104184	8.4761273	1	10000000		R00405
+product catalytic rate constant		SDH_R02164	1/s	79.556898	80.890229	14.871446	1	10000000		R02164
+product catalytic rate constant		FUM_R01082	1/s	115.24806	117.17956	21.543139	1	10000000		R01082
+product catalytic rate constant		MDH_R00342	1/s	227.92729	231.74723	42.60609	1	10000000		R00342
+product catalytic rate constant		PPC_R00345	1/s	NaN	NaN	NaN	1	10000000		R00345
 standard Gibbs free energy of reaction		PTS_RPTSsy	kJ/mol	NaN	NaN	NaN	-1000	1000		RPTSsy
 standard Gibbs free energy of reaction		PGI_R02740	kJ/mol	NaN	NaN	NaN	-1000	1000		R02740
 standard Gibbs free energy of reaction		PFK_R04779	kJ/mol	NaN	NaN	NaN	-1000	1000		R04779

@@ -7,6 +7,9 @@ function [V, Vstd] = cmb_project_fluxes(V,Vstd,network,flag_project_fluxes)
 
 eval(default('flag_project_fluxes','''all'''));
 
+if isempty(Vstd),
+  Vstd = 0.2 * abs(V);
+end
 
 switch flag_project_fluxes,
   case {'all','missing'},

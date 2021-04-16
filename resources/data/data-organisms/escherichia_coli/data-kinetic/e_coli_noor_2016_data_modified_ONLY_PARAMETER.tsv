@@ -30,36 +30,6 @@ equilibrium constant	SDH_R02164		6026.7589	dimensionless	R02164
 equilibrium constant	FUM_R01082		4.0148279	dimensionless	R01082	
 equilibrium constant	MDH_R00342		1.940976e-05	dimensionless	R00342	
 equilibrium constant	PPC_R00345		3.7190993e-07	dimensionless	R00345	
-catalytic rate constant geometric mean	PTS_RPTSsy		NaN	1/s	RPTSsy	
-catalytic rate constant geometric mean	PGI_R02740		NaN	1/s	R02740	
-catalytic rate constant geometric mean	PFK_R04779		NaN	1/s	R04779	
-catalytic rate constant geometric mean	ALD_R01070		NaN	1/s	R01070	
-catalytic rate constant geometric mean	TIM_R01015		1060.6602	1/s	R01015	
-catalytic rate constant geometric mean	GAP_R01061		172.08719	1/s	R01061	
-catalytic rate constant geometric mean	PGK_R01512		236.52354	1/s	R01512	
-catalytic rate constant geometric mean	PGM_R01518		117.66974	1/s	R01518	
-catalytic rate constant geometric mean	PGH_R00658		NaN	1/s	R00658	
-catalytic rate constant geometric mean	PYK_R00200		NaN	1/s	R00200	
-catalytic rate constant geometric mean	PDH_R00209		1.7083033	1/s	R00209	
-catalytic rate constant geometric mean	ZWF_R00835		315.2047	1/s	R00835	
-catalytic rate constant geometric mean	GLH_R02035		NaN	1/s	R02035	
-catalytic rate constant geometric mean	PGD_R01528		51.87217	1/s	R01528	
-catalytic rate constant geometric mean	RPI_R01056		1128.6376	1/s	R01056	
-catalytic rate constant geometric mean	RPE_R01529		487.01987	1/s	R01529	
-catalytic rate constant geometric mean	TXT_R01641		NaN	1/s	R01641	
-catalytic rate constant geometric mean	TAL_R08575		NaN	1/s	R08575	
-catalytic rate constant geometric mean	TXT_R01067		NaN	1/s	R01067	
-catalytic rate constant geometric mean	FBP_R00762		NaN	1/s	R00762	
-catalytic rate constant geometric mean	CSN_R00351		69.518014	1/s	R00351	
-catalytic rate constant geometric mean	ACN_R01325		24.2873	1/s	R01325	
-catalytic rate constant geometric mean	ACN_R01900		137.8083	1/s	R01900	
-catalytic rate constant geometric mean	ICD_R00709		56.471232	1/s	R00709	
-catalytic rate constant geometric mean	KGD_R08549		NaN	1/s	R08549	
-catalytic rate constant geometric mean	SCS_R00405		95.468278	1/s	R00405	
-catalytic rate constant geometric mean	SDH_R02164		82.509888	1/s	R02164	
-catalytic rate constant geometric mean	FUM_R01082		217.26756	1/s	R01082	
-catalytic rate constant geometric mean	MDH_R00342		485.6488	1/s	R00342	
-catalytic rate constant geometric mean	PPC_R00345		NaN	1/s	R00345	
 Michaelis constant	FUM_R01082	_S__Malate	0.64666009	mM	R01082	C00149
 Michaelis constant	MDH_R00342	_S__Malate	0.59870169	mM	R00342	C00149
 Michaelis constant	PDH_R00209	Acetyl_CoA	0.030581258	mM	R00209	C00024
