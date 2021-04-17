@@ -11,8 +11,9 @@ Fitted (metabolite): 40
 Fitted (enzyme):     30
 Fitted (kinetic):    167
 Fitted (TOTAL):      237
-Stringency alpha:    1.000000.2
+Stringency alpha:    1.000000
+c/KM penalty beta:   0.434294
 Initial values type: polytope center
-Geom. std errors:    c:1.70 e:1.02 Keq:1.20 Kcatf:25.12 Kcatr:11.76 KM:20.30
-Corr. on log scale:  c:0.965 e:1.000 Keq:1.000 Kcatf:0.120 Kcatr:0.551 KM:0.539
-Calculation time:    156.9 s
+Geom. std errors:    c:1.85 e:1.09 Keq:1.05 Kcatf:30.85 Kcatr:26.00 KM:32.85
+Corr. on log scale:  c:0.953 e:0.997 Keq:1.000 Kcatf:-0.111 Kcatr:0.592 KM:0.208
+Calculation time:    106.6 s

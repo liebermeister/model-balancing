@@ -4,15 +4,16 @@ Reactions:           30
 KM values:           107
 KA values:           0
 KI values:           0
-Data (kinetic):      159
+Data (kinetic):      157
 Data (metabolite):   25
 Data (enzyme):       26
 Fitted (metabolite): 40
 Fitted (enzyme):     30
 Fitted (kinetic):    167
 Fitted (TOTAL):      237
-Stringency alpha:    0.500000.2
+Stringency alpha:    0.500000
+c/KM penalty beta:   0.434294
 Initial values type: polytope center
-Geom. std errors:    c:1.33 e:1.03 Keq:5.89 Kcatf:3.55 Kcatr:2.82 KM:3.05
-Corr. on log scale:  c:0.991 e:0.999 Keq:0.984 Kcatf:0.700 Kcatr:0.758 KM:0.890
-Calculation time:    68.3 s
+Geom. std errors:    c:1.35 e:1.14 Keq:5.18 Kcatf:2.84 Kcatr:2.50 KM:2.40
+Corr. on log scale:  c:0.990 e:0.991 Keq:0.990 Kcatf:0.742 Kcatr:0.900 KM:0.917
+Calculation time:    52.8 s
