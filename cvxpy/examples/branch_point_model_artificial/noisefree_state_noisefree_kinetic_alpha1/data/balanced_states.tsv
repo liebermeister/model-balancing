@@ -1,6 +1,6 @@
 !!!SBtab DocumentName='MB result' Document='MBresult' StringencyAlpha='1.000000.2' CalculationTime='5.853362 s'					
 					
-!!SBtab TableName='Metabolic fluxes' TableID='MetabolicFlux' TableType='QuantityMatrix' Unit='mM/s'					
+!!SBtab TableName='Metabolic fluxes' TableID='Flux' TableType='QuantityMatrix' Unit='mM/s'					
 !QuantityType	!Reaction	state_1	state_2	state_3	state_4
 rate of reaction	E1	0.00017363462	0.00010793427	0.00017012161	0.00013783703
 rate of reaction	E2	0.00044118047	0.00064526064	0.00033022045	0.000350136

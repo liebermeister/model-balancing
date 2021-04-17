@@ -1,6 +1,6 @@
 !!!SBtab DocumentName='CMB result' Document='CMBresult' RelaxationAlpha='1.000000' CalculationTime='86.029762 s'					
 					
-!!SBtab TableName='Metabolic fluxes' TableID='MetabolicFlux' TableType='QuantityMatrix' Unit='mM/s'					
+!!SBtab TableName='Metabolic fluxes' TableID='Flux' TableType='QuantityMatrix' Unit='mM/s'					
 !QuantityType	!Reaction	state_1	state_2	state_3	state_4
 rate of reaction	E1	0.025362045	0.025561697	0.037704762	0.024604165
 rate of reaction	E2	0.025362045	0.025561697	0.037704762	0.024604165

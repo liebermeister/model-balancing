@@ -22,7 +22,7 @@
 %                                          'Position' (optional), 'Parameter' (optional)
 %   kinetic_data_file  (SBtab filename) SBtab file with table  'ParameterData' (optional; if kinetic_data_file == [],
 %                                          kinetic data are read from table 'Parameter' in file network_file)
-%   state_data_file    (SBtab filename) SBtab file with tables 'MetabolicFluxData', 
+%   state_data_file    (SBtab filename) SBtab file with tables 'FluxData', 
 %                                          'MetaboliteConcentrationData', 'EnzymeConcentrationData'
 %
 % Other settings:
@@ -164,7 +164,7 @@ filenames = cmb_filenames(model, prb, run, result_dir);
 % 'Reaction', 'Compound', 'Position' (optional), 'Parameter'
 % (optional)); (ii) kinetic data (SBtab file with table
 % 'ParameterData'); and (iii) state data (SBtab file with tables
-% 'MetabolicFluxData', 'MetaboliteConcentrationData',
+% 'FluxData', 'MetaboliteConcentrationData',
 % 'EnzymeConcentrationData'). Please have a look at the files
 % 'artificial_network_true.tsv', 'artificial_kinetic_data.tsv', and
 % 'artificial_state_data.tsv' in the folder

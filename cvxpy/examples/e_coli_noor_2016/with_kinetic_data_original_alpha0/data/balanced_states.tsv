@@ -1,6 +1,6 @@
 !!!SBtab DocumentName='MB result' Document='MBresult' StringencyAlpha='0.000000.2' CalculationTime='111.757066 s'		
 		
-!!SBtab TableName='Metabolic fluxes' TableID='MetabolicFlux' TableType='QuantityMatrix' Unit='mM/s'		
+!!SBtab TableName='Metabolic fluxes' TableID='Flux' TableType='QuantityMatrix' Unit='mM/s'		
 !QuantityType	!Reaction	S1
 rate of reaction	PTS_RPTSsy	0.609
 rate of reaction	PGI_R02740	0.504

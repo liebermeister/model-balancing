@@ -109,7 +109,7 @@ Gibbs energy of reaction	FUM_R01082	R01082	1.3457401
 Gibbs energy of reaction	MDH_R00342	R00342	0.22195339
 Gibbs energy of reaction	PPC_R00345	R00345	-0.81585661
 			
-!!SBtab TableName='Metabolic fluxes' TableID='MetabolicFlux' TableType='QuantityMatrix' Unit='mM/s'			
+!!SBtab TableName='Metabolic fluxes' TableID='Flux' TableType='QuantityMatrix' Unit='mM/s'			
 !QuantityType	!Reaction	!Reaction:Identifiers:kegg.reaction	S1
 rate of reaction	PTS_RPTSsy	RPTSsy	0.609
 rate of reaction	PGI_R02740	R02740	0.504

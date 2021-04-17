@@ -11,3 +11,5 @@ replaced substrate catalytic rate constant geom std 50 -> 20
 replaced product catalytic rate constant geom std 50 -> 20
 met concentration data geom std 1.2 -> 1.5
 enz concentration data geom std 1.2 -> 1.5
+
+DataGeomStd replaced for all quantities 1.2 -> 1.5

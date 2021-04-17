@@ -1,5 +1,5 @@
 !!!SBtab DocumentName='balanced_states' SBtabVersion='1.0' Date='2021-4-4'
-!!SBtab TableID='MetabolicFlux' TableType='QuantityMatrix' TableName='MetabolicFlux' SBtabVersion='1.0' Unit='mM/s'
+!!SBtab TableID='Flux' TableType='QuantityMatrix' TableName='MetabolicFlux' SBtabVersion='1.0' Unit='mM/s'
 !QuantityType	!Reaction	S1	S2	S3	S4
 rate of reaction	E1	0.021387373764911267	0.01460085302465973	0.011737199044558173	0.009199216810779395
 rate of reaction	E2	0.021387372521010195	0.014588598605683439	0.011737199044527745	0.009199199058691014

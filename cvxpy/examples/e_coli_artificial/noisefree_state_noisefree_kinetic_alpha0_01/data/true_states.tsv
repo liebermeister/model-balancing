@@ -1,6 +1,6 @@
 !!!SBtab DocumentName='CMB result' Document='CMBresult' CalculationTime='519.027527 s'					
 					
-!!SBtab TableName='Metabolic fluxes' TableID='MetabolicFlux' TableType='QuantityMatrix' Unit='mM/s'					
+!!SBtab TableName='Metabolic fluxes' TableID='Flux' TableType='QuantityMatrix' Unit='mM/s'					
 !QuantityType	!Reaction	state_1	state_2	state_3	state_4
 rate of reaction	PTS_RPTSsy	0.0011510632	0.0010273154	-0.00043427302	0.002437889
 rate of reaction	PGI_R02740	0.084950269	0.20119786	0.17701251	0.13767467
