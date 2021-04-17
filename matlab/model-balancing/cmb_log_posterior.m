@@ -1,5 +1,10 @@
 function [log_posterior,log_posterior_gradient] = cmb_log_posterior(y,pp,preposterior,V,cmb_options,q_info,verbose)
 
+% [log_posterior,log_posterior_gradient] = cmb_log_posterior(y,pp,preposterior,V,cmb_options,q_info,verbose)
+
+% ------------------------------
+% Initialise some variables
+  
 eval(default('verbose','0'))  
 
 no_warnings = 1;
@@ -19,12 +24,22 @@ end
 
 ns = size(preposterior.X.mean,2);
 
+
+% ------------------------------
 % extract X matrix and log kinetic constants from optimization vector z
+
 [q,X] = cmb_y_to_qX(y,nm,ns);
 
 pp.network.kinetics = cmb_q_to_kinetics(q,pp.network,cmb_options,q_info);
 
+q_log_preposterior = - 0.5 *          [q - preposterior.q.mean]' * preposterior.q.cov_inv * [q - preposterior.q.mean];
+
+x_log_posterior    = - 0.5 * sum(sum([[X - preposterior.X.mean] ./ preposterior.X.std ].^2));
+
+
+% ------------------------------
 % compute enzyme levels (ECM code)
+
 for it = 1:ns,
   v      = V(:,it);
   x      = X(:,it);
@@ -44,9 +59,6 @@ end
 % Avoid zero enzyme levels (because of description on log scale)
 E(find(V==0)) = 10^-10;
 E(find([Aforward<0])) = inf;
-q_log_preposterior = - 0.5 *          [q - preposterior.q.mean]' * preposterior.q.cov_inv * [q - preposterior.q.mean];
-x_log_posterior    = - 0.5 * sum(sum([[X - preposterior.X.mean] ./ preposterior.X.std ].^2));
-%e_log_posterior   = - 0.5 * sum(sum([[E - preposterior.E.mean] ./ preposterior.E.std ].^2));
 
 ln_e_log_posterior_upper  = [[log(E) - preposterior.lnE.mean] ./ preposterior.lnE.std ].^2 .* double(log(E) >= preposterior.lnE.mean);
 ln_e_log_posterior_lower  = [[log(E) - preposterior.lnE.mean] ./ preposterior.lnE.std ].^2 .* double(log(E) < preposterior.lnE.mean);
@@ -65,7 +77,23 @@ switch cmb_options.enzyme_score_type,
     otherwise('error');
 end
 
-log_posterior = q_log_preposterior + x_log_posterior + ln_e_log_posterior;
+% -----------------------------------------------
+% c / KM pseudo values term
+
+ln_c_over_km_log_posterior = 0;
+
+if cmb_options.beta_ln_c_over_km > 0,
+  for it = 1:size(X,2),  
+    x = X(:,it);
+    dum = [repmat(x',nr,1) - log(pp.network.kinetics.KM)];
+    dum = sum(find(pp.network.kinetics.KM~=0));
+    c_over_km_score = 1/2 * cmb_options.beta_ln_c_over_km^2 * sum(sum(dum.^2));
+    ln_c_over_km_log_posterior = ln_c_over_km_log_posterior + c_over_km_score;
+  end
+% sigma for pseudo value term for sum_til ln(c_i(t)/km_il)
+end
+
+log_posterior = q_log_preposterior + x_log_posterior + ln_e_log_posterior + ln_c_over_km_log_posterior;
 
 if verbose,
   q_log_preposterior
@@ -87,7 +115,11 @@ end
   if ~strcmp(cmb_options.parameterisation, 'Keq_KV_KM_KA_KI'),
     error('Gradient not supported'); 
   end
-  
+
+  if cmb_options.beta_ln_c_over_km ~= 0,
+    error('Gradient not supported'); 
+  end
+
   %% Compute posterior terms due to enzyme levels
   for it = 1:ns,
     v = V(:,it);

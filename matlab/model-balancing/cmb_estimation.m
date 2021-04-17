@@ -116,7 +116,7 @@ switch cmb_options.initial_values_variant,
     %% find initial point using fmincon with a flat objective function
     opt = optimoptions('fmincon','MaxFunEvals',10^15,'MaxIter',10^15,'TolX',10^-5,'Display',...
                        cmb_options.optim_display,'Algorithm','interior-point','SpecifyObjectiveGradient',false);
-    [y_init,~,err] = fmincon(@(y) 1,y_init,y_ineq_A,y_ineq_b-epsilon,[],[],y_bound_min,y_bound_max,[],opt);
+    [y_init,~,err] = fmincon(@(y) 1, y_init,y_ineq_A,y_ineq_b-epsilon,[],[],y_bound_min,y_bound_max,[],opt);
     [init.q, init.X] = cmb_y_to_qX(y_init, nm, ns);
     
   case {'given_values','true_values','random'},

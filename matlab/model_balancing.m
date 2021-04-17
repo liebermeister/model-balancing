@@ -76,6 +76,9 @@ switch cmb_options.enzyme_score_type,
     display('The optimality problem may be non-convex, and enzyme levels may be underestimated.');
 end
 
+if cmb_options.beta_ln_c_over_km > 0,
+  display('Using penalty term beta for small or large ln c/KM ratios (option cmb_options.beta_ln_c_over_km)');
+end
 
 % -----------------------------------------------
 % Initialise some variables
@@ -258,6 +261,7 @@ calculation_time = toc(tstart_model_balancing);
 if cmb_options.show_graphics,
   display(' '); ca;
   [res, res_true, res_true_data] = cmb_graphics(prior, data, optimal, true, cmb_options, q_info, filenames.graphics_dir, kapp_max);
+  cmb_diagnostic_network_graphics(network, data, optimal, cmb_options, q_info, 20, 1, filenames.graphics_dir);
 else
   res = []; res_true = []; res_true_data = [];
 end
