@@ -1,4 +1,4 @@
 include README.md
 include LICENSE
 include versioneer.py
-include python/model_balancing/_version.py
+include src/model_balancing/_version.py

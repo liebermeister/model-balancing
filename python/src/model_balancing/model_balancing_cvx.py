@@ -1,15 +1,16 @@
 import itertools
 import os
 import warnings
-from typing import Union
+from typing import Union, List
 import numpy as np
 import cvxpy as cp
-from . import Q_
+from . import Q_, read_arguments_json, to_state_sbtab, to_model_sbtab, SBtab, RT
 
 
 class ModelBalancingConvex(object):
 
     MIN_DRIVING_FORCE = 1e-6  # in units of RT
+    MIN_FLUX = 1e-9  # in units of M/s
 
     def __init__(
         self,
@@ -33,6 +34,9 @@ class ModelBalancingConvex(object):
         Ka_ln_cov: np.array,
         Ki_gmean: np.array,
         Ki_ln_cov: np.array,
+        metabolite_names: List[str],
+        reaction_names: List[str],
+        state_names: List[str],
         rate_law: str = "CM",
         solver: str = "MOSEK",
     ) -> None:
@@ -43,6 +47,8 @@ class ModelBalancingConvex(object):
 
         self.Nc, self.Nr = S.shape
         assert self.fluxes.shape[0] == self.Nr
+        if self.fluxes.ndim == 1:
+            self.fluxes = self.fluxes.reshape(self.Nr, 1)
         self.Ncond = self.fluxes.shape[1]
         assert self.A_act.shape == (self.Nc, self.Nr)
         assert self.A_inh.shape == (self.Nc, self.Nr)
@@ -85,6 +91,10 @@ class ModelBalancingConvex(object):
         else:
             self.ln_Ki_precision = None
 
+        self.metabolite_names = metabolite_names
+        self.reaction_names = reaction_names
+        self.state_names = state_names
+
         self.rate_law = rate_law
         self.solver = solver
 
@@ -105,7 +115,8 @@ class ModelBalancingConvex(object):
             else:
                 ln_p = cp.Variable(shape=ln_gmean.size)
                 self.__setattr__(
-                    f"z2_scores_{p}", ModelBalancingConvex._z_score(ln_p, ln_gmean, ln_precision)
+                    f"z2_scores_{p}",
+                    ModelBalancingConvex._z_score(ln_p, ln_gmean, ln_precision),
                 )
                 self.__setattr__(f"ln_{p}", ln_p)
 
@@ -114,7 +125,8 @@ class ModelBalancingConvex(object):
             ln_gmean = self.__getattribute__(f"ln_{p}_gmean")
             ln_precision = self.__getattribute__(f"ln_{p}_precision")
             self.__setattr__(
-                f"z2_scores_{p}", ModelBalancingConvex._z_score(ln_p, ln_gmean, ln_precision)
+                f"z2_scores_{p}",
+                ModelBalancingConvex._z_score(ln_p, ln_gmean, ln_precision),
             )
 
         # conc_met is given as a matrix (with conditions as columns) and therefore
@@ -140,10 +152,24 @@ class ModelBalancingConvex(object):
         total_z2_scores = sum(
             [
                 self.__getattribute__(f"z2_scores_{p}")
-                for p in ["Km", "Ka", "Ki", "Keq", "kcatf", "kcatr", "conc_met", "conc_enz"]
+                for p in [
+                    "Km",
+                    "Ka",
+                    "Ki",
+                    "Keq",
+                    "kcatf",
+                    "kcatr",
+                    "conc_met",
+                    "conc_enz",
+                ]
             ]
         )
         self.objective = cp.Minimize(total_z2_scores)
+
+    @staticmethod
+    def from_json(fname: str) -> "ModelBalancingConvex":
+        args = read_arguments_json(fname)
+        return ModelBalancingConvex(**args)
 
     @staticmethod
     def _B_matrix(Nc: int, col_subs: np.ndarray, col_prod: np.ndarray) -> np.ndarray:
@@ -189,7 +215,8 @@ class ModelBalancingConvex(object):
 
     @staticmethod
     def _create_dense_matrix(
-        S: np.array, x: Union[np.array, cp.Variable],
+        S: np.array,
+        x: Union[np.array, cp.Variable],
     ) -> cp.Expression:
         """Converts a sparse list of affinity parameters (e.g. Km) to a matrix."""
 
@@ -214,7 +241,9 @@ class ModelBalancingConvex(object):
 
     @staticmethod
     def _z_score(
-        x: Union[np.array, cp.Expression], mu: np.array, precision: np.array,
+        x: Union[np.array, cp.Expression],
+        mu: np.array,
+        precision: np.array,
     ) -> cp.Expression:
         """Calculates the sum of squared Z-scores (with a covariance mat)."""
         return cp.quad_form(x - mu, precision)
@@ -244,11 +273,24 @@ class ModelBalancingConvex(object):
 
     @property
     def ln_kcatr(self) -> cp.Expression:
-        return ModelBalancingConvex._ln_kcatr(self.S, self.ln_kcatf, self.ln_Km, self.ln_Keq)
+        return ModelBalancingConvex._ln_kcatr(
+            self.S, self.ln_kcatf, self.ln_Km, self.ln_Keq
+        )
 
-    def _ln_capacity(self, ln_kcatf: Union[np.array, cp.Expression],) -> cp.Expression:
+    def _ln_capacity(
+        self,
+        ln_kcatf: Union[np.array, cp.Expression],
+    ) -> cp.Expression:
         """Calculate the capacity term of the enzyme."""
-        return np.log(self.fluxes.m_as("M/s")) - cp.vstack([ln_kcatf] * self.Ncond).T
+
+        # for reaction-state pairs where there is zero flux (i.e. smaller than
+        # MIN_FLUX), we need to remove them from the enzyme ln_conc_enz calculation
+
+
+        return (
+            np.log(cp.min(self.fluxes.m_as("M/s"), ModelBalancingConvex.MIN_FLUX))
+            - cp.vstack([ln_kcatf] * self.Ncond).T
+        )
 
     def _ln_eta_thermodynamic(
         self, driving_forces: Union[np.array, cp.Expression]
@@ -280,7 +322,13 @@ class ModelBalancingConvex(object):
             ln_D_P = S_prod.T @ (ln_conc_met_matrix - ln_Km_matrix)
 
             if self.rate_law == "S":
-                ln_eta_kinetic += [cp.Constant(np.zeros(self.Nr,))]
+                ln_eta_kinetic += [
+                    cp.Constant(
+                        np.zeros(
+                            self.Nr,
+                        )
+                    )
+                ]
             elif self.rate_law == "1S":
                 ln_eta_kinetic += [-cp.diag(cp.logistic(-ln_D_S))]
             elif self.rate_law == "SP":
@@ -290,7 +338,9 @@ class ModelBalancingConvex(object):
             elif self.rate_law == "CM":
                 ln_eta_of_reaction = []
                 for j in range(self.Nr):
-                    B = ModelBalancingConvex._B_matrix(self.Nc, S_subs[:, j], S_prod[:, j])
+                    B = ModelBalancingConvex._B_matrix(
+                        self.Nc, S_subs[:, j], S_prod[:, j]
+                    )
                     ln_eta_of_reaction += [
                         -cp.log_sum_exp(B @ (ln_conc_met[:, i] - ln_Km_matrix[:, j]))
                     ]
@@ -382,11 +432,11 @@ class ModelBalancingConvex(object):
         self.ln_kcatr_gmean.value = self.ln_kcatr.value
         self.ln_conc_enz_gmean.value = self.ln_conc_enz.value
 
-    def solve(self) -> None:
+    def solve(self, verbose: bool = False) -> None:
         prob = cp.Problem(
             self.objective, [self.driving_forces >= self.MIN_DRIVING_FORCE]
         )
-        prob.solve(solver=self.solver)
+        prob.solve(solver=self.solver, verbose=verbose)
 
     @property
     def objective_value(self) -> float:
@@ -405,3 +455,58 @@ class ModelBalancingConvex(object):
         print("\nη(kin) =\n", np.exp(self.ln_eta_kinetic.value).round(2))
         print("\nη(reg) =\n", np.exp(self.ln_eta_regulation.value).round(2))
         print("\n\n\n")
+
+    def to_state_sbtab(self) -> SBtab.SBtabDocument:
+        v = self.fluxes
+        c = Q_(np.exp(self.ln_conc_met.value), "M")
+        e = Q_(np.exp(self.ln_conc_enz.value), "M")
+        delta_g = -self.driving_forces.value * RT
+        state_sbtabdoc = to_state_sbtab(
+            v,
+            c,
+            e,
+            delta_g,
+            self.metabolite_names,
+            self.reaction_names,
+            self.state_names,
+        )
+        state_sbtabdoc.set_name("CMB result")
+        return state_sbtabdoc
+
+    def to_model_sbtab(self) -> SBtab.SBtabDocument:
+        kcatf = Q_(np.exp(self.ln_kcatf.value), "1/s")
+        kcatr = Q_(np.exp(self.ln_kcatr.value), "1/s")
+        Keq = Q_(np.exp(self.ln_Keq.value), "")
+        if self.ln_Km_gmean.size != 0:
+            Km = Q_(np.exp(self._create_dense_matrix(self.S, self.ln_Km).value), "M")
+        else:
+            Km = Q_(np.exp(self._create_dense_matrix(self.S, self.ln_Km)), "M")
+        if self.ln_Ka_gmean.size != 0:
+            Ka = Q_(
+                np.exp(self._create_dense_matrix(self.A_act, self.ln_Ka).value), "M"
+            )
+        else:
+            Ka = Q_(np.exp(self._create_dense_matrix(self.A_act, self.ln_Ka)), "M")
+        if self.ln_Ki_gmean.size != 0:
+            Ki = Q_(
+                np.exp(self._create_dense_matrix(self.A_inh, self.ln_Ki).value), "M"
+            )
+        else:
+            Ki = Q_(np.exp(self._create_dense_matrix(self.A_inh, self.ln_Ki)), "M")
+
+        model_sbtabdoc = to_model_sbtab(
+            kcatf,
+            kcatr,
+            Keq,
+            Km,
+            Ka,
+            Ki,
+            self.S,
+            self.A_act,
+            self.A_inh,
+            self.metabolite_names,
+            self.reaction_names,
+            self.state_names,
+        )
+        model_sbtabdoc.set_name("CMB result")
+        return model_sbtabdoc
