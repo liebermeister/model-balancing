@@ -1,1 +1,106 @@
-/home/wolfram/arbeit/daten/omics_data/multi-omics_data/escherichia_coli/Davidi_2016_collected_data_for_bigg_iJO1366/Davidi_2016_metabolite_concentrations_uM.tsv
+!!SBtab TableID='Metabolite' TableType='Quantity' Unit='uM' Organism='Escherichia coli' Comment='Data referenced in Davidi et al. (2016) PNAS; Metabolite concentrations in E. coli in batch growth in glucose, acetate and glycerol as sole carbon sources (Bennet et al; Zimmermann et al). Values are given in units of µM.'
+!QuantityType	!Compound:Identifiers:kegg.compound	!>Condition:Glucose	!>Condition:Glycerol	!>Condition:Acetate
+concentration	C00002	9630	8980	4140
+concentration	C00003	2550	4080	2430
+concentration	C00004	83.2	129	135
+concentration	C00005	115	255	267
+concentration	C00006	2.08	0	0
+concentration	C00008	555	149	189
+concentration	C00010	1370	4540	3700
+concentration	C00015	1790	0	0
+concentration	C00016	173	209	49.3
+concentration	C00019	184	1100	388
+concentration	C00020	281	156	101
+concentration	C00024	606	734	628
+concentration	C00025	96000	149000	44800
+concentration	C00026	443	616	446
+concentration	C00029	2500	1120	553
+concentration	C00035	676	23.2	17.7
+concentration	C00036	1		
+concentration	C00041	2550	1770	879
+concentration	C00042	569	1140	923
+concentration	C00043	9240	4110	2400
+concentration	C00044	4870	2690	1250
+concentration	C00047	405	762	554
+concentration	C00049	4230	9300	7350
+concentration	C00051	16600	17600	7970
+concentration	C00055	360		
+concentration	C00061	53.7	2.74	53.1
+concentration	C00062	569		
+concentration	C00063	2730	1400	1150
+concentration	C00064	3770	400	193
+concentration	C00065	67.6	175	97.5
+concentration	C00073	145	129	65.9
+concentration	C00074	184	1340	909
+concentration	C00075	8290	3990	2370
+concentration	C00077	10.1	30.3	64
+concentration	C00078	11.5	4.66	0.896
+concentration	C00079	18.2	42.1	27.4
+concentration	C00081	205		
+concentration	C00082	28.9	87.4	52.2
+concentration	C00083	34.5		
+concentration	C00091	233	1440	390
+concentration	C00092	8750	5480	4360
+concentration	C00093	49	813	246
+concentration	C00100	5.32		
+concentration	C00104	23.7		
+concentration	C00108	3.48	2.66	3.44
+concentration	C00111	374	544	147
+concentration	C00117	1320	1020	686
+concentration	C00119	258	153	94.4
+concentration	C00122	121	288	298
+concentration	C00123	303	438	341
+concentration	C00127	2370	7310	1680
+concentration	C00130	272		
+concentration	C00131	15.5	51	68.5
+concentration	C00135	68	150	95.5
+concentration	C00137	5.72	7.05	6.9
+concentration	C00144	23.8		
+concentration	C00147	1.47		
+concentration	C00148	385	451	361
+concentration	C00149	1690	3450	3330
+concentration	C00152	511	970	540
+concentration	C00156	52.2	787	294
+concentration	C00158	1960	2320	21900
+concentration	C00166	89.8	195	148
+concentration	C00167	566	375	188
+concentration	C00183	4020	2290	1070
+concentration	C00188	179		
+concentration	C00196	138	414	274
+concentration	C00197	1540	4080	1510
+concentration	C00198	1040		
+concentration	C00212	0.131		
+concentration	C00224	6.63		
+concentration	C00227	1070	1050	1560
+concentration	C00242	188	3.31	
+concentration	C00255	19	22.1	18.8
+concentration	C00257	41.6		
+concentration	C00258	1350	931	516
+concentration	C00299	2090		
+concentration	C00327	1410		
+concentration	C00330	0.522		
+concentration	C00332	21.8		
+concentration	C00337	12.1	23.6	20.5
+concentration	C00345	3810	4950	3060
+concentration	C00352	1150	378	316
+concentration	C00354	15200	5850	
+concentration	C00360	8.84		
+concentration	C00362	50.7		
+concentration	C00363	378		
+concentration	C00380	14.1		
+concentration	C00387	1.62		
+concentration	C00417	16.1	95.9	72.3
+concentration	C00437	43.3	398	152
+concentration	C00438	590	90.2	26.6
+concentration	C00458	35.2	83	146
+concentration	C00459	4620	525	667
+concentration	C00475	2.59		
+concentration	C00493	14.1		
+concentration	C00498	4.27		
+concentration	C00559	2.82		
+concentration	C00575	35.4		
+concentration	C00673	303		
+concentration	C00860	12.8	19.2	19.6
+concentration	C01817	370		
+concentration	C03722	11.9	4.58	3.59
+concentration	C04256	81.9		

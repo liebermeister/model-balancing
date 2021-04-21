@@ -1,0 +1,9 @@
+Files used in article:
+* Davidi_2016_metabolite_concentrations_uM.tsv
+* Davidi_2016_protein_abundance_mmolgCDW_KEGG_IDs.tsv
+* Davidi_2016_flux_mmolgCDW_s_KEGG_IDs.tsv
+
+Provenance
+* Davidi_2016_flux_mmolgCDW_s.tsv from /home/wolfram/arbeit/daten/omics_data/multi-omics_data/escherichia_coli/Davidi_2016_collected_data_for_bigg_iJO1366/Davidi_2016_flux_mmolgCDW_s.tsv
+* Davidi_2016_metabolite_concentrations_uM.tsv from /home/wolfram/arbeit/daten/omics_data/multi-omics_data/escherichia_coli/Davidi_2016_collected_data_for_bigg_iJO1366/Davidi_2016_metabolite_concentrations_uM.tsv
+* Davidi_2016_protein_abundance_mmolgCDW.tsv from /home/wolfram/arbeit/daten/omics_data/multi-omics_data/escherichia_coli/Davidi_2016_collected_data_for_bigg_iJO1366/Davidi_2016_protein_abundance_mmolgCDW.tsv
