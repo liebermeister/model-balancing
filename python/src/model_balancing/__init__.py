@@ -19,11 +19,14 @@ with warnings.catch_warnings():
 
 RT = Q_(8.31e-3 * 298.15, "kJ/mol")
 
+MIN_DRIVING_FORCE = 1e-3 * RT
+MIN_FLUX = Q_(1e-9, "M/s")
+
 
 def read_arguments_json(
     json_fname: str,
 ) -> Dict[str, np.array]:
-    with open(f"cvxpy/examples/JSON/{json_fname}", "rt") as fp:
+    with open(json_fname, "rt") as fp:
         data = json.load(fp)
 
     keq_standard_concentration = Q_(data["standard_concentration"])
@@ -119,7 +122,7 @@ def to_state_sbtab(
     flux_df.insert(1, "!Reaction", reaction_names)
     flux_sbtab = SBtab.SBtabTable.from_data_frame(
         flux_df.astype(str),
-        table_id="MetabolicFlux",
+        table_id="Flux",
         table_name="Metabolic fluxes",
         table_type="QuantityMatrix",
         unit="mM/s",
@@ -131,8 +134,8 @@ def to_state_sbtab(
     conc_met_df.insert(1, "!Compound", metabolite_names)
     conc_met_sbtab = SBtab.SBtabTable.from_data_frame(
         conc_met_df.astype(str),
-        table_id="MetaboliteConcentrations",
-        table_name="Metabolite concentrations",
+        table_id="MetaboliteConcentration",
+        table_name="Metabolite concentration",
         table_type="QuantityMatrix",
         unit="mM",
     )
@@ -143,8 +146,8 @@ def to_state_sbtab(
     conc_enz_df.insert(1, "!Reaction", reaction_names)
     conc_enz_sbtab = SBtab.SBtabTable.from_data_frame(
         conc_enz_df.astype(str),
-        table_id="EnzymeConcentrations",
-        table_name="Enzyme concentrations",
+        table_id="EnzymeConcentration",
+        table_name="Enzyme concentration",
         table_type="QuantityMatrix",
         unit="mM",
     )

@@ -1,17 +1,22 @@
 import itertools
 import os
 import warnings
-from typing import Union, List
+from typing import Union, List, Any
 import numpy as np
 import cvxpy as cp
-from . import Q_, read_arguments_json, to_state_sbtab, to_model_sbtab, SBtab, RT
+from . import (
+    Q_,
+    read_arguments_json,
+    to_state_sbtab,
+    to_model_sbtab,
+    SBtab,
+    RT,
+    MIN_DRIVING_FORCE,
+    MIN_FLUX,
+)
 
 
 class ModelBalancingConvex(object):
-
-    MIN_DRIVING_FORCE = 1e-6  # in units of RT
-    MIN_FLUX = 1e-9  # in units of M/s
-
     def __init__(
         self,
         S: np.array,
@@ -40,10 +45,10 @@ class ModelBalancingConvex(object):
         rate_law: str = "CM",
         solver: str = "MOSEK",
     ) -> None:
-        self.S = S
-        self.fluxes = fluxes
-        self.A_act = A_act
-        self.A_inh = A_inh
+        self.S = S.copy()
+        self.fluxes = fluxes.copy()
+        self.A_act = A_act.copy()
+        self.A_inh = A_inh.copy()
 
         self.Nc, self.Nr = S.shape
         assert self.fluxes.shape[0] == self.Nr
@@ -53,18 +58,35 @@ class ModelBalancingConvex(object):
         assert self.A_act.shape == (self.Nc, self.Nr)
         assert self.A_inh.shape == (self.Nc, self.Nr)
 
+        # since we use a log transform on the fluxes, we cannot allow any
+        # zero or negative values. We replace 0 with a small epsilon,
+        # and reverse the reactions that have negative fluxes
+        for i in np.where(self.fluxes < 0)[0]:
+            self.fluxes[i] = -self.fluxes[i]
+            self.S[:, i] = -self.S[:, i]
+            Keq_gmean[i] = 1.0 / Keq_gmean[i]
+            kcatf_gmean[i], kcatr_gmean[i] = (
+                kcatr_gmean[i],
+                kcatf_gmean[i],
+            )
+
+        for i in np.where(self.fluxes < MIN_FLUX)[0]:
+            self.fluxes[i] = MIN_FLUX
+
         self.ln_Keq_gmean = cp.Parameter(
             shape=(self.Nr,), value=np.log(Keq_gmean.m_as(""))
         )
         self.ln_Keq_precision = np.linalg.pinv(Keq_ln_cov)
         self.ln_conc_enz_gmean = cp.Parameter(
-            shape=(self.Nr, self.Ncond), value=np.log(conc_enz_gmean.m_as("M"))
+            shape=(self.Nr, self.Ncond),
+            value=np.log(conc_enz_gmean.m_as("M").reshape(self.Nr, self.Ncond)),
         )
-        self.ln_conc_enz_gstd = np.log(conc_enz_gstd)
+        self.ln_conc_enz_gstd = np.log(conc_enz_gstd).reshape(self.Nr, self.Ncond)
         self.ln_conc_met_gmean = cp.Parameter(
-            shape=(self.Nc, self.Ncond), value=np.log(conc_met_gmean.m_as("M"))
+            shape=(self.Nc, self.Ncond),
+            value=np.log(conc_met_gmean.m_as("M").reshape(self.Nc, self.Ncond)),
         )
-        self.ln_conc_met_gstd = np.log(conc_met_gstd)
+        self.ln_conc_met_gstd = np.log(conc_met_gstd).reshape(self.Nc, self.Ncond)
         self.ln_kcatf_gmean = cp.Parameter(
             shape=(self.Nr,), value=np.log(kcatf_gmean.m_as("1/s"))
         )
@@ -149,7 +171,7 @@ class ModelBalancingConvex(object):
             ).flatten()
         )
 
-        total_z2_scores = sum(
+        self.total_z2_scores = sum(
             [
                 self.__getattribute__(f"z2_scores_{p}")
                 for p in [
@@ -164,7 +186,6 @@ class ModelBalancingConvex(object):
                 ]
             ]
         )
-        self.objective = cp.Minimize(total_z2_scores)
 
     @staticmethod
     def from_json(fname: str) -> "ModelBalancingConvex":
@@ -282,15 +303,7 @@ class ModelBalancingConvex(object):
         ln_kcatf: Union[np.array, cp.Expression],
     ) -> cp.Expression:
         """Calculate the capacity term of the enzyme."""
-
-        # for reaction-state pairs where there is zero flux (i.e. smaller than
-        # MIN_FLUX), we need to remove them from the enzyme ln_conc_enz calculation
-
-
-        return (
-            np.log(cp.min(self.fluxes.m_as("M/s"), ModelBalancingConvex.MIN_FLUX))
-            - cp.vstack([ln_kcatf] * self.Ncond).T
-        )
+        return np.log(self.fluxes.m_as("M/s")) - cp.vstack([ln_kcatf] * self.Ncond).T
 
     def _ln_eta_thermodynamic(
         self, driving_forces: Union[np.array, cp.Expression]
@@ -411,10 +424,16 @@ class ModelBalancingConvex(object):
     def is_gmean_feasible(self) -> bool:
         return (
             self._driving_forces(self.ln_Keq_gmean, self.ln_conc_met_gmean).value
-            >= self.MIN_DRIVING_FORCE
+            >= (MIN_DRIVING_FORCE / RT).m_as("")
         ).all()
 
     def initialize_with_gmeans(self) -> None:
+        """Initialize the independent parameters with their gmeans.
+
+        Note that the dependent parameters (kcatr and ln_conc_enz) can both
+        be very far from their gmeans, and that the system might not be
+        thermodynamically feasible.
+        """
         # define the independent variables and their z-scores
         self.ln_conc_met.value = self.ln_conc_met_gmean.value
         self.ln_Keq.value = self.ln_Keq_gmean.value
@@ -429,14 +448,24 @@ class ModelBalancingConvex(object):
         if self.ln_Ki_gmean.size != 0:
             self.ln_Ki.value = self.ln_Ki_gmean
 
-        self.ln_kcatr_gmean.value = self.ln_kcatr.value
-        self.ln_conc_enz_gmean.value = self.ln_conc_enz.value
+        # self.ln_kcatr_gmean.value = self.ln_kcatr.value
+        # self.ln_conc_enz_gmean.value = self.ln_conc_enz.value
 
     def solve(self, verbose: bool = False) -> None:
         prob = cp.Problem(
-            self.objective, [self.driving_forces >= self.MIN_DRIVING_FORCE]
+            cp.Minimize(self.total_z2_scores),
+            [self.driving_forces >= (MIN_DRIVING_FORCE / RT).m_as("")],
         )
         prob.solve(solver=self.solver, verbose=verbose)
+        return prob.status
+
+    def find_inner_point(self, verbose: bool = False) -> Any:
+        prob = cp.Problem(
+            cp.Minimize(self.z2_scores_conc_met),
+            [self.driving_forces >= (MIN_DRIVING_FORCE / RT).m_as("")],
+        )
+        prob.solve(solver=self.solver, verbose=verbose)
+        return prob.status
 
     @property
     def objective_value(self) -> float:
