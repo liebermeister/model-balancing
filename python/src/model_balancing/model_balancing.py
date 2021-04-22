@@ -377,10 +377,7 @@ class ModelBalancing(object):
         for i in range(self.Nr):
             for j in range(self.Ncond):
                 ln_c_over_Km = ln_conc_met[:, j] - ln_Km_matrix[:, i]
-                try:
-                    ln_1_plus_c_over_Km = np.log(1.0 + np.exp(ln_c_over_Km))
-                except RuntimeWarning:
-                    print(ln_c_over_Km)
+                ln_1_plus_c_over_Km = np.log(1.0 + np.exp(ln_c_over_Km))
 
                 if self.rate_law == "S":
                     # numerator and denominator are identical
@@ -431,12 +428,8 @@ class ModelBalancing(object):
             for j in range(self.Ncond):
                 ln_c_over_Ka = ln_conc_met[:, j] - ln_Ka_matrix[:, i]
                 ln_c_over_Ki = ln_conc_met[:, j] - ln_Ki_matrix[:, i]
-                try:
-                    ln_act = self.A_act[:, i].T @ np.log(1.0 + np.exp(-ln_c_over_Ka))
-                    ln_inh = self.A_inh[:, i].T @ np.log(1.0 + np.exp(-ln_c_over_Ki))
-                except RuntimeWarning:
-                    print(ln_c_over_Ka)
-                    print(ln_c_over_Ki)
+                ln_act = self.A_act[:, i].T @ np.log(1.0 + np.exp(-ln_c_over_Ka))
+                ln_inh = self.A_inh[:, i].T @ np.log(1.0 + np.exp(-ln_c_over_Ki))
                 ln_eta_regulation[i, j] = ln_act + ln_inh
         return ln_eta_regulation
 
