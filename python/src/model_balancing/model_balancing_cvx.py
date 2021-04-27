@@ -1,18 +1,20 @@
 import itertools
 import os
 import warnings
-from typing import Union, List, Any
-import numpy as np
+from typing import Any, List, Union
+
 import cvxpy as cp
+import numpy as np
+
 from . import (
-    Q_,
-    read_arguments_json,
-    to_state_sbtab,
-    to_model_sbtab,
-    SBtab,
-    RT,
     MIN_DRIVING_FORCE,
     MIN_FLUX,
+    Q_,
+    RT,
+    SBtab,
+    read_arguments_json,
+    to_model_sbtab,
+    to_state_sbtab,
 )
 
 
@@ -26,9 +28,9 @@ class ModelBalancingConvex(object):
         Keq_gmean: np.array,
         Keq_ln_cov: np.array,
         conc_enz_gmean: np.array,
-        conc_enz_gstd: np.array,
+        conc_enz_ln_cov: np.array,
         conc_met_gmean: np.array,
-        conc_met_gstd: np.array,
+        conc_met_ln_cov: np.array,
         kcatf_gmean: np.array,
         kcatf_ln_cov: np.array,
         kcatr_gmean: np.array,
@@ -77,16 +79,20 @@ class ModelBalancingConvex(object):
             shape=(self.Nr,), value=np.log(Keq_gmean.m_as(""))
         )
         self.ln_Keq_precision = np.linalg.pinv(Keq_ln_cov)
-        self.ln_conc_enz_gmean = cp.Parameter(
-            shape=(self.Nr, self.Ncond),
-            value=np.log(conc_enz_gmean.m_as("M").reshape(self.Nr, self.Ncond)),
-        )
-        self.ln_conc_enz_gstd = np.log(conc_enz_gstd).reshape(self.Nr, self.Ncond)
         self.ln_conc_met_gmean = cp.Parameter(
             shape=(self.Nc, self.Ncond),
             value=np.log(conc_met_gmean.m_as("M").reshape(self.Nc, self.Ncond)),
         )
-        self.ln_conc_met_gstd = np.log(conc_met_gstd).reshape(self.Nc, self.Ncond)
+        self.ln_conc_met_gstd = np.diag(conc_met_ln_cov ** (0.5)).reshape(
+            self.Nc, self.Ncond
+        )
+        self.ln_conc_enz_gmean = cp.Parameter(
+            shape=(self.Nr, self.Ncond),
+            value=np.log(conc_enz_gmean.m_as("M").reshape(self.Nr, self.Ncond)),
+        )
+        self.ln_conc_enz_gstd = np.diag(conc_enz_ln_cov ** (0.5)).reshape(
+            self.Nr, self.Ncond
+        )
         self.ln_kcatf_gmean = cp.Parameter(
             shape=(self.Nr,), value=np.log(kcatf_gmean.m_as("1/s"))
         )
@@ -135,7 +141,7 @@ class ModelBalancingConvex(object):
                 self.__setattr__(f"ln_{p}", np.array([]))
                 self.__setattr__(f"z2_scores_{p}", cp.Constant(0))
             else:
-                ln_p = cp.Variable(shape=ln_gmean.size)
+                ln_p = cp.Variable(shape=ln_gmean.shape)
                 self.__setattr__(
                     f"z2_scores_{p}",
                     ModelBalancingConvex._z_score(ln_p, ln_gmean, ln_precision),
@@ -469,7 +475,7 @@ class ModelBalancingConvex(object):
 
     @property
     def objective_value(self) -> float:
-        return self.objective.value
+        return self.total_z2_scores.value
 
     def print_z_scores(self, precision: int = 2) -> None:
         for p in ["Km", "Ka", "Ki", "Keq", "kcatf", "conc_met", "kcatr", "conc_enz"]:
