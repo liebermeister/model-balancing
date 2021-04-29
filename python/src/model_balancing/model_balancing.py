@@ -1,7 +1,7 @@
 import itertools
 import os
 import warnings
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Iterable
 
 import numpy as np
 import scipy.special
@@ -30,32 +30,22 @@ class ModelBalancing(object):
         fluxes: np.array,
         A_act: np.array,
         A_inh: np.array,
-        Keq_gmean: np.array,
-        Keq_ln_cov: np.array,
-        conc_enz_gmean: np.array,
-        conc_enz_ln_cov: np.array,
-        conc_met_gmean: np.array,
-        conc_met_ln_cov: np.array,
-        kcatf_gmean: np.array,
-        kcatf_ln_cov: np.array,
-        kcatr_gmean: np.array,
-        kcatr_ln_cov: np.array,
-        Km_gmean: np.array,
-        Km_ln_cov: np.array,
-        Ka_gmean: np.array,
-        Ka_ln_cov: np.array,
-        Ki_gmean: np.array,
-        Ki_ln_cov: np.array,
         metabolite_names: List[str],
         reaction_names: List[str],
         state_names: List[str],
         rate_law: str = "CM",
         alpha: float = 1.0,
+        **kwargs,
     ) -> None:
         self.S = S.copy()
         self.fluxes = fluxes.copy()
         self.A_act = A_act.copy()
         self.A_inh = A_inh.copy()
+        self.metabolite_names = metabolite_names
+        self.reaction_names = reaction_names
+        self.state_names = state_names
+        self.rate_law = rate_law
+        self.alpha = alpha
 
         self.Nc, self.Nr = S.shape
         assert self.fluxes.shape[0] == self.Nr
@@ -64,53 +54,70 @@ class ModelBalancing(object):
         self.Ncond = self.fluxes.shape[1]
         assert self.A_act.shape == (self.Nc, self.Nr)
         assert self.A_inh.shape == (self.Nc, self.Nr)
+        assert len(self.metabolite_names) == self.Nc
+        assert len(self.reaction_names) == self.Nr
+        assert len(self.state_names) == self.Ncond
+        assert self.rate_law in [
+            "S",
+            "1S",
+            "SP",
+            "1SP",
+            "CM",
+        ], f"unsupported rate law {self.rate_law}"
 
-        self.ln_Keq_gmean = np.log(Keq_gmean.m_as(""))
-        self.ln_Keq_precision = np.linalg.pinv(Keq_ln_cov)
+        for p in (
+            ModelBalancing.INDEPENDENT_VARIABLES + ModelBalancing.DEPENDENT_VARIABLES
+        ):
+            assert f"{p}_gmean" in kwargs
+            assert f"{p}_ln_cov" in kwargs
 
-        self.ln_kcatf_gmean = np.log(kcatf_gmean.m_as("1/s"))
-        self.ln_kcatf_precision = np.linalg.pinv(kcatf_ln_cov)
-        self.ln_kcatr_gmean = np.log(kcatr_gmean.m_as("1/s"))
-        self.ln_kcatr_precision = np.linalg.pinv(kcatr_ln_cov)
+        # geometric means (in log-scale)
+        self.ln_gmean = {
+            "Keq": np.log(kwargs["Keq_gmean"].m_as("")),
+            "kcatf": np.log(kwargs["kcatf_gmean"].m_as("1/s")),
+            "kcatr": np.log(kwargs["kcatr_gmean"].m_as("1/s")),
+            "Km": np.log(kwargs["Km_gmean"].m_as("M")),
+            "Ka": np.log(kwargs["Ka_gmean"].m_as("M")),
+            "Ki": np.log(kwargs["Ki_gmean"].m_as("M")),
+            "conc_met": np.log(kwargs["conc_met_gmean"].m_as("M")),
+            "conc_enz": np.log(kwargs["conc_enz_gmean"].m_as("M")),
+        }
 
-        self.ln_Km_gmean = np.log(Km_gmean.m_as("M"))
-        self.ln_Ka_gmean = np.log(Ka_gmean.m_as("M"))
-        self.ln_Ki_gmean = np.log(Ki_gmean.m_as("M"))
+        self.ln_precision = {
+            p: np.linalg.pinv(kwargs[f"{p}_ln_cov"])
+            if self.ln_gmean[p].size > 0
+            else None
+            for p in self.DEPENDENT_VARIABLES + self.INDEPENDENT_VARIABLES
+        }
 
-        self.ln_Km_precision = np.linalg.pinv(Km_ln_cov)
-        if Ka_ln_cov.size == 0:
-            self.ln_Ka_precision = None
-        else:
-            self.ln_Ka_precision = np.linalg.pinv(Ka_ln_cov)
-        if Ki_ln_cov.size == 0:
-            self.ln_Ki_precision = None
-        else:
-            self.ln_Ki_precision = np.linalg.pinv(Ki_ln_cov)
-
-        self.ln_conc_met_gmean = np.log(conc_met_gmean.m_as("M"))
-        assert self.ln_conc_met_gmean.shape == (self.Nc, self.Ncond)
-        self.ln_conc_met_precision = np.linalg.pinv(conc_met_ln_cov)
-        assert self.ln_conc_met_precision.shape == (
+        assert self.ln_gmean["conc_met"].shape == (self.Nc, self.Ncond)
+        assert self.ln_precision["conc_met"].shape == (
             self.Nc * self.Ncond,
             self.Nc * self.Ncond,
         )
-        self.ln_conc_enz_gmean = np.log(conc_enz_gmean.m_as("M"))
-        assert self.ln_conc_enz_gmean.shape == (self.Nr, self.Ncond)
-        self.ln_conc_enz_precision = np.linalg.pinv(conc_enz_ln_cov)
-        assert self.ln_conc_enz_precision.shape == (
+        assert self.ln_gmean["conc_enz"].shape == (self.Nr, self.Ncond)
+        assert self.ln_precision["conc_enz"].shape == (
             self.Nr * self.Ncond,
             self.Nr * self.Ncond,
         )
 
-        self.metabolite_names = metabolite_names
-        self.reaction_names = reaction_names
-        self.state_names = state_names
-
-        self.rate_law = rate_law
-        self.alpha = alpha
-
+        # initialize the independent variables with their geometric means
         for p in self.INDEPENDENT_VARIABLES:
-            self.__setattr__(f"ln_{p}", self.__getattribute__(f"ln_{p}_gmean"))
+            self.__setattr__(f"ln_{p}", self.ln_gmean[p])
+
+        self.ln_lower_bound = {}
+        self.ln_upper_bound = {}
+        for p in self.INDEPENDENT_VARIABLES + self.DEPENDENT_VARIABLES:
+            if self.ln_gmean[p].size > 0:
+                self.ln_lower_bound[p] = self.ln_gmean[p].T.flatten() - 20.0 * np.diag(
+                    self.ln_precision[p]
+                ) ** (-1.0)
+                self.ln_upper_bound[p] = self.ln_gmean[p].T.flatten() + 20.0 * np.diag(
+                    self.ln_precision[p]
+                ) ** (-1.0)
+            else:
+                self.ln_lower_bound[p] = None
+                self.ln_upper_bound[p] = None
 
     @staticmethod
     def from_json(fname: str) -> "ModelBalancing":
@@ -128,7 +135,7 @@ class ModelBalancing(object):
     ) -> Dict[str, np.ndarray]:
         """Convert the variable vector into a dictionary."""
         if x is None:
-            x = self._get_variable_vector()
+            x = np.array(list(self.ln_x))
         var_dict = {}
         i = 0
         for p in self.INDEPENDENT_VARIABLES:
@@ -138,17 +145,14 @@ class ModelBalancing(object):
             i += size
         return var_dict
 
-    def _get_variable_vector(self) -> np.ndarray:
+    @property
+    def ln_x(self) -> Iterable[float]:
         """Get the variable vector (x)."""
         # in order to use the scipy solver, we need to stack all the independent variables
         # into one 1-D array (denoted 'x').
-        x0 = []
         for p in self.INDEPENDENT_VARIABLES:
-            try:
-                x0.append(self.__getattribute__(f"ln_{p}").T.flatten())
-            except AttributeError:
-                raise KeyError(f"Cannot find variable ln_{p}")
-        return np.hstack(x0).flatten()
+            for x in self.__getattribute__(f"ln_{p}").T.flat:
+                yield x
 
     def _get_full_variable_dictionary(
         self, x: Optional[np.ndarray] = None
@@ -171,8 +175,8 @@ class ModelBalancing(object):
 
         all_z2_scores = []
         for p in self.INDEPENDENT_VARIABLES + self.DEPENDENT_VARIABLES:
-            ln_p_gmean = self.__getattribute__(f"ln_{p}_gmean")
-            ln_p_precision = self.__getattribute__(f"ln_{p}_precision")
+            ln_p_gmean = self.ln_gmean[p]
+            ln_p_precision = self.ln_precision[p]
             ln_p = var_dict[f"ln_{p}"]
 
             # take a scaled version of the negative part of
@@ -335,9 +339,9 @@ class ModelBalancing(object):
         for i in range(self.Nr):
             for j in range(self.Ncond):
                 f = self.fluxes[i, j].m_as("M/s")
-                if f > 0:
+                if f > 0.0:
                     ln_cap[i, j] = np.log(f) - ln_kcatf[i]
-                elif f < 0:
+                elif f < 0.0:
                     ln_cap[i, j] = np.log(-f) - ln_kcatr[i]
 
         return ln_cap
@@ -374,12 +378,12 @@ class ModelBalancing(object):
         ln_eta_kinetic = np.zeros((self.Nr, self.Ncond))
         for i in range(self.Nr):
             for j in range(self.Ncond):
-                if self.fluxes[i, j] == 0:
-                    continue
-                elif self.fluxes[i, j] > 0:
+                if self.fluxes[i, j] > 0:
                     s_subs, s_prod = S_neg[:, i].T, S_pos[:, i].T
                 elif self.fluxes[i, j] < 0:
                     s_subs, s_prod = S_pos[:, i].T, S_neg[:, i].T
+                else:
+                    continue
 
                 ln_c_over_Km = ln_conc_met[:, j] - ln_Km_matrix[:, i]
                 ln_1_plus_c_over_Km = np.log(1.0 + np.exp(ln_c_over_Km))
@@ -425,12 +429,17 @@ class ModelBalancing(object):
         ln_Ki: np.ndarray,
     ) -> np.ndarray:
         """Calculate the regulation (allosteric) term of the enzyme."""
+        ln_eta_regulation = np.zeros((self.Nr, self.Ncond))
+        if ln_Ka.size == 0 and ln_Ki.size == 0:
+            return ln_eta_regulation
+
         ln_Ka_matrix = ModelBalancing._create_dense_matrix(self.A_act, ln_Ka)
         ln_Ki_matrix = ModelBalancing._create_dense_matrix(self.A_inh, ln_Ki)
 
-        ln_eta_regulation = np.zeros((self.Nr, self.Ncond))
         for i in range(self.Nr):
             for j in range(self.Ncond):
+                if self.fluxes[i, j] == 0:
+                    continue
                 ln_c_over_Ka = ln_conc_met[:, j] - ln_Ka_matrix[:, i]
                 ln_c_over_Ki = ln_conc_met[:, j] - ln_Ki_matrix[:, i]
                 ln_act = self.A_act[:, i].T @ np.log(1.0 + np.exp(-ln_c_over_Ka))
@@ -473,11 +482,12 @@ class ModelBalancing(object):
 
     def is_gmean_feasible(self) -> bool:
         return (
-            self._driving_forces(self.ln_Keq_gmean, self.ln_conc_met_gmean)
+            self._driving_forces(self.ln_gmean["Keq"], self.ln_gmean["conc_met"])
             >= (MIN_DRIVING_FORCE / RT).m_as("")
         ).all()
 
-    def _thermodynamic_constraints(self) -> scipy.optimize.LinearConstraint:
+    @property
+    def thermodynamic_constraints(self) -> scipy.optimize.LinearConstraint:
         """Construct the thermodynamic constraints for the variable vector."""
 
         # given a constraint matrix (A), lower bound (lb), and a variable vector (x)
@@ -507,36 +517,54 @@ class ModelBalancing(object):
                 (i_conc_met + self.Nc * j) : (i_conc_met + self.Nc * (j + 1)),
             ] = -self.S.T
 
-        lb = np.ones((self.Nr, self.Ncond)) * -np.inf
-        ub = np.ones((self.Nr, self.Ncond)) * np.inf
-        lb[self.fluxes > 0] = (MIN_DRIVING_FORCE / RT).m_as("")
-        ub[self.fluxes < 0] = -(MIN_DRIVING_FORCE / RT).m_as("")
-        lb = lb.T.reshape((self.Nr * self.Ncond,))
-        ub = ub.T.reshape((self.Nr * self.Ncond,))
+        v = self.fluxes.T.reshape((self.Nr * self.Ncond,))
+        lb = np.ones(self.Nr * self.Ncond) * -np.inf
+        ub = np.ones(self.Nr * self.Ncond) * np.inf
+        lb[v > 0] = (MIN_DRIVING_FORCE / RT).m_as("")
+        ub[v < 0] = -(MIN_DRIVING_FORCE / RT).m_as("")
 
-        return scipy.optimize.LinearConstraint(A, lb, ub)
+        # skip the rows in A, lb, ub which correspond to flux = 0, since these
+        # reactions are unbounded above and below.
+        return scipy.optimize.LinearConstraint(A[v != 0, :], lb[v != 0], ub[v != 0])
+
+    @property
+    def lower_bounds(self) -> Iterable[float]:
+        lb = []
+        for p in self.INDEPENDENT_VARIABLES:
+            if self.ln_lower_bound[p] is not None:
+                for x in self.ln_lower_bound[p].T.flat:
+                    yield x
+
+    @property
+    def upper_bounds(self) -> Iterable[float]:
+        lb = []
+        for p in self.INDEPENDENT_VARIABLES:
+            if self.ln_upper_bound[p] is not None:
+                for x in self.ln_upper_bound[p].T.flat:
+                    yield x
+
+    @property
+    def bounds(self) -> scipy.optimize.Bounds:
+        """Get the lower and upper bounds on the independent variables."""
+        return scipy.optimize.Bounds(list(self.lower_bounds), list(self.upper_bounds))
 
     def initialize_with_gmeans(self) -> None:
         # set the independent parameters values to the geometric means
         for p in self.INDEPENDENT_VARIABLES:
-            self.__setattr__(f"ln_{p}", self.__getattribute__(f"ln_{p}_gmean"))
+            self.__setattr__(f"ln_{p}", self.ln_gmean[p])
 
         # set the geometric means of the dependent parameters (kcatr and conc_enz)
         # to the values calculated using all the independent parameters
         for p in self.DEPENDENT_VARIABLES:
-            self.__setattr__(f"ln_{p}_gmean", self.__getattribute__(f"ln_{p}"))
+            self.ln_gmean[p] = self.__getattribute__(f"ln_{p}")
 
     def solve(self, solver: str = "SLSQP", options: Optional[dict] = None) -> None:
-
-        x0 = self._get_variable_vector()
-
-        # calculate the thermodynamic constraints (driving_forces >= MIN_DRIVING_FORCE)
-        constraints = self._thermodynamic_constraints()
-
+        x0 = np.array(list(self.ln_x))
         r = minimize(
             fun=self.objective_function,
             x0=x0,
-            constraints=constraints,
+            constraints=self.thermodynamic_constraints,
+            bounds=self.bounds,
             method=solver,
             options=options,
         )
@@ -549,7 +577,7 @@ class ModelBalancing(object):
 
     def print_z_scores(self) -> None:
         for p in self.INDEPENDENT_VARIABLES + self.DEPENDENT_VARIABLES:
-            ln_p_gmean = self.__getattribute__(f"ln_{p}_gmean")
+            ln_p_gmean = self.ln_gmean[p]
             ln_p_precision = self.__getattribute__(f"ln_{p}_precision")
             ln_p = self.__getattribute__(f"ln_{p}")
 
@@ -578,6 +606,15 @@ class ModelBalancing(object):
         v = self.fluxes
         c = Q_(np.exp(self.ln_conc_met), "M")
         e = Q_(np.exp(self.ln_conc_enz), "M")
+
+        # during the optimization, reactions with 0 flux were not skipped in
+        # the calculation of ln_capacity, ln_thermodynamic, ln_kinetic, and
+        # ln_regulation. therefore, these reactions will have an enzyme
+        # concentration of 1 (i.e. 0 in log-scale).
+        # we need to replace that value with a 0 in order to return a correct
+        # metabolic state.
+        e[v == 0] = Q_(0.0, "M")
+
         delta_g = -self.driving_forces * RT
         state_sbtabdoc = to_state_sbtab(
             v,
