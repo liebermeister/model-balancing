@@ -35,7 +35,7 @@ N = network.N; W = network.regulation_matrix; ind_ext = find(network.external); 
 
 tstart_cmb_estimation = tic;
 
-epsilon = 10^-15;
+epsilon = 10^-9;
 
 [nr,nm,nx,KM_indices,KA_indices,KI_indices,nKM,nKA,nKI] = network_numbers(network);
 [~,ns] = size(data.X.mean);
@@ -47,9 +47,8 @@ Aforward_min = cmb_options.quantities.Aforward.min * ones(nr,ns);
 % --------------------------------------------------
 % Bounds and preposterior distributions for y vector
 
-y_bound_min            = cmb_qX_to_y(bounds.q_min, repmat(bounds.x_min,1,ns), nm,ns);
-y_bound_max            = cmb_qX_to_y(bounds.q_max, repmat(bounds.x_max,1,ns), nm,ns);
-
+y_bound_min = cmb_qX_to_y(bounds.q_min, repmat(bounds.x_min,1,ns), nm,ns);
+y_bound_max = cmb_qX_to_y(bounds.q_max, repmat(bounds.x_max,1,ns), nm,ns);
 
 y_preposterior_mean    = cmb_qX_to_y(preposterior.q.mean, preposterior.X.mean, nm, ns);
 y_preposterior_cov_inv = preposterior.q.cov_inv; 
@@ -81,15 +80,25 @@ y_ineq_b = y_ineq_b(ind_finite_flux,:);
 
 % constraints for bounds on dependent kinetic constants
 
+y_ineq_bounds_A = y_ineq_A;
+y_ineq_bounds_b = y_ineq_b;
+
+% cmb_options.use_bounds == 0, the constraints from bounds are simply ignored
+
 nq       = q_info.q.number;
 M_y_to_q = [zeros(nq,nm*ns), eye(nq)];
-YY_A     = [-q_info.M_q_to_qdep * M_y_to_q; ...
-             q_info.M_q_to_qdep * M_y_to_q];
-YY_b     = [-bounds.q_dep_min; ...
-             bounds.q_dep_max];
-y_ineq_A = [y_ineq_A; YY_A];
-y_ineq_b = [y_ineq_b; YY_b];
+YY_A     = [-q_info.M_q_to_qall * M_y_to_q; ...
+             q_info.M_q_to_qall * M_y_to_q];
+YY_b     = [-bounds.q_all_min; ...
+             bounds.q_all_max];
 
+y_ineq_bounds_A = [y_ineq_bounds_A; YY_A];
+y_ineq_bounds_b = [y_ineq_bounds_b; YY_b];
+
+if cmb_options.use_bounds,
+  y_ineq_A = y_ineq_bounds_A;
+  y_ineq_b = y_ineq_bounds_b;
+end
 
 % --------------------------------------------------
 % Set initial values
@@ -102,12 +111,29 @@ switch cmb_options.initial_values_variant,
     clear y_init_list
     for it =1:nn;
       f = randn(size(y_bound_min));
-      opt = optimoptions('linprog','Display','none');
-      [y_init_list(:,it), ~,exitflag] = linprog( f,y_ineq_A,y_ineq_b-epsilon,[],[],y_bound_min,y_bound_max,[],opt);
-      [y_init_list(:,it+nn),~,exitflag] = linprog(-f,y_ineq_A,y_ineq_b-epsilon,[],[],y_bound_min,y_bound_max,[],opt);
+      opt = optimoptions('linprog','Display','none','Algorithm','interior-point','ConstraintTolerance',10^-10);
+      [y_init_list(:,it), ~,exitflag]   = linprog(f,y_ineq_bounds_A,y_ineq_bounds_b-epsilon,[],[],y_bound_min+epsilon,y_bound_max-epsilon,[],opt);
+      [y_init_list(:,it+nn),~,exitflag] = linprog(-f,y_ineq_bounds_A,y_ineq_bounds_b-epsilon,[],[],y_bound_min+epsilon,y_bound_max-epsilon,[],opt);
+
+      % check validity of the solution
+      % y_bound_min-y_init_list(:,it)
+      % y_init_list(:,it)-y_bound_max
+      % y_bound_min-y_init_list(:,it+nn)
+      % y_init_list(:,it+nn)-y_bound_max
+      % max(y_ineq_bounds_A * y_init_list(:,it)- y_ineq_bounds_b)
+      % max(y_ineq_bounds_A * y_init_list(:,it+nn) - y_ineq_bounds_b)
+      
+      my_init_q = cmb_y_to_qX(y_init_list(:,it+nn), nm, ns);
+      if sum(q_info.M_q_to_qall * my_init_q < bounds.q_all_min),
+        q_info.M_q_to_qall * my_init_q - bounds.q_all_min
+        error('Infeasible initial point'); end
+      if sum(q_info.M_q_to_qall * my_init_q > bounds.q_all_max), 
+        q_info.M_q_to_qall * my_init_q - bounds.q_all_max
+        error('Infeasible initial point'); end
+
     end
     y_init = mean(y_init_list,2);
-    if prod(y_ineq_A * y_init < y_ineq_b) * prod(y_init >= y_bound_min) * prod(y_init <= y_bound_max) ==0,
+    if prod(y_ineq_bounds_A * y_init < y_ineq_bounds_b) * prod(y_init >= y_bound_min) * prod(y_init <= y_bound_max) ==0,
       error('Infeasible solution');
     end
     [init.q, init.X] = cmb_y_to_qX(y_init, nm, ns);
@@ -115,8 +141,8 @@ switch cmb_options.initial_values_variant,
   case 'flat_objective',
     %% find initial point using fmincon with a flat objective function
     opt = optimoptions('fmincon','MaxFunEvals',10^15,'MaxIter',10^15,'TolX',10^-5,'Display',...
-                       cmb_options.optim_display,'Algorithm','interior-point','SpecifyObjectiveGradient',false);
-    [y_init,~,err] = fmincon(@(y) 1, y_init,y_ineq_A,y_ineq_b-epsilon,[],[],y_bound_min,y_bound_max,[],opt);
+                       cmb_options.optim_display,'Algorithm','interior-point','SpecifyObjectiveGradient',false,'ConstraintTolerance',10^-10);
+    [y_init,~,err] = fmincon(@(y) 1, y_init, y_ineq_bounds_A, y_bounds_ineq_b-epsilon, [],[],y_bound_min,y_bound_max,[],opt);
     [init.q, init.X] = cmb_y_to_qX(y_init, nm, ns);
     
   case {'given_values','true_values','random'},
@@ -127,13 +153,13 @@ switch cmb_options.initial_values_variant,
     % if y_preposterior_mean satisfies all constraints, use it
     if 0 == sum(y_preposterior_mean < y_bound_min) ...
           + sum(y_preposterior_mean > y_bound_max)  ...
-          + sum(y_ineq_A * y_preposterior_mean > y_ineq_b),
+          + sum(y_ineq_bounds_A * y_preposterior_mean > y_ineq_bounds_b),
       y_init = y_preposterior_mean;
     else
       %% find preposterior mode under constraints
       %% in the future, use cplexqp (to account for constraints)
       opt_quadprog = struct('Algorithm','interior-point-convex','MaxFunEvals',10^10,'MaxIter',10^10,'TolX',10^-5,'Display','off','OptimalityTolerance', 10^-5,'StepTolerance', 10^-10);
-      [y_init,~,err] = quadprog(y_preposterior_cov_inv, -y_preposterior_cov_inv * y_preposterior_mean, y_ineq_A, y_ineq_b-epsilon,[],[], y_bound_min, y_bound_max,[],opt_quadprog);
+      [y_init,~,err] = quadprog(y_preposterior_cov_inv, -y_preposterior_cov_inv * y_preposterior_mean, y_bounds_ineq_A, y_bounds_ineq_b-epsilon,[],[], y_bound_min, y_bound_max,[],opt_quadprog);
       if err<0, error(sprintf('Error in computing initial values: quadprog error flag %d',err)); end
     end
     [init.q, init.X] = cmb_y_to_qX(y_init, nm, ns);
@@ -145,13 +171,23 @@ end
 
 % Kinetic constants, bounds 
 
-if sum(q_info.M_q_to_qall * init.q < bounds.q_all_min), error('Infeasible initial point'); end
-if sum(q_info.M_q_to_qall * init.q > bounds.q_all_max), error('Infeasible initial point'); end
+if cmb_options.use_bounds,
+  if sum(q_info.M_q_to_qall * init.q < bounds.q_all_min), 
+    q_info.M_q_to_qall * init.q - bounds.q_all_min
+    error('Infeasible initial point'); 
+  end
+  if sum(q_info.M_q_to_qall * init.q > bounds.q_all_max), 
+    q_info.M_q_to_qall * init.q - bounds.q_all_max
+    error('Infeasible initial point'); 
+  end
+end
 
 % Metabolite data, bounds 
 
-if sum(sum(init.X < repmat(bounds.x_min,1,ns))), error('Infeasible initial point'); end
-if sum(sum(init.X > repmat(bounds.x_max,1,ns))), error('Infeasible initial point'); end
+if cmb_options.use_bounds,
+  if sum(sum(init.X < repmat(bounds.x_min,1,ns))), error('Infeasible initial point'); end
+  if sum(sum(init.X > repmat(bounds.x_max,1,ns))), error('Infeasible initial point'); end
+end
 
 % Thermodynamic forces, directions
 
@@ -167,9 +203,11 @@ if sum(sum([my_theta_matrix == 0] .* [data.V.mean ~=0])), error('Infeasible init
 
 init_feasible = 1;
 
-if sum(y_init < y_bound_min) + sum(y_init > y_bound_max) ~= 0,
-  error('Initial point violates some bounds');
-  init_feasible = 0;
+if cmb_options.use_bounds,
+  if sum(y_init < y_bound_min) + sum(y_init > y_bound_max) ~= 0,
+    error('Initial point violates some bounds');
+    init_feasible = 0;
+  end
 end
 
 if length(y_ineq_b),
@@ -179,7 +217,7 @@ if length(y_ineq_b),
     init_feasible = 0;
   end
 end
-
+  
 if init_feasible,
   if cmb_options.verbose,
     display('Initial point respects all bounds and constraints');
@@ -196,18 +234,21 @@ LP_info.y_ineq_A = y_ineq_A;
 LP_info.y_ineq_b = y_ineq_b;
 LP_info.epsilon  = epsilon;
 
-if init_feasible,
-  f_init = cmb_log_posterior(y_init,pp,preposterior,V,cmb_options,q_info);
-  preposterior.q.std = sqrt(diag(inv(preposterior.q.cov_inv)));
-  new_X_min       = preposterior.X.mean - sqrt(2 * abs(f_init)) * preposterior.X.std;
-  new_X_max       = preposterior.X.mean + sqrt(2 * abs(f_init)) * preposterior.X.std;
-  new_q_min       = preposterior.q.mean - sqrt(2 * abs(f_init)) * preposterior.q.std;
-  new_q_max       = preposterior.q.mean + sqrt(2 * abs(f_init)) * preposterior.q.std;
-  y_bound_min_new = cmb_qX_to_y(bounds.q_min, repmat(bounds.x_min,1,ns), nm,ns);
-  y_bound_max_new = cmb_qX_to_y(bounds.q_max, repmat(bounds.x_max,1,ns), nm,ns); 
-  y_bound_min     = max(y_bound_min,y_bound_min_new);
-  y_bound_max     = min(y_bound_max,y_bound_max_new);
+if cmb_options.use_bounds,
+  if init_feasible,
+    f_init = cmb_log_posterior(y_init,pp,preposterior,V,cmb_options,q_info);
+    preposterior.q.std = sqrt(diag(inv(preposterior.q.cov_inv)));
+    new_X_min       = preposterior.X.mean - sqrt(2 * abs(f_init)) * preposterior.X.std;
+    new_X_max       = preposterior.X.mean + sqrt(2 * abs(f_init)) * preposterior.X.std;
+    new_q_min       = preposterior.q.mean - sqrt(2 * abs(f_init)) * preposterior.q.std;
+    new_q_max       = preposterior.q.mean + sqrt(2 * abs(f_init)) * preposterior.q.std;
+    y_bound_min_new = cmb_qX_to_y(bounds.q_min, repmat(bounds.x_min,1,ns), nm,ns);
+    y_bound_max_new = cmb_qX_to_y(bounds.q_max, repmat(bounds.x_max,1,ns), nm,ns); 
+    y_bound_min     = max(y_bound_min,y_bound_min_new);
+    y_bound_max     = min(y_bound_max,y_bound_max_new);
+  end
 end
+
 
 % --------------------------------------------------------
 % Optimisation
@@ -216,14 +257,26 @@ end
 % y_mean = cmb_qX_to_y(preposterior.q.mean,preposterior.X.mean,nm,ns);
 % cmb_log_posterior(y_mean,pp,preposterior,V,cmb_options,q_info);
 
+if cmb_options.use_bounds == 0, 
+  y_bound_min = -inf * ones(size(y_bound_min));
+  y_bound_max = inf * ones(size(y_bound_min));
+end
+
 opt = optimoptions('fmincon','MaxFunEvals',10^15,'MaxIter',10^15,'TolX',10^-5,'Display',...
-                   cmb_options.optim_display,'Algorithm','interior-point','SpecifyObjectiveGradient',false);
+                   cmb_options.optim_display,'Algorithm','interior-point','SpecifyObjectiveGradient',false,'ConstraintTolerance',10^-10);
 
 if cmb_options.use_gradient,
   opt.SpecifyObjectiveGradient = true;
 end
 
 [y_opt,~,err] = fmincon(@(y) cmb_objective(y,pp,preposterior,V,cmb_options,q_info,cmb_options.verbose),y_init,y_ineq_A,y_ineq_b-epsilon,[],[],y_bound_min,y_bound_max,[],opt);
+
+% % check validity of the solution (violation of inequality constraints
+% err
+% epsilon
+% %y_bound_min-y_opt % must be negative!
+% %y_opt-y_bound_max % must be negative!
+% y_ineq_A * y_opt - y_ineq_b % must be negative!
 
 if err<0,
   error(sprintf('No feasible solution found. Error flag %d',err));
@@ -242,6 +295,18 @@ end
 [q_opt,X_opt] = cmb_y_to_qX(y_opt,nm,ns);
 
 optimal = cmb_qX_to_variables(q_opt,X_opt,V,network,cmb_options,q_info,cmb_options.ecm_score,pp);
+
+if cmb_options.use_bounds,
+  if sum(q_info.M_q_to_qall * q_opt < bounds.q_all_min), 
+    q_info.M_q_to_qall * q_opt - bounds.q_all_min
+    error('Infeasible solution point'); 
+  end
+  if sum(q_info.M_q_to_qall * q_opt > bounds.q_all_max), 
+    q_info.M_q_to_qall * q_opt - bounds.q_all_max
+    error('Infeasible solution point'); 
+  end
+end
+
 
 % --------------------------------------------------------
 % Gradient of enzyme posterior loss with respect to fluxes
