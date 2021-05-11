@@ -71,7 +71,8 @@ for it = 1:ns,
 end
 
 y_ineq_A = [y_ineq_A, repmat(block_q, ns, 1)];
-y_ineq_A = -diag(sign(V(:))) * y_ineq_A;
+y_ineq_A = -diag(sign(V(:))) * y_ineq_A;  
+% note that this correctly implements the fact that in reactions with v==0 there is no constraint
 y_ineq_b = -[cmb_options.quantities.Aforward.min * ones(nr * ns,1)];
 
 ind_finite_flux = find(V(:)~=0);
@@ -108,31 +109,35 @@ switch cmb_options.initial_values_variant,
   case 'polytope center',
     %% find initial point using linprog
     nn = 5;
-    clear y_init_list
-    for it =1:nn;
-      f = randn(size(y_bound_min));
-      opt = optimoptions('linprog','Display','none','Algorithm','interior-point','ConstraintTolerance',10^-10);
-      [y_init_list(:,it), ~,exitflag]   = linprog(f,y_ineq_bounds_A,y_ineq_bounds_b-epsilon,[],[],y_bound_min+epsilon,y_bound_max-epsilon,[],opt);
-      [y_init_list(:,it+nn),~,exitflag] = linprog(-f,y_ineq_bounds_A,y_ineq_bounds_b-epsilon,[],[],y_bound_min+epsilon,y_bound_max-epsilon,[],opt);
+    y_init = find_polytope_centre_randn([],[],y_ineq_bounds_A,y_ineq_bounds_b,y_bound_min, y_bound_max, epsilon, nn);
+    
+    %% clear y_init_list
+    %% for it =1:nn;
+    %%   
+    %%   f = randn(size(y_bound_min));
+    %%   opt = optimoptions('linprog','Display','none','Algorithm','interior-point','ConstraintTolerance',10^-10);
+    %%   [y_init_list(:,it), ~,exitflag]   = linprog(f,y_ineq_bounds_A,y_ineq_bounds_b-epsilon,[],[],y_bound_min+epsilon,y_bound_max-epsilon,[],opt);
+    %%   [y_init_list(:,it+nn),~,exitflag] = linprog(-f,y_ineq_bounds_A,y_ineq_bounds_b-epsilon,[],[],y_bound_min+epsilon,y_bound_max-epsilon,[],opt);
+    %% 
+    %%   % check validity of the solution
+    %%   % y_bound_min-y_init_list(:,it)
+    %%   % y_init_list(:,it)-y_bound_max
+    %%   % y_bound_min-y_init_list(:,it+nn)
+    %%   % y_init_list(:,it+nn)-y_bound_max
+    %%   % max(y_ineq_bounds_A * y_init_list(:,it)- y_ineq_bounds_b)
+    %%   % max(y_ineq_bounds_A * y_init_list(:,it+nn) - y_ineq_bounds_b)
+    %%   
+    %%   my_init_q = cmb_y_to_qX(y_init_list(:,it+nn), nm, ns);
+    %%   if sum(q_info.M_q_to_qall * my_init_q < bounds.q_all_min),
+    %%     q_info.M_q_to_qall * my_init_q - bounds.q_all_min
+    %%     error('Infeasible initial point'); end
+    %%   if sum(q_info.M_q_to_qall * my_init_q > bounds.q_all_max), 
+    %%     q_info.M_q_to_qall * my_init_q - bounds.q_all_max
+    %%     error('Infeasible initial point'); end
+    %% 
+    %% end
+    %% y_init = mean(y_init_list,2);
 
-      % check validity of the solution
-      % y_bound_min-y_init_list(:,it)
-      % y_init_list(:,it)-y_bound_max
-      % y_bound_min-y_init_list(:,it+nn)
-      % y_init_list(:,it+nn)-y_bound_max
-      % max(y_ineq_bounds_A * y_init_list(:,it)- y_ineq_bounds_b)
-      % max(y_ineq_bounds_A * y_init_list(:,it+nn) - y_ineq_bounds_b)
-      
-      my_init_q = cmb_y_to_qX(y_init_list(:,it+nn), nm, ns);
-      if sum(q_info.M_q_to_qall * my_init_q < bounds.q_all_min),
-        q_info.M_q_to_qall * my_init_q - bounds.q_all_min
-        error('Infeasible initial point'); end
-      if sum(q_info.M_q_to_qall * my_init_q > bounds.q_all_max), 
-        q_info.M_q_to_qall * my_init_q - bounds.q_all_max
-        error('Infeasible initial point'); end
-
-    end
-    y_init = mean(y_init_list,2);
     if prod(y_ineq_bounds_A * y_init < y_ineq_bounds_b) * prod(y_init >= y_bound_min) * prod(y_init <= y_bound_max) ==0,
       error('Infeasible solution');
     end
@@ -263,13 +268,14 @@ if cmb_options.use_bounds == 0,
 end
 
 opt = optimoptions('fmincon','MaxFunEvals',10^15,'MaxIter',10^15,'TolX',10^-5,'Display',...
-                   cmb_options.optim_display,'Algorithm','interior-point','SpecifyObjectiveGradient',false,'ConstraintTolerance',10^-10);
+                   cmb_options.optim_display,'Algorithm','interior-point','SpecifyObjectiveGradient',...
+                   false,'ConstraintTolerance',10^-10);
 
 if cmb_options.use_gradient,
   opt.SpecifyObjectiveGradient = true;
 end
 
-[y_opt,~,err] = fmincon(@(y) cmb_objective(y,pp,preposterior,V,cmb_options,q_info,cmb_options.verbose),y_init,y_ineq_A,y_ineq_b-epsilon,[],[],y_bound_min,y_bound_max,[],opt);
+[y_opt,~,err] = fmincon(@(y) cmb_objective(y,pp,preposterior,V,cmb_options,q_info,cmb_options.verbose),y_init,y_ineq_A, y_ineq_b-epsilon, [],[],y_bound_min,y_bound_max,[],opt);
 
 % % check validity of the solution (violation of inequality constraints
 % err
