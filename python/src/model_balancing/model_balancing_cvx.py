@@ -5,17 +5,15 @@ from typing import Any, List, Union
 
 import cvxpy as cp
 import numpy as np
+from sbtab import SBtab
 
 from . import (
     MIN_DRIVING_FORCE,
     MIN_FLUX,
     Q_,
     RT,
-    SBtab,
-    read_arguments_json,
-    to_model_sbtab,
-    to_state_sbtab,
 )
+from .io import read_arguments_json, to_model_sbtab, to_state_sbtab
 
 
 class ModelBalancingConvex(object):

@@ -1,22 +1,15 @@
 import itertools
 import os
 import warnings
-from typing import Dict, List, Optional, Tuple, Iterable
+from typing import Dict, Iterable, List, Optional, Tuple
 
 import numpy as np
 import scipy.special
+from sbtab import SBtab
 from scipy.optimize import minimize
 
-from . import (
-    MIN_DRIVING_FORCE,
-    MIN_FLUX,
-    Q_,
-    RT,
-    SBtab,
-    read_arguments_json,
-    to_model_sbtab,
-    to_state_sbtab,
-)
+from . import MIN_DRIVING_FORCE, MIN_FLUX, Q_, RT
+from .io import read_arguments_json, to_model_sbtab, to_state_sbtab
 
 
 class ModelBalancing(object):
@@ -35,6 +28,7 @@ class ModelBalancing(object):
         state_names: List[str],
         rate_law: str = "CM",
         alpha: float = 1.0,
+        beta: float = 0.0,
         **kwargs,
     ) -> None:
         self.S = S.copy()
@@ -46,6 +40,7 @@ class ModelBalancing(object):
         self.state_names = state_names
         self.rate_law = rate_law
         self.alpha = alpha
+        self.beta = beta
 
         self.Nc, self.Nr = S.shape
         assert self.fluxes.shape[0] == self.Nr
@@ -180,7 +175,7 @@ class ModelBalancing(object):
             ln_p = var_dict[f"ln_{p}"]
 
             # take a scaled version of the negative part of
-            # the z-score of ln_conc_enz. (alpha = 0 would be convex, and alpha = 1
+            # the z-score of ln_conc_enz. (α = 0 would be convex, and α = 1
             # would be the true cost function)
             all_z2_scores.append(
                 ModelBalancing._z_score(
@@ -188,6 +183,24 @@ class ModelBalancing(object):
                     ln_p_gmean,
                     ln_p_precision,
                     self.alpha if p == "conc_enz" else None,
+                )
+            )
+
+        # add an extra term for the c/Km pseudo-parameters. we assume that
+        # they are log-normal with a mean of 1 and stdev of 1/β
+        if self.beta > 0:
+            ln_Km_matrix = ModelBalancing._create_dense_matrix(
+                self.S, var_dict["ln_Km"]
+            )
+            ln_c_over_Km = (
+                np.repeat(var_dict["ln_conc_met"], (1, self.Nr)) - ln_Km_matrix
+            )
+
+            all_z2_scores.append(
+                ModelBalancing._z_score(
+                    ln_c_over_Km,
+                    np.ones((self.Nc, self.Nr)),
+                    1.0 / self.beta,
                 )
             )
 

@@ -63,4 +63,3 @@ def B_matrix(Nc: int, col_subs: np.ndarray, col_prod: np.ndarray) -> np.ndarray:
 def logistic(x: np.ndarray) -> np.ndarray:
     """elementwise calculation of: log(1 + e ^ x)"""
     return np.log(1.0 + np.exp(x))
-
