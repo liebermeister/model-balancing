@@ -262,7 +262,7 @@ end
 % --------------------------------------------------------------
 
 if cmb_options.save_results,
-  cvxpy_problem = cvxpy_problem_data_structure(network, q_info, prior, data, []);
+  cvxpy_problem = cvxpy_problem_data_structure(network, q_info, prior, data, bounds, []);
   save_json_file(cvxpy_problem, filenames.model_and_data_json);
   display(sprintf('Writing JSON file for cvxpy: %s', filenames.model_and_data_json));
 end

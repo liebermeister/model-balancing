@@ -38,7 +38,9 @@ if cmb_options.display,
   display(sprintf('Model balancing'));
   display(sprintf('---------------\n'));
 end
-  
+
+rng(cmb_options.random_seed,'twister');
+
 filenames_default = struct('graphics_dir',[],'report_txt',[],'results_mat',[]);
 filenames = join_struct(filenames_default,filenames);
   
@@ -64,20 +66,24 @@ switch cmb_options.enzyme_score_type,
   case 'quadratic'
     % normal quadratic likelihood term: with this option, MB is not guaranteed to be convex!
     %display('model_balancing.m:');
-    display('Using quadratic formula for enzyme posterior score.');
-    %display('  The optimality problem may be non-convex');
+    display('Using quadratic formula for enzyme posterior score (stringency alpha = 1).');
+    display('  (The optimality problem may be non-convex)');
   case 'monotonic'
     %display('model_balancing.m:')
-    display('Using convex formula for enzyme posterior score - enzyme levels may be underestimated.')
+    display('Using convex formula for enzyme posterior score (stringency alpha = 0): enzyme levels may be underestimated.')
     %display('  The optimality problem is convex, but enzyme levels may be underestimated!');
   case 'interpolated'
     %display(sprintf('model_balancing.m:'))
-    display(sprintf('Using enzyme fit stringency alpha=%f ',cmb_options.enzyme_score_alpha))
-    display('The optimality problem may be non-convex, and enzyme levels may be underestimated.');
+    display(sprintf('Using stringency alpha=%f for enzyme fit',cmb_options.enzyme_score_alpha))
+    display('  (The optimality problem may be non-convex, and enzyme levels may be underestimated)');
 end
 
-if cmb_options.beta_ln_c_over_km > 0,
-  display('Using penalty term beta for small or large ln c/KM ratios (option cmb_options.beta_ln_c_over_km)');
+%if cmb_options.beta_ln_c_over_km > 0,
+display(sprintf('Using stringency beta=%f for c/KM ratios (option cmb_options.beta_ln_c_over_km)',cmb_options.beta_ln_c_over_km));
+%end
+
+if cmb_options.use_bounds == 0,
+  display('Ignoring all bounds on individual variables');
 end
 
 % -----------------------------------------------
@@ -232,7 +238,7 @@ if cmb_options.use_safe_optimisation,
   cont = 1;
   my_cmb_options = cmb_options;
   while cont,
-    my_cmb_options.init = optimal;  
+    my_cmb_options.init = optimal;
     my_cmb_options.initial_values_variant = 'given_values';
     [optimal, gradient_V, my_init] = cmb_estimation(network, q_info, bounds, data, prior, preposterior, pp, V, my_cmb_options);
     cont = cmb_display_scores(network, q_info, my_cmb_options, pp, preposterior, my_init, optimal, true, V, cmb_options.verbose);

@@ -1,6 +1,6 @@
-function problem = cvxpy_problem_data_structure(network, q_info, prior, data, true_model)
+function problem = cvxpy_problem_data_structure(network, q_info, prior, data, bounds, true_model)
 
-% problem = cvxpy_problem_data_structure(network, q_info, prior, data, true_model)
+% problem = cvxpy_problem_data_structure(network, q_info, prior, data, bounds, true_model)
 %
 % Convert a model balancing problem (data structures: network, q_info, true_model, prior, data) 
 % into a single data structure, exported to json and then used by python model balancing tool (based on CVXpy)
@@ -29,6 +29,8 @@ function problem = cvxpy_problem_data_structure(network, q_info, prior, data, tr
 %       .true:              (column vector or matrix; true values in the case of artificial data; otherwise empty)
 %       .prior_ln.mean      prior mean vector of log values
 %       .prior_ln.cov       prior covariance matrix of log values
+%       .bounds_ln.min      lower bounds on log values
+%       .bounds_ln.max      upper bounds on log values
 %       .data_ln.mean       data mean vector of log values
 %       .data_ln.cov        data covariance matrix of log values
 %       .combined.mean_ln   preposterior mean vector of log values
@@ -40,6 +42,8 @@ function problem = cvxpy_problem_data_structure(network, q_info, prior, data, tr
 %   .metabolite_concentrations.true:              matrix of true values (only in models with artificial data; otherwise [])
 %   .metabolite_concentrations.prior_ln.mean      matrix of prior mean values for metabolite log-concentrations
 %   .metabolite_concentrations.prior_ln.std       matrix of prior std dev for metabolite log-concentrations
+%   .metabolite_concentrations.bounds_ln.min      matrix of lower bounds on metabolite log-concentrations
+%   .metabolite_concentrations.bounds_ln.max      matrix of upper bounds on metabolite log-concentrations
 %   .metabolite_concentrations.data_ln.mean       matrix of data  mean values for metabolite log-concentrations
 %   .metabolite_concentrations.data_ln.std        matrix of data  std dev for metabolite log-concentrations
 %   .metabolite_concentrations.combined.geom_mean matrix of preposterior geom mean for metabolite concentrations
@@ -47,7 +51,7 @@ function problem = cvxpy_problem_data_structure(network, q_info, prior, data, tr
 %
 %   .enzyme_concentrations
 %    ...
-%    (structure analogous to .metabolite_concentrations)
+%    (structure analogous to .metabolite_concentrations; note that lower bounds for log(e) are typically -inf)
 %
 %   .reaction_fluxes
 %   .reaction_fluxes.unit:          string, default 'mM/s'
@@ -141,6 +145,8 @@ all_kinetic_constants.true        = true_model.qall;
 all_kinetic_constants.prior.mean  = M_q_to_qall * prior.q.mean;
 all_kinetic_constants.prior.cov   = M_q_to_qall * inv(prior.q.cov_inv) * M_q_to_qall';
 all_kinetic_constants.prior.std   = sqrt(diag(all_kinetic_constants.prior.cov));
+all_kinetic_constants.bounds.min  = M_q_to_qall * bounds.q_min;
+all_kinetic_constants.bounds.max  = M_q_to_qall * bounds.q_max;
 all_kinetic_constants.data        = data.qall;
 % PROBLEM: currently there is a prior only for INDEPENDENT Keq, not dependent ones; fix this!
 
@@ -148,6 +154,8 @@ Keq.unit          = 'depends on reaction stoichiometry';
 Keq.true          = exp(all_kinetic_constants.true(index.Keq));
 Keq.prior_ln.mean = all_kinetic_constants.prior.mean(index.Keq);
 Keq.prior_ln.cov  = all_kinetic_constants.prior.cov(index.Keq,index.Keq);
+Keq.bounds_ln.min = all_kinetic_constants.bounds.min(index.Keq);
+Keq.bounds_ln.max = all_kinetic_constants.bounds.max(index.Keq);
 Keq.data_ln.mean  = all_kinetic_constants.data.mean(index.Keq);
 Keq.data_ln.std   = all_kinetic_constants.data.std(index.Keq);
 
@@ -158,6 +166,8 @@ Kcatf.unit          = '1/s';
 Kcatf.true          = exp(all_kinetic_constants.true(index.Kcatf));
 Kcatf.prior_ln.mean = all_kinetic_constants.prior.mean(index.Kcatf);
 Kcatf.prior_ln.cov  = all_kinetic_constants.prior.cov(index.Kcatf,index.Kcatf);
+Kcatf.bounds_ln.min = all_kinetic_constants.bounds.min(index.Kcatf);
+Kcatf.bounds_ln.max = all_kinetic_constants.bounds.max(index.Kcatf);
 Kcatf.data_ln.mean  = all_kinetic_constants.data.mean(index.Kcatf);
 Kcatf.data_ln.std   = all_kinetic_constants.data.std(index.Kcatf);
 [Kcatf.combined.mean_ln, Kcatf.combined.cov_ln] = cvxpy_combine_prior_and_likelihood(Kcatf.prior_ln.mean,Kcatf.prior_ln.cov,Kcatf.data_ln.mean,Kcatf.data_ln.std);
@@ -167,6 +177,8 @@ Kcatr.unit          = '1/s';
 Kcatr.true          = exp(all_kinetic_constants.true(index.Kcatr));
 Kcatr.prior_ln.mean = all_kinetic_constants.prior.mean(index.Kcatr);
 Kcatr.prior_ln.cov  = all_kinetic_constants.prior.cov(index.Kcatr,index.Kcatr);
+Kcatr.bounds_ln.min = all_kinetic_constants.bounds.min(index.Kcatr);
+Kcatr.bounds_ln.max = all_kinetic_constants.bounds.max(index.Kcatr);
 Kcatr.data_ln.mean  = all_kinetic_constants.data.mean(index.Kcatr);
 Kcatr.data_ln.std   = all_kinetic_constants.data.std(index.Kcatr);
 [Kcatr.combined.mean_ln, Kcatr.combined.cov_ln] = cvxpy_combine_prior_and_likelihood(Kcatr.prior_ln.mean,Kcatr.prior_ln.cov,Kcatr.data_ln.mean,Kcatr.data_ln.std);
@@ -176,6 +188,8 @@ KM.unit          = 'mM';
 KM.true          = exp(all_kinetic_constants.true(index.KM));
 KM.prior_ln.mean = all_kinetic_constants.prior.mean(index.KM);
 KM.prior_ln.cov  = all_kinetic_constants.prior.cov(index.KM,index.KM);
+KM.bounds_ln.min = all_kinetic_constants.bounds.min(index.KM);
+KM.bounds_ln.max = all_kinetic_constants.bounds.max(index.KM);
 KM.data_ln.mean  = all_kinetic_constants.data.mean(index.KM);
 KM.data_ln.std   = all_kinetic_constants.data.std(index.KM);
 [KM.combined.mean_ln, KM.combined.cov_ln] = cvxpy_combine_prior_and_likelihood(KM.prior_ln.mean,KM.prior_ln.cov,KM.data_ln.mean,KM.data_ln.std);
@@ -185,6 +199,8 @@ KA.unit          = 'mM';
 KA.true          = exp(all_kinetic_constants.true(index.KA));
 KA.prior_ln.mean = all_kinetic_constants.prior.mean(index.KA);
 KA.prior_ln.cov  = all_kinetic_constants.prior.cov(index.KA,index.KA);
+KA.bounds_ln.min = all_kinetic_constants.bounds.min(index.KA);
+KA.bounds_ln.max = all_kinetic_constants.bounds.max(index.KA);
 KA.data_ln.mean  = all_kinetic_constants.data.mean(index.KA);
 KA.data_ln.std   = all_kinetic_constants.data.std(index.KA);
 [KA.combined.mean_ln, KA.combined.cov_ln] = cvxpy_combine_prior_and_likelihood(KA.prior_ln.mean,KA.prior_ln.cov,KA.data_ln.mean,KA.data_ln.std);
@@ -194,6 +210,8 @@ KI.unit          = 'mM';
 KI.true          = exp(all_kinetic_constants.true(index.KI));
 KI.prior_ln.mean = all_kinetic_constants.prior.mean(index.KI);
 KI.prior_ln.cov  = all_kinetic_constants.prior.cov(index.KI,index.KI);
+KI.bounds_ln.min = all_kinetic_constants.bounds.min(index.KI);
+KI.bounds_ln.max = all_kinetic_constants.bounds.max(index.KI);
 KI.data_ln.mean  = all_kinetic_constants.data.mean(index.KI);
 KI.data_ln.std   = all_kinetic_constants.data.std(index.KI);
 [KI.combined.mean_ln, KI.combined.cov_ln] = cvxpy_combine_prior_and_likelihood(KI.prior_ln.mean,KI.prior_ln.cov,KI.data_ln.mean,KI.data_ln.std);
@@ -213,7 +231,10 @@ problem.kinetic_constants.KI    = KI;
 
 met.unit     = 'mM'; 
 met.true     = exp(true_model.X);
-met.prior_ln = prior.X; 
+met.prior_ln = prior.X;
+met.bounds_ln.min = repmat(bounds.x_min,1,nc);
+met.bounds_ln.max = repmat(bounds.x_max,1,nc);
+
 met.data_ln  = data.X;
 
 % combine prior and data
@@ -239,6 +260,8 @@ enz.prior_ln     = prior.lnE;
 
 enz_prior_mean_ln = enz.prior_ln.mean(:);
 enz_prior_std_ln  = enz.prior_ln.std(:);
+enz.bounds_ln.min    = repmat(log(bounds.e_min),1,nc);
+enz.bounds_ln.max    = repmat(log(bounds.e_max),1,nc);
 enz.data_ln       = data.lnE;
 enz_data_mean_ln  = enz.data_ln.mean(:);
 enz_data_std_ln   = enz.data_ln.std(:);
