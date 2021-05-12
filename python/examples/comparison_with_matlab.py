@@ -5,15 +5,15 @@ from model_balancing import (
 from model_balancing.model_balancing import ModelBalancing
 import cvxpy as cp
 from model_balancing.io import read_arguments_json
-
+import numpy as np
 
 os.chdir("/home/eladn/git/model-balancing")
 
 json_fnames = []
-json_fnames += ["three_chain_model_artificial_noisy_state_noisy_kinetic.json"]
+# json_fnames += ["three_chain_model_artificial_noisy_state_noisy_kinetic.json"]
 # json_fnames += ["e_coli_artificial_noisefree_state_noisefree_Keq.json"]
 # json_fnames += ["e_coli_noor_2016_no_kinetic_data_balanced.json"]
-#json_fnames += ["double_branch_model_artificial_noisefree_state_noisy_Keq.json"]
+json_fnames += ["branch_point_model_artificial_noisefree_state_noisefree_kinetic.json"]
 #json_fnames += ["branch_point_model_artificial_noisy_state_noisy_kinetic.json"]
 
 # json_fnames = os.listdir("cvxpy/examples/JSON")

@@ -50,27 +50,36 @@ def read_arguments_json(
     )
 
     # Read the kinetic parameters that have 'normal' units:
-    for p in ["kcatf", "kcatr", "Km", "Ka", "Ki"]:
+    for p in ["Keq", "kcatf", "kcatr", "Km", "Ka", "Ki"]:
         # in the JSON, parameter names have slightly different casing, so we
         # use a dictionary for converting between the conventions.
-        p_in_json = JSON_NAME_MAPPINGS[p]
-        args[f"{p}_gmean"] = Q_(
-            data["kinetic_constants"][p_in_json]["combined"]["geom_mean"],
-            data["kinetic_constants"][p_in_json]["unit"],
-        )
-        args[f"{p}_ln_cov"] = np.array(
-            data["kinetic_constants"][p_in_json]["combined"]["cov_ln"]
-        )
+        p_json = data["kinetic_constants"][JSON_NAME_MAPPINGS[p]]
+        unit = p_json["unit"]
+        args[f"{p}_ln_cov"] = np.array(p_json["combined"]["cov_ln"])
 
-    # Read the equilibrium constants, which are unitless but if the standard
-    # concentration is not 1M, we need to adjust their values based on what
-    # it is in the JSON file.
-    args["Keq_gmean"] = np.diag(
-        np.power(keq_standard_concentration.m_as("M"), args["S"].sum(axis=0))
-    ) @ Q_(data["kinetic_constants"]["Keq"]["combined"]["geom_mean"], "")
-    args["Keq_ln_cov"] = np.array(
-        data["kinetic_constants"]["Keq"]["combined"]["cov_ln"]
-    )
+        if p == "Keq":
+            # For the equilibrium constants, which are unitless but if the standard
+            # concentration is not 1M, we need to adjust their values based on what
+            # it is in the JSON file.
+            A = np.diag(
+                np.power(keq_standard_concentration.m_as("M"), args["S"].sum(axis=0))
+            )
+            args["Keq_gmean"] = A @ Q_(p_json["combined"]["geom_mean"], "")
+            args[f"{p}_lower_bound"] = A @ Q_(np.exp(p_json["bounds_ln"]["min"]), "")
+            args[f"{p}_upper_bound"] = A @ Q_(np.exp(p_json["bounds_ln"]["max"]), "")
+        else:
+            args[f"{p}_gmean"] = Q_(
+                p_json["combined"]["geom_mean"],
+                p_json["unit"],
+            )
+            args[f"{p}_lower_bound"] = Q_(
+                np.exp(p_json["bounds_ln"]["min"]),
+                p_json["unit"],
+            )
+            args[f"{p}_upper_bound"] = Q_(
+                np.exp(p_json["bounds_ln"]["max"]),
+                p_json["unit"],
+            )
 
     args["conc_met_gmean"] = standardize_input_matrix(
         data["metabolite_concentrations"]["combined"]["geom_mean"],
@@ -85,6 +94,14 @@ def read_arguments_json(
             )
         )
         ** 2.0
+    )
+    args[f"conc_met_lower_bound"] = Q_(
+        np.exp(data["metabolite_concentrations"]["bounds_ln"]["min"]),
+        data["metabolite_concentrations"]["unit"],
+    )
+    args[f"conc_met_upper_bound"] = Q_(
+        np.exp(data["metabolite_concentrations"]["bounds_ln"]["max"]),
+        data["metabolite_concentrations"]["unit"],
     )
 
     args["conc_enz_gmean"] = standardize_input_matrix(
@@ -101,6 +118,24 @@ def read_arguments_json(
         )
         ** 2.0
     )
+
+    enz_bounds_ln_min = np.array(data["enzyme_concentrations"]["bounds_ln"]["min"])
+    enz_bounds_ln_max = np.array(data["enzyme_concentrations"]["bounds_ln"]["max"])
+    if np.all(enz_bounds_ln_min != None):
+        args[f"conc_enz_lower_bound"] = Q_(
+            np.exp(enz_bounds_ln_min),
+            data["metabolite_concentrations"]["unit"],
+        )
+    else:
+        args[f"conc_enz_lower_bound"] = None
+
+    if np.all(enz_bounds_ln_max != None):
+        args[f"conc_enz_upper_bound"] = Q_(
+            np.exp(enz_bounds_ln_max),
+            data["metabolite_concentrations"]["unit"],
+        )
+    else:
+        args[f"conc_enz_upper_bound"] = None
 
     args["metabolite_names"] = data["network"]["metabolite_names"]
     args["reaction_names"] = data["network"]["reaction_names"]

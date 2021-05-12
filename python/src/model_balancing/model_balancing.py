@@ -17,6 +17,17 @@ class ModelBalancing(object):
     INDEPENDENT_VARIABLES = ["Km", "Ka", "Ki", "Keq", "kcatf", "conc_met"]
     DEPENDENT_VARIABLES = ["kcatr", "conc_enz"]
 
+    DEFAULT_UNITS = {
+        "Km": "M",
+        "Ka": "M",
+        "Ki": "M",
+        "Keq": "",
+        "kcatf": "1/s",
+        "kcatr": "1/s",
+        "conc_met": "M",
+        "conc_enz": "M",
+    }
+
     def __init__(
         self,
         S: np.array,
@@ -60,30 +71,36 @@ class ModelBalancing(object):
             "CM",
         ], f"unsupported rate law {self.rate_law}"
 
-        for p in (
-            ModelBalancing.INDEPENDENT_VARIABLES + ModelBalancing.DEPENDENT_VARIABLES
-        ):
+        for p in ModelBalancing.DEFAULT_UNITS.keys():
             assert f"{p}_gmean" in kwargs
             assert f"{p}_ln_cov" in kwargs
 
-        # geometric means (in log-scale)
-        self.ln_gmean = {
-            "Keq": np.log(kwargs["Keq_gmean"].m_as("")),
-            "kcatf": np.log(kwargs["kcatf_gmean"].m_as("1/s")),
-            "kcatr": np.log(kwargs["kcatr_gmean"].m_as("1/s")),
-            "Km": np.log(kwargs["Km_gmean"].m_as("M")),
-            "Ka": np.log(kwargs["Ka_gmean"].m_as("M")),
-            "Ki": np.log(kwargs["Ki_gmean"].m_as("M")),
-            "conc_met": np.log(kwargs["conc_met_gmean"].m_as("M")),
-            "conc_enz": np.log(kwargs["conc_enz_gmean"].m_as("M")),
-        }
+        self.ln_gmean = {}
+        self.ln_precision = {}
+        self.ln_lower_bound = {}
+        self.ln_upper_bound = {}
 
-        self.ln_precision = {
-            p: np.linalg.pinv(kwargs[f"{p}_ln_cov"])
-            if self.ln_gmean[p].size > 0
-            else None
-            for p in self.DEPENDENT_VARIABLES + self.INDEPENDENT_VARIABLES
-        }
+        for p, unit in ModelBalancing.DEFAULT_UNITS.items():
+            # geometric means (in log-scale)
+            self.ln_gmean[p] = np.log(kwargs[f"{p}_gmean"].m_as(unit))
+            if self.ln_gmean[p].size > 0:
+                self.ln_precision[p] = np.linalg.pinv(kwargs[f"{p}_ln_cov"])
+                if np.all(kwargs[f"{p}_lower_bound"] != None):
+                    self.ln_lower_bound[p] = np.log(kwargs[f"{p}_lower_bound"].m_as(unit))
+                else:
+                    self.ln_lower_bound[p] = self.ln_gmean[p].T.flatten() - 20.0 * np.diag(
+                        self.ln_precision[p]
+                    ) ** (-1.0)
+                if np.all(kwargs[f"{p}_upper_bound"] != None):
+                    self.ln_upper_bound[p] = np.log(kwargs[f"{p}_upper_bound"].m_as(unit))
+                else:
+                    self.ln_upper_bound[p] = self.ln_gmean[p].T.flatten() + 20.0 * np.diag(
+                        self.ln_precision[p]
+                    ) ** (-1.0)
+            else:
+                self.ln_precision[p] = None
+                self.ln_lower_bound[p] = None
+                self.ln_upper_bound[p] = None
 
         assert self.ln_gmean["conc_met"].shape == (self.Nc, self.Ncond)
         assert self.ln_precision["conc_met"].shape == (
@@ -99,20 +116,6 @@ class ModelBalancing(object):
         # initialize the independent variables with their geometric means
         for p in self.INDEPENDENT_VARIABLES:
             self.__setattr__(f"ln_{p}", self.ln_gmean[p])
-
-        self.ln_lower_bound = {}
-        self.ln_upper_bound = {}
-        for p in self.INDEPENDENT_VARIABLES + self.DEPENDENT_VARIABLES:
-            if self.ln_gmean[p].size > 0:
-                self.ln_lower_bound[p] = self.ln_gmean[p].T.flatten() - 20.0 * np.diag(
-                    self.ln_precision[p]
-                ) ** (-1.0)
-                self.ln_upper_bound[p] = self.ln_gmean[p].T.flatten() + 20.0 * np.diag(
-                    self.ln_precision[p]
-                ) ** (-1.0)
-            else:
-                self.ln_lower_bound[p] = None
-                self.ln_upper_bound[p] = None
 
     @staticmethod
     def from_json(fname: str) -> "ModelBalancing":
@@ -540,26 +543,32 @@ class ModelBalancing(object):
         # reactions are unbounded above and below.
         return scipy.optimize.LinearConstraint(A[v != 0, :], lb[v != 0], ub[v != 0])
 
+    def extend_variable_vector(self, x: np.ndarray) -> np.ndarray:
+        """Add the dependent variables to a vector of the independen ones."""
+        var_dict = self._get_full_variable_dictionary(x)
+        var_array = []
+        for p in self.INDEPENDENT_VARIABLES + self.DEPENDENT_VARIABLES:
+            for x in var_dict[f"ln_{p}"].T.flat:
+                var_array.append(x)
+        return np.array(var_array)
+
     @property
-    def lower_bounds(self) -> Iterable[float]:
+    def parameter_constraints(self) -> scipy.optimize.NonlinearConstraint:
         lb = []
-        for p in self.INDEPENDENT_VARIABLES:
+        ub = []
+        for p in self.INDEPENDENT_VARIABLES + self.DEPENDENT_VARIABLES:
             if self.ln_lower_bound[p] is not None:
                 for x in self.ln_lower_bound[p].T.flat:
-                    yield x
-
-    @property
-    def upper_bounds(self) -> Iterable[float]:
-        lb = []
-        for p in self.INDEPENDENT_VARIABLES:
+                    lb.append(x)
             if self.ln_upper_bound[p] is not None:
                 for x in self.ln_upper_bound[p].T.flat:
-                    yield x
-
-    @property
-    def bounds(self) -> scipy.optimize.Bounds:
-        """Get the lower and upper bounds on the independent variables."""
-        return scipy.optimize.Bounds(list(self.lower_bounds), list(self.upper_bounds))
+                    ub.append(x)
+        lb = np.array(lb)
+        ub = np.array(ub)
+        return scipy.optimize.NonlinearConstraint(
+            self.extend_variable_vector,
+            lb=lb, ub=ub
+        )
 
     def initialize_with_gmeans(self) -> None:
         # set the independent parameters values to the geometric means
@@ -576,8 +585,7 @@ class ModelBalancing(object):
         r = minimize(
             fun=self.objective_function,
             x0=x0,
-            constraints=self.thermodynamic_constraints,
-            bounds=self.bounds,
+            constraints=(self.thermodynamic_constraints, self.parameter_constraints),
             method=solver,
             options=options,
         )
