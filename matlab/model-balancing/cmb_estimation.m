@@ -110,7 +110,15 @@ switch cmb_options.initial_values_variant,
     %% find initial point using linprog
     nn = 5;
     y_init = find_polytope_centre_randn([],[],y_ineq_bounds_A,y_ineq_bounds_b,y_bound_min, y_bound_max, epsilon, nn);
-    
+
+    %% %%   % check validity of the solution
+    %% %y_bound_min-y_init
+    %% find(y_init<y_bound_min)
+    %% %y_init-y_bound_max
+    %% find(y_init>y_bound_max)
+    %% %max(y_ineq_bounds_A * y_init - y_ineq_bounds_b)
+    %% find(y_ineq_bounds_A * y_init > y_ineq_bounds_b)
+
     %% clear y_init_list
     %% for it =1:nn;
     %%   
@@ -216,7 +224,7 @@ if cmb_options.use_bounds,
 end
 
 if length(y_ineq_b),
-  if sum(y_ineq_A * y_init > y_ineq_b-epsilon) ~=0,
+  if sum(y_ineq_A * y_init > y_ineq_b) ~=0, % -epsilon
     error('Initial point violates some constraints; please change the initial state (or possibly Aforward_min)');
     occuring_values_and_constraints = [y_ineq_A * y_init, y_ineq_b]
     init_feasible = 0;

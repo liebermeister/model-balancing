@@ -33,9 +33,12 @@ function problem = cvxpy_problem_data_structure(network, q_info, prior, data, bo
 %       .bounds_ln.max      upper bounds on log values
 %       .data_ln.mean       data mean vector of log values
 %       .data_ln.cov        data covariance matrix of log values
+%       .bounds.min         lower bounds on log values
+%       .bounds.max         upper bounds on log values
+%       .combined.geom_mean preposterior geometric mean vector
 %       .combined.mean_ln   preposterior mean vector of log values
 %       .combined.cov_ln    preposterior covariance matrix of log values
-%       .geom_mean          preposterior geometric mean vector
+%
 %
 %   .metabolite_concentrations
 %   .metabolite_concentrations.unit:              string, default 'mM'
@@ -46,8 +49,10 @@ function problem = cvxpy_problem_data_structure(network, q_info, prior, data, bo
 %   .metabolite_concentrations.bounds_ln.max      matrix of upper bounds on metabolite log-concentrations
 %   .metabolite_concentrations.data_ln.mean       matrix of data  mean values for metabolite log-concentrations
 %   .metabolite_concentrations.data_ln.std        matrix of data  std dev for metabolite log-concentrations
+%   .metabolite_concentrations.bounds.min         matrix of preposterior geom mean for metabolite concentrations
+%   .metabolite_concentrations.bounds.max         matrix of preposterior geom std  for metabolite concentrations
 %   .metabolite_concentrations.combined.geom_mean matrix of preposterior geom mean for metabolite concentrations
-%   .metabolite_concentrations.combined.geom_mean matrix of preposterior geom std  for metabolite concentrations
+%   .metabolite_concentrations.combined.geom_std  matrix of preposterior geom std  for metabolite concentrations
 %
 %   .enzyme_concentrations
 %    ...
@@ -145,10 +150,11 @@ all_kinetic_constants.true        = true_model.qall;
 all_kinetic_constants.prior.mean  = M_q_to_qall * prior.q.mean;
 all_kinetic_constants.prior.cov   = M_q_to_qall * inv(prior.q.cov_inv) * M_q_to_qall';
 all_kinetic_constants.prior.std   = sqrt(diag(all_kinetic_constants.prior.cov));
-all_kinetic_constants.bounds.min  = M_q_to_qall * bounds.q_min;
-all_kinetic_constants.bounds.max  = M_q_to_qall * bounds.q_max;
+all_kinetic_constants.bounds.min  = bounds.q_all_min;
+all_kinetic_constants.bounds.max  = bounds.q_all_max;
 all_kinetic_constants.data        = data.qall;
 % PROBLEM: currently there is a prior only for INDEPENDENT Keq, not dependent ones; fix this!
+
 
 Keq.unit          = 'depends on reaction stoichiometry';
 Keq.true          = exp(all_kinetic_constants.true(index.Keq));
@@ -158,7 +164,8 @@ Keq.bounds_ln.min = all_kinetic_constants.bounds.min(index.Keq);
 Keq.bounds_ln.max = all_kinetic_constants.bounds.max(index.Keq);
 Keq.data_ln.mean  = all_kinetic_constants.data.mean(index.Keq);
 Keq.data_ln.std   = all_kinetic_constants.data.std(index.Keq);
-
+Keq.bounds.min = exp(all_kinetic_constants.bounds.min(index.Keq));
+Keq.bounds.max = exp(all_kinetic_constants.bounds.max(index.Keq));
 [Keq.combined.mean_ln, Keq.combined.cov_ln] = cvxpy_combine_prior_and_likelihood(Keq.prior_ln.mean,Keq.prior_ln.cov,Keq.data_ln.mean,Keq.data_ln.std);
 Keq.combined.geom_mean = exp(Keq.combined.mean_ln);
 
@@ -170,6 +177,8 @@ Kcatf.bounds_ln.min = all_kinetic_constants.bounds.min(index.Kcatf);
 Kcatf.bounds_ln.max = all_kinetic_constants.bounds.max(index.Kcatf);
 Kcatf.data_ln.mean  = all_kinetic_constants.data.mean(index.Kcatf);
 Kcatf.data_ln.std   = all_kinetic_constants.data.std(index.Kcatf);
+Kcatf.bounds.min    = exp(all_kinetic_constants.bounds.min(index.Kcatf));
+Kcatf.bounds.max    = exp(all_kinetic_constants.bounds.max(index.Kcatf));
 [Kcatf.combined.mean_ln, Kcatf.combined.cov_ln] = cvxpy_combine_prior_and_likelihood(Kcatf.prior_ln.mean,Kcatf.prior_ln.cov,Kcatf.data_ln.mean,Kcatf.data_ln.std);
 Kcatf.combined.geom_mean = exp(Kcatf.combined.mean_ln);
 
@@ -181,8 +190,11 @@ Kcatr.bounds_ln.min = all_kinetic_constants.bounds.min(index.Kcatr);
 Kcatr.bounds_ln.max = all_kinetic_constants.bounds.max(index.Kcatr);
 Kcatr.data_ln.mean  = all_kinetic_constants.data.mean(index.Kcatr);
 Kcatr.data_ln.std   = all_kinetic_constants.data.std(index.Kcatr);
+Kcatr.bounds.min    = exp(all_kinetic_constants.bounds.min(index.Kcatr));
+Kcatr.bounds.max    = exp(all_kinetic_constants.bounds.max(index.Kcatr));
 [Kcatr.combined.mean_ln, Kcatr.combined.cov_ln] = cvxpy_combine_prior_and_likelihood(Kcatr.prior_ln.mean,Kcatr.prior_ln.cov,Kcatr.data_ln.mean,Kcatr.data_ln.std);
 Kcatr.combined.geom_mean = exp(Kcatr.combined.mean_ln);
+
 
 KM.unit          = 'mM';
 KM.true          = exp(all_kinetic_constants.true(index.KM));
@@ -192,8 +204,11 @@ KM.bounds_ln.min = all_kinetic_constants.bounds.min(index.KM);
 KM.bounds_ln.max = all_kinetic_constants.bounds.max(index.KM);
 KM.data_ln.mean  = all_kinetic_constants.data.mean(index.KM);
 KM.data_ln.std   = all_kinetic_constants.data.std(index.KM);
+KM.bounds.min    = exp(all_kinetic_constants.bounds.min(index.KM));
+KM.bounds.max    = exp(all_kinetic_constants.bounds.max(index.KM));
 [KM.combined.mean_ln, KM.combined.cov_ln] = cvxpy_combine_prior_and_likelihood(KM.prior_ln.mean,KM.prior_ln.cov,KM.data_ln.mean,KM.data_ln.std);
 KM.combined.geom_mean = exp(KM.combined.mean_ln);
+
 
 KA.unit          = 'mM';
 KA.true          = exp(all_kinetic_constants.true(index.KA));
@@ -203,8 +218,11 @@ KA.bounds_ln.min = all_kinetic_constants.bounds.min(index.KA);
 KA.bounds_ln.max = all_kinetic_constants.bounds.max(index.KA);
 KA.data_ln.mean  = all_kinetic_constants.data.mean(index.KA);
 KA.data_ln.std   = all_kinetic_constants.data.std(index.KA);
+KA.bounds.min    = exp(all_kinetic_constants.bounds.min(index.KA));
+KA.bounds.max    = exp(all_kinetic_constants.bounds.max(index.KA));
 [KA.combined.mean_ln, KA.combined.cov_ln] = cvxpy_combine_prior_and_likelihood(KA.prior_ln.mean,KA.prior_ln.cov,KA.data_ln.mean,KA.data_ln.std);
 KA.combined.geom_mean = exp(KA.combined.mean_ln);
+
 
 KI.unit          = 'mM';
 KI.true          = exp(all_kinetic_constants.true(index.KI));
@@ -214,6 +232,8 @@ KI.bounds_ln.min = all_kinetic_constants.bounds.min(index.KI);
 KI.bounds_ln.max = all_kinetic_constants.bounds.max(index.KI);
 KI.data_ln.mean  = all_kinetic_constants.data.mean(index.KI);
 KI.data_ln.std   = all_kinetic_constants.data.std(index.KI);
+KI.bounds.min    = exp(all_kinetic_constants.bounds.min(index.KI));
+KI.bounds.max    = exp(all_kinetic_constants.bounds.max(index.KI));
 [KI.combined.mean_ln, KI.combined.cov_ln] = cvxpy_combine_prior_and_likelihood(KI.prior_ln.mean,KI.prior_ln.cov,KI.data_ln.mean,KI.data_ln.std);
 KI.combined.geom_mean = exp(KI.combined.mean_ln);
 
@@ -231,16 +251,17 @@ problem.kinetic_constants.KI    = KI;
 
 met.unit     = 'mM'; 
 met.true     = exp(true_model.X);
-met.prior_ln = prior.X;
+
 met.bounds_ln.min = repmat(bounds.x_min,1,nc);
 met.bounds_ln.max = repmat(bounds.x_max,1,nc);
-
+met.prior_ln = prior.X;
 met.data_ln  = data.X;
-
+met.bounds.min         = exp(repmat(bounds.x_min,1,nc));
+met.bounds.max         = exp(repmat(bounds.x_max,1,nc));
 % combine prior and data
 [met_mean_ln, met_cov_ln] = cvxpy_combine_prior_and_likelihood(met.prior_ln.mean(:),diag(met.prior_ln.std(:).^2),met.data_ln.mean(:),met.data_ln.std(:));
-met.combined.geom_mean  = exp(reshape(met_mean_ln,nm,nc));
-met.combined.geom_std   = exp(reshape(sqrt(diag(met_cov_ln)),nm,nc));
+met.combined.geom_mean = exp(reshape(met_mean_ln,nm,nc));
+met.combined.geom_std  = exp(reshape(sqrt(diag(met_cov_ln)),nm,nc));
 
 problem.metabolite_concentrations = met;
 
@@ -258,14 +279,16 @@ enz.prior_ln     = prior.lnE;
 % enz.data_ln      = data.lnE;
 % [enz_data_mean_ln,enz_data_std_ln] = lognormal_normal2log(enz.data.mean(:),enz.data.std(:));
 
+
 enz_prior_mean_ln = enz.prior_ln.mean(:);
 enz_prior_std_ln  = enz.prior_ln.std(:);
-enz.bounds_ln.min    = repmat(log(bounds.e_min),1,nc);
-enz.bounds_ln.max    = repmat(log(bounds.e_max),1,nc);
+enz.bounds_ln.min = repmat(log(bounds.e_min),1,nc);
+enz.bounds_ln.max = repmat(log(bounds.e_max),1,nc);
 enz.data_ln       = data.lnE;
 enz_data_mean_ln  = enz.data_ln.mean(:);
 enz_data_std_ln   = enz.data_ln.std(:);
-
+enz.bounds.min         = exp(repmat(log(bounds.e_min),1,nc));
+enz.bounds.max         = exp(repmat(log(bounds.e_max),1,nc));
 % combine prior and data
 [enz_mean_ln, enz_cov_ln] = cvxpy_combine_prior_and_likelihood(enz_prior_mean_ln,diag(enz_prior_std_ln.^2),enz_data_mean_ln,enz_data_std_ln);
 enz.combined.geom_mean = exp(reshape(enz_mean_ln,nr,nc));

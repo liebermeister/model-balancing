@@ -261,15 +261,14 @@ calculation_time = toc(tstart_model_balancing);
 
 
 % -----------------------------------------------
-% Graphics
+% Graphics - 'cmb_graphics' also provides data for statistics below
 % -----------------------------------------------
 
+display(' '); ca;
+[res, res_true, res_true_data] = cmb_graphics(prior, data, optimal, true, cmb_options, q_info, filenames.graphics_dir, kapp_max, cmb_options.show_graphics);
+
 if cmb_options.show_graphics,
-  display(' '); ca;
-  [res, res_true, res_true_data] = cmb_graphics(prior, data, optimal, true, cmb_options, q_info, filenames.graphics_dir, kapp_max);
   cmb_diagnostic_network_graphics(network, data, optimal, cmb_options, q_info, 20, 1, filenames.graphics_dir);
-else
-  res = []; res_true = []; res_true_data = [];
 end
 
 
