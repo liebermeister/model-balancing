@@ -1,0 +1,35 @@
+!!!SBtab DocumentName='MB result' Document='MBresult' StringencyAlpha='1.000000.2' CalculationTime='82.897182 s'					
+					
+!!SBtab TableName='Metabolic fluxes' TableID='Flux' TableType='QuantityMatrix' Unit='mM/s'					
+!QuantityType	!Reaction	state_1	state_2	state_3	state_4
+rate of reaction	E1	0.020129048	0.011377653	0.02883798	0.0082712579
+rate of reaction	E2	0.010801877	0.01443462	0.027581858	0.0064664672
+rate of reaction	E3	0.019886778	0.011968796	0.029699366	0.012842748
+rate of reaction	E4	-0.0012465692	-0.0023583657	-0.00072784837	-0.0023569429
+rate of reaction	E5	0.014981973	0.014216284	0.035823327	0.0094764196
+					
+!!SBtab TableName='Metabolite concentrations' TableID='MetaboliteConcentration' TableType='QuantityMatrix' Unit='mM'					
+!QuantityType	!Compound	state_1	state_2	state_3	state_4
+concentration	X1	12.915431	4.6973406	22.683185	7.5129297
+concentration	S2	0.18295081	0.1982037	0.83294229	0.26424976
+concentration	X3	1.4305103	1.4127993	1.1722369	0.7600815
+concentration	S4	0.16123176	0.099218886	0.033543257	0.065093866
+concentration	S5	0.034845293	0.027686632	0.021351757	0.018843784
+concentration	X6	0.8403589	0.31015723	0.50507812	2.0359724
+concentration	X7	0.020754477	0.020125132	0.0028148936	0.012298897
+					
+!!SBtab TableName='Enzyme concentrations' TableID='EnzymeConcentration' TableType='QuantityMatrix' Unit='mM'					
+!QuantityType	!Reaction	state_1	state_2	state_3	state_4
+concentration of enzyme	E1	0.0004470285	0.0014369456	0.0012320137	0.00056047493
+concentration of enzyme	E2	0.0048206581	0.0013475358	0.0014468047	0.00085263106
+concentration of enzyme	E3	0.0013638136	0.0007796675	0.00051793791	0.00064093766
+concentration of enzyme	E4	0.00043179459	0.00083825449	0.00025277467	0.00080405492
+concentration of enzyme	E5	0.00070883286	0.00083281225	0.00039938724	0.00049987374
+					
+!!SBtab TableName='Gibbs free energies of reaction' TableID='ReactionGibbsFreeEnergy' TableType='QuantityMatrix' Unit='kJ/mol'					
+!QuantityType	!Reaction	state_1	state_2	state_3	state_4
+Gibbs energy of reaction	E1	3.8022584	1.0964666	1.4409382	1.5477099
+Gibbs energy of reaction	E2	0.23695517	1.4096412	3.6353311	0.91780466
+Gibbs energy of reaction	E3	8.414065	7.9790871	9.4937105	8.600978
+Gibbs energy of reaction	E4	10.173032	8.2722143	10.125109	13.890562
+Gibbs energy of reaction	E5	6.8911885	6.3974404	10.629588	6.6644071
