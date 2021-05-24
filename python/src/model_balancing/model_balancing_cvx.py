@@ -12,7 +12,9 @@ from . import (
     MIN_FLUX,
     Q_,
     RT,
+    DEFAULT_UNITS,
 )
+
 from .io import read_arguments_json, to_model_sbtab, to_state_sbtab
 
 
@@ -23,32 +25,24 @@ class ModelBalancingConvex(object):
         fluxes: np.array,
         A_act: np.array,
         A_inh: np.array,
-        Keq_gmean: np.array,
-        Keq_ln_cov: np.array,
-        conc_enz_gmean: np.array,
-        conc_enz_ln_cov: np.array,
-        conc_met_gmean: np.array,
-        conc_met_ln_cov: np.array,
-        kcatf_gmean: np.array,
-        kcatf_ln_cov: np.array,
-        kcatr_gmean: np.array,
-        kcatr_ln_cov: np.array,
-        Km_gmean: np.array,
-        Km_ln_cov: np.array,
-        Ka_gmean: np.array,
-        Ka_ln_cov: np.array,
-        Ki_gmean: np.array,
-        Ki_ln_cov: np.array,
         metabolite_names: List[str],
         reaction_names: List[str],
         state_names: List[str],
         rate_law: str = "CM",
         solver: str = "MOSEK",
+        beta: float = 0.0,
+        **kwargs,
     ) -> None:
         self.S = S.copy()
         self.fluxes = fluxes.copy()
         self.A_act = A_act.copy()
         self.A_inh = A_inh.copy()
+        self.metabolite_names = metabolite_names
+        self.reaction_names = reaction_names
+        self.state_names = state_names
+        self.rate_law = rate_law
+        self.beta = beta
+        self.solver = solver
 
         self.Nc, self.Nr = S.shape
         assert self.fluxes.shape[0] == self.Nr
@@ -57,72 +51,75 @@ class ModelBalancingConvex(object):
         self.Ncond = self.fluxes.shape[1]
         assert self.A_act.shape == (self.Nc, self.Nr)
         assert self.A_inh.shape == (self.Nc, self.Nr)
+        assert len(self.metabolite_names) == self.Nc
+        assert len(self.reaction_names) == self.Nr
+        assert len(self.state_names) == self.Ncond
+        assert self.rate_law in [
+            "S",
+            "1S",
+            "SP",
+            "1SP",
+            "CM",
+        ], f"unsupported rate law {self.rate_law}"
 
-        # since we use a log transform on the fluxes, we cannot allow any
-        # zero or negative values. We replace 0 with a small epsilon,
-        # and reverse the reactions that have negative fluxes
-        for i in np.where(self.fluxes < 0)[0]:
-            self.fluxes[i] = -self.fluxes[i]
-            self.S[:, i] = -self.S[:, i]
-            Keq_gmean[i] = 1.0 / Keq_gmean[i]
-            kcatf_gmean[i], kcatr_gmean[i] = (
-                kcatr_gmean[i],
-                kcatf_gmean[i],
+        for p in DEFAULT_UNITS.keys():
+            assert f"{p}_gmean" in kwargs
+            assert f"{p}_ln_cov" in kwargs
+
+        self.ln_gmean = {}
+        self.ln_precision = {}
+        self.ln_lower_bound = {}
+        self.ln_upper_bound = {}
+
+        if not all(self.fluxes.flatten() > MIN_FLUX):
+            raise ValueError(
+                "In order to use Convex Model Balancing, all fluxes must be strictly positive"
+                f"(i.e. > {MIN_FLUX:.1e})"
             )
 
-        for i in np.where(self.fluxes < MIN_FLUX)[0]:
-            self.fluxes[i] = MIN_FLUX
-
         self.ln_Keq_gmean = cp.Parameter(
-            shape=(self.Nr,), value=np.log(Keq_gmean.m_as(""))
+            shape=(self.Nr,), value=np.log(kwargs["Keq_gmean"].m_as(""))
         )
-        self.ln_Keq_precision = np.linalg.pinv(Keq_ln_cov)
+        self.ln_Keq_precision = np.linalg.pinv(kwargs["Keq_ln_cov"])
         self.ln_conc_met_gmean = cp.Parameter(
             shape=(self.Nc, self.Ncond),
-            value=np.log(conc_met_gmean.m_as("M").reshape(self.Nc, self.Ncond)),
+            value=np.log(kwargs["conc_met_gmean"].m_as("M").reshape(self.Nc, self.Ncond)),
         )
-        self.ln_conc_met_gstd = np.diag(conc_met_ln_cov ** (0.5)).reshape(
+        self.ln_conc_met_gstd = np.diag(kwargs["conc_met_ln_cov"] ** (0.5)).reshape(
             self.Nc, self.Ncond
         )
         self.ln_conc_enz_gmean = cp.Parameter(
             shape=(self.Nr, self.Ncond),
-            value=np.log(conc_enz_gmean.m_as("M").reshape(self.Nr, self.Ncond)),
+            value=np.log(kwargs["conc_enz_gmean"].m_as("M").reshape(self.Nr, self.Ncond)),
         )
-        self.ln_conc_enz_gstd = np.diag(conc_enz_ln_cov ** (0.5)).reshape(
+        self.ln_conc_enz_gstd = np.diag(kwargs["conc_enz_ln_cov"] ** (0.5)).reshape(
             self.Nr, self.Ncond
         )
         self.ln_kcatf_gmean = cp.Parameter(
-            shape=(self.Nr,), value=np.log(kcatf_gmean.m_as("1/s"))
+            shape=(self.Nr,), value=np.log(kwargs["kcatf_gmean"].m_as("1/s"))
         )
-        self.ln_kcatf_precision = np.linalg.pinv(kcatf_ln_cov)
+        self.ln_kcatf_precision = np.linalg.pinv(kwargs["kcatf_ln_cov"])
         self.ln_kcatr_gmean = cp.Parameter(
-            shape=(self.Nr,), value=np.log(kcatr_gmean.m_as("1/s"))
+            shape=(self.Nr,), value=np.log(kwargs["kcatr_gmean"].m_as("1/s"))
         )
-        self.ln_kcatr_precision = np.linalg.pinv(kcatr_ln_cov)
-        self.ln_Km_gmean = np.log(Km_gmean.m_as("M"))
+        self.ln_kcatr_precision = np.linalg.pinv(kwargs["kcatr_ln_cov"])
+        self.ln_Km_gmean = np.log(kwargs["Km_gmean"].m_as("M"))
         if self.ln_Km_gmean.size != 0:
-            self.ln_Km_precision = np.linalg.pinv(Km_ln_cov)
+            self.ln_Km_precision = np.linalg.pinv(kwargs["Km_ln_cov"])
         else:
             self.ln_Km_precision = None
 
-        self.ln_Ka_gmean = np.log(Ka_gmean.m_as("M"))
+        self.ln_Ka_gmean = np.log(kwargs["Ka_gmean"].m_as("M"))
         if self.ln_Ka_gmean.size != 0:
-            self.ln_Ka_precision = np.linalg.pinv(Ka_ln_cov)
+            self.ln_Ka_precision = np.linalg.pinv(kwargs["Ka_ln_cov"])
         else:
             self.ln_Ka_precision = None
 
-        self.ln_Ki_gmean = np.log(Ki_gmean.m_as("M"))
+        self.ln_Ki_gmean = np.log(kwargs["Ki_gmean"].m_as("M"))
         if self.ln_Ki_gmean.size != 0:
-            self.ln_Ki_precision = np.linalg.pinv(Ki_ln_cov)
+            self.ln_Ki_precision = np.linalg.pinv(kwargs["Ki_ln_cov"])
         else:
             self.ln_Ki_precision = None
-
-        self.metabolite_names = metabolite_names
-        self.reaction_names = reaction_names
-        self.state_names = state_names
-
-        self.rate_law = rate_law
-        self.solver = solver
 
         assert self.ln_Keq_precision.shape == (self.Nr, self.Nr)
         assert self.ln_conc_enz_gstd.shape == (self.Nr, self.Ncond)

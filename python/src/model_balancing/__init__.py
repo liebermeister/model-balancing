@@ -21,6 +21,10 @@ RT = Q_(8.31e-3 * 298.15, "kJ/mol")
 
 MIN_DRIVING_FORCE = 1e-3 * RT
 MIN_FLUX = Q_(1e-9, "M/s")
+INDEPENDENT_VARIABLES = ["Km", "Ka", "Ki", "Keq", "kcatf", "conc_met"]
+DEPENDENT_VARIABLES = ["kcatr", "conc_enz"]
+DEFAULT_UNITS = {"Km": "M", "Ka": "M", "Ki": "M", "Keq": "", "kcatf": "1/s", "kcatr": "1/s", "conc_met": "M",
+    "conc_enz": "M", }
 
 
 def convert_to_irreversible(args: Dict[str, np.array]) -> Dict[str, np.array]:

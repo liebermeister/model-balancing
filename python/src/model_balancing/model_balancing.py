@@ -8,26 +8,18 @@ import scipy.special
 from sbtab import SBtab
 from scipy.optimize import minimize
 
-from . import MIN_DRIVING_FORCE, MIN_FLUX, Q_, RT
+from . import (
+    MIN_DRIVING_FORCE,
+    Q_,
+    RT,
+    INDEPENDENT_VARIABLES,
+    DEPENDENT_VARIABLES,
+    DEFAULT_UNITS,
+)
 from .io import read_arguments_json, to_model_sbtab, to_state_sbtab
 
 
 class ModelBalancing(object):
-
-    INDEPENDENT_VARIABLES = ["Km", "Ka", "Ki", "Keq", "kcatf", "conc_met"]
-    DEPENDENT_VARIABLES = ["kcatr", "conc_enz"]
-
-    DEFAULT_UNITS = {
-        "Km": "M",
-        "Ka": "M",
-        "Ki": "M",
-        "Keq": "",
-        "kcatf": "1/s",
-        "kcatr": "1/s",
-        "conc_met": "M",
-        "conc_enz": "M",
-    }
-
     def __init__(
         self,
         S: np.array,
@@ -71,7 +63,7 @@ class ModelBalancing(object):
             "CM",
         ], f"unsupported rate law {self.rate_law}"
 
-        for p in ModelBalancing.DEFAULT_UNITS.keys():
+        for p in DEFAULT_UNITS.keys():
             assert f"{p}_gmean" in kwargs
             assert f"{p}_ln_cov" in kwargs
 
@@ -80,23 +72,27 @@ class ModelBalancing(object):
         self.ln_lower_bound = {}
         self.ln_upper_bound = {}
 
-        for p, unit in ModelBalancing.DEFAULT_UNITS.items():
+        for p, unit in DEFAULT_UNITS.items():
             # geometric means (in log-scale)
             self.ln_gmean[p] = np.log(kwargs[f"{p}_gmean"].m_as(unit))
             if self.ln_gmean[p].size > 0:
                 self.ln_precision[p] = np.linalg.pinv(kwargs[f"{p}_ln_cov"])
                 if np.all(kwargs[f"{p}_lower_bound"] != None):
-                    self.ln_lower_bound[p] = np.log(kwargs[f"{p}_lower_bound"].m_as(unit))
+                    self.ln_lower_bound[p] = np.log(
+                        kwargs[f"{p}_lower_bound"].m_as(unit)
+                    )
                 else:
-                    self.ln_lower_bound[p] = self.ln_gmean[p].T.flatten() - 20.0 * np.diag(
-                        self.ln_precision[p]
-                    ) ** (-1.0)
+                    self.ln_lower_bound[p] = self.ln_gmean[
+                        p
+                    ].T.flatten() - 20.0 * np.diag(self.ln_precision[p]) ** (-1.0)
                 if np.all(kwargs[f"{p}_upper_bound"] != None):
-                    self.ln_upper_bound[p] = np.log(kwargs[f"{p}_upper_bound"].m_as(unit))
+                    self.ln_upper_bound[p] = np.log(
+                        kwargs[f"{p}_upper_bound"].m_as(unit)
+                    )
                 else:
-                    self.ln_upper_bound[p] = self.ln_gmean[p].T.flatten() + 20.0 * np.diag(
-                        self.ln_precision[p]
-                    ) ** (-1.0)
+                    self.ln_upper_bound[p] = self.ln_gmean[
+                        p
+                    ].T.flatten() + 20.0 * np.diag(self.ln_precision[p]) ** (-1.0)
             else:
                 self.ln_precision[p] = None
                 self.ln_lower_bound[p] = None
@@ -114,7 +110,7 @@ class ModelBalancing(object):
         )
 
         # initialize the independent variables with their geometric means
-        for p in self.INDEPENDENT_VARIABLES:
+        for p in INDEPENDENT_VARIABLES:
             self.__setattr__(f"ln_{p}", self.ln_gmean[p])
 
     @staticmethod
@@ -136,7 +132,7 @@ class ModelBalancing(object):
             x = np.array(list(self.ln_x))
         var_dict = {}
         i = 0
-        for p in self.INDEPENDENT_VARIABLES:
+        for p in INDEPENDENT_VARIABLES:
             size = self._get_variable_size(p)
             shape = self._get_variable_shape(p)
             var_dict[f"ln_{p}"] = x[i : i + size].reshape(shape, order="F")
@@ -148,7 +144,7 @@ class ModelBalancing(object):
         """Get the variable vector (x)."""
         # in order to use the scipy solver, we need to stack all the independent variables
         # into one 1-D array (denoted 'x').
-        for p in self.INDEPENDENT_VARIABLES:
+        for p in INDEPENDENT_VARIABLES:
             for x in self.__getattribute__(f"ln_{p}").T.flat:
                 yield x
 
@@ -172,7 +168,7 @@ class ModelBalancing(object):
         var_dict = self._get_full_variable_dictionary(x)
 
         all_z2_scores = []
-        for p in self.INDEPENDENT_VARIABLES + self.DEPENDENT_VARIABLES:
+        for p in INDEPENDENT_VARIABLES + DEPENDENT_VARIABLES:
             ln_p_gmean = self.ln_gmean[p]
             ln_p_precision = self.ln_precision[p]
             ln_p = var_dict[f"ln_{p}"]
@@ -516,7 +512,7 @@ class ModelBalancing(object):
         i = 0
         i_Keq = None
         i_conc_met = None
-        for p in self.INDEPENDENT_VARIABLES:
+        for p in INDEPENDENT_VARIABLES:
             if p == "Keq":
                 i_Keq = i
             elif p == "conc_met":
@@ -547,7 +543,7 @@ class ModelBalancing(object):
         """Add the dependent variables to a vector of the independen ones."""
         var_dict = self._get_full_variable_dictionary(x)
         var_array = []
-        for p in self.INDEPENDENT_VARIABLES + self.DEPENDENT_VARIABLES:
+        for p in INDEPENDENT_VARIABLES + DEPENDENT_VARIABLES:
             for x in var_dict[f"ln_{p}"].T.flat:
                 var_array.append(x)
         return np.array(var_array)
@@ -556,7 +552,7 @@ class ModelBalancing(object):
     def parameter_constraints(self) -> scipy.optimize.NonlinearConstraint:
         lb = []
         ub = []
-        for p in self.INDEPENDENT_VARIABLES + self.DEPENDENT_VARIABLES:
+        for p in INDEPENDENT_VARIABLES + DEPENDENT_VARIABLES:
             if self.ln_lower_bound[p] is not None:
                 for x in self.ln_lower_bound[p].T.flat:
                     lb.append(x)
@@ -566,18 +562,17 @@ class ModelBalancing(object):
         lb = np.array(lb)
         ub = np.array(ub)
         return scipy.optimize.NonlinearConstraint(
-            self.extend_variable_vector,
-            lb=lb, ub=ub
+            self.extend_variable_vector, lb=lb, ub=ub
         )
 
     def initialize_with_gmeans(self) -> None:
         # set the independent parameters values to the geometric means
-        for p in self.INDEPENDENT_VARIABLES:
+        for p in INDEPENDENT_VARIABLES:
             self.__setattr__(f"ln_{p}", self.ln_gmean[p])
 
         # set the geometric means of the dependent parameters (kcatr and conc_enz)
         # to the values calculated using all the independent parameters
-        for p in self.DEPENDENT_VARIABLES:
+        for p in DEPENDENT_VARIABLES:
             self.ln_gmean[p] = self.__getattribute__(f"ln_{p}")
 
     def solve(self, solver: str = "SLSQP", options: Optional[dict] = None) -> None:
@@ -597,7 +592,7 @@ class ModelBalancing(object):
             self.__setattr__(key, val)
 
     def print_z_scores(self) -> None:
-        for p in self.INDEPENDENT_VARIABLES + self.DEPENDENT_VARIABLES:
+        for p in INDEPENDENT_VARIABLES + DEPENDENT_VARIABLES:
             ln_p_gmean = self.ln_gmean[p]
             ln_p_precision = self.__getattribute__(f"ln_{p}_precision")
             ln_p = self.__getattribute__(f"ln_{p}")
