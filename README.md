@@ -17,34 +17,36 @@ To run model balancing in python, your model and input data need to be encoded i
 To generate this file format from model and data files (in SBML / SBtab formats),
 you can use the matlab function `cvxpy_problem_data_structure.m`
 (as shown in the demo script `matlab/demo/demo_cmb_experimental_data.m`).
-For a description of the JSON format, see [examples](examples)
+For a description of the JSON format, see [examples](examples).
 
 ### Example models
 Example model and data files can be found in the folder "resources". 
 The folder `resources/models` contains files for four different example models. 
-Each model comes as an SBML (.xml) and an SBtab (.tsv) file. 
-The folders cvxpy/examples/[MODEL_NAME] contains balancing results for a large number of model balancing problems
+Each model comes as an SBML (`.xml`) and an SBtab (`.tsv`) file. 
+The folders `cvxpy/examples/[MODEL_NAME]` contains balancing results for a large number of model balancing problems
 with these models: artificial data for all 4 models, experimental data for the E coli model (folder `e_coli_noor_2016`).
 
 ### How to balance your own model
-To balance your own model, we recommend to get acquainted with the matlab demo script `demo_cmb_experimental_data.m`.
+To balance your own model, we recommend getting acquainted with the matlab demo script `demo_cmb_experimental_data.m`.
 You need to prepare three input files in SBtab format, describing
 
 1. the network structure and metabolite constraints (tables Reaction, Compound, Position (optional), Parameter (optional))
 2. kinetic data (table ParameterData)
 3. state data (tables MetabolicFluxData, MetaboliteConcentrationData, EnzymeConcentrationData)
 
-For an example, please have a look at the files `artificial_network_true.tsv`, `artificial_kinetic_data.tsv`, and `artificial_state_data.tsv`
-in the folder `./resourcedir/models/branch_point_model/data/`.
+For an example, please have a look at the files `artificial_network_true.tsv`, `artificial_kinetic_data.tsv`,
+and `artificial_state_data.tsv` in the folder `./resourcedir/models/branch_point_model/data/`.
 
 To balance your model in matlab, you can then use the code from `demo_cmb_experimental_data.m`.
 Please note that there are many more settings that you can change. For an overview, type `help cmb_default_options` in matlab.
 
 To balance your model in python, you first need to convert your model and data into a JSON file.
-This can be done in matlab and is shown in demo_cmb_experimental_data.m. For an overview of the JSON format,
+This can be done in matlab and is shown in `demo_cmb_experimental_data.m`. For an overview of the JSON format,
 type `help cvxpy_problem_data_structure` in matlab.
 
-## Dependencies
+## Installation
+You have two options to choose from: Matlab or Python.
+
 ### Matlab
 - [SBML toolbox](http://sbml.org/Software/SBMLToolbox) (optional - needed only if SBML files are used;
   version needs to match your matlab version and  requires a matching version of libSBML)
@@ -57,7 +59,7 @@ type `help cvxpy_problem_data_structure` in matlab.
 
 The code was tested with Matlab R2019b on Linux. 
 ### Python
-Clone this repository
+Clone this repository:
 ```bash
 git clone https://github.com/liebermeister/model-balancing.git
 ```
