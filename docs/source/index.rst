@@ -10,8 +10,7 @@ Welcome to Model Balancing's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   modules
-   model_balancing
+   model_balancing/model_balancing
 
 Indices and tables
 ==================
