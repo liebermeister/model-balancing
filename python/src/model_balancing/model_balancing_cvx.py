@@ -1,3 +1,15 @@
+# -*- coding: utf-8 -*-
+"""
+This is my module brief line.
+
+This is a more complete paragraph documenting my module.
+
+- A list item.
+- Another list item.
+
+This section can use any reST syntax.
+"""
+
 import itertools
 import os
 import warnings
@@ -19,6 +31,8 @@ from .io import read_arguments_json, to_model_sbtab, to_state_sbtab
 
 
 class ModelBalancingConvex(object):
+    """A class for performing Convex Model Balancing (using CVXPY).
+    """
     def __init__(
         self,
         S: np.array,
@@ -540,3 +554,8 @@ class ModelBalancingConvex(object):
         )
         model_sbtabdoc.set_name("CMB result")
         return model_sbtabdoc
+
+__all__ = [
+    'ModelBalancingConvex'
+]
+

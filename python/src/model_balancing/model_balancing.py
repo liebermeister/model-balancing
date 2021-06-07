@@ -1,3 +1,15 @@
+# -*- coding: utf-8 -*-
+"""
+This is my module brief line.
+
+This is a more complete paragraph documenting my module.
+
+- A list item.
+- Another list item.
+
+This section can use any reST syntax.
+"""
+
 import itertools
 import os
 import warnings
@@ -20,6 +32,9 @@ from .io import read_arguments_json, to_model_sbtab, to_state_sbtab
 
 
 class ModelBalancing(object):
+    """A class for performing Model Balancing (non-convex version).
+    """
+    
     def __init__(
         self,
         S: np.array,
@@ -669,3 +684,8 @@ class ModelBalancing(object):
         model_sbtabdoc.set_name("MB result")
         model_sbtabdoc.change_attribute("RelaxationAlpha", f"{self.alpha}")
         return model_sbtabdoc
+        
+__all__ = [
+    'ModelBalancing'
+]
+
