@@ -11,6 +11,7 @@ Welcome to Model Balancing's documentation!
    :caption: Contents:
 
    modules
+   model_balancing
 
 Indices and tables
 ==================

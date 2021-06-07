@@ -53,8 +53,8 @@ templates_path = ['_templates']
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", ".ipynb_checkpoints"]
 
 # -- Sphinx AutoAPI ----------------------------------------------------------
-autoapi_type = "python"
-autoapi_dirs = ["python/src/model_balancing"]
+autoapi_type = "../python"
+autoapi_dirs = ["../python/src/model_balancing"]
 autoapi_options = [
     "members",
     "undoc-members",
