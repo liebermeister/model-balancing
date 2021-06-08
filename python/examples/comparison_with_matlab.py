@@ -7,7 +7,6 @@ from model_balancing import (
 )
 import cvxpy as cp
 from model_balancing.io import read_arguments_json
-import numpy as np
 
 os.chdir("/home/eladn/git/model-balancing")
 

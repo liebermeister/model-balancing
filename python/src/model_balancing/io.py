@@ -1,3 +1,15 @@
+# -*- coding: utf-8 -*-
+"""
+This is my module brief line.
+
+This is a more complete paragraph documenting my module.
+
+- A list item.
+- Another list item.
+
+This section can use any reST syntax.
+"""
+
 import json
 from typing import Dict, Union, List
 
@@ -230,3 +242,12 @@ def to_model_sbtab(
     model_sbtabdoc.add_sbtab(parameter_sbtab)
 
     return model_sbtabdoc
+    
+
+__all__ = [
+    "standardize_input_matrix",
+    "read_arguments_json",
+    "to_state_sbtab",
+    "to_model_sbtab",
+]
+

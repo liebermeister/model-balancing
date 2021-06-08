@@ -98,8 +98,6 @@ def convert_to_irreversible(args: Dict[str, np.array]) -> Dict[str, np.array]:
 
 
 from ._version import get_versions
-from .model_balancing import ModelBalancing
-from .model_balancing_cvx import ModelBalancingConvex
 
 __version__ = get_versions()["version"]
 del get_versions
