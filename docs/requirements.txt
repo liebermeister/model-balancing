@@ -4,5 +4,5 @@ sphinx-autoapi~=1.7
 sphinx_rtd_theme~=0.5
 nbsphinx~=0.2
 ipykernel
-../python
+./python
 
