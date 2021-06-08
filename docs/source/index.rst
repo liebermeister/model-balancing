@@ -8,7 +8,8 @@ Model balancing
 
 `Model balancing <https://www.metabolic-economics.de/model-balancing/index.html>`_
 is a computational method to determine plausible kinetic constants and metabolic
-states in kinetic metabolic models. It integrates flux, metabolite, protein,
+states in kinetic metabolic models :footcite:`noor_consistent_2013`.
+It integrates flux, metabolite, protein,
 and kinetic constant data, using prior distributions for all these variables, and
 computes the joint posterior mode.
 
@@ -47,20 +48,19 @@ The code was tested with Python 3.9 on Ubuntu Linux 21.04.
 
 License
 =======
+
 This package is released under the GNU General Public License.
 
 Contact
 =======
+
 Please contact `Wolfram Liebermeister <mailto:wolfram.liebermeister@gmail.com>`_
 and `Elad Noor <mailto:elad.noor@weizmann.ac.il>`_ with any questions or comments.
 
 References
 ==========
-Liebermeister W. and Noor E. (2021),
-*Model balancing: in search of consistent metabolic states and in-vivo kinetic constants*
-`bioRxiv doi:10.1101/2019.12.23.887166v2 <https://www.biorxiv.org/content/10.1101/2019.12.23.887166v2>`_
 
-`www.metabolic-economics.de/model-balancing/ <https://www.metabolic-economics.de/model-balancing/index.html>`_
+.. footbibliography::
 
 
 .. toctree::
@@ -69,6 +69,7 @@ Liebermeister W. and Noor E. (2021),
    
    autoapi/index
    autoapi/python/src/model_balancing/index
+
 
 Indices and tables
 ==================
