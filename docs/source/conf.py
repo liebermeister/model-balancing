@@ -39,7 +39,7 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
-#    "sphinxcontrib.bibtex",
+    "sphinxcontrib.bibtex",
     "autoapi.extension",
     "nbsphinx",
 ]

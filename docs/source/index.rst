@@ -6,9 +6,9 @@
 Model balancing
 ===============
 
-`Model balancing <https://www.metabolic-economics.de/model-balancing/index.html>`_
+`Model balancing <https://www.metabolic-economics.de/model-balancing>`_
 is a computational method to determine plausible kinetic constants and metabolic
-states in kinetic metabolic models :footcite:`noor_consistent_2013`.
+states in kinetic metabolic models :footcite:p:`liebermeister_model_2021`.
 It integrates flux, metabolite, protein,
 and kinetic constant data, using prior distributions for all these variables, and
 computes the joint posterior mode.
@@ -21,10 +21,10 @@ This documentation is for the *Python* version of Model Balancing only.
 For balancing your model, generating a JSON input file, or running model balancing in Maltab -
 see instructions `here <https://github.com/liebermeister/model-balancing>`_.
 
-Installation
-============
+Installation:
+*************
  
-Clone the repository::
+Clone the `repository <https://github.com/liebermeister/model-balancing>`_::
 
     git clone https://github.com/liebermeister/model-balancing.git
 
@@ -35,10 +35,10 @@ Install using the package in a new Virtual Environment using::
     source venv/bin/activate
     pip install -e .
 
-Obtain a license for `MOSEK <https://www.mosek.com/>`_, for example you might qualify for a
+Obtain a license for `MOSEK <https://www.mosek.com/>`_. For example, you might qualify for a
 `free academic license <https://www.mosek.com/products/academic-licenses/>`_.
 
-Now you can then try the example script::
+You can then try the example script::
 
     python examples/comparison_with_matlab.py
 
@@ -46,19 +46,19 @@ which runs model balancing on a list of JSON examples and for a fixed set of val
 
 The code was tested with Python 3.9 on Ubuntu Linux 21.04.
 
-License
-=======
+License:
+********
 
 This package is released under the GNU General Public License.
 
-Contact
-=======
+Contact:
+********
 
 Please contact `Wolfram Liebermeister <mailto:wolfram.liebermeister@gmail.com>`_
 and `Elad Noor <mailto:elad.noor@weizmann.ac.il>`_ with any questions or comments.
 
-References
-==========
+References:
+***********
 
 .. footbibliography::
 
@@ -70,10 +70,11 @@ References
    autoapi/index
    autoapi/python/src/model_balancing/index
 
+..
+  Indices and tables
+  ==================
+  
+  * :ref:`genindex`
+  * :ref:`modindex`
+  * :ref:`search`
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
