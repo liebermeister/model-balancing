@@ -40,7 +40,7 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
 #    "sphinxcontrib.bibtex",
-    "autoapi.sphinx",
+    "autoapi.extension",
     "nbsphinx",
 ]
 
@@ -53,15 +53,33 @@ templates_path = ['_templates']
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", ".ipynb_checkpoints"]
 
 # -- Sphinx AutoAPI ----------------------------------------------------------
-autoapi_type = "../python"
-autoapi_dirs = ["../python/src/model_balancing"]
+autoapi_type = "python"
+autoapi_dirs = ["../../python/src/model_balancing"]
 autoapi_options = [
     "members",
     "undoc-members",
     "show-inheritance",
 ]
-autoapi_modules = {'model_balancing': None}
 
+# Example configuration for intersphinx: refer to the Python standard library.
+intersphinx_mapping = {
+    "http://docs.python.org/": None,
+    "http://docs.scipy.org/doc/numpy/": None,
+    "http://docs.scipy.org/doc/scipy/reference": None,
+}
+intersphinx_cache_limit = 10  # days to keep the cached inventories
+
+
+def skip_member_handler(app, what, name, obj, skip, options):
+    return skip or name.endswith(".logger")
+
+
+def setup(app):
+    app.connect("autoapi-skip-member", skip_member_handler)
+
+
+# For debugging purposes only.
+# autoapi_keep_files = True
 
 # -- Options for HTML output -------------------------------------------------
 
