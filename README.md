@@ -12,12 +12,8 @@ format, models can be provided in  [SBML](http://sbml.org) or  [SBtab](https://w
 To run model balancing in matlab, please have a look at the demo scripts in `matlab/demo` and adjust them to your model and data.
 For HTML documentation of the matlab code, see `matlab/doc`. For help in matlab, please type `help model-balancing`.
 
-### Python and JSON file format
-To run model balancing in python, your model and input data need to be encoded in a JSON file.
-To generate this file format from model and data files (in SBML / SBtab formats),
-you can use the matlab function `cvxpy_problem_data_structure.m`
-(as shown in the demo script `matlab/demo/demo_cmb_experimental_data.m`).
-For a description of the JSON format, see [examples](examples).
+### Python
+For using model balancing in python, please refer to our [Read The Docs](https://model-balancing.readthedocs.io/en/latest/index.html) page.
 
 ### Example models
 Example model and data files can be found in the folder "resources". 
@@ -45,9 +41,9 @@ This can be done in matlab and is shown in `demo_cmb_experimental_data.m`. For a
 type `help cvxpy_problem_data_structure` in matlab.
 
 ## Installation
-You have two options to choose from: Matlab or Python.
+These installtion instructions are only for the Matlab version.
+For Python, please refer to our [Read The Docs](https://model-balancing.readthedocs.io/en/latest/index.html) page.
 
-### Matlab
 - [SBML toolbox](http://sbml.org/Software/SBMLToolbox) (optional - needed only if SBML files are used;
   version needs to match your matlab version and  requires a matching version of libSBML)
 - Clone the following [GitHub](https://github.com/liebermeister) repositories
@@ -58,28 +54,6 @@ You have two options to choose from: Matlab or Python.
 - Make sure all the directories and subdirectories are included in your Matlab path.
 
 The code was tested with Matlab R2019b on Linux. 
-### Python
-Clone this repository:
-```bash
-git clone https://github.com/liebermeister/model-balancing.git
-```
-Install using the package in a new Virtual Environment using:
-```bash
-cd python
-python -m venv venv
-source venv/bin/activate
-pip install -e .
-```
-Obtain a license for [MOSEK](https://www.mosek.com/), for example you might qualify for a
-[free academic license](https://www.mosek.com/products/academic-licenses/).
-
-Now you can then try the example script:
-```bash
-python examples/comparison_with_matlab.py
-```
-which runs model balancing on a list of JSON examples and for a fixed set of values for α.
-
-The code was tested with Python 3.9 on Ubuntu Linux 21.04. 
 
 ## License
 This package is released under the [GNU General Public License](LICENSE).
