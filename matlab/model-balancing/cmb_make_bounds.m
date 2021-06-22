@@ -63,8 +63,9 @@ bounds.e_max =  cmb_options.quantities.e.max * ones(nr,1);
 bounds.a_forward_min = cmb_options.quantities.Aforward.min * ones(nr,1);
 bounds.a_forward_max = cmb_options.quantities.Aforward.max * ones(nr,1);
 
-bounds.conc_min = conc_min;
-bounds.conc_max = conc_max;
+% deprecated -  use bounds.x_min, bounds.x_max instead
+% bounds.conc_min = conc_min;
+% bounds.conc_max = conc_max;
 
 % check for identical lower and upper bounds
 if sum(bounds.q_min==bounds.q_max),

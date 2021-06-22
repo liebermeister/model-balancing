@@ -32,9 +32,8 @@ ns = size(preposterior.X.mean,2);
 
 pp.network.kinetics = cmb_q_to_kinetics(q,pp.network,cmb_options,q_info);
 
-q_log_preposterior = - 0.5 *          [q - preposterior.q.mean]' * preposterior.q.cov_inv * [q - preposterior.q.mean];
-
-x_log_posterior    = - 0.5 * sum(sum([[X - preposterior.X.mean] ./ preposterior.X.std ].^2));
+log_posterior_q = - 0.5 *          [q - preposterior.q.mean]' * preposterior.q.cov_inv * [q - preposterior.q.mean];
+log_posterior_x = - 0.5 * sum(sum([[X - preposterior.X.mean] ./ preposterior.X.std ].^2));
 
 
 % ------------------------------
@@ -45,61 +44,68 @@ for it = 1:ns,
   x      = X(:,it);
   c      = exp(x);
   pp.v   = v;
-  [~, e] = ecm_get_score(cmb_options.ecm_score,x,pp,no_warnings);
-  E(:,it) = e;
+  [~, E] = ecm_get_score(cmb_options.ecm_score,x,pp,no_warnings);
+  lnE(:,it) = log(E);
   Aforward(:,it) = RT * diag(sign(v)) * [log(pp.network.kinetics.Keq) - pp.network.N' * x];
 end
 
+% check
 if verbose,
-  if find(Aforward<0), 
+  if find(Aforward<0),
     display('Constraint violation detected');
   end
 end
 
-% Avoid zero enzyme levels (because of description on log scale)
-E(find(V==0)) = 10^-10;
-E(find([Aforward<0])) = inf;
+% Avoid zero or negative enzyme levels (because of description on log scale)
+lnE(find(V==0))         = log(10^-10);
+lnE(find([Aforward<0])) = inf;
 
-ln_e_log_posterior_upper  = [[log(E) - preposterior.lnE.mean] ./ preposterior.lnE.std ].^2 .* double(log(E) >= preposterior.lnE.mean);
-ln_e_log_posterior_lower  = [[log(E) - preposterior.lnE.mean] ./ preposterior.lnE.std ].^2 .* double(log(E) < preposterior.lnE.mean);
+lnE_log_posterior_upper  = - 0.5 * sum(sum( [[lnE - preposterior.lnE.mean] ./ preposterior.lnE.std ].^2 .* double(lnE >= preposterior.lnE.mean)));
+lnE_log_posterior_lower  = - 0.5 * sum(sum( [[lnE - preposterior.lnE.mean] ./ preposterior.lnE.std ].^2 .* double(lnE <  preposterior.lnE.mean)));
 
 switch cmb_options.enzyme_score_type,
   case 'quadratic'
-    % normal quadratic term: with this option, MB is not guaranteed to be convex!
-    ln_e_log_posterior  = - 0.5 * sum(sum(ln_e_log_posterior_lower + ln_e_log_posterior_upper));
+    % with this option, MB is not guaranteed to be convex!
+    my_alpha = 1;
   case 'monotonic',
     % set likehood for E values below posterior mean to 0 
-    % -> makes enzyme posterior score monotonically increasing;
-    % and therefore overall MP problem convex
-    ln_e_log_posterior = - 0.5 * sum(sum(ln_e_log_posterior_upper));
+    % -> monotonically increasing enzyme posterior score; overall MP problem is convex
+    my_alpha = 0;
   case 'interpolated',
-    ln_e_log_posterior = - 0.5 * sum(sum(cmb_options.enzyme_score_alpha * ln_e_log_posterior_lower + ln_e_log_posterior_upper));
-    otherwise('error');
+    my_alpha = cmb_options.enzyme_score_alpha;
+  otherwise('error');
 end
+
+log_posterior_lnE = my_alpha * lnE_log_posterior_lower + lnE_log_posterior_upper;
+
 
 % -----------------------------------------------
 % c / KM pseudo values term
 
-ln_c_over_km_log_posterior = 0;
+log_posterior_ln_c_over_km = 0;
 
 if cmb_options.beta_ln_c_over_km > 0,
+  %% 1/sigma for pseudo value term for sum_til ln(c_i(t)/km_il)
   for it = 1:size(X,2),  
     x = X(:,it);
-    dum = [repmat(x',nr,1) - log(pp.network.kinetics.KM)];
-    dum = sum(find(pp.network.kinetics.KM~=0));
-    c_over_km_score = 1/2 * cmb_options.beta_ln_c_over_km^2 * sum(sum(dum.^2));
-    ln_c_over_km_log_posterior = ln_c_over_km_log_posterior + c_over_km_score;
+    log_c_over_km   = [repmat(x',nr,1) - log(pp.network.kinetics.KM)];
+    log_c_over_km   = sum(find(pp.network.kinetics.KM~=0));
+    c_over_km_score = - 0.5 * cmb_options.beta_ln_c_over_km^2 * sum(sum(log_c_over_km.^2));
+    log_posterior_ln_c_over_km = log_posterior_ln_c_over_km + c_over_km_score;
   end
-% sigma for pseudo value term for sum_til ln(c_i(t)/km_il)
 end
 
-log_posterior = q_log_preposterior + x_log_posterior + ln_e_log_posterior + ln_c_over_km_log_posterior;
+% -----------------------------------------------
+
+log_posterior = log_posterior_q + log_posterior_x + log_posterior_lnE + log_posterior_ln_c_over_km;
 
 if verbose,
-  q_log_preposterior
-  x_log_posterior
-  ln_e_log_posterior
+  log_posterior_q
+  log_posterior_x
+  log_posterior_lnE
+  log_posterior_ln_c_over_km
 end
+
 
 % ---------------------------------------------------------------------------
 % Compute gradient
@@ -140,15 +146,16 @@ end
     de_dq  = - diag(e./v) * Eun_k * diag(k);
     %e_mean = preposterior.E.mean(:,it);
     %e_std  = preposterior.E.std(:,it);
-    ln_e_mean = preposterior.lnE.mean(:,it);
-    ln_e_std  = preposterior.lnE.std(:,it);
+    lnE_mean = preposterior.lnE.mean(:,it);
+    lnE_std  = preposterior.lnE.std(:,it);
     %log_preposterior_gradient_eX(:,it) = [[e - e_mean] ./ [e_std.^2]]' * de_dx;
     %log_preposterior_gradient_eq(:,it) = [[e - e_mean] ./ [e_std.^2]]' * de_dq;
-    log_preposterior_gradient_eX(:,it) = [[log(e) - ln_e_mean] ./ [ln_e_std.^2]]' * de_dx;
-    log_preposterior_gradient_eq(:,it) = [[log(e) - ln_e_mean] ./ [ln_e_std.^2]]' * de_dq;
+    log_preposterior_gradient_eX(:,it) = [[log(e) - lnE_mean] ./ [lnE_std.^2]]' * de_dx;
+    log_preposterior_gradient_eq(:,it) = [[log(e) - lnE_mean] ./ [lnE_std.^2]]' * de_dq;
   end
 
   log_posterior_gradient_q = - preposterior.q.cov_inv * [q-preposterior.q.mean] + sum(log_preposterior_gradient_eq')';
   log_posterior_gradient_X = - [X-preposterior.X.mean]./[preposterior.X.std.^2] + log_preposterior_gradient_eX;
   log_posterior_gradient   = cmb_qX_to_y(log_posterior_gradient_q,log_posterior_gradient_X,nm,ns);
+  
 end

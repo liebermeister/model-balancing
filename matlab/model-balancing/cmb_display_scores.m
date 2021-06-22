@@ -6,7 +6,7 @@ eval(default('true','[]','verbose','0'));
 
 if ~isempty(true),
   y_true     = cmb_qX_to_y(true.q,true.X,nm,cmb_options.ns);
-  score_true = cmb_log_posterior(y_true,pp,preposterior,true.V,cmb_options,q_info, verbose);
+  score_true = cmb_log_posterior(y_true, pp, preposterior, V, cmb_options, q_info, verbose);
   display(sprintf('log posterior TRUE:      %f', score_true ));
 end
 

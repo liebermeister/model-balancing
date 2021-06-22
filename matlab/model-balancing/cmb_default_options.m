@@ -20,7 +20,7 @@ function cmb_options = cmb_default_options(flag_artificial)
 %   .enzyme_score_type       = 'interpolated';      % 'quadratic' (alpha=1), 'monotonic' (alpha =0), 'interpolated'
 %                                                     (only "monotonic" guarantees that MB is convex!)
 %   .enzyme_score_alpha      = 0.5;                 % stringency parameter alpha for enzyme_score_type='interpolated'
-%   .beta_ln_c_over_km       = 0                    % beta = 1/sigma for penalty on sum_til ln(c_i(t)/km_il)
+%   .beta_ln_c_over_km       = 0                    % beta = 1/sigma for penalty on sum_til ln(c_i(t)/km_il) = 1/ln(geom std of c/KM)!!
 %   .parameterisation        = 'Keq_KV_KM_KA_KI';   % options: 'Keq_KV_KM_KA_KI', 'KV_KM_KA_KI';
 %   .use_kinetic_data        = 'all';               % 'all', 'only_Keq', 'none'
 %   .score                   = 'neg_log_posterior'; % options: 'neg_log_posterior', 'log_neg_log_posterior';

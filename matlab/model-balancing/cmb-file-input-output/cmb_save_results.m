@@ -53,7 +53,7 @@ end
 
 ecm_sbtab_options = struct('r', optimal.kinetics,'method','emc4cm','document_name',filenames.model_name, 'save_tolerance_ranges',0,'sbtab_attributes',struct('DocumentName', 'MB result', 'Document', 'MBresult', 'StringencyAlpha', sprintf('%f.2',cmb_options.enzyme_score_alpha), 'CalculationTime', sprintf('%f s',options.calculation_time)),'filename_model_state', filenames.extension_model_state, 'filename_state_runs',filenames.extension_state_runs);
 
-ecm_save_result_sbtab(filenames.balanced, network_optimal, result.C, result.E, result.DeltaG, ecm_sbtab_options,bounds.conc_min, bounds.conc_max,[],[],[],[],[],result.V);
+ecm_save_result_sbtab(filenames.balanced, network_optimal, result.C, result.E, result.DeltaG, ecm_sbtab_options, exp(bounds.x_min), exp(bounds.x_max), [],[],[],[],[],result.V);
 
 
 % -----------------------------------------
@@ -75,7 +75,7 @@ if length(true),
   
   ecm_sbtab_options = struct('r', optimal.kinetics,'method','emc4cm','document_name',filenames.model_name, 'save_tolerance_ranges',0,'sbtab_attributes',struct('DocumentName', 'MB result', 'Document', 'MBresult', 'CalculationTime', sprintf('%f s',options.calculation_time)),'filename_model_state', filenames.extension_model_state, 'filename_state_runs', filenames.extension_state_runs);
 
-  ecm_save_result_sbtab(filenames.true, network_true, result.C, result.E, result.A, ecm_sbtab_options, bounds.conc_min, bounds.conc_max,[],[],[],[],[],result.V);
+  ecm_save_result_sbtab(filenames.true, network_true, result.C, result.E, result.A, ecm_sbtab_options, exp(bounds.x_min), exp(bounds.x_max),[],[],[],[],[],result.V);
 
 end
 

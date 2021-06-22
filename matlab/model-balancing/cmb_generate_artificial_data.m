@@ -86,7 +86,6 @@ bounds = cmb_make_bounds(network, q_info, cmb_options, conc_min, conc_max);
 
 prior = cmb_make_prior(network,q_info,cmb_options);
 
-
 % -------------------------------------------------------------
 % Generate "true" data points based on existing data set;
 % use feasible state, randomise enzyme and ext. metab levels (multiplicative random variations),
@@ -136,8 +135,10 @@ for j=1:ns,
   [c_ss,v_ss] = network_steady_state(my_network, my_network.kinetics.c);
   true.X(:,j) = log(c_ss);
   true.V(:,j) = v_ss;
-  true.A_forward(:,j) = sign(v_ss) .* [log(network.kinetics.Keq) - network.N' * true.X(:,j)];
+  true.A(:,j) = log(network.kinetics.Keq) - network.N' * true.X(:,j);
+  true.A_forward(:,j) = sign(v_ss) .* true.A(:,j);
 end
+if find(true.A .* true.V <0), error('infeasible flux direction'); end
 
 true.kinetics = network.kinetics;
 
@@ -166,7 +167,7 @@ if cmb_options.use_artificial_noise,
     display('Using artificial metabolic data with noise');
   end
   data.V.mean = data.V.mean + data.V.std .* randn(nr,ns);
-  ind_wrong_sign = find(data.V.mean .* data.V.mean <0);
+  ind_wrong_sign = find(data.V.mean .* true.V <0);
   data.V.mean(ind_wrong_sign) = -data.V.mean(ind_wrong_sign);
   data.X.mean = data.X.mean + data.X.std .* randn(nm,ns);
   %data.E.mean = data.E.mean + data.E.std .* randn(nr,ns);
@@ -191,6 +192,7 @@ else
   end
 end
 
+data.kinetics_median = cmb_qall_to_kinetics(data.qall.mean,network,cmb_options,q_info);
 
 % --------------------------------------------------------------
 % check whether true values satisfy bounds

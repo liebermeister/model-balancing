@@ -187,19 +187,23 @@ end
 if cmb_options.use_bounds,
   if sum(q_info.M_q_to_qall * init.q < bounds.q_all_min), 
     q_info.M_q_to_qall * init.q - bounds.q_all_min
-    error('Infeasible initial point'); 
+    error('Infeasible initial point: parameter below lower bound!'); 
   end
   if sum(q_info.M_q_to_qall * init.q > bounds.q_all_max), 
     q_info.M_q_to_qall * init.q - bounds.q_all_max
-    error('Infeasible initial point'); 
+    error('Infeasible initial point: parameter above upper bound!'); 
   end
 end
 
 % Metabolite data, bounds 
 
 if cmb_options.use_bounds,
-  if sum(sum(init.X < repmat(bounds.x_min,1,ns))), error('Infeasible initial point'); end
-  if sum(sum(init.X > repmat(bounds.x_max,1,ns))), error('Infeasible initial point'); end
+  if sum(sum(init.X < repmat(bounds.x_min,1,ns))), 
+    error('Infeasible initial point: concentration below lower bound!'); 
+  end
+  if sum(sum(init.X > repmat(bounds.x_max,1,ns))), 
+    error('Infeasible initial point: concentration above upper bound!'); 
+  end
 end
 
 % Thermodynamic forces, directions
@@ -207,8 +211,12 @@ end
 my_ln_Keq       = init.q(q_info.q.index.Keq);
 my_theta_matrix = repmat(my_ln_Keq,1,ns) - network.N' * init.X;
 
-if sum(sum(my_theta_matrix .* data.V.mean < 0)),          error('Infeasible initial point'); end
-if sum(sum([my_theta_matrix == 0] .* [data.V.mean ~=0])), error('Infeasible initial point'); end
+if sum(sum(my_theta_matrix .* data.V.mean < 0)),
+  error('Infeasible initial point: flux opposite to driving force!'); 
+end
+if sum(sum([my_theta_matrix == 0] .* [data.V.mean ~=0])), 
+  error('Infeasible initial point: flux at zero driving force!'); 
+end
 
 
 % ------------------------------------------------------
@@ -297,8 +305,8 @@ if err<0,
 end
 
 %CHECK: show function value of initial guess and end result
-f_init = cmb_log_posterior(y_init,pp,preposterior,V,cmb_options,q_info);
-f_opt  = cmb_log_posterior(y_opt,pp,preposterior,V,cmb_options,q_info);
+f_init = cmb_log_posterior(y_init, pp, preposterior, V, cmb_options,q_info);
+f_opt  = cmb_log_posterior(y_opt, pp, preposterior, V, cmb_options,q_info);
 if f_init>f_opt,
   if init_feasible,
     display('Optimised value is worse than initial guess; keeping initial value');

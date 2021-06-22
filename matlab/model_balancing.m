@@ -112,8 +112,8 @@ if isempty(true),
   end
 end
 
-conc_min = bounds.conc_min;
-conc_max = bounds.conc_max;
+conc_min = exp(bounds.x_min);
+conc_max = exp(bounds.x_max);
 
 % check whether fluxes are thermodynamically feasible
 thermo_pb_options.c_min = conc_min;
@@ -126,6 +126,9 @@ for it = 1:size(V,2),
 end
 display('Flux distributions are thermo-physiologically feasible');
 
+if find(bounds.x_min==bounds.x_max), 
+  warning('Model contains equal lower and upper bounds for some metabolites; this is not recommended - if possible, use broader ranges and data values instead');
+end
 
 % -----------------------------------------------
 % Initial values
@@ -271,6 +274,20 @@ if cmb_options.show_graphics,
   cmb_diagnostic_network_graphics(network, data, optimal, cmb_options, q_info, 20, 1, filenames.graphics_dir);
 end
 
+% check which variables (parameters and concentrations) have no data attached and hit a bound
+% (should work, but has not been tested)
+
+% q_without_data     = ~isfinite(data.qall.mean(q_info.q.index_q));
+% q_hits_lower_bound = optimal.q==bounds.q_min;
+% q_hits_upper_bound = optimal.q==bounds.q_max;
+% 
+% parameters_hitting_bound_and_no_data = q_info.q.names(find(q_without_data .* [q_hits_lower_bound + q_hits_upper_bound]))
+% 
+% x_without_data     = ~isfinite(data.X.mean);
+% x_hits_lower_bound = optimal.C == repmat(exp(bounds.x_min),1,ns)';
+% x_hits_upper_bound = optimal.C == repmat(exp(bounds.x_min),1,ns)';
+% 
+% metabolites_hitting_bound_and_no_data = network.metabolites(find(sum(x_without_data .* [x_hits_lower_bound + x_hits_upper_bound])'))
 
 % -----------------------------------------------
 % Save results as SBtab files and .mat files
@@ -302,6 +319,7 @@ if cmb_options.save_results,
     mytable(report,0,filenames.report_txt);
   end
 end
+
 
 % --------------------------------------------------------------
 %% Clear global variables

@@ -15,7 +15,7 @@ function [posterior_mean, posterior_cov, posterior_std] = combine_prior_and_like
 %   posterior_cov:  posterior covariance matrix
 
 % projector matrix P (from all variables to those for which valid data values are available)
-is_ok = find(isfinite(data_mean).*isfinite(data_std));
+is_ok = find(isfinite(data_mean) .* isfinite(data_std));
 I = eye(length(data_mean));
 P = I(is_ok,:);
 
