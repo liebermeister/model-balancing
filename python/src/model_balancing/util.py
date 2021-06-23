@@ -1,13 +1,5 @@
-# -*- coding: utf-8 -*-
 """
-This is my module brief line.
-
-This is a more complete paragraph documenting my module.
-
-- A list item.
-- Another list item.
-
-This section can use any reST syntax.
+This module containts a few mathematical utility functions for model balancing.
 """
 
 import itertools
@@ -18,9 +10,6 @@ from typing import Union
 import cvxpy as cp
 import numpy as np
 import pint
-
-# Disable Pint's old fallback behavior (must come before importing Pint)
-os.environ["PINT_ARRAY_PROTOCOL_FALLBACK"] = "0"
 
 ureg = pint.UnitRegistry(system="mks")
 Q_ = ureg.Quantity
@@ -75,7 +64,8 @@ def B_matrix(Nc: int, col_subs: np.ndarray, col_prod: np.ndarray) -> np.ndarray:
 def logistic(x: np.ndarray) -> np.ndarray:
     """elementwise calculation of: log(1 + e ^ x)"""
     return np.log(1.0 + np.exp(x))
-    
+
+
 __all__ = [
     "logistic",
     "B_matrix",

@@ -1,13 +1,6 @@
-# -*- coding: utf-8 -*-
 """
-This is my module brief line.
+A module for performing full model balancing (using SciPy).
 
-This is a more complete paragraph documenting my module.
-
-- A list item.
-- Another list item.
-
-This section can use any reST syntax.
 """
 
 import itertools
@@ -21,20 +14,24 @@ from sbtab import SBtab
 from scipy.optimize import minimize
 
 from . import (
+    DEFAULT_UNITS,
+    DEPENDENT_VARIABLES,
+    INDEPENDENT_VARIABLES,
     MIN_DRIVING_FORCE,
     Q_,
     RT,
-    INDEPENDENT_VARIABLES,
-    DEPENDENT_VARIABLES,
-    DEFAULT_UNITS,
 )
 from .io import read_arguments_json, to_model_sbtab, to_state_sbtab
 
 
 class ModelBalancing(object):
     """A class for performing Model Balancing (non-convex version).
+
+    This version of model balancing solves the exact non-convex problem. The
+    α parameter can be used to tune between a convex version (α = 0) and the
+    full version (α = 1).
     """
-    
+
     def __init__(
         self,
         S: np.array,
@@ -130,6 +127,10 @@ class ModelBalancing(object):
 
     @staticmethod
     def from_json(fname: str) -> "ModelBalancing":
+        """Initialize a ModelBalancing object using a JSON file.
+
+        See our page about the :ref:`JSON specification sheet <json>`.
+        """
         args = read_arguments_json(fname)
         return ModelBalancing(**args)
 
@@ -175,10 +176,12 @@ class ModelBalancing(object):
         return var_dict
 
     def objective_function(self, x: Optional[np.ndarray] = None) -> float:
-        """Calculate the sum of squares of all Z-scores.
+        """Calculate the sum of squares of all Z-scores for a given point (x).
 
         The input (x) is a stacked version of all the independent variables, assuming
         the following order: Km, Ka, Ki, Keq, kcatf, conc_met
+        By default, if x is None, the objective value for (the exponent of)
+        self.ln_x is returned.
         """
         var_dict = self._get_full_variable_dictionary(x)
 
@@ -222,6 +225,7 @@ class ModelBalancing(object):
 
     @property
     def objective_value(self) -> float:
+        """Get the objective value (i.e. the sum of squares of all z-scores)."""
         return self.objective_function()
 
     @staticmethod
@@ -330,11 +334,11 @@ class ModelBalancing(object):
         ln_Keq: np.ndarray,
         ln_conc_met: np.ndarray,
     ) -> np.ndarray:
-        """Calculates the driving forces of all reactions."""
         return np.vstack([ln_Keq] * self.Ncond).T - self.S.T @ ln_conc_met
 
     @property
     def driving_forces(self) -> np.ndarray:
+        """Calculates the driving forces of all reactions."""
         return self._driving_forces(self.ln_Keq, self.ln_conc_met)
 
     @staticmethod
@@ -344,12 +348,12 @@ class ModelBalancing(object):
         ln_Km: np.ndarray,
         ln_Keq: np.ndarray,
     ) -> np.ndarray:
-        """Calculate the kcat-reverse based on Haldane relationship constraint."""
         ln_Km_matrix = ModelBalancing._create_dense_matrix(S, ln_Km)
         return np.diag(S.T @ ln_Km_matrix) + ln_kcatf - ln_Keq
 
     @property
     def ln_kcatr(self) -> np.ndarray:
+        """Calculate the kcat-reverse based on Haldane relationship constraint."""
         return ModelBalancing._ln_kcatr(self.S, self.ln_kcatf, self.ln_Km, self.ln_Keq)
 
     def _ln_capacity(
@@ -357,10 +361,11 @@ class ModelBalancing(object):
         ln_kcatf: np.ndarray,
         ln_kcatr: np.ndarray,
     ) -> np.ndarray:
-        """Calculate the capacity term of the enzyme."""
+        """Calculate the capacity term of the enzyme.
 
-        # for positive fluxes we take the kcatf, and for negative ones we take
-        # the kcatr. reactions with zero flux, are not counted at all.
+        for positive fluxes we take the kcatf, and for negative ones we take
+        the kcatr. reactions with zero flux, are not counted at all.
+        """
 
         ln_cap = np.zeros((self.Nr, self.Ncond))
         for i in range(self.Nr):
@@ -374,7 +379,6 @@ class ModelBalancing(object):
         return ln_cap
 
     def _ln_eta_thermodynamic(self, driving_forces: np.ndarray) -> np.ndarray:
-        """Calculate the thermodynamic term of the enzyme."""
         eta_thermo = 1.0 - np.exp(-np.abs(driving_forces))
 
         # we ignore reactions that have exactly 0 flux (since we can assume
@@ -387,6 +391,7 @@ class ModelBalancing(object):
 
     @property
     def ln_eta_thermodynamic(self) -> np.ndarray:
+        """Calculate the thermodynamic term of the enzyme."""
         return self._ln_eta_thermodynamic(self.driving_forces)
 
     def _ln_eta_kinetic(
@@ -394,7 +399,6 @@ class ModelBalancing(object):
         ln_conc_met: np.ndarray,
         ln_Km: np.ndarray,
     ) -> np.ndarray:
-        """Calculate the kinetic (saturation) term of the enzyme."""
         S_neg = abs(self.S)
         S_pos = abs(self.S)
         S_neg[self.S > 0] = 0.0
@@ -447,6 +451,7 @@ class ModelBalancing(object):
 
     @property
     def ln_eta_kinetic(self) -> np.ndarray:
+        """Calculate the kinetic (saturation) term of the enzyme."""
         return self._ln_eta_kinetic(self.ln_conc_met, self.ln_Km)
 
     def _ln_eta_regulation(
@@ -455,7 +460,6 @@ class ModelBalancing(object):
         ln_Ka: np.ndarray,
         ln_Ki: np.ndarray,
     ) -> np.ndarray:
-        """Calculate the regulation (allosteric) term of the enzyme."""
         ln_eta_regulation = np.zeros((self.Nr, self.Ncond))
         if ln_Ka.size == 0 and ln_Ki.size == 0:
             return ln_eta_regulation
@@ -476,6 +480,7 @@ class ModelBalancing(object):
 
     @property
     def ln_eta_regulation(self) -> np.ndarray:
+        """Calculate the regulation (allosteric) term of the enzyme."""
         return self._ln_eta_regulation(self.ln_conc_met, self.ln_Ka, self.ln_Ki)
 
     def _ln_conc_enz(
@@ -487,7 +492,6 @@ class ModelBalancing(object):
         ln_Ki: np.ndarray,
         ln_conc_met: np.ndarray,
     ) -> np.ndarray:
-        """Calculate the required enzyme levels based on fluxes and rate laws."""
         driving_forces = self._driving_forces(ln_Keq, ln_conc_met)
         ln_kcatr = self._ln_kcatr(self.S, ln_kcatf, ln_Km, ln_Keq)
         ln_capacity = self._ln_capacity(ln_kcatf, ln_kcatr)
@@ -498,6 +502,7 @@ class ModelBalancing(object):
 
     @property
     def ln_conc_enz(self) -> np.ndarray:
+        """Calculate the required enzyme levels based on fluxes and rate laws."""
         return self._ln_conc_enz(
             self.ln_Keq,
             self.ln_kcatf,
@@ -508,6 +513,13 @@ class ModelBalancing(object):
         )
 
     def is_gmean_feasible(self) -> bool:
+        """Check if the gmean  is a thermodynamically feasible solution.
+
+        This is useful because we sometimes would like to initialize the
+        optimization with the geometric means, but that can only be done if
+        that point is feasible (otherwise, the dependent parameter
+        conc_enz is not defined).
+        """
         return (
             self._driving_forces(self.ln_gmean["Keq"], self.ln_gmean["conc_met"])
             >= (MIN_DRIVING_FORCE / RT).m_as("")
@@ -581,7 +593,12 @@ class ModelBalancing(object):
         )
 
     def initialize_with_gmeans(self) -> None:
-        # set the independent parameters values to the geometric means
+        """Initialize the independent parameters with their gmeans.
+
+        Note that the dependent parameters (kcatr and ln_conc_enz) can both
+        be very far from their gmeans, and that the system might not be
+        thermodynamically feasible.
+        """
         for p in INDEPENDENT_VARIABLES:
             self.__setattr__(f"ln_{p}", self.ln_gmean[p])
 
@@ -591,6 +608,7 @@ class ModelBalancing(object):
             self.ln_gmean[p] = self.__getattribute__(f"ln_{p}")
 
     def solve(self, solver: str = "SLSQP", options: Optional[dict] = None) -> None:
+        """Find a local minimum of the objective function using SciPy."""
         x0 = np.array(list(self.ln_x))
         r = minimize(
             fun=self.objective_function,
@@ -607,6 +625,7 @@ class ModelBalancing(object):
             self.__setattr__(key, val)
 
     def print_z_scores(self) -> None:
+        """Print the z-score values for all variables."""
         for p in INDEPENDENT_VARIABLES + DEPENDENT_VARIABLES:
             ln_p_gmean = self.ln_gmean[p]
             ln_p_precision = self.__getattribute__(f"ln_{p}_precision")
@@ -625,6 +644,7 @@ class ModelBalancing(object):
             print(f"{p} = {z:.2f}")
 
     def print_status(self) -> None:
+        """Print a status report based on the current solution."""
         print("\nMetabolite concentrations (M) =\n", np.exp(self.ln_conc_met))
         print("\nEnzyme concentrations (M) =\n", np.exp(self.ln_conc_enz))
         print("\nDriving forces (RT) =\n", self.driving_forces)
@@ -634,6 +654,12 @@ class ModelBalancing(object):
         print("\n\n\n")
 
     def to_state_sbtab(self) -> SBtab.SBtabDocument:
+        """Create a state SBtab.
+
+        The state SBtab contains the values of the state-dependent variables,
+        i.e. flux, concentrations of metabolites, concentrations of enzymes,
+        and the ΔG' values.
+        """
         v = self.fluxes
         c = Q_(np.exp(self.ln_conc_met), "M")
         e = Q_(np.exp(self.ln_conc_enz), "M")
@@ -661,6 +687,11 @@ class ModelBalancing(object):
         return state_sbtabdoc
 
     def to_model_sbtab(self) -> SBtab.SBtabDocument:
+        """Create a model SBtab.
+
+        The model SBtab contains the values of the state-independent variables,
+        i.e. kcatf, kcatr, Km, Ka, and Ki.
+        """
         kcatf = Q_(np.exp(self.ln_kcatf), "1/s")
         kcatr = Q_(np.exp(self.ln_kcatr), "1/s")
         Keq = Q_(np.exp(self.ln_Keq), "")
@@ -684,8 +715,6 @@ class ModelBalancing(object):
         model_sbtabdoc.set_name("MB result")
         model_sbtabdoc.change_attribute("RelaxationAlpha", f"{self.alpha}")
         return model_sbtabdoc
-        
-__all__ = [
-    'ModelBalancing'
-]
 
+
+__all__ = ["ModelBalancing"]

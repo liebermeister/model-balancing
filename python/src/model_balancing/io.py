@@ -1,24 +1,16 @@
-# -*- coding: utf-8 -*-
 """
-This is my module brief line.
+A module for I/O operations related to model balancing.
 
-This is a more complete paragraph documenting my module.
-
-- A list item.
-- Another list item.
-
-This section can use any reST syntax.
 """
 
 import json
-from typing import Dict, Union, List
+from typing import Dict, List, Union
 
 import numpy as np
-from sbtab import SBtab
 import pandas as pd
+from sbtab import SBtab
 
 from . import Q_
-
 
 JSON_NAME_MAPPINGS = {
     "Keq": ("kinetic_constants", "Keq"),
@@ -29,7 +21,7 @@ JSON_NAME_MAPPINGS = {
     "kcatr": ("kinetic_constants", "Kcatr"),
     "conc_met": ("metabolite_concentrations",),
     "conc_enz": ("enzyme_concentrations",),
-}
+}  # mapping from the variable names in python to the location in the JSON
 
 
 def standardize_input_matrix(x: Union[List[float], np.array], unit: str) -> Q_:
@@ -50,6 +42,10 @@ def standardize_input_matrix(x: Union[List[float], np.array], unit: str) -> Q_:
 def read_arguments_json(
     json_fname: str,
 ) -> Dict[str, np.array]:
+    """Read the list of model balancing arguments from a JSON.
+
+    See our page about the :ref:`JSON specification sheet <json>`.
+    """
     with open(json_fname, "rt") as fp:
         data = json.load(fp)
 
@@ -125,6 +121,12 @@ def to_state_sbtab(
     reaction_names,
     state_names,
 ) -> SBtab.SBtabDocument:
+    """Create a state SBtab.
+
+    The state SBtab contains the values of the state-dependent variables,
+    i.e. flux, concentrations of metabolites, concentrations of enzymes,
+    and the ΔG' values.
+    """
 
     state_sbtabdoc = SBtab.SBtabDocument(name="MB result")
     flux_df = pd.DataFrame(v.m_as("mM/s"), columns=state_names)
@@ -191,6 +193,11 @@ def to_model_sbtab(
     reaction_names,
     state_names,
 ) -> SBtab.SBtabDocument:
+    """Create a model SBtab.
+
+    The model SBtab contains the values of the state-independent variables,
+    i.e. kcatf, kcatr, Km, Ka, and Ki.
+    """
 
     model_sbtabdoc = SBtab.SBtabDocument(name="MB result")
 
@@ -242,7 +249,7 @@ def to_model_sbtab(
     model_sbtabdoc.add_sbtab(parameter_sbtab)
 
     return model_sbtabdoc
-    
+
 
 __all__ = [
     "standardize_input_matrix",
@@ -250,4 +257,3 @@ __all__ = [
     "to_state_sbtab",
     "to_model_sbtab",
 ]
-

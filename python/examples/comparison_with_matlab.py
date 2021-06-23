@@ -1,12 +1,11 @@
 import os
-from path import Path
-from model_balancing import (
-    ModelBalancing,
-    ModelBalancingConvex,
-    INDEPENDENT_VARIABLES,
-)
+
 import cvxpy as cp
+from model_balancing import INDEPENDENT_VARIABLES
 from model_balancing.io import read_arguments_json
+from model_balancing.model_balancing_cvx import ModelBalancingConvex
+from model_balancing.model_balancing_noncvx import ModelBalancing
+from path import Path
 
 os.chdir("/home/eladn/git/model-balancing")
 
