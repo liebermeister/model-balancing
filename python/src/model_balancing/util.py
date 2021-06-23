@@ -20,7 +20,7 @@ with warnings.catch_warnings():
 
 
 def B_matrix(Nc: int, col_subs: np.ndarray, col_prod: np.ndarray) -> np.ndarray:
-    """Build the B matrix for the eta^kin expression.
+    """Build the B matrix for the :math:`\eta^{kin}` expression.
 
     row_subs : np.ndarray
         A column from the substrate stoichiometric matrix. We assume
@@ -62,7 +62,7 @@ def B_matrix(Nc: int, col_subs: np.ndarray, col_prod: np.ndarray) -> np.ndarray:
 
 
 def logistic(x: np.ndarray) -> np.ndarray:
-    """elementwise calculation of: log(1 + e ^ x)"""
+    """elementwise calculation of :math:`\log(1 + e^x)`"""
     return np.log(1.0 + np.exp(x))
 
 

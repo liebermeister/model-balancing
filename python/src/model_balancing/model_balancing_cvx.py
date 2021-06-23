@@ -335,7 +335,7 @@ class ModelBalancingConvex(object):
 
     @property
     def ln_eta_thermodynamic(self) -> cp.Expression:
-        """Calculate the thermodynamic term of the enzyme."""
+        """Calculate the thermodynamic term of the enzyme :math:`\eta^{thr}`."""
         return self._ln_eta_thermodynamic(self.driving_forces)
 
     def _ln_eta_kinetic(
@@ -389,7 +389,7 @@ class ModelBalancingConvex(object):
 
     @property
     def ln_eta_kinetic(self) -> cp.Expression:
-        """Calculate the kinetic (saturation) term of the enzyme."""
+        """Calculate the kinetic (saturation) term of the enzyme :math:`\eta^{kin}`."""
         return self._ln_eta_kinetic(self.ln_conc_met, self.ln_Km)
 
     def _ln_eta_regulation(
@@ -413,7 +413,7 @@ class ModelBalancingConvex(object):
 
     @property
     def ln_eta_regulation(self) -> cp.Expression:
-        """Calculate the regulation (allosteric) term of the enzyme."""
+        """Calculate the regulation (allosteric) term of the enzyme :math:`\eta^{reg}`."""
         return self._ln_eta_regulation(self.ln_conc_met, self.ln_Ka, self.ln_Ki)
 
     def _ln_conc_enz(

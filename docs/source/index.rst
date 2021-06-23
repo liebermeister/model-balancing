@@ -68,8 +68,7 @@ References:
    :caption: Contents:
    
    json_format
-   autoapi/index
-   autoapi/python/src/model_balancing/index
+   api
 
 ..
   Indices and tables

@@ -64,6 +64,7 @@ bibtex_bibfiles = ["bibliography.bib"]
 
 # -- Sphinx AutoAPI ----------------------------------------------------------
 autoapi_type = "python"
+autoapi_add_toctree_entry = False
 autoapi_dirs = ["../../python/src/model_balancing"]
 autoapi_options = [
     "members",
