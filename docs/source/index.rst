@@ -18,7 +18,7 @@ Model balancing can be run in *Matlab* or *Python*. Data tables can be provided 
 `SBML <http://sbml.org>`_ or `SBtab <https://www.sbtab.net>`_ format.
 
 This documentation is for the *Python* version of Model Balancing only.
-For balancing your model, generating a JSON input file, or running model balancing in Maltab -
+For balancing your model, generating a JSON input file, or running model balancing in Matlab -
 see instructions `here <https://github.com/liebermeister/model-balancing>`_.
 
 Installation:
@@ -67,6 +67,7 @@ References:
    :maxdepth: 2
    :caption: Contents:
    
+   json_format
    autoapi/index
    autoapi/python/src/model_balancing/index
 

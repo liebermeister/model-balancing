@@ -1,13 +1,6 @@
-# -*- coding: utf-8 -*-
 """
-This is my module brief line.
+A module for performing convex model balancing (using CVXPY).
 
-This is a more complete paragraph documenting my module.
-
-- A list item.
-- Another list item.
-
-This section can use any reST syntax.
 """
 
 import itertools
@@ -19,20 +12,27 @@ import cvxpy as cp
 import numpy as np
 from sbtab import SBtab
 
-from . import (
-    MIN_DRIVING_FORCE,
-    MIN_FLUX,
-    Q_,
-    RT,
-    DEFAULT_UNITS,
-)
-
+from . import DEFAULT_UNITS, MIN_DRIVING_FORCE, MIN_FLUX, Q_, RT
 from .io import read_arguments_json, to_model_sbtab, to_state_sbtab
 
 
 class ModelBalancingConvex(object):
     """A class for performing Convex Model Balancing (using CVXPY).
+
+    All input parameters are provided through the constructor. Then running
+    .solve() will find the (global) optimum and the result will be stored in the
+    cvxpy.Variable objects that represent the independent variables:
+    .ln_Km .ln_Ka .ln_Ki .ln_Keq .ln_kcatf .ln_conc_met
+    and also in the two dependent cvxpy.Expression objects:
+    .ln_kcatr .ln_conc_enz
+
+    Use the .value to get the solution for any of these Variables/Expressions.
+    Alternatively, .to_model_sbtab and .to_state_sbtab return SBtab objects
+    containing the state (met_conc, enz_conc) and the model (Km, Ki, Ka, Keq,
+    kcatf, kcatr) values respectively.
+
     """
+
     def __init__(
         self,
         S: np.array,
@@ -97,14 +97,18 @@ class ModelBalancingConvex(object):
         self.ln_Keq_precision = np.linalg.pinv(kwargs["Keq_ln_cov"])
         self.ln_conc_met_gmean = cp.Parameter(
             shape=(self.Nc, self.Ncond),
-            value=np.log(kwargs["conc_met_gmean"].m_as("M").reshape(self.Nc, self.Ncond)),
+            value=np.log(
+                kwargs["conc_met_gmean"].m_as("M").reshape(self.Nc, self.Ncond)
+            ),
         )
         self.ln_conc_met_gstd = np.diag(kwargs["conc_met_ln_cov"] ** (0.5)).reshape(
             self.Nc, self.Ncond
         )
         self.ln_conc_enz_gmean = cp.Parameter(
             shape=(self.Nr, self.Ncond),
-            value=np.log(kwargs["conc_enz_gmean"].m_as("M").reshape(self.Nr, self.Ncond)),
+            value=np.log(
+                kwargs["conc_enz_gmean"].m_as("M").reshape(self.Nr, self.Ncond)
+            ),
         )
         self.ln_conc_enz_gstd = np.diag(kwargs["conc_enz_ln_cov"] ** (0.5)).reshape(
             self.Nr, self.Ncond
@@ -204,6 +208,10 @@ class ModelBalancingConvex(object):
 
     @staticmethod
     def from_json(fname: str) -> "ModelBalancingConvex":
+        """Initialize a ModelBalancingConvex object using a JSON file.
+
+        See our page about the :ref:`JSON specification sheet <json>`.
+        """
         args = read_arguments_json(fname)
         return ModelBalancingConvex(**args)
 
@@ -289,11 +297,11 @@ class ModelBalancingConvex(object):
         ln_Keq: Union[np.array, cp.Expression],
         ln_conc_met: Union[np.array, cp.Expression],
     ) -> cp.Expression:
-        """Calculates the driving forces of all reactions."""
         return cp.vstack([ln_Keq] * self.Ncond).T - self.S.T @ ln_conc_met
 
     @property
     def driving_forces(self) -> cp.Expression:
+        """Calculates the driving forces of all reactions."""
         return self._driving_forces(self.ln_Keq, self.ln_conc_met)
 
     @staticmethod
@@ -303,12 +311,12 @@ class ModelBalancingConvex(object):
         ln_Km: Union[np.array, cp.Expression],
         ln_Keq: Union[np.array, cp.Expression],
     ) -> cp.Expression:
-        """Calculate the kcat-reverse based on Haldane relationship constraint."""
         ln_Km_matrix = ModelBalancingConvex._create_dense_matrix(S, ln_Km)
         return cp.diag(S.T @ ln_Km_matrix) + ln_kcatf - ln_Keq
 
     @property
     def ln_kcatr(self) -> cp.Expression:
+        """Calculate the kcat-reverse based on Haldane relationship constraint."""
         return ModelBalancingConvex._ln_kcatr(
             self.S, self.ln_kcatf, self.ln_Km, self.ln_Keq
         )
@@ -323,11 +331,11 @@ class ModelBalancingConvex(object):
     def _ln_eta_thermodynamic(
         self, driving_forces: Union[np.array, cp.Expression]
     ) -> cp.Expression:
-        """Calculate the thermodynamic term of the enzyme."""
         return cp.log(1.0 - cp.exp(-driving_forces))
 
     @property
     def ln_eta_thermodynamic(self) -> cp.Expression:
+        """Calculate the thermodynamic term of the enzyme."""
         return self._ln_eta_thermodynamic(self.driving_forces)
 
     def _ln_eta_kinetic(
@@ -335,7 +343,6 @@ class ModelBalancingConvex(object):
         ln_conc_met: Union[np.array, cp.Expression],
         ln_Km: Union[np.array, cp.Expression],
     ) -> cp.Expression:
-        """Calculate the kinetic (saturation) term of the enzyme."""
         S_subs = abs(self.S)
         S_prod = abs(self.S)
         S_subs[self.S > 0] = 0
@@ -382,6 +389,7 @@ class ModelBalancingConvex(object):
 
     @property
     def ln_eta_kinetic(self) -> cp.Expression:
+        """Calculate the kinetic (saturation) term of the enzyme."""
         return self._ln_eta_kinetic(self.ln_conc_met, self.ln_Km)
 
     def _ln_eta_regulation(
@@ -390,7 +398,6 @@ class ModelBalancingConvex(object):
         ln_Ka: Union[np.array, cp.Expression],
         ln_Ki: Union[np.array, cp.Expression],
     ) -> cp.Expression:
-        """Calculate the regulation (allosteric) term of the enzyme."""
         ln_Ka_matrix = ModelBalancingConvex._create_dense_matrix(self.A_act, ln_Ka)
         ln_Ki_matrix = ModelBalancingConvex._create_dense_matrix(self.A_inh, ln_Ki)
 
@@ -406,6 +413,7 @@ class ModelBalancingConvex(object):
 
     @property
     def ln_eta_regulation(self) -> cp.Expression:
+        """Calculate the regulation (allosteric) term of the enzyme."""
         return self._ln_eta_regulation(self.ln_conc_met, self.ln_Ka, self.ln_Ki)
 
     def _ln_conc_enz(
@@ -417,7 +425,6 @@ class ModelBalancingConvex(object):
         ln_Ki: Union[np.array, cp.Expression],
         ln_conc_met: Union[np.array, cp.Expression],
     ) -> cp.Expression:
-        """Calculate the required enzyme levels based on fluxes and rate laws."""
         driving_forces = self._driving_forces(ln_Keq, ln_conc_met)
         ln_capacity = self._ln_capacity(ln_kcatf)
         ln_eta_thermodynamic = self._ln_eta_thermodynamic(driving_forces)
@@ -427,6 +434,7 @@ class ModelBalancingConvex(object):
 
     @property
     def ln_conc_enz(self) -> cp.Expression:
+        """Calculate the required enzyme levels based on fluxes and rate laws."""
         return self._ln_conc_enz(
             self.ln_Keq,
             self.ln_kcatf,
@@ -437,6 +445,13 @@ class ModelBalancingConvex(object):
         )
 
     def is_gmean_feasible(self) -> bool:
+        """Check if the gmean  is a thermodynamically feasible solution.
+
+        This is useful because we sometimes would like to initialize the
+        optimization with the geometric means, but that can only be done if
+        that point is feasible (otherwise, the dependent parameter
+        conc_enz is not defined).
+        """
         return (
             self._driving_forces(self.ln_Keq_gmean, self.ln_conc_met_gmean).value
             >= (MIN_DRIVING_FORCE / RT).m_as("")
@@ -467,6 +482,7 @@ class ModelBalancingConvex(object):
         # self.ln_conc_enz_gmean.value = self.ln_conc_enz.value
 
     def solve(self, verbose: bool = False) -> None:
+        """Use CVXPY to find the global optimum that minimizes all z-scores."""
         prob = cp.Problem(
             cp.Minimize(self.total_z2_scores),
             [self.driving_forces >= (MIN_DRIVING_FORCE / RT).m_as("")],
@@ -475,6 +491,12 @@ class ModelBalancingConvex(object):
         return prob.status
 
     def find_inner_point(self, verbose: bool = False) -> Any:
+        """Find a point insize the feasible thermodynamic space.
+
+        If the geometric mean is not a feasible solution, we will need this
+        function in order to initialize the solver with a point inside the
+        thermodynamically feasible space.
+        """
         prob = cp.Problem(
             cp.Minimize(self.z2_scores_conc_met),
             [self.driving_forces >= (MIN_DRIVING_FORCE / RT).m_as("")],
@@ -484,14 +506,17 @@ class ModelBalancingConvex(object):
 
     @property
     def objective_value(self) -> float:
+        """Get the objective value (i.e. the sum of squares of all z-scores)."""
         return self.total_z2_scores.value
 
     def print_z_scores(self, precision: int = 2) -> None:
+        """Print the z-score values for all variables."""
         for p in ["Km", "Ka", "Ki", "Keq", "kcatf", "conc_met", "kcatr", "conc_enz"]:
             z = self.__getattribute__(f"z2_scores_{p}").value
             print(f"{p} = {z.round(precision)}")
 
     def print_status(self) -> None:
+        """Print a status report based on the current solution."""
         print("\nMetabolite concentrations (M) =\n", np.exp(self.ln_conc_met.value))
         print("\nEnzyme concentrations (M) =\n", np.exp(self.ln_conc_enz.value))
         print("\nDriving forces (RT) =\n", self.driving_forces.value)
@@ -501,6 +526,12 @@ class ModelBalancingConvex(object):
         print("\n\n\n")
 
     def to_state_sbtab(self) -> SBtab.SBtabDocument:
+        """Create a state SBtab.
+
+        The state SBtab contains the values of the state-dependent variables,
+        i.e. flux, concentrations of metabolites, concentrations of enzymes,
+        and the ΔG' values.
+        """
         v = self.fluxes
         c = Q_(np.exp(self.ln_conc_met.value), "M")
         e = Q_(np.exp(self.ln_conc_enz.value), "M")
@@ -518,6 +549,11 @@ class ModelBalancingConvex(object):
         return state_sbtabdoc
 
     def to_model_sbtab(self) -> SBtab.SBtabDocument:
+        """Create a model SBtab.
+
+        The model SBtab contains the values of the state-independent variables,
+        i.e. kcatf, kcatr, Km, Ka, and Ki.
+        """
         kcatf = Q_(np.exp(self.ln_kcatf.value), "1/s")
         kcatr = Q_(np.exp(self.ln_kcatr.value), "1/s")
         Keq = Q_(np.exp(self.ln_Keq.value), "")
@@ -555,7 +591,5 @@ class ModelBalancingConvex(object):
         model_sbtabdoc.set_name("CMB result")
         return model_sbtabdoc
 
-__all__ = [
-    'ModelBalancingConvex'
-]
 
+__all__ = ["ModelBalancingConvex"]
