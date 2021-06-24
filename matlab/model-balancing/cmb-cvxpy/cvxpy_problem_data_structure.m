@@ -148,8 +148,11 @@ problem.network.inhibition_matrix     = full(-[network.regulation_matrix .* [net
 index                                 = q_info.qall.index;
 all_kinetic_constants_ln.names        = q_info.qall.names;
 all_kinetic_constants_ln.true         = true_model.qall;
-all_kinetic_constants_ln.prior.mean   = M_q_to_qall * prior.q.mean + M_qdep_to_qall * prior.qdep_pseudo.mean;
-all_kinetic_constants_ln.prior.cov    = M_q_to_qall * inv(prior.q.cov_inv) * M_q_to_qall' + M_qdep_to_qall * inv(prior.qdep_pseudo.cov_inv) * M_qdep_to_qall';
+% helper variables
+D1 = inv(M_q_to_qall * prior.q.cov_inv * M_q_to_qall' + M_qdep_to_qall * prior.qdep_pseudo.cov_inv * M_qdep_to_qall');
+D2 = D1 * [M_q_to_qall * prior.q.cov_inv * prior.q.mean + M_qdep_to_qall * prior.qdep_pseudo.cov_inv * prior.qdep_pseudo.mean];
+all_kinetic_constants_ln.prior.mean   = D2;
+all_kinetic_constants_ln.prior.cov    = D1;
 all_kinetic_constants_ln.prior.std    = sqrt(diag(all_kinetic_constants_ln.prior.cov));
 all_kinetic_constants_ln.bounds.min   = bounds.q_all_min;
 all_kinetic_constants_ln.bounds.max   = bounds.q_all_max;

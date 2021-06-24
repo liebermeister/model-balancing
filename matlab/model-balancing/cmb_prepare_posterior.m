@@ -46,7 +46,7 @@ switch cmb_options.use_kinetic_data,
     R              = q_info.M_q_to_qall(q_info.qall.index.Keq,:);
   
   case 'none',
-    display('Not using kinetic or equilibrium constants data');
+    display('cmb_prepare_posterior: Not using kinetic or equilibrium constants data');
     qall_data_mean = [];
     qall_data_std  = [];
     R              = [];
@@ -78,9 +78,11 @@ R                 = R(is_ok,:);
 
 % prior
 M_q_to_qall         = q_info.M_q_to_qall;
-M_qdep_to_qall         = q_info.M_qdep_to_qall;
-qall_prior_mean     = M_q_to_qall * prior.q.mean + M_qdep_to_qall * prior.qdep_pseudo.mean;
-qall_prior_cov      = M_q_to_qall * inv(prior.q.cov_inv) * M_q_to_qall' + M_qdep_to_qall * inv(prior.qdep_pseudo.cov_inv) * M_qdep_to_qall';
+M_qdep_to_qall      = q_info.M_qdep_to_qall;
+D1 = inv(M_q_to_qall * prior.q.cov_inv * M_q_to_qall' + M_qdep_to_qall * prior.qdep_pseudo.cov_inv * M_qdep_to_qall');
+D2 = D1 * [M_q_to_qall * prior.q.cov_inv * prior.q.mean + M_qdep_to_qall * prior.qdep_pseudo.cov_inv * prior.qdep_pseudo.mean];
+qall_prior_mean     = D2;
+qall_prior_cov      = D1;
 qall_prior_std      = sqrt(diag(qall_prior_cov));
 qall_prior_cov_inv  = inv(qall_prior_cov);
 

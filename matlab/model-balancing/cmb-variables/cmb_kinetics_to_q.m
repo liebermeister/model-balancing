@@ -3,6 +3,7 @@ function q = cmb_kinetics_to_q(network, cmb_options, q_info)
 [nr,nm,nx,KM_ind,KA_ind,KI_ind,nKM,nKA,nKI] = network_numbers(network);
 
 r = network.kinetics;
+%r.KV = sqrt(r.Kcatf .* r.Kcatr);
 
 switch cmb_options.parameterisation,
   

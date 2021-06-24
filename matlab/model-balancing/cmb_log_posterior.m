@@ -14,12 +14,14 @@ global LP_info % variable defined in cmb_estimation
 eval(default('verbose','0'));
 
 if verbose,
-  if sum(LP_info.y_ineq_A * y > LP_info.y_ineq_b - LP_info.epsilon) ~=0,
-    warning('Constraint violation detected');
-    max_violation = max(LP_info.y_ineq_A * y - [ LP_info.y_ineq_b - LP_info.epsilon])
+  if length(LP_info),
+    if sum(LP_info.y_ineq_A * y > LP_info.y_ineq_b - LP_info.epsilon) ~=0,
+      warning('Constraint violation detected');
+      max_violation = max(LP_info.y_ineq_A * y - [ LP_info.y_ineq_b - LP_info.epsilon])
+    end
   end
 end
-  
+
 [nr,nm,nx,KM_indices,KA_indices,KI_indices,nKM,nKA,nKI] = network_numbers(pp.network);
 
 ns = size(preposterior.X.mean,2);
@@ -46,19 +48,19 @@ for it = 1:ns,
   pp.v   = v;
   [~, E] = ecm_get_score(cmb_options.ecm_score,x,pp,no_warnings);
   lnE(:,it) = log(E);
-  Aforward(:,it) = RT * diag(sign(v)) * [log(pp.network.kinetics.Keq) - pp.network.N' * x];
+  A(:,it) = RT * [log(pp.network.kinetics.Keq) - pp.network.N' * x];
 end
 
 % check
 if verbose,
-  if find(Aforward<0),
-    display('Constraint violation detected');
+  if find(V.*A<0),
+    display('WARNING: Constraint violation detected!');
   end
 end
 
 % Avoid zero or negative enzyme levels (because of description on log scale)
 lnE(find(V==0))         = log(10^-10);
-lnE(find([Aforward<0])) = inf;
+lnE(find(V.*A<0)) = inf;
 
 lnE_log_posterior_upper  = - 0.5 * sum(sum( [[lnE - preposterior.lnE.mean] ./ preposterior.lnE.std ].^2 .* double(lnE >= preposterior.lnE.mean)));
 lnE_log_posterior_lower  = - 0.5 * sum(sum( [[lnE - preposterior.lnE.mean] ./ preposterior.lnE.std ].^2 .* double(lnE <  preposterior.lnE.mean)));
@@ -100,10 +102,11 @@ end
 log_posterior = log_posterior_q + log_posterior_x + log_posterior_lnE + log_posterior_ln_c_over_km;
 
 if verbose,
-  log_posterior_q
-  log_posterior_x
-  log_posterior_lnE
-  log_posterior_ln_c_over_km
+  % show z-scores
+  -2*log_posterior_q
+  -2*log_posterior_x
+  -2*log_posterior_lnE
+  -2*log_posterior_ln_c_over_km
 end
 
 
