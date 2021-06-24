@@ -624,11 +624,12 @@ class ModelBalancing(object):
         for key, val in self._variable_vector_to_dict(r.x).items():
             self.__setattr__(key, val)
 
-    def print_z_scores(self) -> None:
-        """Print the z-score values for all variables."""
+    def get_z_scores(self) -> Dict[str, float]:
+        """Get the z-score values for all variables."""
+        res = {}
         for p in INDEPENDENT_VARIABLES + DEPENDENT_VARIABLES:
             ln_p_gmean = self.ln_gmean[p]
-            ln_p_precision = self.__getattribute__(f"ln_{p}_precision")
+            ln_p_precision = self.ln_precision[p]
             ln_p = self.__getattribute__(f"ln_{p}")
 
             if p == "conc_enz":
@@ -641,6 +642,12 @@ class ModelBalancing(object):
             else:
                 z = ModelBalancing._z_score(ln_p, ln_p_gmean, ln_p_precision)
 
+            res[p] = z
+        return res
+
+    def print_z_scores(self) -> None:
+        """Print the z-score values for all variables."""
+        for p, z in self.get_z_scores().items():
             print(f"{p} = {z:.2f}")
 
     def print_status(self) -> None:

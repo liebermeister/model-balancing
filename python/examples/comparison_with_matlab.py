@@ -1,4 +1,6 @@
 import os
+import warnings
+import pandas as pd
 
 import cvxpy as cp
 from model_balancing import INDEPENDENT_VARIABLES
@@ -15,6 +17,9 @@ os.chdir("/home/eladn/git/model-balancing")
 
 json_fnames = Path("examples/JSON").listdir("*.json")
 
+INITIALIZE_WITH_CONVEX = False
+
+z_scores = {}
 
 for json_fname in json_fnames:
     if json_fname.endswith(".json"):
@@ -26,44 +31,44 @@ for json_fname in json_fnames:
 
     args = read_arguments_json(json_fname)
 
-    try:
-        mbc = ModelBalancingConvex(**args)
-        # if not mbc.is_gmean_feasible():
-        #    print("geometric mean is not a feasible solution")
-        #    continue
+    initial_point = {}
+    if INITIALIZE_WITH_CONVEX:
+        try:
+            mbc = ModelBalancingConvex(**args)
+            # if not mbc.is_gmean_feasible():
+            #    print("geometric mean is not a feasible solution")
+            #    continue
 
-        mbc.initialize_with_gmeans()
-        if mbc.find_inner_point(verbose=False) != cp.OPTIMAL:
-            print("Cannot find an inner point given the constraints")
-            continue
+            mbc.initialize_with_gmeans()
+            if mbc.find_inner_point(verbose=False) != cp.OPTIMAL:
+                print("Cannot find an inner point given the constraints")
+                continue
 
-        mbc.solve(verbose=False)
-        print(
-            f"Convex optimization (equivalent to α = 0) ... optimized total "
-            f"squared Z-scores = {mbc.objective_value:.3f}"
-        )
-        with open(f"python/res/{example_name}_convex_state.tsv", "wt") as fp:
-            fp.write(mbc.to_state_sbtab().to_str())
+            mbc.solve(verbose=False)
+            print(
+                f"Convex optimization (equivalent to α = 0) ... optimized total "
+                f"squared Z-scores = {mbc.objective_value:.3f}"
+            )
+            with open(f"python/res/{example_name}_convex_state.tsv", "wt") as fp:
+                fp.write(mbc.to_state_sbtab().to_str())
 
-        with open(f"python/res/{example_name}_convex_model.tsv", "wt") as fp:
-            fp.write(mbc.to_model_sbtab().to_str())
+            with open(f"python/res/{example_name}_convex_model.tsv", "wt") as fp:
+                fp.write(mbc.to_model_sbtab().to_str())
 
-        initial_point = {
-            f"ln_{p}": mbc.__getattribute__(f"ln_{p}").value
-            for p in INDEPENDENT_VARIABLES
-            if mbc.__getattribute__(f"ln_{p}").size != 0
-        }
-    except ValueError as e:
-        print(str(e))
-        initial_point = {}
-    except cp.error.SolverError as e:
-        print(str(e))
-        initial_point = {}
+            initial_point = {
+                f"ln_{p}": mbc.__getattribute__(f"ln_{p}").value
+                for p in INDEPENDENT_VARIABLES
+                if mbc.__getattribute__(f"ln_{p}").size != 0
+            }
+        except ValueError as e:
+            print(str(e))
+        except cp.error.SolverError as e:
+            print(str(e))
 
     mb = ModelBalancing(**args)
 
     for a in [0.0, 0.001, 0.01, 0.1, 0.5, 1.0]:
-        # warnings.filterwarnings("ignore", category=RuntimeWarning)
+        warnings.filterwarnings("ignore", category=RuntimeWarning)
 
         # initialize solver with the Convex optimization solution
         for k, v in initial_point.items():
@@ -74,7 +79,12 @@ for json_fname in json_fnames:
         mb.solve(solver="SLSQP", options={"maxiter": 1000, "disp": False})
         mb.solve()
         print(f"optimized total squared Z-scores = {mb.objective_value:.3f}")
+        z_scores[(example_name, a)] = mb.get_z_scores()
+
         with open(f"python/res/{example_name}_alpha_{a:.1g}_state.tsv", "wt") as fp:
             fp.write(mb.to_state_sbtab().to_str())
         with open(f"python/res/{example_name}_alpha_{a:.1g}_model.tsv", "wt") as fp:
             fp.write(mb.to_model_sbtab().to_str())
+
+df = pd.DataFrame.from_dict(z_scores)
+df.round(5).to_csv("python/res/z_score_report.csv")
