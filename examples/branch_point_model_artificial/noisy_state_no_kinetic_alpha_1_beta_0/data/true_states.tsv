@@ -1,4 +1,4 @@
-!!!SBtab DocumentName='MB result' Document='MBresult' CalculationTime='17.619600 s'					
+!!!SBtab DocumentName='MB result' Document='MBresult' CalculationTime='18.480385 s'					
 					
 !!SBtab TableName='Metabolic fluxes' TableID='Flux' TableType='QuantityMatrix' Unit='mM/s'					
 !QuantityType	!Reaction	state_1	state_2	state_3	state_4
