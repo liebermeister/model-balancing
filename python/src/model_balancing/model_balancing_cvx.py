@@ -12,7 +12,14 @@ import cvxpy as cp
 import numpy as np
 from sbtab import SBtab
 
-from . import DEFAULT_UNITS, MIN_DRIVING_FORCE, MIN_FLUX, Q_, RT
+from . import (
+    DEFAULT_UNITS,
+    DEPENDENT_VARIABLES,
+    INDEPENDENT_VARIABLES,
+    MIN_DRIVING_FORCE,
+    Q_,
+    RT,
+)
 from .io import read_arguments_json, to_model_sbtab, to_state_sbtab
 
 
@@ -101,18 +108,14 @@ class ModelBalancingConvex(object):
                 kwargs["conc_met_gmean"].m_as("M").reshape(self.Nc, self.Ncond)
             ),
         )
-        self.ln_conc_met_gstd = np.diag(kwargs["conc_met_ln_precision"] ** (-0.5)).reshape(
-            self.Nc, self.Ncond
-        )
+        self.ln_conc_met_precision = kwargs["conc_met_ln_precision"]
         self.ln_conc_enz_gmean = cp.Parameter(
             shape=(self.Nr, self.Ncond),
             value=np.log(
                 kwargs["conc_enz_gmean"].m_as("M").reshape(self.Nr, self.Ncond)
             ),
         )
-        self.ln_conc_enz_gstd = np.diag(kwargs["conc_enz_ln_precision"] ** (-0.5)).reshape(
-            self.Nr, self.Ncond
-        )
+        self.ln_conc_enz_precision = kwargs["conc_enz_ln_precision"]
         self.ln_kcatf_gmean = cp.Parameter(
             shape=(self.Nr,), value=np.log(kwargs["kcatf_gmean"].m_as("1/s"))
         )
@@ -140,8 +143,14 @@ class ModelBalancingConvex(object):
             self.ln_Ki_precision = None
 
         assert self.ln_Keq_precision.shape == (self.Nr, self.Nr)
-        assert self.ln_conc_enz_gstd.shape == (self.Nr, self.Ncond)
-        assert self.ln_conc_met_gstd.shape == (self.Nc, self.Ncond)
+        assert self.ln_conc_enz_precision.shape == (
+            self.Nr * self.Ncond,
+            self.Nr * self.Ncond,
+        )
+        assert self.ln_conc_met_precision.shape == (
+            self.Nc * self.Ncond,
+            self.Nc * self.Ncond,
+        )
 
         self.ln_conc_met = cp.Variable(shape=(self.Nc, self.Ncond))
         self.ln_Keq = cp.Variable(shape=(self.Nr,))
@@ -174,20 +183,17 @@ class ModelBalancingConvex(object):
         # we assume a diagonal covariance matrix (for simplicity). Instead of a
         # ln_precision matrix, we simply have the geometric means and stds arranged in
         # the same shape as the variables.
-        self.z2_scores_conc_met = sum(
-            cp.square(
-                (self.ln_conc_met - self.ln_conc_met_gmean) / self.ln_conc_met_gstd
-            ).flatten()
+        self.z2_scores_conc_met = cp.quad_form(
+            (self.ln_conc_met - self.ln_conc_met_gmean).flatten(),
+            self.ln_conc_met_precision,
         )
 
         # ln enzyme concentrations are convex functions of the ln metabolite concentrations
         # but, since the z-scores use the square function, we have to take only the positive
         # values (otherwise the result is not convex).
-        self.z2_scores_conc_enz = sum(
-            cp.square(
-                cp.pos(self.ln_conc_enz - self.ln_conc_enz_gmean)
-                / self.ln_conc_enz_gstd
-            ).flatten()
+        self.z2_scores_conc_enz = cp.quad_form(
+            (cp.pos(self.ln_conc_enz - self.ln_conc_enz_gmean)).flatten(),
+            self.ln_conc_enz_precision,
         )
 
         self.total_z2_scores = sum(
