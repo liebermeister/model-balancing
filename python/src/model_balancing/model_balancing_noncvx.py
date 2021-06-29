@@ -77,7 +77,7 @@ class ModelBalancing(object):
 
         for p in DEFAULT_UNITS.keys():
             assert f"{p}_gmean" in kwargs
-            assert f"{p}_ln_cov" in kwargs
+            assert f"{p}_ln_precision" in kwargs
 
         self.ln_gmean = {}
         self.ln_precision = {}
@@ -88,7 +88,7 @@ class ModelBalancing(object):
             # geometric means (in log-scale)
             self.ln_gmean[p] = np.log(kwargs[f"{p}_gmean"].m_as(unit))
             if self.ln_gmean[p].size > 0:
-                self.ln_precision[p] = np.linalg.pinv(kwargs[f"{p}_ln_cov"])
+                self.ln_precision[p] = kwargs[f"{p}_ln_precision"]
                 if np.all(kwargs[f"{p}_lower_bound"] != None):
                     self.ln_lower_bound[p] = np.log(
                         kwargs[f"{p}_lower_bound"].m_as(unit)

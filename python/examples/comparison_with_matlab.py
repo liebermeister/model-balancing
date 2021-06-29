@@ -11,13 +11,10 @@ from path import Path
 
 os.chdir("/home/eladn/git/model-balancing")
 
-# json_fnames = []
-# json_fnames += ["double_branch_model_artificial_noisy_state_no_kinetic.json"]
-# json_fnames = [f"examples/JSON/{n}" for n in json_fnames]
+json_fnames = [f"examples/JSON/branch_point_model_elad.json"]
+#json_fnames = Path("examples/JSON").listdir("*.json")
 
-json_fnames = Path("examples/JSON").listdir("*.json")
-
-INITIALIZE_WITH_CONVEX = False
+INITIALIZE_WITH_CONVEX = True
 
 z_scores_data = []
 

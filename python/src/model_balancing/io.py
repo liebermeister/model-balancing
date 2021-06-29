@@ -5,7 +5,7 @@ A module for I/O operations related to model balancing.
 
 import json
 from typing import Dict, List, Union
-
+from itertools import chain
 import numpy as np
 import pandas as pd
 from sbtab import SBtab
@@ -70,11 +70,19 @@ def read_arguments_json(
         unit = p_json["unit"]
 
         if "cov_ln" in p_json["combined"]:
-            args[f"{p}_ln_cov"] = np.array(p_json["combined"]["cov_ln"])
+            cov_ln = np.array(p_json["combined"]["cov_ln"])
+            if cov_ln.size == 0:
+                args[f"{p}_ln_precision"] = None
+            else:
+                args[f"{p}_ln_precision"] = np.linalg.pinv(cov_ln)
         elif "geom_std" in p_json["combined"]:
-            args[f"{p}_ln_cov"] = (
-                np.diag(np.log(np.array(p_json["combined"]["geom_std"]).T.flatten()))
-                ** 2.0
+            args[f"{p}_ln_precision"] = np.diag(
+                list(
+                    map(
+                        lambda x: np.log(x) ** (-2.0),
+                        chain.from_iterable(p_json["combined"]["geom_std"]),
+                    )
+                )
             )
         else:
             raise KeyError(

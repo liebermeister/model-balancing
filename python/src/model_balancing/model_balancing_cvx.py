@@ -78,7 +78,7 @@ class ModelBalancingConvex(object):
 
         for p in DEFAULT_UNITS.keys():
             assert f"{p}_gmean" in kwargs
-            assert f"{p}_ln_cov" in kwargs
+            assert f"{p}_ln_precision" in kwargs
 
         self.ln_gmean = {}
         self.ln_precision = {}
@@ -94,14 +94,14 @@ class ModelBalancingConvex(object):
         self.ln_Keq_gmean = cp.Parameter(
             shape=(self.Nr,), value=np.log(kwargs["Keq_gmean"].m_as(""))
         )
-        self.ln_Keq_precision = np.linalg.pinv(kwargs["Keq_ln_cov"])
+        self.ln_Keq_precision = kwargs["Keq_ln_precision"]
         self.ln_conc_met_gmean = cp.Parameter(
             shape=(self.Nc, self.Ncond),
             value=np.log(
                 kwargs["conc_met_gmean"].m_as("M").reshape(self.Nc, self.Ncond)
             ),
         )
-        self.ln_conc_met_gstd = np.diag(kwargs["conc_met_ln_cov"] ** (0.5)).reshape(
+        self.ln_conc_met_gstd = np.diag(kwargs["conc_met_ln_precision"] ** (-0.5)).reshape(
             self.Nc, self.Ncond
         )
         self.ln_conc_enz_gmean = cp.Parameter(
@@ -110,32 +110,32 @@ class ModelBalancingConvex(object):
                 kwargs["conc_enz_gmean"].m_as("M").reshape(self.Nr, self.Ncond)
             ),
         )
-        self.ln_conc_enz_gstd = np.diag(kwargs["conc_enz_ln_cov"] ** (0.5)).reshape(
+        self.ln_conc_enz_gstd = np.diag(kwargs["conc_enz_ln_precision"] ** (-0.5)).reshape(
             self.Nr, self.Ncond
         )
         self.ln_kcatf_gmean = cp.Parameter(
             shape=(self.Nr,), value=np.log(kwargs["kcatf_gmean"].m_as("1/s"))
         )
-        self.ln_kcatf_precision = np.linalg.pinv(kwargs["kcatf_ln_cov"])
+        self.ln_kcatf_precision = kwargs["kcatf_ln_precision"]
         self.ln_kcatr_gmean = cp.Parameter(
             shape=(self.Nr,), value=np.log(kwargs["kcatr_gmean"].m_as("1/s"))
         )
-        self.ln_kcatr_precision = np.linalg.pinv(kwargs["kcatr_ln_cov"])
+        self.ln_kcatr_precision = kwargs["kcatr_ln_precision"]
         self.ln_Km_gmean = np.log(kwargs["Km_gmean"].m_as("M"))
         if self.ln_Km_gmean.size != 0:
-            self.ln_Km_precision = np.linalg.pinv(kwargs["Km_ln_cov"])
+            self.ln_Km_precision = kwargs["Km_ln_precision"]
         else:
             self.ln_Km_precision = None
 
         self.ln_Ka_gmean = np.log(kwargs["Ka_gmean"].m_as("M"))
         if self.ln_Ka_gmean.size != 0:
-            self.ln_Ka_precision = np.linalg.pinv(kwargs["Ka_ln_cov"])
+            self.ln_Ka_precision = kwargs["Ka_ln_precision"]
         else:
             self.ln_Ka_precision = None
 
         self.ln_Ki_gmean = np.log(kwargs["Ki_gmean"].m_as("M"))
         if self.ln_Ki_gmean.size != 0:
-            self.ln_Ki_precision = np.linalg.pinv(kwargs["Ki_ln_cov"])
+            self.ln_Ki_precision = kwargs["Ki_ln_precision"]
         else:
             self.ln_Ki_precision = None
 
@@ -172,7 +172,7 @@ class ModelBalancingConvex(object):
 
         # conc_met is given as a matrix (with conditions as columns) and therefore
         # we assume a diagonal covariance matrix (for simplicity). Instead of a
-        # ln_cov matrix, we simply have the geometric means and stds arranged in
+        # ln_precision matrix, we simply have the geometric means and stds arranged in
         # the same shape as the variables.
         self.z2_scores_conc_met = sum(
             cp.square(
