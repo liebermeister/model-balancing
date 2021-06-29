@@ -202,26 +202,25 @@ class ModelBalancing(object):
                     self.alpha if p == "conc_enz" else None,
                 )
             )
-
-        # add an extra term for the c/Km pseudo-parameters. we assume that
-        # they are log-normal with a mean of 1 and stdev of 1/β
         if self.beta > 0:
-            ln_Km_matrix = ModelBalancing._create_dense_matrix(
-                self.S, var_dict["ln_Km"]
-            )
-            ln_c_over_Km = (
-                np.repeat(var_dict["ln_conc_met"], (1, self.Nr)) - ln_Km_matrix
-            )
-
-            all_z2_scores.append(
-                ModelBalancing._z_score(
-                    ln_c_over_Km,
-                    np.ones((self.Nc, self.Nr)),
-                    1.0 / self.beta,
-                )
-            )
+            all_z2_scores.append(self.beta * self.penalty_term_beta(var_dict["ln_Km"]))
 
         return sum(all_z2_scores)
+
+    def penalty_term_beta(self, ln_Km) -> float:
+        """Calculate the penalty term for c/Km."""
+        beta_z_score = 0.0
+        ln_Km_matrix = ModelBalancing._create_dense_matrix(
+            self.S, ln_Km
+        )
+        for i in range(self.Nc):
+            for j in range(self.Nr):
+                if self.S[i, j] == 0:
+                    continue
+                for k in range(self.Ncond):
+                    ln_c_minus_km = self.ln_conc_met[i, k] - ln_Km_matrix[i, j]
+                    beta_z_score += ln_c_minus_km**2
+        return beta_z_score
 
     @property
     def objective_value(self) -> float:
@@ -643,6 +642,9 @@ class ModelBalancing(object):
                 z = ModelBalancing._z_score(ln_p, ln_p_gmean, ln_p_precision)
 
             res[p] = z
+
+        res["c_over_km"] = self.penalty_term_beta(self.ln_Km)
+        res["objective"] = self.objective_function()
         return res
 
     def print_z_scores(self) -> None:

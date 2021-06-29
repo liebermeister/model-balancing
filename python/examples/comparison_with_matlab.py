@@ -19,7 +19,7 @@ json_fnames = Path("examples/JSON").listdir("*.json")
 
 INITIALIZE_WITH_CONVEX = False
 
-z_scores = {}
+z_scores_data = []
 
 for json_fname in json_fnames:
     if json_fname.endswith(".json"):
@@ -67,24 +67,31 @@ for json_fname in json_fnames:
 
     mb = ModelBalancing(**args)
 
-    for a in [0.0, 0.001, 0.01, 0.1, 0.5, 1.0]:
-        warnings.filterwarnings("ignore", category=RuntimeWarning)
+    #for a in [0.0, 0.001, 0.01, 0.1, 0.5, 1.0]:
+    for a in [0.0, 1.0]:
+        for b in [0.0, 1.0]:
+            warnings.filterwarnings("ignore", category=RuntimeWarning)
 
-        # initialize solver with the Convex optimization solution
-        for k, v in initial_point.items():
-            mb.__setattr__(k, v)
+            # initialize solver with the Convex optimization solution
+            for k, v in initial_point.items():
+                mb.__setattr__(k, v)
 
-        print(f"Solving using non-convex solver, α = {a:5.1g} ... ", end="")
-        mb.alpha = a
-        mb.solve(solver="SLSQP", options={"maxiter": 1000, "disp": False})
-        mb.solve()
-        print(f"optimized total squared Z-scores = {mb.objective_value:.3f}")
-        z_scores[(example_name, a)] = mb.get_z_scores()
+            print(f"Solving using non-convex solver, α = {a:5.1g}, β = {b:5.1g} ... ", end="")
+            mb.alpha = a
+            mb.beta = b
+            mb.solve(solver="SLSQP", options={"maxiter": 1000, "disp": False})
+            print(f"optimized total squared Z-scores = {mb.objective_value:.3f}")
 
-        with open(f"python/res/{example_name}_alpha_{a:.1g}_state.tsv", "wt") as fp:
-            fp.write(mb.to_state_sbtab().to_str())
-        with open(f"python/res/{example_name}_alpha_{a:.1g}_model.tsv", "wt") as fp:
-            fp.write(mb.to_model_sbtab().to_str())
+            result_dict = mb.get_z_scores()
+            result_dict["JSON"] = example_name
+            result_dict["alpha"] = a
+            result_dict["beta"] = b
+            z_scores_data.append(result_dict)
 
-df = pd.DataFrame.from_dict(z_scores)
+            with open(f"python/res/{example_name}_alpha_{a:.1g}_state.tsv", "wt") as fp:
+                fp.write(mb.to_state_sbtab().to_str())
+            with open(f"python/res/{example_name}_alpha_{a:.1g}_model.tsv", "wt") as fp:
+                fp.write(mb.to_model_sbtab().to_str())
+
+df = pd.DataFrame.from_dict(z_scores_data).set_index(["JSON", "alpha", "beta"])
 df.round(5).to_csv("python/res/z_score_report.csv")
