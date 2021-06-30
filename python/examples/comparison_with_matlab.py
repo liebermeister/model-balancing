@@ -1,18 +1,19 @@
 import os
+import sys
 import warnings
 import pandas as pd
 
 import cvxpy as cp
-from model_balancing import INDEPENDENT_VARIABLES
+from model_balancing import ALL_VARIABLES
 from model_balancing.io import read_arguments_json
-from model_balancing.model_balancing_cvx import ModelBalancingConvex
+from model_balancing.model_balancing_cvx import ModelBalancingConvex, NegativeFluxError
 from model_balancing.model_balancing_noncvx import ModelBalancing
 from path import Path
 
 os.chdir("/home/eladn/git/model-balancing")
 
 json_fnames = [f"examples/JSON/branch_point_model_elad.json"]
-#json_fnames = Path("examples/JSON").listdir("*.json")
+# json_fnames = Path("examples/JSON").listdir("*.json")
 
 INITIALIZE_WITH_CONVEX = True
 
@@ -27,19 +28,16 @@ for json_fname in json_fnames:
     print(f"Analyzing example: {example_name}")
 
     args = read_arguments_json(json_fname)
-
+    
     initial_point = {}
     if INITIALIZE_WITH_CONVEX:
         try:
             mbc = ModelBalancingConvex(**args)
-            # if not mbc.is_gmean_feasible():
-            #    print("geometric mean is not a feasible solution")
-            #    continue
-
             mbc.initialize_with_gmeans()
-            if mbc.find_inner_point(verbose=False) != cp.OPTIMAL:
-                print("Cannot find an inner point given the constraints")
-                continue
+            if not mbc.is_gmean_feasible():
+                if mbc.find_inner_point(verbose=False) != cp.OPTIMAL:
+                    print("Cannot find an inner point given the constraints")
+                    continue
 
             mbc.solve(verbose=False)
             print(
@@ -53,36 +51,48 @@ for json_fname in json_fnames:
                 fp.write(mbc.to_model_sbtab().to_str())
 
             initial_point = {
-                f"ln_{p}": mbc.__getattribute__(f"ln_{p}").value
-                for p in INDEPENDENT_VARIABLES
-                if mbc.__getattribute__(f"ln_{p}").size != 0
+                f"ln_{p}": mbc._var_dict[f"ln_{p}"].value
+                for p in ALL_VARIABLES
+                if mbc._var_dict[f"ln_{p}"] is not None
             }
-        except ValueError as e:
+        except NegativeFluxError as e:
             print(str(e))
         except cp.error.SolverError as e:
             print(str(e))
 
+        result_dict = mbc.get_z_scores()
+        result_dict["JSON"] = example_name
+        result_dict["CVXPY"] = True
+        result_dict["alpha"] = 0.0
+        result_dict["beta"] = 0.0
+        result_dict["objective"] = mbc.objective_value
+        z_scores_data.append(result_dict)
+
     mb = ModelBalancing(**args)
 
-    #for a in [0.0, 0.001, 0.01, 0.1, 0.5, 1.0]:
+    # for a in [0.0, 0.001, 0.01, 0.1, 0.5, 1.0]:
     for a in [0.0, 1.0]:
         for b in [0.0, 1.0]:
             warnings.filterwarnings("ignore", category=RuntimeWarning)
 
-            # initialize solver with the Convex optimization solution
-            for k, v in initial_point.items():
-                mb.__setattr__(k, v)
-
-            print(f"Solving using non-convex solver, α = {a:5.1g}, β = {b:5.1g} ... ", end="")
             mb.alpha = a
             mb.beta = b
+
+            # initialize solver with the Convex optimization solution
+            mb._var_dict.update(initial_point)
+            print(
+                f"Solving using non-convex solver, α = {a:5.1g}, β = {b:5.1g} ... ",
+                end="",
+            )
             mb.solve(solver="SLSQP", options={"maxiter": 1000, "disp": False})
             print(f"optimized total squared Z-scores = {mb.objective_value:.3f}")
 
             result_dict = mb.get_z_scores()
             result_dict["JSON"] = example_name
+            result_dict["CVXPY"] = False
             result_dict["alpha"] = a
             result_dict["beta"] = b
+            result_dict["objective"] = mb.objective_value
             z_scores_data.append(result_dict)
 
             with open(f"python/res/{example_name}_alpha_{a:.1g}_state.tsv", "wt") as fp:

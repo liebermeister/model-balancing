@@ -23,6 +23,9 @@ MIN_DRIVING_FORCE = 1e-3 * RT
 MIN_FLUX = Q_(1e-9, "M/s")
 INDEPENDENT_VARIABLES = ["Km", "Ka", "Ki", "Keq", "kcatf", "conc_met"]
 DEPENDENT_VARIABLES = ["kcatr", "conc_enz"]
+MODEL_VARIABLES = ["Km", "Ka", "Ki", "Keq", "kcatf", "kcatr"]
+STATE_VARIABLES = ["conc_met", "conc_enz"]
+ALL_VARIABLES = ["Km", "Ka", "Ki", "Keq", "kcatf", "kcatr", "conc_met", "conc_enz"]
 DEFAULT_UNITS = {
     "Km": "M",
     "Ka": "M",

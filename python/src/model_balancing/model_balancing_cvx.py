@@ -6,7 +6,7 @@ A module for performing convex model balancing (using CVXPY).
 import itertools
 import os
 import warnings
-from typing import Any, List, Union
+from typing import Any, List, Union, Dict
 
 import cvxpy as cp
 import numpy as np
@@ -16,11 +16,19 @@ from . import (
     DEFAULT_UNITS,
     DEPENDENT_VARIABLES,
     INDEPENDENT_VARIABLES,
+    ALL_VARIABLES,
+    STATE_VARIABLES,
+    MODEL_VARIABLES,
     MIN_DRIVING_FORCE,
+    MIN_FLUX,
     Q_,
     RT,
 )
 from .io import read_arguments_json, to_model_sbtab, to_state_sbtab
+
+
+class NegativeFluxError(Exception):
+    pass
 
 
 class ModelBalancingConvex(object):
@@ -83,134 +91,51 @@ class ModelBalancingConvex(object):
             "CM",
         ], f"unsupported rate law {self.rate_law}"
 
-        for p in DEFAULT_UNITS.keys():
+        for p in ALL_VARIABLES:
             assert f"{p}_gmean" in kwargs
             assert f"{p}_ln_precision" in kwargs
 
+        self._var_dict = {}
         self.ln_gmean = {}
-        self.ln_precision = {}
+        self.z2_scores = {}
         self.ln_lower_bound = {}
         self.ln_upper_bound = {}
 
         if not all(self.fluxes.flatten() > MIN_FLUX):
-            raise ValueError(
+            raise NegativeFluxError(
                 "In order to use Convex Model Balancing, all fluxes must be strictly positive"
                 f"(i.e. > {MIN_FLUX:.1e})"
             )
 
-        self.ln_Keq_gmean = cp.Parameter(
-            shape=(self.Nr,), value=np.log(kwargs["Keq_gmean"].m_as(""))
-        )
-        self.ln_Keq_precision = kwargs["Keq_ln_precision"]
-        self.ln_conc_met_gmean = cp.Parameter(
-            shape=(self.Nc, self.Ncond),
-            value=np.log(
-                kwargs["conc_met_gmean"].m_as("M").reshape(self.Nc, self.Ncond)
-            ),
-        )
-        self.ln_conc_met_precision = kwargs["conc_met_ln_precision"]
-        self.ln_conc_enz_gmean = cp.Parameter(
-            shape=(self.Nr, self.Ncond),
-            value=np.log(
-                kwargs["conc_enz_gmean"].m_as("M").reshape(self.Nr, self.Ncond)
-            ),
-        )
-        self.ln_conc_enz_precision = kwargs["conc_enz_ln_precision"]
-        self.ln_kcatf_gmean = cp.Parameter(
-            shape=(self.Nr,), value=np.log(kwargs["kcatf_gmean"].m_as("1/s"))
-        )
-        self.ln_kcatf_precision = kwargs["kcatf_ln_precision"]
-        self.ln_kcatr_gmean = cp.Parameter(
-            shape=(self.Nr,), value=np.log(kwargs["kcatr_gmean"].m_as("1/s"))
-        )
-        self.ln_kcatr_precision = kwargs["kcatr_ln_precision"]
-        self.ln_Km_gmean = np.log(kwargs["Km_gmean"].m_as("M"))
-        if self.ln_Km_gmean.size != 0:
-            self.ln_Km_precision = kwargs["Km_ln_precision"]
-        else:
-            self.ln_Km_precision = None
+        for p in INDEPENDENT_VARIABLES + DEPENDENT_VARIABLES:
+            p_dim = kwargs[f"{p}_gmean"].size
+            if p_dim > 0:
+                if p in INDEPENDENT_VARIABLES:
+                    self._var_dict[f"ln_{p}"] = cp.Variable(shape=kwargs[f"{p}_gmean"].shape)
+                elif p == "conc_enz":
+                    self._var_dict[f"ln_{p}"] = self.ln_conc_enz
+                elif p == "kcatr":
+                    self._var_dict[f"ln_{p}"] = self.ln_kcatr
+                else:
+                    raise Exception(f"unknown parameter: {p}")
 
-        self.ln_Ka_gmean = np.log(kwargs["Ka_gmean"].m_as("M"))
-        if self.ln_Ka_gmean.size != 0:
-            self.ln_Ka_precision = kwargs["Ka_ln_precision"]
-        else:
-            self.ln_Ka_precision = None
+                self.ln_gmean[p] = np.log(kwargs[f"{p}_gmean"].m_as(DEFAULT_UNITS[p]))
+                assert kwargs[f"{p}_ln_precision"].shape == (p_dim, p_dim)
+                displacement = self._var_dict[f"ln_{p}"] - self.ln_gmean[p]
+                if len(displacement.shape) > 1:
+                    displacement = displacement.flatten()
+                if p == "conc_enz":
+                    displacement = cp.pos(displacement)
 
-        self.ln_Ki_gmean = np.log(kwargs["Ki_gmean"].m_as("M"))
-        if self.ln_Ki_gmean.size != 0:
-            self.ln_Ki_precision = kwargs["Ki_ln_precision"]
-        else:
-            self.ln_Ki_precision = None
-
-        assert self.ln_Keq_precision.shape == (self.Nr, self.Nr)
-        assert self.ln_conc_enz_precision.shape == (
-            self.Nr * self.Ncond,
-            self.Nr * self.Ncond,
-        )
-        assert self.ln_conc_met_precision.shape == (
-            self.Nc * self.Ncond,
-            self.Nc * self.Ncond,
-        )
-
-        self.ln_conc_met = cp.Variable(shape=(self.Nc, self.Ncond))
-        self.ln_Keq = cp.Variable(shape=(self.Nr,))
-        self.ln_kcatf = cp.Variable(shape=(self.Nr,))
-
-        for p in ["Km", "Ka", "Ki"]:
-            ln_gmean = self.__getattribute__(f"ln_{p}_gmean")
-            ln_precision = self.__getattribute__(f"ln_{p}_precision")
-            if ln_gmean.size == 0:
-                self.__setattr__(f"ln_{p}", np.array([]))
-                self.__setattr__(f"z2_scores_{p}", cp.Constant(0))
-            else:
-                ln_p = cp.Variable(shape=ln_gmean.shape)
-                self.__setattr__(
-                    f"z2_scores_{p}",
-                    ModelBalancingConvex._z_score(ln_p, ln_gmean, ln_precision),
+                self.z2_scores[p] = cp.quad_form(
+                    displacement, kwargs[f"{p}_ln_precision"]
                 )
-                self.__setattr__(f"ln_{p}", ln_p)
+            else:
+                self.ln_gmean[p] = None
+                self._var_dict[f"ln_{p}"] = None
+                self.z2_scores[p] = cp.Constant(0)
 
-        for p in ["Keq", "kcatf", "kcatr"]:
-            ln_p = self.__getattribute__(f"ln_{p}")
-            ln_gmean = self.__getattribute__(f"ln_{p}_gmean")
-            ln_precision = self.__getattribute__(f"ln_{p}_precision")
-            self.__setattr__(
-                f"z2_scores_{p}",
-                ModelBalancingConvex._z_score(ln_p, ln_gmean, ln_precision),
-            )
-
-        # conc_met is given as a matrix (with conditions as columns) and therefore
-        # we assume a diagonal covariance matrix (for simplicity). Instead of a
-        # ln_precision matrix, we simply have the geometric means and stds arranged in
-        # the same shape as the variables.
-        self.z2_scores_conc_met = cp.quad_form(
-            (self.ln_conc_met - self.ln_conc_met_gmean).flatten(),
-            self.ln_conc_met_precision,
-        )
-
-        # ln enzyme concentrations are convex functions of the ln metabolite concentrations
-        # but, since the z-scores use the square function, we have to take only the positive
-        # values (otherwise the result is not convex).
-        self.z2_scores_conc_enz = cp.quad_form(
-            (cp.pos(self.ln_conc_enz - self.ln_conc_enz_gmean)).flatten(),
-            self.ln_conc_enz_precision,
-        )
-
-        self.total_z2_scores = sum(
-            [
-                self.__getattribute__(f"z2_scores_{p}")
-                for p in [
-                    "Km",
-                    "Ka",
-                    "Ki",
-                    "Keq",
-                    "kcatf",
-                    "kcatr",
-                    "conc_met",
-                    "conc_enz",
-                ]
-            ]
-        )
+        self.total_z2_scores = sum([self.z2_scores[p] for p in ALL_VARIABLES])
 
     @staticmethod
     def from_json(fname: str) -> "ModelBalancingConvex":
@@ -272,7 +197,7 @@ class ModelBalancingConvex(object):
 
         Nc, Nr = S.shape
 
-        if x.size == 0:
+        if x is None:
             return np.zeros((Nc, Nr))
 
         K_mat = []
@@ -289,15 +214,6 @@ class ModelBalancingConvex(object):
         K_mat = cp.vstack(K_mat)
         return K_mat
 
-    @staticmethod
-    def _z_score(
-        x: Union[np.array, cp.Expression],
-        mu: np.array,
-        precision: np.array,
-    ) -> cp.Expression:
-        """Calculates the sum of squared Z-scores (with a covariance mat)."""
-        return cp.quad_form(x - mu, precision)
-
     def _driving_forces(
         self,
         ln_Keq: Union[np.array, cp.Expression],
@@ -308,7 +224,7 @@ class ModelBalancingConvex(object):
     @property
     def driving_forces(self) -> cp.Expression:
         """Calculates the driving forces of all reactions."""
-        return self._driving_forces(self.ln_Keq, self.ln_conc_met)
+        return self._driving_forces(self._var_dict["ln_Keq"], self._var_dict["ln_conc_met"])
 
     @staticmethod
     def _ln_kcatr(
@@ -324,7 +240,7 @@ class ModelBalancingConvex(object):
     def ln_kcatr(self) -> cp.Expression:
         """Calculate the kcat-reverse based on Haldane relationship constraint."""
         return ModelBalancingConvex._ln_kcatr(
-            self.S, self.ln_kcatf, self.ln_Km, self.ln_Keq
+            self.S, self._var_dict["ln_kcatf"], self._var_dict["ln_Km"], self._var_dict["ln_Keq"]
         )
 
     def _ln_capacity(
@@ -441,14 +357,8 @@ class ModelBalancingConvex(object):
     @property
     def ln_conc_enz(self) -> cp.Expression:
         """Calculate the required enzyme levels based on fluxes and rate laws."""
-        return self._ln_conc_enz(
-            self.ln_Keq,
-            self.ln_kcatf,
-            self.ln_Km,
-            self.ln_Ka,
-            self.ln_Ki,
-            self.ln_conc_met,
-        )
+        kwargs = {f"ln_{p}": self._var_dict[f"ln_{p}"] for p in INDEPENDENT_VARIABLES}
+        return self._ln_conc_enz(**kwargs)
 
     def is_gmean_feasible(self) -> bool:
         """Check if the gmean  is a thermodynamically feasible solution.
@@ -459,7 +369,7 @@ class ModelBalancingConvex(object):
         conc_enz is not defined).
         """
         return (
-            self._driving_forces(self.ln_Keq_gmean, self.ln_conc_met_gmean).value
+            self._driving_forces(self.ln_gmean["Keq"], self.ln_gmean["conc_met"]).value
             >= (MIN_DRIVING_FORCE / RT).m_as("")
         ).all()
 
@@ -471,18 +381,9 @@ class ModelBalancingConvex(object):
         thermodynamically feasible.
         """
         # define the independent variables and their z-scores
-        self.ln_conc_met.value = self.ln_conc_met_gmean.value
-        self.ln_Keq.value = self.ln_Keq_gmean.value
-        self.ln_kcatf.value = self.ln_kcatf_gmean.value
-
-        if self.ln_Km_gmean.size != 0:
-            self.ln_Km.value = self.ln_Km_gmean
-
-        if self.ln_Ka_gmean.size != 0:
-            self.ln_Ka.value = self.ln_Ka_gmean
-
-        if self.ln_Ki_gmean.size != 0:
-            self.ln_Ki.value = self.ln_Ki_gmean
+        for p in INDEPENDENT_VARIABLES:
+            if self.ln_gmean[p] is not None:
+                self._var_dict[f"ln_{p}"].value = self.ln_gmean[p]
 
         # self.ln_kcatr_gmean.value = self.ln_kcatr.value
         # self.ln_conc_enz_gmean.value = self.ln_conc_enz.value
@@ -504,7 +405,7 @@ class ModelBalancingConvex(object):
         thermodynamically feasible space.
         """
         prob = cp.Problem(
-            cp.Minimize(self.z2_scores_conc_met),
+            cp.Minimize(self.z2_scores["conc_met"]),
             [self.driving_forces >= (MIN_DRIVING_FORCE / RT).m_as("")],
         )
         prob.solve(solver=self.solver, verbose=verbose)
@@ -515,10 +416,13 @@ class ModelBalancingConvex(object):
         """Get the objective value (i.e. the sum of squares of all z-scores)."""
         return self.total_z2_scores.value
 
+    def get_z_scores(self) -> Dict[str, np.array]:
+        return {p: self.z2_scores[p].value for p in ALL_VARIABLES}
+
     def print_z_scores(self, precision: int = 2) -> None:
         """Print the z-score values for all variables."""
-        for p in ["Km", "Ka", "Ki", "Keq", "kcatf", "conc_met", "kcatr", "conc_enz"]:
-            z = self.__getattribute__(f"z2_scores_{p}").value
+        for p in ALL_VARIABLES:
+            z = self.z2_scores[p].value
             print(f"{p} = {z.round(precision)}")
 
     def print_status(self) -> None:
@@ -539,8 +443,8 @@ class ModelBalancingConvex(object):
         and the ΔG' values.
         """
         v = self.fluxes
-        c = Q_(np.exp(self.ln_conc_met.value), "M")
-        e = Q_(np.exp(self.ln_conc_enz.value), "M")
+        c = Q_(np.exp(self._var_dict["ln_conc_met"].value), "M")
+        e = Q_(np.exp(self._var_dict["ln_conc_enz"].value), "M")
         delta_g = -self.driving_forces.value * RT
         state_sbtabdoc = to_state_sbtab(
             v,
@@ -560,40 +464,28 @@ class ModelBalancingConvex(object):
         The model SBtab contains the values of the state-independent variables,
         i.e. kcatf, kcatr, Km, Ka, and Ki.
         """
-        kcatf = Q_(np.exp(self.ln_kcatf.value), "1/s")
-        kcatr = Q_(np.exp(self.ln_kcatr.value), "1/s")
-        Keq = Q_(np.exp(self.ln_Keq.value), "")
-        if self.ln_Km_gmean.size != 0:
-            Km = Q_(np.exp(self._create_dense_matrix(self.S, self.ln_Km).value), "M")
-        else:
-            Km = Q_(np.exp(self._create_dense_matrix(self.S, self.ln_Km)), "M")
-        if self.ln_Ka_gmean.size != 0:
-            Ka = Q_(
-                np.exp(self._create_dense_matrix(self.A_act, self.ln_Ka).value), "M"
-            )
-        else:
-            Ka = Q_(np.exp(self._create_dense_matrix(self.A_act, self.ln_Ka)), "M")
-        if self.ln_Ki_gmean.size != 0:
-            Ki = Q_(
-                np.exp(self._create_dense_matrix(self.A_inh, self.ln_Ki).value), "M"
-            )
-        else:
-            Ki = Q_(np.exp(self._create_dense_matrix(self.A_inh, self.ln_Ki)), "M")
+        kwargs = {
+            "S": self.S,
+            "A_act": self.A_act,
+            "A_inh": self.A_inh,
+            "metabolite_names": self.metabolite_names,
+            "reaction_names": self.reaction_names,
+            "state_names": self.state_names,
+        }
+        for p in MODEL_VARIABLES:
+            if self.ln_gmean[p] is None:
+                kwargs[p] = Q_(np.array([]), DEFAULT_UNITS[p])
+                continue
+            val = np.exp(self._var_dict[f"ln_{p}"].value)
+            if p == "Km":
+                val = self._create_dense_matrix(self.S, val)
+            elif p == "Ka":
+                val = self._create_dense_matrix(self.A_act, val)
+            elif p == "Ki":
+                val = self._create_dense_matrix(self.A_inh, val)
+            kwargs[p] = Q_(val, DEFAULT_UNITS[p])
 
-        model_sbtabdoc = to_model_sbtab(
-            kcatf,
-            kcatr,
-            Keq,
-            Km,
-            Ka,
-            Ki,
-            self.S,
-            self.A_act,
-            self.A_inh,
-            self.metabolite_names,
-            self.reaction_names,
-            self.state_names,
-        )
+        model_sbtabdoc = to_model_sbtab(**kwargs)
         model_sbtabdoc.set_name("CMB result")
         return model_sbtabdoc
 

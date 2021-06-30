@@ -15,9 +15,12 @@ from scipy.optimize import minimize
 
 from . import (
     DEFAULT_UNITS,
+    ALL_VARIABLES,
     DEPENDENT_VARIABLES,
     INDEPENDENT_VARIABLES,
     MIN_DRIVING_FORCE,
+    MODEL_VARIABLES,
+    STATE_VARIABLES,
     Q_,
     RT,
 )
@@ -75,7 +78,7 @@ class ModelBalancing(object):
             "CM",
         ], f"unsupported rate law {self.rate_law}"
 
-        for p in DEFAULT_UNITS.keys():
+        for p in ALL_VARIABLES:
             assert f"{p}_gmean" in kwargs
             assert f"{p}_ln_precision" in kwargs
 
@@ -84,7 +87,8 @@ class ModelBalancing(object):
         self.ln_lower_bound = {}
         self.ln_upper_bound = {}
 
-        for p, unit in DEFAULT_UNITS.items():
+        for p in ALL_VARIABLES:
+            unit = DEFAULT_UNITS[p]
             # geometric means (in log-scale)
             self.ln_gmean[p] = np.log(kwargs[f"{p}_gmean"].m_as(unit))
             if self.ln_gmean[p].size > 0:
@@ -122,8 +126,9 @@ class ModelBalancing(object):
         )
 
         # initialize the independent variables with their geometric means
+        self._var_dict = {}
         for p in INDEPENDENT_VARIABLES:
-            self.__setattr__(f"ln_{p}", self.ln_gmean[p])
+            self._var_dict[f"ln_{p}"] = self.ln_gmean[p]
 
     @staticmethod
     def from_json(fname: str) -> "ModelBalancing":
@@ -134,98 +139,98 @@ class ModelBalancing(object):
         args = read_arguments_json(fname)
         return ModelBalancing(**args)
 
-    def _get_variable_shape(self, p: str) -> int:
-        return self.__getattribute__(f"ln_{p}").shape
+    def var_dict_to_vector(
+        self,
+        var_dict: Dict[str, np.array],
+        param_order: List[str] = INDEPENDENT_VARIABLES,
+    ) -> np.array:
+        """Get the variable vector (x)."""
+        # in order to use the scipy solver, we need to stack all the independent variables
+        # into one 1-D array (denoted 'x').
+        return np.array([x for p in param_order for x in var_dict[f"ln_{p}"].T.flat])
 
-    def _get_variable_size(self, p: str) -> int:
-        return self.__getattribute__(f"ln_{p}").size
-
-    def _variable_vector_to_dict(
-        self, x: Optional[np.ndarray] = None
-    ) -> Dict[str, np.ndarray]:
+    def _var_vector_to_dict_independent(self, x: np.ndarray) -> Dict[str, np.ndarray]:
         """Convert the variable vector into a dictionary."""
-        if x is None:
-            x = np.array(list(self.ln_x))
         var_dict = {}
         i = 0
         for p in INDEPENDENT_VARIABLES:
-            size = self._get_variable_size(p)
-            shape = self._get_variable_shape(p)
+            size = self._var_dict[f"ln_{p}"].size
+            shape = self._var_dict[f"ln_{p}"].shape
             var_dict[f"ln_{p}"] = x[i : i + size].reshape(shape, order="F")
             i += size
         return var_dict
 
-    @property
-    def ln_x(self) -> Iterable[float]:
-        """Get the variable vector (x)."""
-        # in order to use the scipy solver, we need to stack all the independent variables
-        # into one 1-D array (denoted 'x').
-        for p in INDEPENDENT_VARIABLES:
-            for x in self.__getattribute__(f"ln_{p}").T.flat:
-                yield x
-
-    def _get_full_variable_dictionary(
-        self, x: Optional[np.ndarray] = None
-    ) -> Dict[str, np.ndarray]:
-        """Get a dictionary with all dependent and independent variable values."""
-        var_dict = self._variable_vector_to_dict(x)
-        var_dict["ln_conc_enz"] = self._ln_conc_enz(**var_dict)
+    def extend_var_dict_to_dependent_params(
+        self, var_dict: Dict[str, np.ndarray]
+    ) -> None:
+        var_dict["ln_conc_enz"] = self._ln_conc_enz(
+            var_dict["ln_Keq"],
+            var_dict["ln_kcatf"],
+            var_dict["ln_Km"],
+            var_dict["ln_Ka"],
+            var_dict["ln_Ki"],
+            var_dict["ln_conc_met"],
+        )
         var_dict["ln_kcatr"] = ModelBalancing._ln_kcatr(
             self.S, var_dict["ln_kcatf"], var_dict["ln_Km"], var_dict["ln_Keq"]
         )
+
+    def var_vector_to_dict_all(self, x: np.ndarray) -> Dict[str, np.ndarray]:
+        """Get a dictionary with all dependent and independent variable values."""
+        var_dict = self._var_vector_to_dict_independent(x)
+        self.extend_var_dict_to_dependent_params(var_dict)
         return var_dict
 
-    def objective_function(self, x: Optional[np.ndarray] = None) -> float:
+    def var_vector_to_z_scores(self, x: np.ndarray) -> Dict[str, float]:
+        return self.var_dict_to_z_scores(self.var_vector_to_dict_all(x))
+
+    def var_dict_to_z_scores(self, var_dict: Dict[str, float]) -> Dict[str, float]:
+        z2_scores_dict = {}
+        for p in ALL_VARIABLES:
+            if f"ln_{p}" not in var_dict:
+                raise KeyError(
+                    f"ln_{p} is not in the variable dictionary, use extend_var_dict_to_dependent_params()"
+                )
+            z2_scores_dict[p] = ModelBalancing._z_score(
+                var_dict[f"ln_{p}"],
+                self.ln_gmean[p],
+                self.ln_precision[p],
+                self.alpha if p == "conc_enz" else None,
+            )
+            # note that for conc_enz, we take a scaled version of the negative
+            # part of the z-score of ln_conc_enz. (α = 0 would be convex, and
+            # α = 1 would be the true cost function)
+
+        if self.beta > 0:
+            z2_scores_dict["c_over_Km"] = self.beta * self.penalty_term_beta(var_dict)
+        return z2_scores_dict
+
+    def objective_function(self, x: np.ndarray) -> float:
         """Calculate the sum of squares of all Z-scores for a given point (x).
 
         The input (x) is a stacked version of all the independent variables, assuming
         the following order: Km, Ka, Ki, Keq, kcatf, conc_met
         By default, if x is None, the objective value for (the exponent of)
-        self.ln_x is returned.
+        self.x is returned.
         """
-        var_dict = self._get_full_variable_dictionary(x)
+        return sum(self.var_vector_to_z_scores(x).values())
 
-        all_z2_scores = []
-        for p in INDEPENDENT_VARIABLES + DEPENDENT_VARIABLES:
-            ln_p_gmean = self.ln_gmean[p]
-            ln_p_precision = self.ln_precision[p]
-            ln_p = var_dict[f"ln_{p}"]
-
-            # take a scaled version of the negative part of
-            # the z-score of ln_conc_enz. (α = 0 would be convex, and α = 1
-            # would be the true cost function)
-            all_z2_scores.append(
-                ModelBalancing._z_score(
-                    ln_p,
-                    ln_p_gmean,
-                    ln_p_precision,
-                    self.alpha if p == "conc_enz" else None,
-                )
-            )
-        if self.beta > 0:
-            all_z2_scores.append(self.beta * self.penalty_term_beta(var_dict["ln_Km"]))
-
-        return sum(all_z2_scores)
-
-    def penalty_term_beta(self, ln_Km) -> float:
+    def penalty_term_beta(self, var_dict: Dict[str, float]) -> float:
         """Calculate the penalty term for c/Km."""
         beta_z_score = 0.0
         ln_Km_matrix = ModelBalancing._create_dense_matrix(
-            self.S, ln_Km
+            self.S, var_dict["ln_Km"]
         )
         for i in range(self.Nc):
             for j in range(self.Nr):
                 if self.S[i, j] == 0:
                     continue
                 for k in range(self.Ncond):
-                    ln_c_minus_km = self.ln_conc_met[i, k] - ln_Km_matrix[i, j]
-                    beta_z_score += ln_c_minus_km**2
+                    ln_c_minus_km = (
+                        var_dict["ln_conc_met"][i, k] - ln_Km_matrix[i, j]
+                    )
+                    beta_z_score += ln_c_minus_km ** 2
         return beta_z_score
-
-    @property
-    def objective_value(self) -> float:
-        """Get the objective value (i.e. the sum of squares of all z-scores)."""
-        return self.objective_function()
 
     @staticmethod
     def _z_score(
@@ -338,7 +343,9 @@ class ModelBalancing(object):
     @property
     def driving_forces(self) -> np.ndarray:
         """Calculates the driving forces of all reactions."""
-        return self._driving_forces(self.ln_Keq, self.ln_conc_met)
+        return self._driving_forces(
+            self._var_dict["ln_Keq"], self._var_dict["ln_conc_met"]
+        )
 
     @staticmethod
     def _ln_kcatr(
@@ -353,7 +360,12 @@ class ModelBalancing(object):
     @property
     def ln_kcatr(self) -> np.ndarray:
         """Calculate the kcat-reverse based on Haldane relationship constraint."""
-        return ModelBalancing._ln_kcatr(self.S, self.ln_kcatf, self.ln_Km, self.ln_Keq)
+        return ModelBalancing._ln_kcatr(
+            self.S,
+            self._var_dict["ln_kcatf"],
+            self._var_dict["ln_Km"],
+            self._var_dict["ln_Keq"],
+        )
 
     def _ln_capacity(
         self,
@@ -451,7 +463,7 @@ class ModelBalancing(object):
     @property
     def ln_eta_kinetic(self) -> np.ndarray:
         """Calculate the kinetic (saturation) term of the enzyme."""
-        return self._ln_eta_kinetic(self.ln_conc_met, self.ln_Km)
+        return self._ln_eta_kinetic(self._var_dict["conc_met"], self._var_dict["Km"])
 
     def _ln_eta_regulation(
         self,
@@ -480,7 +492,9 @@ class ModelBalancing(object):
     @property
     def ln_eta_regulation(self) -> np.ndarray:
         """Calculate the regulation (allosteric) term of the enzyme."""
-        return self._ln_eta_regulation(self.ln_conc_met, self.ln_Ka, self.ln_Ki)
+        return self._ln_eta_regulation(
+            self._var_dict["conc_met"], self._var_dict["Ka"], self._var_dict["Ki"]
+        )
 
     def _ln_conc_enz(
         self,
@@ -502,14 +516,8 @@ class ModelBalancing(object):
     @property
     def ln_conc_enz(self) -> np.ndarray:
         """Calculate the required enzyme levels based on fluxes and rate laws."""
-        return self._ln_conc_enz(
-            self.ln_Keq,
-            self.ln_kcatf,
-            self.ln_Km,
-            self.ln_Ka,
-            self.ln_Ki,
-            self.ln_conc_met,
-        )
+        kwargs = {f"ln_{p}": self._var_dict[f"ln_{p}"] for p in INDEPENDENT_VARIABLES}
+        return self._ln_conc_enz(**kwargs)
 
     def is_gmean_feasible(self) -> bool:
         """Check if the gmean  is a thermodynamically feasible solution.
@@ -543,7 +551,7 @@ class ModelBalancing(object):
                 i_Keq = i
             elif p == "conc_met":
                 i_conc_met = i
-            i += self._get_variable_size(p)
+            i += self._var_dict[f"ln_{p}"].size
 
         A = np.zeros((self.Nr * self.Ncond, i))
         for j in range(self.Ncond):
@@ -567,12 +575,10 @@ class ModelBalancing(object):
 
     def extend_variable_vector(self, x: np.ndarray) -> np.ndarray:
         """Add the dependent variables to a vector of the independen ones."""
-        var_dict = self._get_full_variable_dictionary(x)
-        var_array = []
-        for p in INDEPENDENT_VARIABLES + DEPENDENT_VARIABLES:
-            for x in var_dict[f"ln_{p}"].T.flat:
-                var_array.append(x)
-        return np.array(var_array)
+        var_dict = self.var_vector_to_dict_all(x)
+        return self.var_dict_to_vector(
+            var_dict, INDEPENDENT_VARIABLES + DEPENDENT_VARIABLES
+        )
 
     @property
     def parameter_constraints(self) -> scipy.optimize.NonlinearConstraint:
@@ -599,16 +605,16 @@ class ModelBalancing(object):
         thermodynamically feasible.
         """
         for p in INDEPENDENT_VARIABLES:
-            self.__setattr__(f"ln_{p}", self.ln_gmean[p])
+            self._var_dict[f"ln_{p}"] = self.ln_gmean[p]
 
         # set the geometric means of the dependent parameters (kcatr and conc_enz)
         # to the values calculated using all the independent parameters
-        for p in DEPENDENT_VARIABLES:
-            self.ln_gmean[p] = self.__getattribute__(f"ln_{p}")
+        self.ln_gmean["kcatr"] = self.ln_kcatr
+        self.ln_gmean["conc_enz"] = self.ln_conc_enz
 
     def solve(self, solver: str = "SLSQP", options: Optional[dict] = None) -> None:
         """Find a local minimum of the objective function using SciPy."""
-        x0 = np.array(list(self.ln_x))
+        x0 = self.var_dict_to_vector(self._var_dict)
         r = minimize(
             fun=self.objective_function,
             x0=x0,
@@ -620,47 +626,33 @@ class ModelBalancing(object):
             raise Exception(f"optimization unsuccessful because of {r.message}")
 
         # copy the values from the solution to the class members
-        for key, val in self._variable_vector_to_dict(r.x).items():
-            self.__setattr__(key, val)
+        self._var_dict = self._var_vector_to_dict_independent(r.x)
+        self.extend_var_dict_to_dependent_params(self._var_dict)
 
-    def get_z_scores(self) -> Dict[str, float]:
-        """Get the z-score values for all variables."""
-        res = {}
-        for p in INDEPENDENT_VARIABLES + DEPENDENT_VARIABLES:
-            ln_p_gmean = self.ln_gmean[p]
-            ln_p_precision = self.ln_precision[p]
-            ln_p = self.__getattribute__(f"ln_{p}")
-
-            if p == "conc_enz":
-                # take a scaled version of the negative part of
-                # the z-score of ln_conc_enz. (alpha = 0 would be convex, and alpha = 1
-                # would be the true cost function)
-                z = ModelBalancing._z_score(
-                    ln_p, ln_p_gmean, ln_p_precision, self.alpha
-                )
-            else:
-                z = ModelBalancing._z_score(ln_p, ln_p_gmean, ln_p_precision)
-
-            res[p] = z
-
-        res["c_over_km"] = self.penalty_term_beta(self.ln_Km)
-        res["objective"] = self.objective_function()
-        return res
+    def get_z_scores(self) -> Dict[str, np.array]:
+        return self.var_dict_to_z_scores(self._var_dict)
 
     def print_z_scores(self) -> None:
         """Print the z-score values for all variables."""
         for p, z in self.get_z_scores().items():
-            print(f"{p} = {z:.2f}")
+            print(f"{p} = {z:.3f}")
 
     def print_status(self) -> None:
         """Print a status report based on the current solution."""
-        print("\nMetabolite concentrations (M) =\n", np.exp(self.ln_conc_met))
-        print("\nEnzyme concentrations (M) =\n", np.exp(self.ln_conc_enz))
+        print(
+            "\nMetabolite concentrations (M) =\n", np.exp(self._var_dict["ln_conc_met"])
+        )
+        print("\nEnzyme concentrations (M) =\n", np.exp(self._var_dict["ln_conc_enz"]))
         print("\nDriving forces (RT) =\n", self.driving_forces)
         print("\nη(thr) =\n", np.exp(self.ln_eta_thermodynamic).round(2))
         print("\nη(kin) =\n", np.exp(self.ln_eta_kinetic).round(2))
         print("\nη(reg) =\n", np.exp(self.ln_eta_regulation).round(2))
         print("\n\n\n")
+
+    @property
+    def objective_value(self) -> float:
+        """Get the objective value (i.e. the sum of squares of all z-scores)."""
+        return sum(self.get_z_scores().values())
 
     def to_state_sbtab(self) -> SBtab.SBtabDocument:
         """Create a state SBtab.
@@ -670,8 +662,8 @@ class ModelBalancing(object):
         and the ΔG' values.
         """
         v = self.fluxes
-        c = Q_(np.exp(self.ln_conc_met), "M")
-        e = Q_(np.exp(self.ln_conc_enz), "M")
+        c = Q_(np.exp(self._var_dict["ln_conc_met"]), "M")
+        e = Q_(np.exp(self._var_dict["ln_conc_enz"]), "M")
 
         # during the optimization, reactions with 0 flux were not skipped in
         # the calculation of ln_capacity, ln_thermodynamic, ln_kinetic, and
@@ -701,28 +693,31 @@ class ModelBalancing(object):
         The model SBtab contains the values of the state-independent variables,
         i.e. kcatf, kcatr, Km, Ka, and Ki.
         """
-        kcatf = Q_(np.exp(self.ln_kcatf), "1/s")
-        kcatr = Q_(np.exp(self.ln_kcatr), "1/s")
-        Keq = Q_(np.exp(self.ln_Keq), "")
-        Km = Q_(np.exp(self._create_dense_matrix(self.S, self.ln_Km)), "M")
-        Ka = Q_(np.exp(self._create_dense_matrix(self.A_act, self.ln_Ka)), "M")
-        Ki = Q_(np.exp(self._create_dense_matrix(self.A_inh, self.ln_Ki)), "M")
-        model_sbtabdoc = to_model_sbtab(
-            kcatf,
-            kcatr,
-            Keq,
-            Km,
-            Ka,
-            Ki,
-            self.S,
-            self.A_act,
-            self.A_inh,
-            self.metabolite_names,
-            self.reaction_names,
-            self.state_names,
-        )
+        kwargs = {
+            "S": self.S,
+            "A_act": self.A_act,
+            "A_inh": self.A_inh,
+            "metabolite_names": self.metabolite_names,
+            "reaction_names": self.reaction_names,
+            "state_names": self.state_names,
+        }
+        for p in MODEL_VARIABLES:
+            if self.ln_gmean[p] is None:
+                kwargs[p] = Q_(np.array([]), DEFAULT_UNITS[p])
+                continue
+            val = np.exp(self._var_dict[f"ln_{p}"])
+            if p == "Km":
+                val = self._create_dense_matrix(self.S, val)
+            elif p == "Ka":
+                val = self._create_dense_matrix(self.A_act, val)
+            elif p == "Ki":
+                val = self._create_dense_matrix(self.A_inh, val)
+            kwargs[p] = Q_(val, DEFAULT_UNITS[p])
+
+        model_sbtabdoc = to_model_sbtab(**kwargs)
         model_sbtabdoc.set_name("MB result")
         model_sbtabdoc.change_attribute("RelaxationAlpha", f"{self.alpha}")
+        model_sbtabdoc.change_attribute("Beta", f"{self.beta}")
         return model_sbtabdoc
 
 
