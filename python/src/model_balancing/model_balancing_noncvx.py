@@ -218,17 +218,13 @@ class ModelBalancing(object):
     def penalty_term_beta(self, var_dict: Dict[str, float]) -> float:
         """Calculate the penalty term for c/Km."""
         beta_z_score = 0.0
-        ln_Km_matrix = ModelBalancing._create_dense_matrix(
-            self.S, var_dict["ln_Km"]
-        )
+        ln_Km_matrix = ModelBalancing._create_dense_matrix(self.S, var_dict["ln_Km"])
         for i in range(self.Nc):
             for j in range(self.Nr):
                 if self.S[i, j] == 0:
                     continue
                 for k in range(self.Ncond):
-                    ln_c_minus_km = (
-                        var_dict["ln_conc_met"][i, k] - ln_Km_matrix[i, j]
-                    )
+                    ln_c_minus_km = var_dict["ln_conc_met"][i, k] - ln_Km_matrix[i, j]
                     beta_z_score += ln_c_minus_km ** 2
         return beta_z_score
 
@@ -612,7 +608,7 @@ class ModelBalancing(object):
         self.ln_gmean["kcatr"] = self.ln_kcatr
         self.ln_gmean["conc_enz"] = self.ln_conc_enz
 
-    def solve(self, solver: str = "SLSQP", options: Optional[dict] = None) -> None:
+    def solve(self, solver: str = "SLSQP", options: Optional[dict] = None) -> str:
         """Find a local minimum of the objective function using SciPy."""
         x0 = self.var_dict_to_vector(self._var_dict)
         r = minimize(
@@ -623,11 +619,13 @@ class ModelBalancing(object):
             options=options,
         )
         if not r.success:
-            raise Exception(f"optimization unsuccessful because of {r.message}")
+            print(f"optimization unsuccessful because of {r.message}")
+            return r.message
 
         # copy the values from the solution to the class members
         self._var_dict = self._var_vector_to_dict_independent(r.x)
         self.extend_var_dict_to_dependent_params(self._var_dict)
+        return "optimal"
 
     def get_z_scores(self) -> Dict[str, np.array]:
         return self.var_dict_to_z_scores(self._var_dict)

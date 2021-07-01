@@ -111,7 +111,9 @@ class ModelBalancingConvex(object):
             p_dim = kwargs[f"{p}_gmean"].size
             if p_dim > 0:
                 if p in INDEPENDENT_VARIABLES:
-                    self._var_dict[f"ln_{p}"] = cp.Variable(shape=kwargs[f"{p}_gmean"].shape)
+                    self._var_dict[f"ln_{p}"] = cp.Variable(
+                        shape=kwargs[f"{p}_gmean"].shape
+                    )
                 elif p == "conc_enz":
                     self._var_dict[f"ln_{p}"] = self.ln_conc_enz
                 elif p == "kcatr":
@@ -135,7 +137,12 @@ class ModelBalancingConvex(object):
                 self._var_dict[f"ln_{p}"] = None
                 self.z2_scores[p] = cp.Constant(0)
 
-        self.total_z2_scores = sum([self.z2_scores[p] for p in ALL_VARIABLES])
+        if self.beta > 0:
+            self.z2_scores["c_over_Km"] = self.beta * self.penalty_term_beta(
+                self._var_dict["ln_Km"], self._var_dict["ln_conc_met"]
+            )
+
+        self.total_z2_scores = sum(self.z2_scores.values())
 
     @staticmethod
     def from_json(fname: str) -> "ModelBalancingConvex":
@@ -224,7 +231,9 @@ class ModelBalancingConvex(object):
     @property
     def driving_forces(self) -> cp.Expression:
         """Calculates the driving forces of all reactions."""
-        return self._driving_forces(self._var_dict["ln_Keq"], self._var_dict["ln_conc_met"])
+        return self._driving_forces(
+            self._var_dict["ln_Keq"], self._var_dict["ln_conc_met"]
+        )
 
     @staticmethod
     def _ln_kcatr(
@@ -240,7 +249,10 @@ class ModelBalancingConvex(object):
     def ln_kcatr(self) -> cp.Expression:
         """Calculate the kcat-reverse based on Haldane relationship constraint."""
         return ModelBalancingConvex._ln_kcatr(
-            self.S, self._var_dict["ln_kcatf"], self._var_dict["ln_Km"], self._var_dict["ln_Keq"]
+            self.S,
+            self._var_dict["ln_kcatf"],
+            self._var_dict["ln_Km"],
+            self._var_dict["ln_Keq"],
         )
 
     def _ln_capacity(
@@ -360,6 +372,23 @@ class ModelBalancingConvex(object):
         kwargs = {f"ln_{p}": self._var_dict[f"ln_{p}"] for p in INDEPENDENT_VARIABLES}
         return self._ln_conc_enz(**kwargs)
 
+    def penalty_term_beta(
+        self,
+        ln_Km: Union[np.array, cp.Expression],
+        ln_conc_met: Union[np.array, cp.Expression],
+    ) -> cp.Expression:
+        """Calculate the penalty term for c/Km."""
+        beta_z_score = 0.0
+        ln_Km_matrix = ModelBalancingConvex._create_dense_matrix(self.S, ln_Km)
+        for i in range(self.Nc):
+            for j in range(self.Nr):
+                if self.S[i, j] == 0:
+                    continue
+                for k in range(self.Ncond):
+                    ln_c_minus_km = ln_conc_met[i, k] - ln_Km_matrix[i, j]
+                    beta_z_score += ln_c_minus_km ** 2
+        return beta_z_score
+
     def is_gmean_feasible(self) -> bool:
         """Check if the gmean  is a thermodynamically feasible solution.
 
@@ -388,7 +417,7 @@ class ModelBalancingConvex(object):
         # self.ln_kcatr_gmean.value = self.ln_kcatr.value
         # self.ln_conc_enz_gmean.value = self.ln_conc_enz.value
 
-    def solve(self, verbose: bool = False) -> None:
+    def solve(self, verbose: bool = False) -> str:
         """Use CVXPY to find the global optimum that minimizes all z-scores."""
         prob = cp.Problem(
             cp.Minimize(self.total_z2_scores),
@@ -417,7 +446,7 @@ class ModelBalancingConvex(object):
         return self.total_z2_scores.value
 
     def get_z_scores(self) -> Dict[str, np.array]:
-        return {p: self.z2_scores[p].value for p in ALL_VARIABLES}
+        return {k: v.value for k, v in self.z2_scores.items()}
 
     def print_z_scores(self, precision: int = 2) -> None:
         """Print the z-score values for all variables."""
