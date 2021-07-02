@@ -14,7 +14,8 @@ Fitted (TOTAL):      40
 Enzyme strgcy alpha: 0.000000
 c/KM stringency beta:0.000000
 Used bounds (1=yes): 1
+Used pseudo (1=yes): 0
 Initial values type: polytope center
-Geom. std errors:    c:1.016 e:1.146 Keq:1.045 Kcatf:1.958 Kcatr:1.619 KM:1.015
-Corr. on log scale:  c:1.000 e:0.989 Keq:1.000 Kcatf:0.998 Kcatr:0.998 KM:1.000
-Calculation time:    8.3 s
+Geom. std errors:    c:1.013 e:1.017 Keq:1.046 Kcatf:1.305 Kcatr:1.312 KM:1.152
+Corr. on log scale:  c:1.000 e:1.000 Keq:1.000 Kcatf:0.999 Kcatr:0.997 KM:0.998
+Calculation time:    12.6 s
