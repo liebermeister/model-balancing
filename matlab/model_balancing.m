@@ -86,6 +86,12 @@ if cmb_options.use_bounds == 0,
   display('Ignoring all bounds on individual variables');
 end
 
+if cmb_options.use_pseudo_values,
+  display('Using pseudo values');
+else
+  display('Not using pseudo values');
+end
+
 % -----------------------------------------------
 % Initialise some variables
 

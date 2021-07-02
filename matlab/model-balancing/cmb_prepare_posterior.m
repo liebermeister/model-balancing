@@ -25,6 +25,7 @@ preposterior.V.std(isnan(preposterior.V.std))   = prior.V.std(isnan(preposterior
 preposterior.lnE.mean(isnan(preposterior.lnE.mean)) = prior.lnE.mean(isnan(preposterior.lnE.mean));
 preposterior.lnE.std(isnan(preposterior.lnE.std))   = prior.lnE.std(isnan(preposterior.lnE.std));
 
+
 % --------------------------------------------------------------------------------
 % infer multivariate gaussian for q from multivariate gaussian for qall 
 % (e.g., from Eq 10 in Liebermeister 2006, "Bringing .. : Integration ...")
@@ -37,19 +38,19 @@ switch cmb_options.use_kinetic_data,
     display('Using kinetic and equilibrium constants data');
     qall_data_mean = data.qall.mean;
     qall_data_std  = data.qall.std;    
-    R              = q_info.M_q_to_qall;
+    M_q_to_qdata   = q_info.M_q_to_qall;
 
   case 'only_Keq',
     display('Using equilibrium constants data');
     qall_data_mean = data.qall.mean(q_info.qall.index.Keq);
     qall_data_std  = data.qall.std(q_info.qall.index.Keq);
-    R              = q_info.M_q_to_qall(q_info.qall.index.Keq,:);
+    M_q_to_qdata   = q_info.M_q_to_qall(q_info.qall.index.Keq,:);
   
   case 'none',
     display('cmb_prepare_posterior: Not using kinetic or equilibrium constants data');
     qall_data_mean = [];
     qall_data_std  = [];
-    R              = [];
+    M_q_to_qdata   = [];
     
   otherwise,
     error('incorrect option');
@@ -57,50 +58,65 @@ switch cmb_options.use_kinetic_data,
 end
 
 %% use only non-nan data values
-is_ok             = find(isfinite(qall_data_mean).*isfinite(qall_data_std));
-I                 = eye(length(data.qall.mean));
-P                 = I(is_ok,:);
-qall_data_mean    = qall_data_mean(is_ok);
-qall_data_std     = qall_data_std(is_ok);
-qall_data_cov_inv = diag(1./[qall_data_std.^2]);
-R                 = R(is_ok,:);
+I               = eye(length(data.qall.mean));
+is_ok           = find(isfinite(qall_data_mean) .* isfinite(qall_data_std));
+M_qall_to_qdata = I(is_ok,:);
+M_q_to_qdata    = M_q_to_qdata(is_ok,:);
+qdata_mean      = qall_data_mean(is_ok);
+qdata_std       = qall_data_std(is_ok);
+qdata_prec      = diag(1./[qdata_std.^2]);
 
 % compute preposterior mean and covariance
 
-% OLD VARIANT: compute everything only for q
-% q_cov_inv              = prior.q.cov_inv + R' * qall_data_cov_inv * R;
-% q_mean                 = q_cov_inv \ [R' * qall_data_cov_inv * qall_data_mean + prior.q.cov_inv * prior.q.mean];
-% preposterior.q.mean    = q_mean;
-% preposterior.q.cov_inv = q_cov_inv;
-% preposterior.q.cov     = inv(preposterior.q.cov_inv);
+% OLD VARIANT: compute correlated posterior for q (from prior and data -  without pseudo values!)
 
-% NEW variant: compute everything for qall, then select vectors and matrices for q
+M_q_to_qall = q_info.M_q_to_qall;
+M_q_to_qdep = q_info.M_q_to_qdep;
 
-% prior
-M_q_to_qall         = q_info.M_q_to_qall;
-M_qdep_to_qall      = q_info.M_qdep_to_qall;
-D1 = inv(M_q_to_qall * prior.q.cov_inv * M_q_to_qall' + M_qdep_to_qall * prior.qdep_pseudo.cov_inv * M_qdep_to_qall');
-D2 = D1 * [M_q_to_qall * prior.q.cov_inv * prior.q.mean + M_qdep_to_qall * prior.qdep_pseudo.cov_inv * prior.qdep_pseudo.mean];
-qall_prior_mean     = D2;
-qall_prior_cov      = D1;
-qall_prior_std      = sqrt(diag(qall_prior_cov));
-qall_prior_cov_inv  = inv(qall_prior_cov);
-
-% preposterior mean and covariance
-if length(qall_data_mean),
-  qall_cov_inv        = qall_prior_cov_inv + P' * qall_data_cov_inv * P;
-  qall_mean           = qall_cov_inv \ [qall_prior_cov_inv * qall_prior_mean + P' * qall_data_cov_inv * qall_data_mean];
-  qall_cov            = inv(qall_cov_inv);
+if length(qdata_mean),
+  if cmb_options.use_pseudo_values,
+    %%  with pseudo values
+    q_prec = prior.q.prec + M_q_to_qdata' * qdata_prec * M_q_to_qdata + M_q_to_qdep' * prior.qdep_pseudo.prec * M_q_to_qdep;
+    q_mean = q_prec \ [M_q_to_qdata' * qdata_prec * qdata_mean + prior.q.prec * prior.q.mean + M_q_to_qdep' * prior.qdep_pseudo.prec * prior.qdep_pseudo.mean];
+  else,
+    %% without pseudo values
+    q_prec = prior.q.prec + M_q_to_qdata' * qdata_prec * M_q_to_qdata;
+    q_mean = q_prec \ [M_q_to_qdata' * qdata_prec * qdata_mean + prior.q.prec * prior.q.mean];
+  end
 else
-  % important to write this explicitly, matlab has a strange bug when qall_data_mean is an empty vector
-  qall_mean           = qall_prior_mean;
-  qall_cov_inv        = qall_prior_cov_inv;
-  qall_cov            = inv(qall_prior_cov_inv);
+  q_prec = prior.q.prec;
+  q_mean = prior.q.mean;
 end
 
-preposterior.q.mean = qall_mean(q_info.q.index_q);
-preposterior.q.cov  = qall_cov(q_info.q.index_q,q_info.q.index_q);
-preposterior.q.cov_inv = qall_cov_inv(q_info.q.index_q,q_info.q.index_q);
+preposterior.q.mean    = q_mean;
+preposterior.q.prec    = q_prec;
+preposterior.q.cov     = inv(q_prec);
+preposterior.qall.mean = M_q_to_qall * q_mean;
+preposterior.qall.cov  = M_q_to_qall * preposterior.q.cov * M_q_to_qall'; 
+preposterior.qall.prec = pinv(preposterior.qall.cov);
 
-%preposterior.q.mean
-%preposterior.q.cov
+% % NEW variant: compute everything for qall, then select vectors and matrices for q
+% 
+% % combine prior + pseudo values -> pseudoprior for all constants
+% M_q_to_qall      = q_info.M_q_to_qall;
+% M_qdep_to_qall   = q_info.M_qdep_to_qall;
+% qall_pprior_prec = M_q_to_qall * prior.q.prec * M_q_to_qall' + M_qdep_to_qall * prior.qdep_pseudo.prec * M_qdep_to_qall';
+% qall_pprior_mean = qall_pprior_prec \ [M_q_to_qall * prior.q.prec * prior.q.mean + M_qdep_to_qall * prior.qdep_pseudo.prec * prior.qdep_pseudo.mean];
+% 
+% % preposterior mean and covariance
+% if length(qdata_mean),
+%   qall_prec = qall_pprior_prec + M_qall_to_qdata' * qdata_prec * M_qall_to_qdata;
+%   qall_mean = qall_prec \ [M_qall_to_qdata' * qdata_prec * qdata_mean + qall_pprior_prec * qall_pprior_mean];
+% else
+%   % important to write this explicitly, matlab has a strange bug when qdata_mean is an empty vector
+%   qall_prec = qall_pprior_prec;
+%   qall_mean = qall_pprior_mean;
+% end
+% 
+% preposterior.qall.mean = qall_mean;
+% preposterior.qall.prec = qall_prec;
+% preposterior.qall.cov  = inv(qall_prec);
+% 
+% preposterior.q.mean    = qall_mean(q_info.q.index_q);
+% preposterior.q.cov     = preposterior.qall.cov(q_info.q.index_q,q_info.q.index_q);
+% preposterior.q.prec    = pinv(preposterior.q.cov);

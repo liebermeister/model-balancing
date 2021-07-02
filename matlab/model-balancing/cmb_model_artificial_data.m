@@ -76,37 +76,38 @@ switch cmb_options.prior_variant,
   
   case 'prior_around_true_values',
     prior.q.mean = true.q;
+    prior.qdep_pseudo.mean = q_info.M_q_to_qdep * true.q; 
     prior.X.mean = true.X;
-    %prior.E.mean = true.E;
     prior.lnE.mean = log(true.E);
 
   case 'broad_prior',
-    prior.q.std = log(10^10)*ones(size(prior.q.std));
-    prior.X.std = log(10^10)*ones(size(prior.X.std));
-    %prior.E.std = log(10^10)*ones(size(prior.E.std));
+    prior.q.std   = log(10^10)*ones(size(prior.q.std));
+    prior.qdep_pseudo.std  = log(10^10)*ones(size(prior.qdep_pseudo.std));
+    prior.X.std   = log(10^10)*ones(size(prior.X.std));
     prior.lnE.std = log(10^10)*ones(size(prior.lnE.std));
   
   case 'broad_prior_around_zero',
     prior.q.mean = zeros(size(prior.q.std));
     prior.q.std  = log(10^10)*ones(size(prior.q.std));
+    prior.qdep_pseudo.mean = zeros(size(prior.qdep_pseudo.std)); 
+    prior.qdep_pseudo.std  = log(10^10)*ones(size(prior.qdep_pseudo.std));
     prior.X.mean = 0 * prior.X.mean;
     prior.X.std  = log(10^10)*ones(size(prior.X.std));
-    %prior.E.mean = 0 * prior.E.mean;
-    %prior.E.std  = log(10^10)*ones(size(prior.E.std));
     prior.lnE.mean = 0 * prior.lnE.mean;
     prior.lnE.std  = log(10^10)*ones(size(prior.lnE.std));
   
   case 'broad_prior_around_true_values',
     prior.q.mean = true.q;
     prior.q.std  = log(10^10)*ones(size(prior.q.std));
+    prior.qdep_pseudo.mean = q_info.M_q_to_qdep * true.q; 
+    prior.qdep_pseudo.std  = log(10^10)*ones(size(prior.qdep_pseudo.std));
     prior.X.mean = true.X;
     prior.X.std  = log(10^10)*ones(size(prior.X.std));
-    %prior.E.mean = true.E;
-    %prior.E.std  = log(10^10)*ones(size(prior.E.std));
     prior.lnE.mean = true.lnE;
     prior.lnE.std  = log(10^10)*ones(size(prior.lnE.std));
 
   otherwise, error('');
 end
 
-prior.q.cov_inv = diag(1./prior.q.std.^2);
+prior.q.prec           = diag(1./prior.q.std.^2);
+prior.qdep_pseudo.prec = diag(1./prior.qdep_pseudo.std.^2);
