@@ -90,38 +90,21 @@ switch cmb_options.parameterisation,
 end
 
 % ---------------------------------------------------
-
-qdep.names = [repmat({'Keq'},nr,1); ...
-              repmat({'Kcatf'},nr,1); ...
-              repmat({'Kcatr'},nr,1); ...
-             ];
-
-qdep.index.Keq    = 1:nr;
-qdep.index.Kcatf  = nr + [1:nr];    
-qdep.index.Kcatr  = 2 * nr + [1:nr];
-
-% ---------------------------------------------------
               
 q.number    = length(q.names);
 qall.number = length(qall.names);
-qdep.number = length(qdep.names);
 
 
 % ---------------------------------------------------
 % Conversion matrices
 
 M_q_to_qall = zeros(qall.number, q.number);
-M_qdep_to_qall = zeros(qall.number, qdep.number);
 M_qall_to_q = zeros(q.number, qall.number);
 
 M_q_to_qall(qall.index.KV, q.index.KV) = eye(nr);
 M_q_to_qall(qall.index.KM, q.index.KM) = eye(nKM);
 M_q_to_qall(qall.index.KA, q.index.KA) = eye(nKA);
 M_q_to_qall(qall.index.KI, q.index.KI) = eye(nKI);
-
-M_qdep_to_qall(qall.index.Keq , qdep.index.Keq)    = eye(nr);
-M_qdep_to_qall(qall.index.Kcatf, qdep.index.Kcatf) = eye(nr);
-M_qdep_to_qall(qall.index.Kcatr, qdep.index.Kcatr) = eye(nr);
 
 M_qall_to_q(q.index.KV, qall.index.KV) = eye(nr);
 M_qall_to_q(q.index.KM, qall.index.KM) = eye(nKM);
@@ -148,16 +131,23 @@ switch cmb_options.parameterisation,
     
 end
 
+
+
+
 % ------------------------------------------
 % dependent q variables
 
-qdep.names = [repmat({'Kcatf'},nr,1); ...
-              repmat({'Kcatr'},nr,1)];
-qdep.index.Kcatf = [1:nr];
-qdep.index.Kcatr = nr + [1:nr];    
+qdep.names = [repmat({'Keq'},nr,1); ...
+              repmat({'Kcatf'},nr,1); ...
+              repmat({'Kcatr'},nr,1); ...
+             ];
+qdep.index.Keq    = 1:nr;
+qdep.index.Kcatf  = nr + [1:nr];    
+qdep.index.Kcatr  = 2 * nr + [1:nr];
 qdep.number = length(qdep.names);
 
 M_q_to_qdep = zeros(qdep.number, q.number);
+M_q_to_qdep(qdep.index.Keq,   q.index.Keq) = eye(nr);
 M_q_to_qdep(qdep.index.Kcatf, q.index.KV)  = eye(nr);
 M_q_to_qdep(qdep.index.Kcatf, q.index.Keq) =  0.5 * diag(h) * Bt;
 M_q_to_qdep(qdep.index.Kcatf, q.index.KM)  = -0.5 * diag(h) * stoich_matrix_reaction_KM;
@@ -165,17 +155,21 @@ M_q_to_qdep(qdep.index.Kcatr, q.index.KV)  = eye(nr);
 M_q_to_qdep(qdep.index.Kcatr, q.index.Keq) = -0.5 * diag(h) * Bt;
 M_q_to_qdep(qdep.index.Kcatr, q.index.KM)  =  0.5 * diag(h) * stoich_matrix_reaction_KM;
 
+M_qdep_to_qall = zeros(qall.number, qdep.number);
+M_qdep_to_qall(qall.index.Keq,   qdep.index.Keq)    = eye(nr);
+M_qdep_to_qall(qall.index.Kcatf, qdep.index.Kcatf) = eye(nr);
+M_qdep_to_qall(qall.index.Kcatr, qdep.index.Kcatr) = eye(nr);
 
 % ------------------------------------------
 % Put together data structure q_info 
 
-q_info.q           = q;            % independent parameters
-q_info.qall        = qall;         % all parameters
-q_info.qdep        = qdep;         % all parameters
-q_info.M_q_to_qall = M_q_to_qall;  % conversion independent -> all
-q_info.M_q_to_qdep = M_q_to_qdep;  % conversion independent -> dependent
-q_info.M_qdep_to_qall = M_qdep_to_qall;  % conversion independent -> dependent
-q_info.M_qall_to_q = M_qall_to_q;  % conversion all -> independent
+q_info.q           = q;                 % independent parameters
+q_info.qall        = qall;              % all parameters
+q_info.qdep        = qdep;              % all parameters
+q_info.M_q_to_qall = M_q_to_qall;       % conversion independent -> all
+q_info.M_qall_to_q = M_qall_to_q;       % conversion all -> independent
+q_info.M_q_to_qdep = M_q_to_qdep;       % conversion independent -> dependent
+q_info.M_qdep_to_qall = M_qdep_to_qall; % conversion independent -> dependent
 
 switch cmb_options.parameterisation,  
   case 'Keq_KV_KM_KA_KI',

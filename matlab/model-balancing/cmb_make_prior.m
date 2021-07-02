@@ -36,11 +36,11 @@ switch cmb_options.parameterisation,
                     cmb_options.quantities.KM.std_ln  * repmat(1,nKM,1); ...
                     cmb_options.quantities.KA.std_ln  * repmat(1,nKA,1); ...
                     cmb_options.quantities.KI.std_ln  * repmat(1,nKI,1)];
-    
+
   otherwise error('cmb_options.parameterisation not supported');
 end
 
-prior.q.cov_inv = diag(1./prior.q.std.^2);
+prior.q.prec = diag(1./prior.q.std.^2);
 
 % --------------------------------------------------------------
 % Pseudo values for dependent model parameters
@@ -57,7 +57,7 @@ prior.qdep_pseudo.std  = [...
     cmb_options.quantities.Kcatf.std_ln * repmat(1,nr,1); ...
     cmb_options.quantities.Kcatr.std_ln * repmat(1,nr,1)];
 
-prior.qdep_pseudo.cov_inv = diag(1./prior.qdep_pseudo.std.^2);
+prior.qdep_pseudo.prec = diag(1./prior.qdep_pseudo.std.^2);
 
 
 % --------------------------------------------------------------
@@ -66,11 +66,9 @@ prior.qdep_pseudo.cov_inv = diag(1./prior.qdep_pseudo.std.^2);
 ns = cmb_options.ns; 
 
 prior.X.mean = log(cmb_options.metabolic_prior_c_geom_mean * ones(nm, ns));
-%prior.E.mean =     cmb_options.metabolic_prior_e_geom_mean * ones(nr, ns);
 prior.lnE.mean = log(cmb_options.metabolic_prior_e_geom_mean * ones(nr, ns));
 prior.V.mean = zeros(nr, ns);
 
 prior.X.std  = log(cmb_options.metabolic_prior_c_geom_std) * ones(size(prior.X.mean));
-%prior.E.std  = cmb_options.metabolic_prior_geom_std * prior.E.mean;
 prior.lnE.std = log(cmb_options.metabolic_prior_e_geom_std) * ones(size(prior.lnE.mean));
 prior.V.std  = 1 * ones(size(prior.V.mean)); % not used

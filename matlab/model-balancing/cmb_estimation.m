@@ -51,9 +51,9 @@ y_bound_min = cmb_qX_to_y(bounds.q_min, repmat(bounds.x_min,1,ns), nm,ns);
 y_bound_max = cmb_qX_to_y(bounds.q_max, repmat(bounds.x_max,1,ns), nm,ns);
 
 y_preposterior_mean    = cmb_qX_to_y(preposterior.q.mean, preposterior.X.mean, nm, ns);
-y_preposterior_cov_inv = preposterior.q.cov_inv; 
+y_preposterior_prec = preposterior.q.prec; 
 for it = 1:ns,
-  y_preposterior_cov_inv = matrix_add_block(y_preposterior_cov_inv, diag(1./preposterior.X.std(:,it).^2));
+  y_preposterior_prec = matrix_add_block(y_preposterior_prec, diag(1./preposterior.X.std(:,it).^2));
 end
 
 % --------------------------------------------------
@@ -172,7 +172,7 @@ switch cmb_options.initial_values_variant,
       %% find preposterior mode under constraints
       %% in the future, use cplexqp (to account for constraints)
       opt_quadprog = struct('Algorithm','interior-point-convex','MaxFunEvals',10^10,'MaxIter',10^10,'TolX',10^-5,'Display','off','OptimalityTolerance', 10^-5,'StepTolerance', 10^-10);
-      [y_init,~,err] = quadprog(y_preposterior_cov_inv, -y_preposterior_cov_inv * y_preposterior_mean, y_bounds_ineq_A, y_bounds_ineq_b-epsilon,[],[], y_bound_min, y_bound_max,[],opt_quadprog);
+      [y_init,~,err] = quadprog(y_preposterior_prec, -y_preposterior_prec * y_preposterior_mean, y_bounds_ineq_A, y_bounds_ineq_b-epsilon,[],[], y_bound_min, y_bound_max,[],opt_quadprog);
       if err<0, error(sprintf('Error in computing initial values: quadprog error flag %d',err)); end
     end
     [init.q, init.X] = cmb_y_to_qX(y_init, nm, ns);
@@ -258,7 +258,7 @@ LP_info.epsilon  = epsilon;
 if cmb_options.use_bounds,
   if init_feasible,
     f_init = cmb_log_posterior(y_init,pp,preposterior,V,cmb_options,q_info);
-    preposterior.q.std = sqrt(diag(inv(preposterior.q.cov_inv)));
+    preposterior.q.std = sqrt(diag(inv(preposterior.q.prec)));
     new_X_min       = preposterior.X.mean - sqrt(2 * abs(f_init)) * preposterior.X.std;
     new_X_max       = preposterior.X.mean + sqrt(2 * abs(f_init)) * preposterior.X.std;
     new_q_min       = preposterior.q.mean - sqrt(2 * abs(f_init)) * preposterior.q.std;
