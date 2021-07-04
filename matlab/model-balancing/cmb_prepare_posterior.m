@@ -33,6 +33,10 @@ preposterior.lnE.std(isnan(preposterior.lnE.std))   = prior.lnE.std(isnan(prepos
 % replace nan values in data.qall.std by finite values for later calculations
 % data.qall.std(isnan(data.qall.std)) = nanmean(data.qall.std);
 
+index       = q_info.qall.index;
+M_q_to_qall = q_info.M_q_to_qall;
+M_q_to_qdep = q_info.M_q_to_qdep;
+
 switch cmb_options.use_kinetic_data,
   case 'all',
     display('Using kinetic and equilibrium constants data');
@@ -42,9 +46,9 @@ switch cmb_options.use_kinetic_data,
 
   case 'only_Keq',
     display('Using equilibrium constants data');
-    qall_data_mean = data.qall.mean(q_info.qall.index.Keq);
-    qall_data_std  = data.qall.std(q_info.qall.index.Keq);
-    M_q_to_qdata   = q_info.M_q_to_qall(q_info.qall.index.Keq,:);
+    qall_data_mean = data.qall.mean(index.Keq);
+    qall_data_std  = data.qall.std(index.Keq);
+    M_q_to_qdata   = q_info.M_q_to_qall(index.Keq,:);
   
   case 'none',
     display('cmb_prepare_posterior: Not using kinetic or equilibrium constants data');
@@ -68,10 +72,7 @@ qdata_prec      = diag(1./[qdata_std.^2]);
 
 % compute preposterior mean and covariance
 
-% OLD VARIANT: compute correlated posterior for q (from prior and data -  without pseudo values!)
-
-M_q_to_qall = q_info.M_q_to_qall;
-M_q_to_qdep = q_info.M_q_to_qdep;
+% OLD VARIANT: compute correlated posterior for q (from prior and data)
 
 if length(qdata_mean),
   if cmb_options.use_pseudo_values,
@@ -88,12 +89,36 @@ else
   q_mean = prior.q.mean;
 end
 
+% preposterior for basic kinetic constants
+
+preposterior.q.names   = q_info.q.names;
 preposterior.q.mean    = q_mean;
 preposterior.q.prec    = q_prec;
 preposterior.q.cov     = inv(q_prec);
+
+% preposterior for all kinetic constants
+
+preposterior.qall.names= q_info.qall.names;
 preposterior.qall.mean = M_q_to_qall * q_mean;
 preposterior.qall.cov  = M_q_to_qall * preposterior.q.cov * M_q_to_qall'; 
 preposterior.qall.prec = pinv(preposterior.qall.cov);
+
+% preposterior for individual types of kinetic constants (for variant "use_crosscovariances =0")
+
+preposterior.qtypes.Keq.mean   = preposterior.qall.mean(index.Keq);
+preposterior.qtypes.KM.mean    = preposterior.qall.mean(index.KM);
+preposterior.qtypes.KA.mean    = preposterior.qall.mean(index.KA);
+preposterior.qtypes.KI.mean    = preposterior.qall.mean(index.KI); 
+preposterior.qtypes.Kcatf.mean = preposterior.qall.mean(index.Kcatf);
+preposterior.qtypes.Kcatr.mean = preposterior.qall.mean(index.Kcatr);
+preposterior.qtypes.Keq.prec   = inv(preposterior.qall.cov(index.Keq,index.Keq));
+preposterior.qtypes.KM.prec    = inv(preposterior.qall.cov(index.KM,index.KM));
+preposterior.qtypes.KA.prec    = inv(preposterior.qall.cov(index.KA,index.KA));
+preposterior.qtypes.KI.prec    = inv(preposterior.qall.cov(index.KI,index.KI)); 
+preposterior.qtypes.Kcatf.prec = inv(preposterior.qall.cov(index.Kcatf,index.Kcatf));
+preposterior.qtypes.Kcatr.prec = inv(preposterior.qall.cov(index.Kcatr,index.Kcatr));
+
+
 
 % % NEW variant: compute everything for qall, then select vectors and matrices for q
 % 

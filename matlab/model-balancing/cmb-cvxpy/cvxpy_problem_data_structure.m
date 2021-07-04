@@ -8,6 +8,7 @@ function problem = cvxpy_problem_data_structure(network, q_info, prior, data, bo
 % Structure, default values, and matrix sizes for a network with nr reactions and nm metabolites (and ns metabolic states)
 %   .standard_concentration: '1 mM'
 %   .state_names:            {ns x 1 cell}
+%   .use_pseudo_values:      Boolean
 %
 %   .network
 %   .network.metabolite_names:      {nm x 1 cell}
@@ -146,101 +147,82 @@ end
 
 problem.standard_concentration        = '1 mM';
 problem.state_names                   = data.samples;
+problem.use_pseudo_values             = cmb_options.use_pseudo_values;
 problem.network.metabolite_names      = network.metabolites;
 problem.network.reaction_names        = network.actions;
 problem.network.stoichiometric_matrix = full(network.N);
 problem.network.activation_matrix     = full([network.regulation_matrix .* [network.regulation_matrix >0]]');
 problem.network.inhibition_matrix     = full(-[network.regulation_matrix .* [network.regulation_matrix <0]]');
 
-
 %  ---------------------------------
-% kinetic constants - combine simple prior (for basic variables) with pseudo values for dep variables 
+% kinetic constants - combine prior (for basic variables) and pseudo values (for dependent variables)
 % into a "pseudoprior" for all variables
 
 qall_struct.names        = q_info.qall.names;
 qall_struct.true         = true_model.qall;
-if cmb_options.use_pseudo_values,
-  qall_struct.pprior.prec  = M_q_to_qall * prior.q.prec * M_q_to_qall' + M_qdep_to_qall * prior.qdep_pseudo.prec * M_qdep_to_qall';
-  qall_struct.pprior.mean  = qall_struct.pprior.prec \ [M_q_to_qall * prior.q.prec * prior.q.mean + M_qdep_to_qall * prior.qdep_pseudo.prec * prior.qdep_pseudo.mean];
-else
-  qall_struct.pprior.prec  = M_q_to_qall * prior.q.prec * M_q_to_qall';
-  qall_struct.pprior.mean  = qall_struct.pprior.prec \ [M_q_to_qall * prior.q.prec * prior.q.mean];
-end
-qall_struct.pprior.cov   = inv(qall_struct.pprior.prec);
-qall_struct.pprior.std   = sqrt(diag(qall_struct.pprior.cov));
+% if cmb_options.use_pseudo_values,
+%   qall_struct.pprior.prec  = M_q_to_qall * prior.q.prec * M_q_to_qall' + M_qdep_to_qall * prior.qdep_pseudo.prec * M_qdep_to_qall';
+%   qall_struct.pprior.mean  = qall_struct.pprior.prec \ [M_q_to_qall * prior.q.prec * prior.q.mean + M_qdep_to_qall * prior.qdep_pseudo.prec * prior.qdep_pseudo.mean];
+%   qall_struct.pprior.cov   = inv(qall_struct.pprior.prec);
+% else
+%   qall_struct.pprior.cov  = M_q_to_qall * inv(prior.q.prec) * M_q_to_qall';
+%   qall_struct.pprior.mean = M_q_to_qall * prior.q.mean;
+% end
+% qall_struct.pprior.std   = sqrt(diag(qall_struct.pprior.cov));
 qall_struct.bounds.min   = bounds.q_all_min;
 qall_struct.bounds.max   = bounds.q_all_max;
-qall_struct.data         = data.qall;
 
 % hide data that are not supposed to be known 
-
 switch cmb_options.use_kinetic_data,
   case 'all',      remove_data = [];
   case 'only_Keq', remove_data = setdiff(1:length(data.qall.mean),index.Keq);
   case 'none',     remove_data = 1:length(data.qall.mean);
   otherwise, error('incorrect option');
 end
+qall_struct.data                   = data.qall;
 qall_struct.data.mean(remove_data) = nan;
-qall_struct.data.std(remove_data) = nan;
+qall_struct.data.std(remove_data)  = nan;
 
 % preposterior
 
-[qall_struct.combined.mean_ln, qall_struct.combined.cov_ln, ~, qall_struct.combined.prec_ln] = cvxpy_combine_prior_and_likelihood(qall_struct.pprior.mean,qall_struct.pprior.cov,qall_struct.data.mean,qall_struct.data.std);
+%[qall_struct.combined.mean_ln, qall_struct.combined.cov_ln, ~, qall_struct.combined.prec_ln] = cvxpy_combine_prior_and_likelihood(qall_struct.pprior.mean,qall_struct.pprior.cov,qall_struct.data.mean,qall_struct.data.std);
 
+preposterior = cmb_prepare_posterior(prior, data, cmb_options, q_info);
+
+qall_struct.combined.mean_ln = preposterior.qall.mean;
+qall_struct.combined.cov_ln  = preposterior.qall.cov;
+qall_struct.combined.prec_ln  = preposterior.qall.prec;
+
+% --------------------------------------------------------------
 % copy results into "problem" struct
+
 
 problem.kinetic_constants.all.names     = qall_struct.names;
 problem.kinetic_constants.all.mean_ln   = qall_struct.combined.mean_ln;
 problem.kinetic_constants.all.prec_ln   = qall_struct.combined.prec_ln;
 problem.kinetic_constants.all.geom_mean = exp(qall_struct.combined.mean_ln);
 
-problem.kinetic_constants.prec_blocks.prec_Keq_ln   = qall_struct.combined.prec_ln(index.Keq,index.Keq);
-problem.kinetic_constants.prec_blocks.prec_KM_ln    = qall_struct.combined.prec_ln(index.KM,index.KM);
-problem.kinetic_constants.prec_blocks.prec_KA_ln    = qall_struct.combined.prec_ln(index.KA,index.KA);
-problem.kinetic_constants.prec_blocks.prec_KI_ln    = qall_struct.combined.prec_ln(index.KI,index.KI);
-problem.kinetic_constants.prec_blocks.prec_Kcatf_ln = qall_struct.combined.prec_ln(index.Kcatf,index.Kcatf);
-problem.kinetic_constants.prec_blocks.prec_Kcatr_ln = qall_struct.combined.prec_ln(index.Kcatr,index.Kcatr);
-
-problem.kinetic_constants.prec_blocks.prec_Keq_KM_ln    = qall_struct.combined.prec_ln(index.Keq,index.KM);
-problem.kinetic_constants.prec_blocks.prec_Keq_KA_ln    = qall_struct.combined.prec_ln(index.Keq,index.KA);
-problem.kinetic_constants.prec_blocks.prec_Keq_KI_ln    = qall_struct.combined.prec_ln(index.Keq,index.KI);
-problem.kinetic_constants.prec_blocks.prec_Keq_Kcatf_ln = qall_struct.combined.prec_ln(index.Keq,index.Kcatf);
-problem.kinetic_constants.prec_blocks.prec_Keq_Kcatr_ln = qall_struct.combined.prec_ln(index.Keq,index.Kcatr);
-
-problem.kinetic_constants.prec_blocks.prec_KM_KA_ln    = qall_struct.combined.prec_ln(index.KM,index.KA);
-problem.kinetic_constants.prec_blocks.prec_KM_KI_ln    = qall_struct.combined.prec_ln(index.KM,index.KI);
-problem.kinetic_constants.prec_blocks.prec_KM_Kcatf_ln = qall_struct.combined.prec_ln(index.KM,index.Kcatf);
-problem.kinetic_constants.prec_blocks.prec_KM_Kcatr_ln = qall_struct.combined.prec_ln(index.KM,index.Kcatr);
-
-problem.kinetic_constants.prec_blocks.prec_KA_KI_ln    = qall_struct.combined.prec_ln(index.KA,index.KI);
-problem.kinetic_constants.prec_blocks.prec_KA_Kcatf_ln = qall_struct.combined.prec_ln(index.KA,index.Kcatf);
-problem.kinetic_constants.prec_blocks.prec_KA_Kcatr_ln = qall_struct.combined.prec_ln(index.KA,index.Kcatr);
-
-problem.kinetic_constants.prec_blocks.prec_KI_Kcatf_ln = qall_struct.combined.prec_ln(index.KI,index.Kcatf);
-problem.kinetic_constants.prec_blocks.prec_KI_Kcatr_ln = qall_struct.combined.prec_ln(index.KI,index.Kcatr);
-
-problem.kinetic_constants.prec_blocks.prec_Kcatf_Kcatr_ln = qall_struct.combined.prec_ln(index.Kcatf,index.Kcatr);
-
 
 % PROBLEM: currently there is a prior only for INDEPENDENT Keq, not dependent ones; fix this!
 
-Keq.unit          = 'depends on reaction stoichiometry';
-Keq.true          = exp(qall_struct.true(index.Keq));
-Keq.pprior_ln.mean = qall_struct.pprior.mean(index.Keq);
-Keq.pprior_ln.cov  = qall_struct.pprior.cov(index.Keq,index.Keq);
-Keq.bounds_ln.min = qall_struct.bounds.min(index.Keq);
-Keq.bounds_ln.max = qall_struct.bounds.max(index.Keq);
-Keq.data_ln.mean  = qall_struct.data.mean(index.Keq);
-Keq.data_ln.std   = qall_struct.data.std(index.Keq);
-Keq.bounds.min    = exp(qall_struct.bounds.min(index.Keq));
-Keq.bounds.max    = exp(qall_struct.bounds.max(index.Keq));
-Keq.combined.mean_ln = qall_struct.combined.mean_ln(index.Keq);
+Keq.unit               = 'depends on reaction stoichiometry';
+Keq.true               = exp(qall_struct.true(index.Keq));
+%Keq.pprior_ln.mean     = qall_struct.pprior.mean(index.Keq);
+%Keq.pprior_ln.cov      = qall_struct.pprior.cov(index.Keq,index.Keq);
+Keq.bounds_ln.min      = qall_struct.bounds.min(index.Keq);
+Keq.bounds_ln.max      = qall_struct.bounds.max(index.Keq);
+Keq.data_ln.mean       = qall_struct.data.mean(index.Keq);
+Keq.data_ln.std        = qall_struct.data.std(index.Keq);
+Keq.bounds.min         = exp(qall_struct.bounds.min(index.Keq));
+Keq.bounds.max         = exp(qall_struct.bounds.max(index.Keq));
+Keq.combined.mean_ln   = qall_struct.combined.mean_ln(index.Keq);
+Keq.combined.prec_ln   = qall_struct.combined.prec_ln(index.Keq,index.Keq);
 Keq.combined.geom_mean = exp(Keq.combined.mean_ln);
 
 Kcatf.unit          = '1/s';
 Kcatf.true          = exp(qall_struct.true(index.Kcatf));
-Kcatf.pprior_ln.mean = qall_struct.pprior.mean(index.Kcatf);
-Kcatf.pprior_ln.cov  = qall_struct.pprior.cov(index.Kcatf,index.Kcatf);
+%Kcatf.pprior_ln.mean = qall_struct.pprior.mean(index.Kcatf);
+%Kcatf.pprior_ln.cov  = qall_struct.pprior.cov(index.Kcatf,index.Kcatf);
 Kcatf.bounds_ln.min = qall_struct.bounds.min(index.Kcatf);
 Kcatf.bounds_ln.max = qall_struct.bounds.max(index.Kcatf);
 Kcatf.data_ln.mean  = qall_struct.data.mean(index.Kcatf);
@@ -248,12 +230,13 @@ Kcatf.data_ln.std   = qall_struct.data.std(index.Kcatf);
 Kcatf.bounds.min    = exp(qall_struct.bounds.min(index.Kcatf));
 Kcatf.bounds.max    = exp(qall_struct.bounds.max(index.Kcatf));
 Kcatf.combined.mean_ln = qall_struct.combined.mean_ln(index.Kcatf);
+Kcatf.combined.prec_ln = qall_struct.combined.prec_ln(index.Kcatf,index.Kcatf);
 Kcatf.combined.geom_mean = exp(Kcatf.combined.mean_ln);
 
 Kcatr.unit          = '1/s';
 Kcatr.true          = exp(qall_struct.true(index.Kcatr));
-Kcatr.pprior_ln.mean = qall_struct.pprior.mean(index.Kcatr);
-Kcatr.pprior_ln.cov  = qall_struct.pprior.cov(index.Kcatr,index.Kcatr);
+%Kcatr.pprior_ln.mean = qall_struct.pprior.mean(index.Kcatr);
+%Kcatr.pprior_ln.cov  = qall_struct.pprior.cov(index.Kcatr,index.Kcatr);
 Kcatr.bounds_ln.min = qall_struct.bounds.min(index.Kcatr);
 Kcatr.bounds_ln.max = qall_struct.bounds.max(index.Kcatr);
 Kcatr.data_ln.mean  = qall_struct.data.mean(index.Kcatr);
@@ -261,12 +244,13 @@ Kcatr.data_ln.std   = qall_struct.data.std(index.Kcatr);
 Kcatr.bounds.min    = exp(qall_struct.bounds.min(index.Kcatr));
 Kcatr.bounds.max    = exp(qall_struct.bounds.max(index.Kcatr));
 Kcatr.combined.mean_ln = qall_struct.combined.mean_ln(index.Kcatr);
+Kcatr.combined.prec_ln = qall_struct.combined.prec_ln(index.Kcatr,index.Kcatr);
 Kcatr.combined.geom_mean = exp(Kcatr.combined.mean_ln);
 
 KM.unit          = 'mM';
 KM.true          = exp(qall_struct.true(index.KM));
-KM.pprior_ln.mean = qall_struct.pprior.mean(index.KM);
-KM.pprior_ln.cov  = qall_struct.pprior.cov(index.KM,index.KM);
+%KM.pprior_ln.mean = qall_struct.pprior.mean(index.KM);
+%KM.pprior_ln.cov  = qall_struct.pprior.cov(index.KM,index.KM);
 KM.bounds_ln.min = qall_struct.bounds.min(index.KM);
 KM.bounds_ln.max = qall_struct.bounds.max(index.KM);
 KM.data_ln.mean  = qall_struct.data.mean(index.KM);
@@ -274,12 +258,13 @@ KM.data_ln.std   = qall_struct.data.std(index.KM);
 KM.bounds.min    = exp(qall_struct.bounds.min(index.KM));
 KM.bounds.max    = exp(qall_struct.bounds.max(index.KM));
 KM.combined.mean_ln = qall_struct.combined.mean_ln(index.KM);
+KM.combined.prec_ln    = qall_struct.combined.prec_ln(index.KM,index.KM);
 KM.combined.geom_mean = exp(KM.combined.mean_ln);
 
 KA.unit          = 'mM';
 KA.true          = exp(qall_struct.true(index.KA));
-KA.pprior_ln.mean = qall_struct.pprior.mean(index.KA);
-KA.pprior_ln.cov  = qall_struct.pprior.cov(index.KA,index.KA);
+%KA.pprior_ln.mean = qall_struct.pprior.mean(index.KA);
+%KA.pprior_ln.cov  = qall_struct.pprior.cov(index.KA,index.KA);
 KA.bounds_ln.min = qall_struct.bounds.min(index.KA);
 KA.bounds_ln.max = qall_struct.bounds.max(index.KA);
 KA.data_ln.mean  = qall_struct.data.mean(index.KA);
@@ -287,12 +272,13 @@ KA.data_ln.std   = qall_struct.data.std(index.KA);
 KA.bounds.min    = exp(qall_struct.bounds.min(index.KA));
 KA.bounds.max    = exp(qall_struct.bounds.max(index.KA));
 KA.combined.mean_ln = qall_struct.combined.mean_ln(index.KA);
+KA.combined.prec_ln    = qall_struct.combined.prec_ln(index.KA,index.KA);
 KA.combined.geom_mean = exp(KA.combined.mean_ln);
 
 KI.unit          = 'mM';
 KI.true          = exp(qall_struct.true(index.KI));
-KI.pprior_ln.mean = qall_struct.pprior.mean(index.KI);
-KI.pprior_ln.cov  = qall_struct.pprior.cov(index.KI,index.KI);
+%KI.pprior_ln.mean = qall_struct.pprior.mean(index.KI);
+%KI.pprior_ln.cov  = qall_struct.pprior.cov(index.KI,index.KI);
 KI.bounds_ln.min = qall_struct.bounds.min(index.KI);
 KI.bounds_ln.max = qall_struct.bounds.max(index.KI);
 KI.data_ln.mean  = qall_struct.data.mean(index.KI);
@@ -300,6 +286,7 @@ KI.data_ln.std   = qall_struct.data.std(index.KI);
 KI.bounds.min    = exp(qall_struct.bounds.min(index.KI));
 KI.bounds.max    = exp(qall_struct.bounds.max(index.KI));
 KI.combined.mean_ln = qall_struct.combined.mean_ln(index.KI);
+KI.combined.prec_ln    = qall_struct.combined.prec_ln(index.KI,index.KI);
 KI.combined.geom_mean = exp(KI.combined.mean_ln);
 
 problem.kinetic_constants.Keq   = Keq;
@@ -309,6 +296,32 @@ problem.kinetic_constants.KM    = KM;
 problem.kinetic_constants.KA    = KA;
 problem.kinetic_constants.KI    = KI;
 
+% problem.kinetic_constants.prec_blocks.prec_Keq_ln       = qall_struct.combined.prec_ln(index.Keq,index.Keq);
+% problem.kinetic_constants.prec_blocks.prec_KM_ln        = qall_struct.combined.prec_ln(index.KM,index.KM);
+% problem.kinetic_constants.prec_blocks.prec_KA_ln        = qall_struct.combined.prec_ln(index.KA,index.KA);
+% problem.kinetic_constants.prec_blocks.prec_KI_ln        = qall_struct.combined.prec_ln(index.KI,index.KI);
+% problem.kinetic_constants.prec_blocks.prec_Kcatf_ln     = qall_struct.combined.prec_ln(index.Kcatf,index.Kcatf);
+% problem.kinetic_constants.prec_blocks.prec_Kcatr_ln     = qall_struct.combined.prec_ln(index.Kcatr,index.Kcatr);
+% 
+% problem.kinetic_constants.prec_blocks.prec_Keq_KM_ln    = qall_struct.combined.prec_ln(index.Keq,index.KM);
+% problem.kinetic_constants.prec_blocks.prec_Keq_KA_ln    = qall_struct.combined.prec_ln(index.Keq,index.KA);
+% problem.kinetic_constants.prec_blocks.prec_Keq_KI_ln    = qall_struct.combined.prec_ln(index.Keq,index.KI);
+% problem.kinetic_constants.prec_blocks.prec_Keq_Kcatf_ln = qall_struct.combined.prec_ln(index.Keq,index.Kcatf);
+% problem.kinetic_constants.prec_blocks.prec_Keq_Kcatr_ln = qall_struct.combined.prec_ln(index.Keq,index.Kcatr);
+% 
+% problem.kinetic_constants.prec_blocks.prec_KM_KA_ln    = qall_struct.combined.prec_ln(index.KM,index.KA);
+% problem.kinetic_constants.prec_blocks.prec_KM_KI_ln    = qall_struct.combined.prec_ln(index.KM,index.KI);
+% problem.kinetic_constants.prec_blocks.prec_KM_Kcatf_ln = qall_struct.combined.prec_ln(index.KM,index.Kcatf);
+% problem.kinetic_constants.prec_blocks.prec_KM_Kcatr_ln = qall_struct.combined.prec_ln(index.KM,index.Kcatr);
+% 
+% problem.kinetic_constants.prec_blocks.prec_KA_KI_ln    = qall_struct.combined.prec_ln(index.KA,index.KI);
+% problem.kinetic_constants.prec_blocks.prec_KA_Kcatf_ln = qall_struct.combined.prec_ln(index.KA,index.Kcatf);
+% problem.kinetic_constants.prec_blocks.prec_KA_Kcatr_ln = qall_struct.combined.prec_ln(index.KA,index.Kcatr);
+% 
+% problem.kinetic_constants.prec_blocks.prec_KI_Kcatf_ln = qall_struct.combined.prec_ln(index.KI,index.Kcatf);
+% problem.kinetic_constants.prec_blocks.prec_KI_Kcatr_ln = qall_struct.combined.prec_ln(index.KI,index.Kcatr);
+% 
+% problem.kinetic_constants.prec_blocks.prec_Kcatf_Kcatr_ln = qall_struct.combined.prec_ln(index.Kcatf,index.Kcatr);
 
 % --- Metabolite concentrations
 
