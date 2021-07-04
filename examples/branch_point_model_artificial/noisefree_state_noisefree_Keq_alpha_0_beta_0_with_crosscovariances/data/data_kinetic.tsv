@@ -1,0 +1,17 @@
+!!SBtab TableID='ParameterData' TableType='Quantity'										
+!QuantityType	!Compound	!Reaction	!Unit	!Median	!Mean	!Std	!Lower	!Upper	!Compound:Identifiers:kegg.compound	!Reaction:Identifiers:kegg.reaction
+Michaelis constant	X1	E1	mM	0.13325467	NaN	NaN	NaN	NaN		
+Michaelis constant	X2	E2	mM	0.36257693	NaN	NaN	NaN	NaN		
+Michaelis constant	X3	E3	mM	0.13079694	NaN	NaN	NaN	NaN		
+Michaelis constant	S4	E1	mM	0.0042289376	NaN	NaN	NaN	NaN		
+Michaelis constant	S4	E2	mM	0.012949655	NaN	NaN	NaN	NaN		
+Michaelis constant	S4	E3	mM	0.66284115	NaN	NaN	NaN	NaN		
+equilibrium constant		E1	dimensionless	2.0986745	NaN	NaN	NaN	NaN		
+equilibrium constant		E2	dimensionless	39.919571	NaN	NaN	NaN	NaN		
+equilibrium constant		E3	dimensionless	0.56826365	NaN	NaN	NaN	NaN		
+substrate catalytic rate constant		E1	1/s	59.519862	NaN	NaN	NaN	NaN		
+substrate catalytic rate constant		E2	1/s	711.62875	NaN	NaN	NaN	NaN		
+substrate catalytic rate constant		E3	1/s	38.153028	NaN	NaN	NaN	NaN		
+product catalytic rate constant		E1	1/s	0.90004804	NaN	NaN	NaN	NaN		
+product catalytic rate constant		E2	1/s	0.6366865	NaN	NaN	NaN	NaN		
+product catalytic rate constant		E3	1/s	13.248517	NaN	NaN	NaN	NaN		
