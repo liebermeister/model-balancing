@@ -98,7 +98,7 @@ index          = q_info.qall.index;
 % If reactions need to be reoriented ..
 
 if size(data.V.mean,2)>1,
-if sum(max(sign(data.V.mean),2)-min(sign(data.V.mean),2)==2),
+if sum(max(sign(data.V.mean),[],2)-min(sign(data.V.mean),[],2)==2),
   error('data sets with changing flux directions cannot be handled');
 else
   % reorient reactions and change all input data structures accordingly

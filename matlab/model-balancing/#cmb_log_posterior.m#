@@ -71,7 +71,6 @@ else,
 
   index = q_info.qall.index;
   qall  = cmb_q_to_qall(q, q_info);
-%    pm(exp(qall), q_info.qall.names)
 
   log_posterior_q = - 0.5 * [...
         [qall(index.Keq)   - preposterior.qtypes.Keq.mean  ]' * preposterior.qtypes.Keq.prec   * [qall(index.Keq)   - preposterior.qtypes.Keq.mean  ] ...

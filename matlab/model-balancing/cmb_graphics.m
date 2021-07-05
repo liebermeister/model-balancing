@@ -86,7 +86,7 @@ switch cmb_options.parameterisation,
     %% plot only if some reverse kapp values have been determined
     if sum(isfinite(kapp_max.reverse)),
       res.Kappr = scatter_plot(qall_data(index.Kcatr),log(kapp_max.reverse),qall_names(index.Kcatr),kapp_color,'k_{cat}^{-} values [1/s] (data)', 'k_{app,max}^{-} values [1/s] (fit)', [], show_graphics,9,filenames.Kappmaxr);
-    else 
+    elseif show_graphics,
       figure(9);
       title('No reverse Kapp values determined');
       print(filenames.Kappmaxr, '-f9', '-depsc'); 
@@ -149,7 +149,7 @@ if length(true),
       %% only if some reverse kapp values have been determined
       if sum(isfinite(kapp_max.reverse)),
         res_true.Kappr = scatter_plot(qall_true(index.Kcatr),log(kapp_max.reverse),qall_names(index.Kcatr),kapp_color,'k_{cat}^{-} values [1/s] (true)', 'k_{app,max}^{-} values [1/s] (fit)', [], show_graphics,19,filenames.Kappmaxr);
-      else
+      elseif show_graphics,
         figure(19); 
         title('No reverse Kapp values determined');
         print(filenames.Kappmaxr, '-f19', '-depsc'); 
