@@ -29,72 +29,57 @@ ns = size(preposterior.X.mean,2);
 
 [q,X] = cmb_y_to_qX(y,nm,ns);
 
-% version A: consider only basic kinetic constants  
-log_posterior_q = - 0.5 * [q - preposterior.q.mean]' * preposterior.q.prec * [q - preposterior.q.mean];
+if cmb_options.use_crosscovariances,
 
-% äquivalent zu version A
-% consider only basic kinetic constants
-% mean and prec for "qmod" (vector of kinetic constants as they are used in the model)
-% index           = q_info.qall.index;
-% ind             = [index.Keq, index.KM, index.KA, index.KI, index.Kcatf, index.Kcatr];
-% M_q_qmod        = q_info.M_q_to_qall(ind,:);
-% iM_q_qmod       = pinv(M_q_qmod);
-% qall            = cmb_q_to_qall(q, q_info);
-% qmod            = qall(ind);
-% qmod_mean       = M_q_qmod * preposterior.q.mean;
-% qmod_prec       = iM_q_qmod' * preposterior.q.prec * iM_q_qmod;
-% log_posterior_q = - 0.5 * [qmod - qmod_mean]' * qmod_prec * [qmod - qmod_mean];
+  % version A: consider only basic kinetic constants  
+  log_posterior_q = - 0.5 * [q - preposterior.q.mean]' * preposterior.q.prec * [q - preposterior.q.mean];
+  
+  % äquivalent zu version A
+  % consider only basic kinetic constants
+  % mean and prec for "qmod" (vector of kinetic constants as they are used in the model)
+  % index           = q_info.qall.index;
+  % ind             = [index.Keq, index.KM, index.KA, index.KI, index.Kcatf, index.Kcatr];
+  % M_q_qmod        = q_info.M_q_to_qall(ind,:);
+  % iM_q_qmod       = pinv(M_q_qmod);
+  % qall            = cmb_q_to_qall(q, q_info);
+  % qmod            = qall(ind);
+  % qmod_mean       = M_q_qmod * preposterior.q.mean;
+  % qmod_prec       = iM_q_qmod' * preposterior.q.prec * iM_q_qmod;
+  % log_posterior_q = - 0.5 * [qmod - qmod_mean]' * qmod_prec * [qmod - qmod_mean];
+  
+  % äquivalent zu version A
+  % consider all kinetic constants
+  % index     = q_info.qall.index;
+  % ind       = [index.Keq, index.KM, index.KA, index.KI, index.Kcatf, index.Kcatr];
+  % qall      = cmb_q_to_qall(q, q_info);
+  % qall_mean = preposterior.qall.mean;
+  % qall_prec = preposterior.qall.prec;
+  % qall_cov  = preposterior.qall.cov; 
+  % log_posterior_q = - 0.5 * [qall(ind) - qall_mean(ind)]' * pinv(qall_cov(ind,ind)) * [qall(ind) - qall_mean(ind)];
+  
+  % version B: consider all kinetic constants (ignore covariances between them)
+  % nicht äquivalent zu version A
+  % index     = q_info.qall.index;
+  % ind       = [index.Keq, index.KM, index.KA, index.KI, index.Kcatf, index.Kcatr];
+  % qall      = cmb_q_to_qall(q, q_info);
+  % qall_mean = preposterior.qall.mean;
+  % qall_prec = preposterior.qall.prec;
+  % qall_cov  = preposterior.qall.cov; 
+  % log_posterior_q = - 0.5 * [qall(ind) - qall_mean(ind)]' * qall_prec(ind,ind) * [qall(ind) - qall_mean(ind)];
 
-% äquivalent zu version A
-% consider all kinetic constants
-% index     = q_info.qall.index;
-% ind       = [index.Keq, index.KM, index.KA, index.KI, index.Kcatf, index.Kcatr];
-% qall      = cmb_q_to_qall(q, q_info);
-% qall_mean = preposterior.qall.mean;
-% qall_prec = preposterior.qall.prec;
-% qall_cov  = preposterior.qall.cov; 
-% log_posterior_q = - 0.5 * [qall(ind) - qall_mean(ind)]' * pinv(qall_cov(ind,ind)) * [qall(ind) - qall_mean(ind)];
+else,
 
-% version B: consider all kinetic constants (ignore convariances between them)
-% nicht äquivalent zu version A
-% index     = q_info.qall.index;
-% ind       = [index.Keq, index.KM, index.KA, index.KI, index.Kcatf, index.Kcatr];
-% qall      = cmb_q_to_qall(q, q_info);
-% qall_mean = preposterior.qall.mean;
-% qall_prec = preposterior.qall.prec;
-% qall_cov  = preposterior.qall.cov; 
-% log_posterior_q = - 0.5 * [qall(ind) - qall_mean(ind)]' * qall_prec(ind,ind) * [qall(ind) - qall_mean(ind)];
-
-% äquivalent zu version B
-% per variable type 
-% index     = q_info.qall.index;
-% ind       = [index.Keq, index.KM, index.KA, index.KI, index.Kcatf, index.Kcatr];
-% qall      = cmb_q_to_qall(q, q_info);
-% qall_cov  = preposterior.qall.cov;
-% qall_mean = preposterior.qall.mean;
-% log_posterior_q = - 0.5 * [...
-%       [qall(index.Keq)   - qall_mean(index.Keq)]'   * inv(qall_cov(index.Keq,index.Keq))     * [qall(index.Keq)   - qall_mean(index.Keq)] ...
-%     + [qall(index.KM)    - qall_mean(index.KM)]'    * inv(qall_cov(index.KM,index.KM))       * [qall(index.KM)    - qall_mean(index.KM)] ...
-%     + [qall(index.KA)    - qall_mean(index.KA)]'    * inv(qall_cov(index.KA,index.KA))       * [qall(index.KA)    - qall_mean(index.KA)] ...
-%     + [qall(index.KI)    - qall_mean(index.KI)]'    * inv(qall_cov(index.KI,index.KI))       * [qall(index.KI)    - qall_mean(index.KI)] ...
-%     + [qall(index.Kcatf) - qall_mean(index.Kcatf)]' * inv(qall_cov(index.Kcatf,index.Kcatf)) * [qall(index.Kcatf) - qall_mean(index.Kcatf)] ...
-%     + [qall(index.Kcatr) - qall_mean(index.Kcatr)]' * inv(qall_cov(index.Kcatr,index.Kcatr)) * [qall(index.Kcatr) - qall_mean(index.Kcatr)]];
-
-% äquivalent zu version B
-% per variable type 
-% index     = q_info.qall.index;
-% ind       = [index.Keq, index.KM, index.KA, index.KI, index.Kcatf, index.Kcatr];
-% qall      = cmb_q_to_qall(q, q_info);
-% qall_cov  = preposterior.qall.cov;
-% qall_prec = preposterior.qall.prec;
-% qall_mean = preposterior.qall.mean;
-% log_posterior_q = - 0.5 * [...
-%       [qall(index.Keq)   - qall_mean(index.Keq)]'   * qall_prec(index.Keq,index.Keq)     * [qall(index.Keq)   - qall_mean(index.Keq)] ...
-%     + [qall(index.KM)    - qall_mean(index.KM)]'    * qall_prec(index.KM,index.KM)       * [qall(index.KM)    - qall_mean(index.KM)] ...
-%     + [qall(index.KA)    - qall_mean(index.KA)]'    * qall_prec(index.KA,index.KA)       * [qall(index.KA)    - qall_mean(index.KA)] ...
-%     + [qall(index.KI)    - qall_mean(index.KI)]'    * qall_prec(index.KI,index.KI)       * [qall(index.KI)    - qall_mean(index.KI)] ...
-%     + [qall(index.Kcatf) - qall_mean(index.Kcatf)]' * qall_prec(index.Kcatf,index.Kcatf) * [qall(index.Kcatf) - qall_mean(index.Kcatf)] ...
-%     + [qall(index.Kcatr) - qall_mean(index.Kcatr)]' * qall_prec(index.Kcatr,index.Kcatr) * [qall(index.Kcatr) - qall_mean(index.Kcatr)]];
+  index = q_info.qall.index;
+  qall  = cmb_q_to_qall(q, q_info);
+  log_posterior_q = - 0.5 * [...
+        [qall(index.Keq)   - preposterior.qtypes.Keq.mean  ]' * preposterior.qtypes.Keq.prec   * [qall(index.Keq)   - preposterior.qtypes.Keq.mean  ] ...
+      + [qall(index.KM)    - preposterior.qtypes.KM.mean   ]' * preposterior.qtypes.KM.prec    * [qall(index.KM)    - preposterior.qtypes.KM.mean   ] ...
+      + [qall(index.KA)    - preposterior.qtypes.KA.mean   ]' * preposterior.qtypes.KA.prec    * [qall(index.KA)    - preposterior.qtypes.KA.mean   ] ...
+      + [qall(index.KI)    - preposterior.qtypes.KI.mean   ]' * preposterior.qtypes.KI.prec    * [qall(index.KI)    - preposterior.qtypes.KI.mean   ] ...
+      + [qall(index.Kcatf) - preposterior.qtypes.Kcatf.mean]' * preposterior.qtypes.Kcatf.prec * [qall(index.Kcatf) - preposterior.qtypes.Kcatf.mean] ...
+      + [qall(index.Kcatr) - preposterior.qtypes.Kcatr.mean]' * preposterior.qtypes.Kcatr.prec * [qall(index.Kcatr) - preposterior.qtypes.Kcatr.mean] ];
+  
+end
 
 % ------------------------------
 

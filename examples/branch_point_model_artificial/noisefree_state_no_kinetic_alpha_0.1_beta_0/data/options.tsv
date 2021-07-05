@@ -24,6 +24,8 @@ plot_true_vs_data	0
 save_results	1
 save_graphics	1
 use_bounds	1
+use_pseudo_values	0
+use_crosscovariances	0
 quantities	{"Keq":{"max":1.0E+8,"mean_ln":0,"std_ln":18.420680743952367},"KV":{"min":1E-7,"max":10000,"mean_ln":5.2983173665480363,"std_ln":3.912023005428146},"KM":{"min":1E-5,"max":1000,"mean_ln":-2.3025850929940455,"std_ln":1.6094379124341003},"KA":{"min":0.0001,"max":100,"mean_ln":-2.3025850929940455,"std_ln":2.3025850929940459},"KI":{"min":0.0001,"max":100,"mean_ln":-2.3025850929940455,"std_ln":2.3025850929940459},"Kcatf":{"min":0.01,"max":1.0E+7,"mean_ln":5.2983173665480363,"std_ln":6.9077552789821368},"Kcatr":{"min":0.005,"max":1.0E+7,"mean_ln":5.2983173665480363,"std_ln":6.9077552789821368},"v":{"max":100},"c":{"min":1E-7,"max":1000,"mean_ln":-1.2039728043259361,"std_ln":2.3025850929940459,"data_geom_std":1.2},"e":{"max":0.5,"mean_ln":-6.9077552789821368,"std_ln":4.6051701859880918,"data_geom_std":1.2},"Aforward":{"min":0.0001,"max":100},"mu0":{"std":3.9897271780992458}}
 metabolic_prior_c_geom_mean	0.29999999999999993
 metabolic_prior_c_geom_std	10.000000000000002
@@ -35,5 +37,4 @@ data_V_geom_std	1.2
 data_kin_geom_std	1.5
 metabolic_artificial_c_geom_std	1.5
 metabolic_artificial_e_geom_std	1.5
-use_pseudo_values	0
 ns	4

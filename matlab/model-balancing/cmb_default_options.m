@@ -50,8 +50,9 @@ function cmb_options = cmb_default_options(flag_artificial)
 % Bounds and distributions for model variables
 %   Default values are taken from the prior file, see 'cmb_prior_file'
 %
-%   .use_bounds                  Boolean -> if set to 0, lower and upper bounds are ignored for all variables
-%   .use_pseudo_values           Boolean -> if set to 0, no pseudo values are used
+%   .use_bounds                  Boolean (default 1) -> if set to 0, lower and upper bounds are ignored for all variables
+%   .use_pseudo_values           Boolean (default 0) -> if set to 0, no pseudo values are used
+%   .use_crosscovariances        Boolean (default 0) -> if set to 0, crosscovariances (between types of kinetic constants) are ignored
 %   .quantities.Keq.max          new value for upper_bound(ind.Keq);
 %   .quantities.Keq.mean_ln      new value for prior_median_ln(ind.Keq);
 %   .quantities.Keq.std_ln       new value for prior_geostd_ln(ind.Keq);
@@ -191,7 +192,8 @@ end
 % Prior distributions and bounds (mostly from parameter balancing prior file)
 
 cmb_options.use_bounds              = 1; 
-cmb_options.use_bounds              = 0; 
+cmb_options.use_pseudo_values       = 0; 
+cmb_options.use_crosscovariances    = 0; 
 
 cmb_options.quantities.Keq.max      = upper_bound(ind.Keq);
 cmb_options.quantities.Keq.mean_ln  = prior_median_ln(ind.Keq);
