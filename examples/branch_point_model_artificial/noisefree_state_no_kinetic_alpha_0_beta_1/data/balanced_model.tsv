@@ -1,4 +1,4 @@
-!!!SBtab Document='MBresult' DocumentName='MB result' StringencyAlpha='0.000000.2' CalculationTime='22.445955 s'				
+!!!SBtab Document='MBresult' DocumentName='MB result' StringencyAlpha='0.000000.2' CalculationTime='14.799955 s'				
 				
 !!SBtab TableID='Reaction' TableType='Reaction' TableName='Reaction'				
 !ID	!ReactionFormula	!Name	!IsReversible	
@@ -15,24 +15,24 @@ S4	S4	False
 				
 !!SBtab TableID='Parameter' TableType='Quantity' TableName='Parameter' StandardConcentration='mM'				
 !QuantityType	!Reaction	!Compound	!Mode	!Unit
-equilibrium constant	E1		1.0875203	dimensionless
-equilibrium constant	E2		5.7901386	dimensionless
-equilibrium constant	E3		1.0250055	dimensionless
-catalytic rate constant geometric mean	E1		198.66132	1/s
-catalytic rate constant geometric mean	E2		210.84326	1/s
-catalytic rate constant geometric mean	E3		198.61786	1/s
-Michaelis constant	E1	X1	1.0024418	mM
-Michaelis constant	E2	X2	0.63202865	mM
-Michaelis constant	E3	X3	0.096225893	mM
-Michaelis constant	E1	S4	1.6150609	mM
-Michaelis constant	E2	S4	1.6150636	mM
-Michaelis constant	E3	S4	1.6150587	mM
-substrate catalytic rate constant	E1		163.21767	1/s
-substrate catalytic rate constant	E2		317.3787	1/s
-substrate catalytic rate constant	E3		823.81474	1/s
-product catalytic rate constant	E1		241.80178	1/s
-product catalytic rate constant	E2		140.06889	1/s
-product catalytic rate constant	E3		47.885831	1/s
+equilibrium constant	E1		0.94224718	dimensionless
+equilibrium constant	E2		4.3121052	dimensionless
+equilibrium constant	E3		0.41405796	dimensionless
+catalytic rate constant geometric mean	E1		198.49601	1/s
+catalytic rate constant geometric mean	E2		212.91063	1/s
+catalytic rate constant geometric mean	E3		198.49368	1/s
+Michaelis constant	E1	X1	20.012512	mM
+Michaelis constant	E2	X2	3.1569451	mM
+Michaelis constant	E3	X3	0.096268536	mM
+Michaelis constant	E1	S4	5.6065392	mM
+Michaelis constant	E2	S4	5.606308	mM
+Michaelis constant	E3	S4	5.6032193	mM
+substrate catalytic rate constant	E1		364.03033	1/s
+substrate catalytic rate constant	E2		331.76996	1/s
+substrate catalytic rate constant	E3		974.43727	1/s
+product catalytic rate constant	E1		108.23457	1/s
+product catalytic rate constant	E2		136.63364	1/s
+product catalytic rate constant	E3		40.433328	1/s
 				
 !!SBtab TableID='ConcentrationConstraint' TableType='Quantity' TableName='Metabolite concentration constraints'				
 !QuantityType	!Compound	!Min	!Max	

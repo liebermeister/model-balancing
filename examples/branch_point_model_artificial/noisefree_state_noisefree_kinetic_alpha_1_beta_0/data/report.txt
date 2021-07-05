@@ -19,4 +19,4 @@ Used crsscov (1=yes): 0
 Initial values type: polytope center
 Geom. std errors:    c:1.000 e:1.000 Keq:1.000 Kcatf:1.000 Kcatr:1.000 KM:1.000
 Corr. on log scale:  c:1.000 e:1.000 Keq:1.000 Kcatf:1.000 Kcatr:1.000 KM:1.000
-Calculation time:    9.7 s
+Calculation time:    5.1 s
