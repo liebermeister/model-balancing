@@ -5,12 +5,14 @@ A module for I/O operations related to model balancing.
 
 import json
 from typing import Dict, List, Union
-from itertools import chain
 import numpy as np
 import pandas as pd
 from sbtab import SBtab
+from collections import OrderedDict
+import itertools
 
-from . import Q_
+
+from . import Q_, STATE_VARIABLES, MODEL_VARIABLES
 
 JSON_NAME_MAPPINGS = {
     "Keq": ("kinetic_constants", "Keq"),
@@ -69,49 +71,52 @@ def read_arguments_json(
 
         unit = p_json["unit"]
 
-        if "cov_ln" in p_json["combined"]:
-            cov_ln = np.array(p_json["combined"]["cov_ln"])
-            if cov_ln.size == 0:
-                args[f"{p}_ln_precision"] = None
-            else:
-                args[f"{p}_ln_precision"] = np.linalg.pinv(cov_ln)
-        elif "geom_std" in p_json["combined"]:
-            args[f"{p}_ln_precision"] = np.diag(
+        if len(p_json["combined"]["geom_mean"]) == 0:
+            args[f"geom_mean_{p}"] = None
+            args[f"lower_bound_{p}"] = None
+            args[f"upper_bound_{p}"] = None
+            args[f"precision_ln_{p}"] = None
+            continue
+
+        if "geom_std" in p_json["combined"]:
+            args[f"precision_ln_{p}"] = np.diag(
                 list(
                     map(
                         lambda x: np.log(x) ** (-2.0),
-                        chain.from_iterable(p_json["combined"]["geom_std"]),
+                        itertools.chain.from_iterable(p_json["combined"]["geom_std"]),
                     )
                 )
             )
+        elif "prec_ln" in p_json["combined"] and len(p_json["combined"]["prec_ln"]) > 0:
+            args[f"precision_ln_{p}"] = np.array(p_json["combined"]["prec_ln"])
         else:
-            raise KeyError(
-                f"Cannot find neither `cov_ln` nor `geom_std` in the `combined` field of {p}"
-            )
+            raise KeyError(f"neither 'geom_std' nor 'prec_ln' provided for {p}")
 
-        if unit == "depends on reaction stoichiometry":
+        geom_mean = np.array(p_json["combined"]["geom_mean"])
+        lb = np.array(p_json["bounds"]["min"])
+        ub = np.array(p_json["bounds"]["max"])
+        if p == "Keq":
             # For the equilibrium constants, which are unitless but if the standard
             # concentration is not 1M, we need to adjust their values based on what
             # it is in the JSON file.
             A = np.diag(
                 np.power(keq_standard_concentration.m_as("M"), args["S"].sum(axis=0))
             )
-            args["Keq_gmean"] = A @ Q_(p_json["combined"]["geom_mean"], "")
-            args[f"{p}_lower_bound"] = A @ Q_(p_json["bounds"]["min"], "")
-            args[f"{p}_upper_bound"] = A @ Q_(p_json["bounds"]["max"], "")
+            unit = ""
         else:
-            args[f"{p}_gmean"] = Q_(
-                p_json["combined"]["geom_mean"],
-                p_json["unit"],
-            )
-            args[f"{p}_lower_bound"] = Q_(
-                p_json["bounds"]["min"],
-                p_json["unit"],
-            )
-            args[f"{p}_upper_bound"] = Q_(
-                p_json["bounds"]["max"],
-                p_json["unit"],
-            )
+            # otherwise, we set A to be the identity matrix, so it would have no
+            # effect
+            A = np.eye(geom_mean.shape[0])
+
+        args[f"geom_mean_{p}"] = A @ Q_(geom_mean, unit)
+        args[f"lower_bound_{p}"] = A @ Q_(lb, unit)
+        args[f"upper_bound_{p}"] = A @ Q_(ub, unit)
+
+    args["precision_ln_kinetic"] = np.array(data["kinetic_constants"]["all"]["prec_ln"])
+    args["kinetic_order"] = data["kinetic_constants"]["all"]["names"]
+    args["kinetic_order_unique"] = list(
+        OrderedDict(zip(args["kinetic_order"], itertools.repeat(None)))
+    )
 
     args["metabolite_names"] = data["network"]["metabolite_names"]
     args["reaction_names"] = data["network"]["reaction_names"]

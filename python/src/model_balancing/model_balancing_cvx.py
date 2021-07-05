@@ -92,12 +92,16 @@ class ModelBalancingConvex(object):
         ], f"unsupported rate law {self.rate_law}"
 
         for p in ALL_VARIABLES:
-            assert f"{p}_gmean" in kwargs
-            assert f"{p}_ln_precision" in kwargs
+            assert f"geom_mean_{p}" in kwargs
+            assert f"precision_ln_{p}" in kwargs
+            assert f"lower_bound_{p}" in kwargs
+            assert f"upper_bound_{p}" in kwargs
 
         self._var_dict = {}
-        self.ln_gmean = {}
+        self.ln_geom_mean = {}
         self.z2_scores = {}
+
+        # TODO: use the upper and lower bounds
         self.ln_lower_bound = {}
         self.ln_upper_bound = {}
 
@@ -108,11 +112,10 @@ class ModelBalancingConvex(object):
             )
 
         for p in INDEPENDENT_VARIABLES + DEPENDENT_VARIABLES:
-            p_dim = kwargs[f"{p}_gmean"].size
-            if p_dim > 0:
+            if kwargs[f"geom_mean_{p}"] is not None:
                 if p in INDEPENDENT_VARIABLES:
                     self._var_dict[f"ln_{p}"] = cp.Variable(
-                        shape=kwargs[f"{p}_gmean"].shape
+                        shape=kwargs[f"geom_mean_{p}"].shape
                     )
                 elif p == "conc_enz":
                     self._var_dict[f"ln_{p}"] = self.ln_conc_enz
@@ -121,19 +124,24 @@ class ModelBalancingConvex(object):
                 else:
                     raise Exception(f"unknown parameter: {p}")
 
-                self.ln_gmean[p] = np.log(kwargs[f"{p}_gmean"].m_as(DEFAULT_UNITS[p]))
-                assert kwargs[f"{p}_ln_precision"].shape == (p_dim, p_dim)
-                displacement = self._var_dict[f"ln_{p}"] - self.ln_gmean[p]
+                self.ln_geom_mean[p] = np.log(
+                    kwargs[f"geom_mean_{p}"].m_as(DEFAULT_UNITS[p])
+                )
+                assert kwargs[f"precision_ln_{p}"].shape == (
+                    kwargs[f"geom_mean_{p}"].size,
+                    kwargs[f"geom_mean_{p}"].size,
+                )
+                displacement = self._var_dict[f"ln_{p}"] - self.ln_geom_mean[p]
                 if len(displacement.shape) > 1:
                     displacement = displacement.flatten()
                 if p == "conc_enz":
                     displacement = cp.pos(displacement)
 
                 self.z2_scores[p] = cp.quad_form(
-                    displacement, kwargs[f"{p}_ln_precision"]
+                    displacement, kwargs[f"precision_ln_{p}"]
                 )
             else:
-                self.ln_gmean[p] = None
+                self.ln_geom_mean[p] = None
                 self._var_dict[f"ln_{p}"] = None
                 self.z2_scores[p] = cp.Constant(0)
 
@@ -398,7 +406,9 @@ class ModelBalancingConvex(object):
         conc_enz is not defined).
         """
         return (
-            self._driving_forces(self.ln_gmean["Keq"], self.ln_gmean["conc_met"]).value
+            self._driving_forces(
+                self.ln_geom_mean["Keq"], self.ln_geom_mean["conc_met"]
+            ).value
             >= (MIN_DRIVING_FORCE / RT).m_as("")
         ).all()
 
@@ -411,8 +421,8 @@ class ModelBalancingConvex(object):
         """
         # define the independent variables and their z-scores
         for p in INDEPENDENT_VARIABLES:
-            if self.ln_gmean[p] is not None:
-                self._var_dict[f"ln_{p}"].value = self.ln_gmean[p]
+            if self.ln_geom_mean[p] is not None:
+                self._var_dict[f"ln_{p}"].value = self.ln_geom_mean[p]
 
         # self.ln_kcatr_gmean.value = self.ln_kcatr.value
         # self.ln_conc_enz_gmean.value = self.ln_conc_enz.value
@@ -502,7 +512,7 @@ class ModelBalancingConvex(object):
             "state_names": self.state_names,
         }
         for p in MODEL_VARIABLES:
-            if self.ln_gmean[p] is None:
+            if self.ln_geom_mean[p] is None:
                 kwargs[p] = Q_(np.array([]), DEFAULT_UNITS[p])
                 continue
             val = np.exp(self._var_dict[f"ln_{p}"].value)

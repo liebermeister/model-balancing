@@ -4,9 +4,7 @@ A module for performing full model balancing (using SciPy).
 """
 
 import itertools
-import os
-import warnings
-from typing import Dict, Iterable, List, Optional, Tuple
+from typing import Dict, List, Optional
 
 import numpy as np
 import scipy.special
@@ -20,7 +18,6 @@ from . import (
     INDEPENDENT_VARIABLES,
     MIN_DRIVING_FORCE,
     MODEL_VARIABLES,
-    STATE_VARIABLES,
     Q_,
     RT,
 )
@@ -79,56 +76,48 @@ class ModelBalancing(object):
         ], f"unsupported rate law {self.rate_law}"
 
         for p in ALL_VARIABLES:
-            assert f"{p}_gmean" in kwargs
-            assert f"{p}_ln_precision" in kwargs
+            assert f"geom_mean_{p}" in kwargs
+            assert f"precision_ln_{p}" in kwargs
+            assert f"lower_bound_{p}" in kwargs
+            assert f"upper_bound_{p}" in kwargs
 
-        self.ln_gmean = {}
-        self.ln_precision = {}
+        self.ln_geom_mean = {}
+        self.precision_ln = {}
         self.ln_lower_bound = {}
         self.ln_upper_bound = {}
 
         for p in ALL_VARIABLES:
             unit = DEFAULT_UNITS[p]
-            # geometric means (in log-scale)
-            self.ln_gmean[p] = np.log(kwargs[f"{p}_gmean"].m_as(unit))
-            if self.ln_gmean[p].size > 0:
-                self.ln_precision[p] = kwargs[f"{p}_ln_precision"]
-                if np.all(kwargs[f"{p}_lower_bound"] != None):
-                    self.ln_lower_bound[p] = np.log(
-                        kwargs[f"{p}_lower_bound"].m_as(unit)
-                    )
-                else:
-                    self.ln_lower_bound[p] = self.ln_gmean[
-                        p
-                    ].T.flatten() - 20.0 * np.diag(self.ln_precision[p]) ** (-1.0)
-                if np.all(kwargs[f"{p}_upper_bound"] != None):
-                    self.ln_upper_bound[p] = np.log(
-                        kwargs[f"{p}_upper_bound"].m_as(unit)
-                    )
-                else:
-                    self.ln_upper_bound[p] = self.ln_gmean[
-                        p
-                    ].T.flatten() + 20.0 * np.diag(self.ln_precision[p]) ** (-1.0)
-            else:
-                self.ln_precision[p] = None
+
+            if kwargs[f"geom_mean_{p}"] is None:
+                self.ln_geom_mean[p] = None
+                self.precision_ln[p] = None
                 self.ln_lower_bound[p] = None
                 self.ln_upper_bound[p] = None
+                continue
 
-        assert self.ln_gmean["conc_met"].shape == (self.Nc, self.Ncond)
-        assert self.ln_precision["conc_met"].shape == (
-            self.Nc * self.Ncond,
-            self.Nc * self.Ncond,
-        )
-        assert self.ln_gmean["conc_enz"].shape == (self.Nr, self.Ncond)
-        assert self.ln_precision["conc_enz"].shape == (
-            self.Nr * self.Ncond,
-            self.Nr * self.Ncond,
-        )
+            # geometric means (in log-scale)
+            self.ln_geom_mean[p] = np.log(kwargs[f"geom_mean_{p}"].m_as(unit))
+            self.precision_ln[p] = kwargs[f"precision_ln_{p}"]
+            self.ln_lower_bound[p] = np.log(kwargs[f"lower_bound_{p}"].m_as(unit))
+            self.ln_upper_bound[p] = np.log(kwargs[f"upper_bound_{p}"].m_as(unit))
+
+            assert self.precision_ln[p].shape == (
+                self.ln_geom_mean[p].size,
+                self.ln_geom_mean[p].size,
+            )
+            assert self.ln_lower_bound[p].shape == self.ln_geom_mean[p].shape
+            assert self.ln_upper_bound[p].shape == self.ln_geom_mean[p].shape
+
+        assert self.ln_geom_mean["Keq"].shape == (self.Nr,)
+        assert self.ln_geom_mean["kcatf"].shape == (self.Nr,)
+        assert self.ln_geom_mean["kcatr"].shape == (self.Nr,)
+        assert self.ln_geom_mean["conc_met"].shape == (self.Nc, self.Ncond)
+        assert self.ln_geom_mean["conc_enz"].shape == (self.Nr, self.Ncond)
 
         # initialize the independent variables with their geometric means
         self._var_dict = {}
-        for p in INDEPENDENT_VARIABLES:
-            self._var_dict[f"ln_{p}"] = self.ln_gmean[p]
+        self.initialize_with_gmeans()
 
     @staticmethod
     def from_json(fname: str) -> "ModelBalancing":
@@ -147,17 +136,25 @@ class ModelBalancing(object):
         """Get the variable vector (x)."""
         # in order to use the scipy solver, we need to stack all the independent variables
         # into one 1-D array (denoted 'x').
-        return np.array([x for p in param_order for x in var_dict[f"ln_{p}"].T.flat])
+        x = []
+        for p in param_order:
+            if var_dict[f"ln_{p}"] is not None:
+                x += list(var_dict[f"ln_{p}"].T.flat)
+        return np.array(x)
 
     def _var_vector_to_dict_independent(self, x: np.ndarray) -> Dict[str, np.ndarray]:
         """Convert the variable vector into a dictionary."""
         var_dict = {}
         i = 0
         for p in INDEPENDENT_VARIABLES:
-            size = self._var_dict[f"ln_{p}"].size
-            shape = self._var_dict[f"ln_{p}"].shape
-            var_dict[f"ln_{p}"] = x[i : i + size].reshape(shape, order="F")
-            i += size
+            if self._var_dict[f"ln_{p}"] is not None:
+                size = self._var_dict[f"ln_{p}"].size
+                shape = self._var_dict[f"ln_{p}"].shape
+                var_dict[f"ln_{p}"] = x[i : i + size].reshape(shape, order="F")
+                i += size
+            else:
+                var_dict[f"ln_{p}"] = None
+
         return var_dict
 
     def extend_var_dict_to_dependent_params(
@@ -191,15 +188,19 @@ class ModelBalancing(object):
                 raise KeyError(
                     f"ln_{p} is not in the variable dictionary, use extend_var_dict_to_dependent_params()"
                 )
-            z2_scores_dict[p] = ModelBalancing._z_score(
-                var_dict[f"ln_{p}"],
-                self.ln_gmean[p],
-                self.ln_precision[p],
-                self.alpha if p == "conc_enz" else None,
-            )
-            # note that for conc_enz, we take a scaled version of the negative
-            # part of the z-score of ln_conc_enz. (α = 0 would be convex, and
-            # α = 1 would be the true cost function)
+
+            if var_dict[f"ln_{p}"] is None:
+                z2_scores_dict[p] = 0.0
+            else:
+                z2_scores_dict[p] = ModelBalancing._z_score(
+                    var_dict[f"ln_{p}"],
+                    self.ln_geom_mean[p],
+                    self.precision_ln[p],
+                    self.alpha if p == "conc_enz" else None,
+                )
+                # note that for conc_enz, we take a scaled version of the negative
+                # part of the z-score of ln_conc_enz. (α = 0 would be convex, and
+                # α = 1 would be the true cost function)
 
         if self.beta > 0:
             z2_scores_dict["c_over_Km"] = self.beta * self.penalty_term_beta(var_dict)
@@ -468,7 +469,7 @@ class ModelBalancing(object):
         ln_Ki: np.ndarray,
     ) -> np.ndarray:
         ln_eta_regulation = np.zeros((self.Nr, self.Ncond))
-        if ln_Ka.size == 0 and ln_Ki.size == 0:
+        if ln_Ka is None and ln_Ki is None:
             return ln_eta_regulation
 
         ln_Ka_matrix = ModelBalancing._create_dense_matrix(self.A_act, ln_Ka)
@@ -524,7 +525,9 @@ class ModelBalancing(object):
         conc_enz is not defined).
         """
         return (
-            self._driving_forces(self.ln_gmean["Keq"], self.ln_gmean["conc_met"])
+            self._driving_forces(
+                self.ln_geom_mean["Keq"], self.ln_geom_mean["conc_met"]
+            )
             >= (MIN_DRIVING_FORCE / RT).m_as("")
         ).all()
 
@@ -547,7 +550,9 @@ class ModelBalancing(object):
                 i_Keq = i
             elif p == "conc_met":
                 i_conc_met = i
-            i += self._var_dict[f"ln_{p}"].size
+
+            if self._var_dict[f"ln_{p}"] is not None:
+                i += self._var_dict[f"ln_{p}"].size
 
         A = np.zeros((self.Nr * self.Ncond, i))
         for j in range(self.Ncond):
@@ -601,12 +606,13 @@ class ModelBalancing(object):
         thermodynamically feasible.
         """
         for p in INDEPENDENT_VARIABLES:
-            self._var_dict[f"ln_{p}"] = self.ln_gmean[p]
+            self._var_dict[f"ln_{p}"] = self.ln_geom_mean[p]
 
-        # set the geometric means of the dependent parameters (kcatr and conc_enz)
-        # to the values calculated using all the independent parameters
-        self.ln_gmean["kcatr"] = self.ln_kcatr
-        self.ln_gmean["conc_enz"] = self.ln_conc_enz
+        # the dependent parameters are set by the others and therefore we cannot
+        # ensure that their value is the same as the gmeans (and it probably
+        # isn't)
+        self._var_dict["ln_kcatr"] = self.ln_kcatr
+        self._var_dict["ln_conc_enz"] = self.ln_conc_enz
 
     def solve(self, solver: str = "SLSQP", options: Optional[dict] = None) -> str:
         """Find a local minimum of the objective function using SciPy."""
@@ -700,7 +706,7 @@ class ModelBalancing(object):
             "state_names": self.state_names,
         }
         for p in MODEL_VARIABLES:
-            if self.ln_gmean[p] is None:
+            if self.ln_geom_mean[p] is None:
                 kwargs[p] = Q_(np.array([]), DEFAULT_UNITS[p])
                 continue
             val = np.exp(self._var_dict[f"ln_{p}"])
