@@ -119,7 +119,6 @@ preposterior.qtypes.Kcatf.prec = inv(preposterior.qall.cov(index.Kcatf,index.Kca
 preposterior.qtypes.Kcatr.prec = inv(preposterior.qall.cov(index.Kcatr,index.Kcatr));
 
 
-
 % % NEW variant: compute everything for qall, then select vectors and matrices for q
 % 
 % % combine prior + pseudo values -> pseudoprior for all constants

@@ -6,7 +6,7 @@ function f = cmb_variables_to_log_posterior(kinetics,X,network,q_info,cmb_option
 pp = cmb_make_pp(network);
 nn = network;
 nn.kinetics = kinetics;
-modular_rate_law_haldane(nn, nn.kinetics)
+%modular_rate_law_haldane(nn, nn.kinetics)
 q = cmb_kinetics_to_q(nn, cmb_options, q_info);
 %pm(exp(q), q_info.q.names)
 %nn.kinetics.Keq

@@ -38,13 +38,13 @@ function problem = cvxpy_problem_data_structure(network, q_info, prior, data, bo
 %       .bounds.max         upper bounds on log values
 %       .combined.geom_mean preposterior geometric mean vector
 %       .combined.mean_ln   preposterior mean vector of log values
-%       %.combined.cov_ln    preposterior covariance matrix of log values
+%       %.combined.cov_ln   preposterior covariance matrix of log values
 %
 %   .kinetic_constants.all
-%   .kinetic_constants.all.names                  parameter names, list of strings
-%   .kinetic_constants.all.geom_mean              preposterior geometric mean vector
-%   .kinetic_constants.all.mean_ln                preposterior mean vector of log values
-%   .kinetic_constants.all.prec_ln                preposterior precision matrix of log values
+%   .kinetic_constants.all.names      parameter names, list of strings
+%   .kinetic_constants.all.geom_mean  preposterior geometric mean vector
+%   .kinetic_constants.all.mean_ln    preposterior mean vector of log values
+%   .kinetic_constants.all.prec_ln    preposterior precision matrix of log values
 %
 %   .metabolite_concentrations
 %   .metabolite_concentrations.unit:              string, default 'mM'
@@ -191,7 +191,7 @@ preposterior = cmb_prepare_posterior(prior, data, cmb_options, q_info);
 
 qall_struct.combined.mean_ln = preposterior.qall.mean;
 qall_struct.combined.cov_ln  = preposterior.qall.cov;
-qall_struct.combined.prec_ln  = preposterior.qall.prec;
+qall_struct.combined.prec_ln = preposterior.qall.prec;
 
 % --------------------------------------------------------------
 % copy results into "problem" struct
@@ -201,7 +201,6 @@ problem.kinetic_constants.all.names     = qall_struct.names;
 problem.kinetic_constants.all.mean_ln   = qall_struct.combined.mean_ln;
 problem.kinetic_constants.all.prec_ln   = qall_struct.combined.prec_ln;
 problem.kinetic_constants.all.geom_mean = exp(qall_struct.combined.mean_ln);
-
 
 % PROBLEM: currently there is a prior only for INDEPENDENT Keq, not dependent ones; fix this!
 
@@ -215,8 +214,8 @@ Keq.data_ln.mean       = qall_struct.data.mean(index.Keq);
 Keq.data_ln.std        = qall_struct.data.std(index.Keq);
 Keq.bounds.min         = exp(qall_struct.bounds.min(index.Keq));
 Keq.bounds.max         = exp(qall_struct.bounds.max(index.Keq));
-Keq.combined.mean_ln   = qall_struct.combined.mean_ln(index.Keq);
-Keq.combined.prec_ln   = qall_struct.combined.prec_ln(index.Keq,index.Keq);
+Keq.combined.mean_ln   = preposterior.qtypes.Keq.mean;
+Keq.combined.prec_ln   = preposterior.qtypes.Keq.prec;
 Keq.combined.geom_mean = exp(Keq.combined.mean_ln);
 
 Kcatf.unit          = '1/s';
@@ -229,8 +228,8 @@ Kcatf.data_ln.mean  = qall_struct.data.mean(index.Kcatf);
 Kcatf.data_ln.std   = qall_struct.data.std(index.Kcatf);
 Kcatf.bounds.min    = exp(qall_struct.bounds.min(index.Kcatf));
 Kcatf.bounds.max    = exp(qall_struct.bounds.max(index.Kcatf));
-Kcatf.combined.mean_ln = qall_struct.combined.mean_ln(index.Kcatf);
-Kcatf.combined.prec_ln = qall_struct.combined.prec_ln(index.Kcatf,index.Kcatf);
+Kcatf.combined.mean_ln   = preposterior.qtypes.Kcatf.mean;
+Kcatf.combined.prec_ln   = preposterior.qtypes.Kcatf.prec;
 Kcatf.combined.geom_mean = exp(Kcatf.combined.mean_ln);
 
 Kcatr.unit          = '1/s';
@@ -243,8 +242,8 @@ Kcatr.data_ln.mean  = qall_struct.data.mean(index.Kcatr);
 Kcatr.data_ln.std   = qall_struct.data.std(index.Kcatr);
 Kcatr.bounds.min    = exp(qall_struct.bounds.min(index.Kcatr));
 Kcatr.bounds.max    = exp(qall_struct.bounds.max(index.Kcatr));
-Kcatr.combined.mean_ln = qall_struct.combined.mean_ln(index.Kcatr);
-Kcatr.combined.prec_ln = qall_struct.combined.prec_ln(index.Kcatr,index.Kcatr);
+Kcatr.combined.mean_ln   = preposterior.qtypes.Kcatr.mean;
+Kcatr.combined.prec_ln   = preposterior.qtypes.Kcatr.prec;
 Kcatr.combined.geom_mean = exp(Kcatr.combined.mean_ln);
 
 KM.unit          = 'mM';
@@ -257,8 +256,8 @@ KM.data_ln.mean  = qall_struct.data.mean(index.KM);
 KM.data_ln.std   = qall_struct.data.std(index.KM);
 KM.bounds.min    = exp(qall_struct.bounds.min(index.KM));
 KM.bounds.max    = exp(qall_struct.bounds.max(index.KM));
-KM.combined.mean_ln = qall_struct.combined.mean_ln(index.KM);
-KM.combined.prec_ln    = qall_struct.combined.prec_ln(index.KM,index.KM);
+KM.combined.mean_ln   = preposterior.qtypes.KM.mean;
+KM.combined.prec_ln   = preposterior.qtypes.KM.prec;
 KM.combined.geom_mean = exp(KM.combined.mean_ln);
 
 KA.unit          = 'mM';
@@ -271,8 +270,8 @@ KA.data_ln.mean  = qall_struct.data.mean(index.KA);
 KA.data_ln.std   = qall_struct.data.std(index.KA);
 KA.bounds.min    = exp(qall_struct.bounds.min(index.KA));
 KA.bounds.max    = exp(qall_struct.bounds.max(index.KA));
-KA.combined.mean_ln = qall_struct.combined.mean_ln(index.KA);
-KA.combined.prec_ln    = qall_struct.combined.prec_ln(index.KA,index.KA);
+KA.combined.mean_ln   = preposterior.qtypes.KA.mean;
+KA.combined.prec_ln   = preposterior.qtypes.KA.prec;
 KA.combined.geom_mean = exp(KA.combined.mean_ln);
 
 KI.unit          = 'mM';
@@ -285,8 +284,8 @@ KI.data_ln.mean  = qall_struct.data.mean(index.KI);
 KI.data_ln.std   = qall_struct.data.std(index.KI);
 KI.bounds.min    = exp(qall_struct.bounds.min(index.KI));
 KI.bounds.max    = exp(qall_struct.bounds.max(index.KI));
-KI.combined.mean_ln = qall_struct.combined.mean_ln(index.KI);
-KI.combined.prec_ln    = qall_struct.combined.prec_ln(index.KI,index.KI);
+KI.combined.mean_ln   = preposterior.qtypes.KI.mean;
+KI.combined.prec_ln   = preposterior.qtypes.KI.prec;
 KI.combined.geom_mean = exp(KI.combined.mean_ln);
 
 problem.kinetic_constants.Keq   = Keq;
