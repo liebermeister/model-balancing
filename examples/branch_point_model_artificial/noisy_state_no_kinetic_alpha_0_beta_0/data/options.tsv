@@ -19,7 +19,7 @@ random_seed	1
 verbose	0
 optim_display	off
 display	1
-show_graphics	1
+show_graphics	0
 plot_true_vs_data	0
 save_results	1
 save_graphics	1

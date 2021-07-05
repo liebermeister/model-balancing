@@ -17,6 +17,6 @@ Used bounds (1=yes): 1
 Used pseudo (1=yes): 0
 Used crsscov (1=yes): 0
 Initial values type: polytope center
-Geom. std errors:    c:1.000 e:47.156 Keq:3.770 Kcatf:3.519 Kcatr:102.779 KM:6.717
-Corr. on log scale:  c:1.000 e:0.149 Keq:0.952 Kcatf:0.989 Kcatr:0.582 KM:-0.548
-Calculation time:    30.8 s
+Geom. std errors:    c:1.000 e:8.461 Keq:4.328 Kcatf:3.613 Kcatr:105.782 KM:6.631
+Corr. on log scale:  c:1.000 e:0.743 Keq:0.975 Kcatf:0.998 Kcatr:0.664 KM:-0.587
+Calculation time:    16.3 s
