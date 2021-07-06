@@ -13,7 +13,8 @@ To run model balancing in matlab, please have a look at the demo scripts in `mat
 For HTML documentation of the matlab code, see `matlab/doc`. For help in matlab, please type `help model-balancing`.
 
 ### Python
-For using model balancing in python, please refer to our [Read The Docs](https://model-balancing.readthedocs.io/en/latest/index.html) page.
+For using model balancing in python, please refer to our [Read The Docs](https://model-balancing.readthedocs.io/en/latest/index.html) page,
+and the code itself is found on [our GitLab repository](https://gitlab.com/elad.noor/model-balancing)
 
 ### Example models
 Example model and data files can be found in the folder "resources". 
@@ -41,7 +42,7 @@ This can be done in matlab and is shown in `demo_cmb_experimental_data.m`. For a
 type `help cvxpy_problem_data_structure` in matlab.
 
 ## Installation
-These installtion instructions are only for the Matlab version.
+The following installation instructions are only for the Matlab version.
 For Python, please refer to our [Read The Docs](https://model-balancing.readthedocs.io/en/latest/index.html) page.
 
 - [SBML toolbox](http://sbml.org/Software/SBMLToolbox) (optional - needed only if SBML files are used;
