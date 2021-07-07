@@ -42,7 +42,7 @@ bounds.q_all_max = [bounds.q_max; ...
                     bounds.q_dep_max];
 
 bounds.x_min = log(cmb_options.quantities.c.min * ones(nm,1));
-bounds.x_max = log(cmb_options.quantities.c.max * ones(nm,1));
+bounds.x_max = log(100*cmb_options.quantities.c.max * ones(nm,1));
 
 % make sure that conc_min < conc_max holds strictly 
 epsilon = 10^-5;

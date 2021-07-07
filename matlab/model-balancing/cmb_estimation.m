@@ -186,11 +186,11 @@ end
 
 if cmb_options.use_bounds,
   if sum(q_info.M_q_to_qall * init.q < bounds.q_all_min), 
-    q_info.M_q_to_qall * init.q - bounds.q_all_min
+    pm(q_info.M_q_to_qall * init.q - bounds.q_all_min,q_info.qall.names)
     error('Infeasible initial point: parameter below lower bound!'); 
   end
   if sum(q_info.M_q_to_qall * init.q > bounds.q_all_max), 
-    q_info.M_q_to_qall * init.q - bounds.q_all_max
+    pm(q_info.M_q_to_qall * init.q - bounds.q_all_max,q_info.qall.names)
     error('Infeasible initial point: parameter above upper bound!'); 
   end
 end
@@ -291,9 +291,15 @@ if cmb_options.use_gradient,
   opt.SpecifyObjectiveGradient = true;
 end
 
+% % check validity of initial point (violation of inequality constraints)
+% epsilon
+% mmin =find(y_bound_min-y_init>0) % must be negative!
+% mmax =find(y_init-y_bound_max>0) % must be negative!
+% minq =find(y_ineq_A * y_init - y_ineq_b>0) % must be negative!
+
 [y_opt,~,err] = fmincon(@(y) cmb_objective(y,pp,preposterior,V,cmb_options,q_info,cmb_options.verbose),y_init,y_ineq_A, y_ineq_b-epsilon, [],[],y_bound_min,y_bound_max,[],opt);
 
-% % check validity of the solution (violation of inequality constraints
+% % check validity of the solution (violation of inequality constraints)
 % err
 % epsilon
 % %y_bound_min-y_opt % must be negative!

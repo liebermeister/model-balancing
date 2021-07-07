@@ -99,7 +99,7 @@ index          = q_info.qall.index;
 
 if size(data.V.mean,2)>1,
 if sum(max(sign(data.V.mean),[],2)-min(sign(data.V.mean),[],2)==2),
-  error('data sets with changing flux directions cannot be handled');
+  warning('Data set with flux reversal: note that this cannot be handled by the convex pathyon solver');
 else
   % reorient reactions and change all input data structures accordingly
   ind_neg = find(data.V.mean(:,1)<0);

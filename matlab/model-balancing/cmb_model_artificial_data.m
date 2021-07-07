@@ -1,4 +1,4 @@
-function [network, bounds, prior, q_info, data, true, kinetic_data, state_data, conc_min, conc_max] = cmb_model_artificial_data(network_file, cmb_options, c_init, position_sbtab_file, constraint_sbtab_file)
+function [network, bounds, prior, q_info, data, true, kinetic_data, state_data, conc_min, conc_max] = cmb_model_artificial_data(network_file, cmb_options, c_init, position_sbtab_file, constraint_sbtab_file, ind_e_off, Keq_init, v_init)
 
 % [network, bounds, prior, q_info, data, true, kinetic_data, state_data] = cmb_model_artificial_data(network_file, cmb_options, c_init, position_sbtab_file, constraint_sbtab_file)
 %
@@ -21,6 +21,8 @@ function [network, bounds, prior, q_info, data, true, kinetic_data, state_data, 
 %   position_sbtab_file (optional) filename of SBtab file (table "Position") for network layout 
 %                                  (overrides an existing table "Position" in network_file)
 %   constraint_sbtab_file (optional) filename of SBtab file (tables "Position") 
+%   ind_e_off:        indices of enzymes to be shut down
+%   Keq_init Keq vector to be used  for artificial data
 % 
 % Output variables
 %   network      struct describing metabolic network (format as in Metabolic Network Toolbox)
@@ -34,7 +36,7 @@ function [network, bounds, prior, q_info, data, true, kinetic_data, state_data, 
 %
 % For CMB problems with "real" data, use cmb_model_and_data instead
   
-eval(default('c_init','[]','position_sbtab_file','[]'));
+eval(default('c_init','[]','position_sbtab_file','[]','ind_e_off','[]','Keq_init','[]','v_init','[]'));
 
 % load network 
 
@@ -42,7 +44,7 @@ if cmb_options.verbose,
   display(sprintf('Reading file %s', network_file));
 end
 
-network = network_import(network_file);
+network = network_import(network_file, struct('load_quantity_table',0));
 
 if length(position_sbtab_file),
   network = netgraph_read_positions(network, position_sbtab_file);
@@ -64,7 +66,7 @@ q_info = cmb_define_parameterisation(network, cmb_options);
 
 % generate model kinetics and artificial data
 
-[kinetics, prior, bounds, data, true, kinetic_data, state_data] = cmb_generate_artificial_data(network, cmb_options, q_info, c_init, conc_min, conc_max);
+[kinetics, prior, bounds, data, true, kinetic_data, state_data] = cmb_generate_artificial_data(network, cmb_options, q_info, c_init, conc_min, conc_max, ind_e_off, Keq_init, v_init);
 
 network.kinetics = kinetics;
 
@@ -79,6 +81,8 @@ switch cmb_options.prior_variant,
     prior.qdep_pseudo.mean = q_info.M_q_to_qdep * true.q; 
     prior.X.mean = true.X;
     prior.lnE.mean = log(true.E);
+    prior.lnE.mean(true.E==0) = 10^-15;
+    prior.lnE.std(true.E==0) = 10^-15;
 
   case 'broad_prior',
     prior.q.std   = log(10^10)*ones(size(prior.q.std));
@@ -103,8 +107,10 @@ switch cmb_options.prior_variant,
     prior.qdep_pseudo.std  = log(10^10)*ones(size(prior.qdep_pseudo.std));
     prior.X.mean = true.X;
     prior.X.std  = log(10^10)*ones(size(prior.X.std));
-    prior.lnE.mean = true.lnE;
+    prior.lnE.mean = log(true.E);
     prior.lnE.std  = log(10^10)*ones(size(prior.lnE.std));
+    prior.lnE.mean(true.E==0) = 10^-15;
+    prior.lnE.std(true.E==0) = 10^-15;
 
   otherwise, error('');
 end

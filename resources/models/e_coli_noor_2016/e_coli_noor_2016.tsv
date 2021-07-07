@@ -51,7 +51,7 @@ NADplus	NAD+	C00003	True	NAD+
 ATP	ATP	C00002	True	ATP		
 H2O	H2O	C00001	True	H2O		
 _2_Oxoglutarate	2-Oxoglutarate	C00026	False	2-Oxoglutarate		
-Oxaloacetate	Oxaloacetate	C00036	True	Oxaloacetate		
+Oxaloacetate	Oxaloacetate	C00036	False	Oxaloacetate		
 Ubiquinone	Ubiquinone	C00399	True	Ubiquinone		
 D_Erythrose_4_phosphate	D-Erythrose 4-phosphate	C00279	False	D-Erythrose 4-phosphate		
 Ubiquinol	Ubiquinol	C00390	True	Ubiquinol		

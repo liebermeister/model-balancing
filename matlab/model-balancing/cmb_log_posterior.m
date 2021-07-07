@@ -79,13 +79,13 @@ else,
       + [qall(index.KI)    - preposterior.qtypes.KI.mean   ]' * preposterior.qtypes.KI.prec    * [qall(index.KI)    - preposterior.qtypes.KI.mean   ] ...
       + [qall(index.Kcatf) - preposterior.qtypes.Kcatf.mean]' * preposterior.qtypes.Kcatf.prec * [qall(index.Kcatf) - preposterior.qtypes.Kcatf.mean] ...
       + [qall(index.Kcatr) - preposterior.qtypes.Kcatr.mean]' * preposterior.qtypes.Kcatr.prec * [qall(index.Kcatr) - preposterior.qtypes.Kcatr.mean] ];
-
-%  z_Keq  = 2 * [qall(index.Keq)   - preposterior.qtypes.Keq.mean  ]' * preposterior.qtypes.Keq.prec   * [qall(index.Keq)   - preposterior.qtypes.Keq.mean  ] 
-%  z_KM  = 2 * [qall(index.KM)    - preposterior.qtypes.KM.mean   ]' * preposterior.qtypes.KM.prec    * [qall(index.KM)    - preposterior.qtypes.KM.mean   ] 
-%  z_KA  = 2 * [qall(index.KA)    - preposterior.qtypes.KA.mean   ]' * preposterior.qtypes.KA.prec    * [qall(index.KA)    - preposterior.qtypes.KA.mean   ] 
-%  z_KI  = 2 * [qall(index.KI)    - preposterior.qtypes.KI.mean   ]' * preposterior.qtypes.KI.prec    * [qall(index.KI)    - preposterior.qtypes.KI.mean   ] 
-%  z_Kcatf  = 2 * [qall(index.Kcatf) - preposterior.qtypes.Kcatf.mean]' * preposterior.qtypes.Kcatf.prec * [qall(index.Kcatf) - preposterior.qtypes.Kcatf.mean] 
-%  z_Kcatr  = 2 * [qall(index.Kcatr) - preposterior.qtypes.Kcatr.mean]' * preposterior.qtypes.Kcatr.prec * [qall(index.Kcatr) - preposterior.qtypes.Kcatr.mean]
+  
+%  z_Keq    = [qall(index.Keq)   - preposterior.qtypes.Keq.mean  ]' * preposterior.qtypes.Keq.prec   * [qall(index.Keq)   - preposterior.qtypes.Keq.mean  ] 
+%  z_KM     = [qall(index.KM)    - preposterior.qtypes.KM.mean   ]' * preposterior.qtypes.KM.prec    * [qall(index.KM)    - preposterior.qtypes.KM.mean   ] 
+%  z_KA     = [qall(index.KA)    - preposterior.qtypes.KA.mean   ]' * preposterior.qtypes.KA.prec    * [qall(index.KA)    - preposterior.qtypes.KA.mean   ] 
+%  z_KI     = [qall(index.KI)    - preposterior.qtypes.KI.mean   ]' * preposterior.qtypes.KI.prec    * [qall(index.KI)    - preposterior.qtypes.KI.mean   ] 
+%  z_Kcatf  = [qall(index.Kcatf) - preposterior.qtypes.Kcatf.mean]' * preposterior.qtypes.Kcatf.prec * [qall(index.Kcatf) - preposterior.qtypes.Kcatf.mean] 
+%  z_Kcatr  = [qall(index.Kcatr) - preposterior.qtypes.Kcatr.mean]' * preposterior.qtypes.Kcatr.prec * [qall(index.Kcatr) - preposterior.qtypes.Kcatr.mean]
 
 end
 

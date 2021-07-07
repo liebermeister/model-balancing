@@ -15,6 +15,10 @@ preposterior.lnE.mean = [];
 preposterior.lnE.std  = 1 ./ sqrt( 1./[data.lnE.std .^2] + 1./[prior.lnE.std .^2] );
 preposterior.lnE.mean = preposterior.lnE.std.^2 .* [ data.lnE.mean ./ data.lnE.std.^2 + prior.lnE.mean ./ prior.lnE.std.^2 ];
 
+% deal with undefined points (eg from zero enzyme concentrations in data)
+preposterior.lnE.std(~isfinite(preposterior.lnE.mean)) = 10^15;
+preposterior.lnE.mean(~isfinite(preposterior.lnE.mean)) = 0;
+
 % posterior, where data values are undefined
 preposterior.X.mean(isnan(preposterior.X.mean)) = prior.X.mean(isnan(preposterior.X.mean));
 preposterior.X.std(isnan(preposterior.X.std))   = prior.X.std(isnan(preposterior.X.std));

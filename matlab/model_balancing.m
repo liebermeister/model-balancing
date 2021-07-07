@@ -78,9 +78,9 @@ switch cmb_options.enzyme_score_type,
     display('  (The optimality problem may be non-convex, and enzyme levels may be underestimated)');
 end
 
-%if cmb_options.beta_ln_c_over_km > 0,
-display(sprintf('Using stringency beta=%f for c/KM ratios (option cmb_options.beta_ln_c_over_km)',cmb_options.beta_ln_c_over_km));
-%end
+if cmb_options.beta_ln_c_over_km > 0,
+  display(sprintf('Using stringency beta=%f for c/KM ratios (option cmb_options.beta_ln_c_over_km)',cmb_options.beta_ln_c_over_km));
+end
 
 if cmb_options.use_bounds == 0,
   display('Ignoring all bounds on individual variables');
