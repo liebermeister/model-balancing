@@ -1,0 +1,37 @@
+Sample ID,Group,Growth rate (1/h),Strain,Growth medium,Carbon source,Nitrogen source,Supplement,Description,SWATH file name
+A1-1,EQ353 calibration samples,0.69,EQ353,MOPS (Neidhardt),0.2% glucose,9.5 mM NH4Cl,,Same strain and growth condition as Li et al. 2014 (technical replicate #1),CHLUDWIG_K151202_010_SW
+A1-2,,0.69,EQ353,MOPS (Neidhardt),0.2% glucose,9.5 mM NH4Cl,,Same strain and growth condition as Li et al. 2014 (technical replicate #2),CHLUDWIG_K151202_084_SW
+A1-3,,0.69,EQ353,MOPS (Neidhardt),0.2% glucose,9.5 mM NH4Cl,,Same strain and growth condition as Li et al. 2014 (technical replicate #3),CHLUDWIG_K151202_085_SW
+C1,,0.73,EQ353,MOPS (Neidhardt),0.2% glucose,9.5 mM NH4Cl,,Biological replicate of A1,CHLUDWIG_K151202_052_SW
+F1-1,,0.71,EQ353,MOPS (Neidhardt),0.2% glucose,9.5 mM NH4Cl,,Biological replicate of A1 and C1 (technical replicate #1),CHLUDWIG_K151202_031_SW
+F1-2,,0.71,EQ353,MOPS (Neidhardt),0.2% glucose,9.5 mM NH4Cl,,Biological replicate of A1 and C1 (technical replicate #2),CHLUDWIG_K151202_088_SW
+F1-3,,0.71,EQ353,MOPS (Neidhardt),0.2% glucose,9.5 mM NH4Cl,,Biological replicate of A1 and C1 (technical replicate #3),CHLUDWIG_K151202_089_SW
+C2,C-limitation,0.91,NCM3722,M9,0.2% glucose,11.34 mM (NH4)2SO4,,NCM3722 (wild type) in M9 medium,CHLUDWIG_K151202_008a_SW
+C3,,0.77,NQ1243,M9,0.2% glucose,11.34 mM (NH4)2SO4,400 µM 3MBA,Titratable glucose uptake (Pu-ptsG),CHLUDWIG_K151202_062_SW
+C4,,0.69,NQ1243,M9,0.2% glucose,11.34 mM (NH4)2SO4,100 µM 3MBA,Titratable glucose uptake (Pu-ptsG),CHLUDWIG_K151202_021_SW
+C5,,0.56,NQ1243,M9,0.2% glucose,11.34 mM (NH4)2SO4,,Titratable glucose uptake (Pu-ptsG),CHLUDWIG_K151202_016_SW
+C6,,0.48,NQ1390,M9,0.2% glucose,11.34 mM (NH4)2SO4,400 µM 3MBA,Titratable glucose uptake (Pu-ptsG),CHLUDWIG_K151202_011_SW
+C7,,0.35,NQ1390,M9,0.2% glucose,11.34 mM (NH4)2SO4,40 µM 3MBA,Titratable glucose uptake (Pu-ptsG),CHLUDWIG_K151202_046_SW
+C8,,0.72,NQ1243,M9,0.2% glucose,11.34 mM (NH4)2SO4,100 µM 3MBA,biological replicate of C4,CHLUDWIG_K151202_078_SW
+D6,,0.56,NQ1243,M9,0.2% glucose,11.34 mM (NH4)2SO4,,biological replicate of C5,CHLUDWIG_K151202_060_SW
+D7,,0.33,NQ1390,M9,0.2% glucose,11.34 mM (NH4)2SO4,40 µM 3MBA,biological replicate of C7,CHLUDWIG_K151202_053_SW
+D8,,0.49,NQ1390,M9,0.2% glucose,11.34 mM (NH4)2SO4,400 µg 3MBA,biological replicate of C6,CHLUDWIG_K151202_038_SW
+F4,,0.81,NQ1243,M9,0.2% glucose,11.34 mM (NH4)2SO4,400 µM 3MBA,biological replicate of C3,CHLUDWIG_K151202_042_SW
+F5,,0.71,NQ1243,M9,0.2% glucose,11.34 mM (NH4)2SO4,100 µM 3MBA,biological replicate of C4,CHLUDWIG_K151202_006_SW
+F6,,0.55,NQ1243,M9,0.2% glucose,11.34 mM (NH4)2SO4,,biological replicate of C5,CHLUDWIG_K151202_082_SW
+F7,,0.5,NQ1390,M9,0.2% glucose,11.34 mM (NH4)2SO4,400 µM 3MBA,biological replicate of C6,CHLUDWIG_K151202_048_SW
+F8,,0.34,NQ1390,M9,0.2% glucose,11.34 mM (NH4)2SO4,40 µM 3MBA,biological replicate of C7,CHLUDWIG_K151202_077_SW
+D1,A-limitation,0.22,NQ393,M9,0.2% glucose,11.34 mM (NH4)2SO4,20 µM IPTG,Titratable ammonia assimilation (Plac-GOGAT),CHLUDWIG_K151202_013_SW
+D2,,0.36,NQ393,M9,0.2% glucose,11.34 mM (NH4)2SO4,30 µM IPTG,Titratable ammonia assimilation (Plac-GOGAT),CHLUDWIG_K151202_040_SW
+D3,,0.54,NQ393,M9,0.2% glucose,11.34 mM (NH4)2SO4,40 µM IPTG,Titratable ammonia assimilation (Plac-GOGAT),CHLUDWIG_K151202_009a_SW
+D4,,0.67,NQ393,M9,0.2% glucose,11.34 mM (NH4)2SO4,50 µM IPTG,Titratable ammonia assimilation (Plac-GOGAT),CHLUDWIG_K151202_051_SW
+D5,,0.91,NQ393,M9,0.2% glucose,11.34 mM (NH4)2SO4,100 µM IPTG,Titratable ammonia assimilation (Plac-GOGAT),CHLUDWIG_K151202_022_SW
+F2,,0.89,NQ393,M9,0.2% glucose,11.34 mM (NH4)2SO4,100 µM IPTG,biological replicate of D5,CHLUDWIG_K151202_012_SW
+F3,,0.84,NQ393,M9,0.2% glucose,11.34 mM (NH4)2SO4,100 µM IPTG,biological replicate of D5,CHLUDWIG_K151202_047_SW
+A2,R-limitation,0.98,NCM3722,MOPS (Record's),0.2% glucose,10 mM NH4Cl,,NCM3722 (wild type) in MOPS medium,CHLUDWIG_K151202_079_SW
+H1,,0.98,NCM3722,MOPS (Record's),0.2% glucose,10 mM NH4Cl,,biological replicate of A2,CHLUDWIG_K151202_045_SW
+H5,,0.97,NCM3722,MOPS (Record's),0.2% glucose,10 mM NH4Cl,,biological replicate of A2,CHLUDWIG_K151202_023_SW
+E1,,0.79,NCM3722,MOPS (Record's),0.2% glucose,10 mM NH4Cl,2 µg chloramphenicol,Cloramphenicol (translational) inhibition,CHLUDWIG_K151202_064_SW
+E2,,0.61,NCM3722,MOPS (Record's),0.2% glucose,10 mM NH4Cl,4 µg chloramphenicol,Cloramphenicol (translational) inhibition,CHLUDWIG_K151202_065_SW
+E3,,0.49,NCM3722,MOPS (Record's),0.2% glucose,10 mM NH4Cl,6 µg chloramphenicol,Cloramphenicol (translational) inhibition,CHLUDWIG_K151202_083_SW
+E4,,0.36,NCM3722,MOPS (Record's),0.2% glucose,10 mM NH4Cl,8 µg chloramphenicol,Cloramphenicol (translational) inhibition,CHLUDWIG_K151202_005_SW

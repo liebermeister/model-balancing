@@ -1,0 +1,54 @@
+Sample ID,Short Description,Description,Strain,Base medium,Carbon Source,Nitrogen Source,Supplement,Special condition/procedure,Doubling time (min),DDA file name,SWATH file name
+Lib-00-A1,Glucose,Glucose minimal medium,NQ1243,M9,0.2% glucose,10 mM NH4Cl,0.4 mM 3MBA,,,CHLUDWIG_K150203_001_IDA_ECOLI_1243_1    ,
+Lib-00-A2,Glucose,Technical injection replicate of Lib-00-A1,NQ1243,M9,0.2% glucose,10 mM NH4Cl,0.4 mM 3MBA,,,CHLUDWIG_K150203_003_IDA_ECOLI_1243_2 ,
+Lib-00-A3,Glucose,Technical injection replicate of Lib-00-A1,NQ1243,M9,0.2% glucose,10 mM NH4Cl,0.4 mM 3MBA,,,CHLUDWIG_K150203_005_IDA_ECOLI_1243_3,
+Lib-00-B1,Glucose,Biological replicate of Lib-00-A,NQ1243,M9,0.2% glucose,10 mM NH4Cl,0.4 mM 3MBA,,,CHLUDWIG_K150203_002_IDA_ECOLI_1390_1,
+Lib-00-B2,Glucose,Technical injection replicate of Lib-00-B1,NQ1243,M9,0.2% glucose,10 mM NH4Cl,0.4 mM 3MBA,,,CHLUDWIG_K150203_004_IDA_ECOLI_1390_2,
+Lib-00-B3,Glucose,Technical injection replicate of Lib-00-B1,NQ1243,M9,0.2% glucose,10 mM NH4Cl,0.4 mM 3MBA,,,CHLUDWIG_K150203_006_IDA_ECOLI_1390_3,
+Lib-01,Hi Temp,High temperature (42 °C),NCM3722,MOPS (Record's),0.2% glucose,10 mM NH4Cl,,"High temperature, 42 °C",47,CHLUDWIG_Y150505_001_IDA_Lib1,CHLUDWIG_Y150510_001_SW_LIB1
+Lib-02,Hi Osm 1,High osmolarity,NCM3722,MOPS (Record's),0.2% glucose,10 mM NH4Cl,0.6M NaCl instead of 0.1M,Seed culture: LB with 0.3M NaCl,170,CHLUDWIG_Y150505_002_IDA_Lib2,CHLUDWIG_Y150510_002_SW_LIB2
+Lib-03,Hi Osm 2,High osmolarity,NCM3722,MOPS (Record's),0.2% fructose,10 mM NH4Cl,0.4M NaCl instead of 0.1M,Seed culture: LB with 0.3M NaCl,110,CHLUDWIG_Y150505_003_IDA_Lib3,CHLUDWIG_Y150510_003_SW_LIB3
+Lib-04,Hi Osm 3,High osmolarity,NCM3722,MOPS (Record's),0.2% sorbitol,10 mM NH4Cl,0.45M NaCl instead of 0.1M,Seed culture: LB with 0.3M NaCl,110,CHLUDWIG_Y150505_004_IDA_Lib4,CHLUDWIG_Y150510_004_SW_LIB4
+Lib-05,Anaerobic,Anaerobic,NCM3722,Special N-C- (see Methods),10 mM glucose,20 mM NH4Cl,,Grown anaerobically,61,CHLUDWIG_Y150505_005_IDA_Lib5,CHLUDWIG_Y150510_005_SW_LIB5
+Lib-06,Acetate,Poor carbon,NCM3722,Phosphate buffered N-C- medium,0.4% sodium acetate,20 mM NH4Cl,,,83,CHLUDWIG_Y150505_006_IDA_Lib6,CHLUDWIG_Y150510_006_SW_LIB6
+Lib-07,Kanamycin,kanamycin,NCM3722,Phosphate buffered N-C- medium,0.4% glucose,20 mM NH4Cl,12 µg/mL Kanamycin,,56,CHLUDWIG_Y150505_007_IDA_Lib7,CHLUDWIG_Y150510_007_SW_LIB7
+Lib-08,A-lim (GOGAT),low GOGAT expression,NQ393,M9,0.2% glucose,11.34 mM (NH4)2SO4,20 µg/mL IPTG,,120,CHLUDWIG_Y150505_008_IDA_Lib8,CHLUDWIG_Y150510_008_SW_LIB8
+Lib-09,Poor P,Poor phosphate,NQ1431,MOPS (Record's),20 mM glucose,20 mM NH4Cl,0.4 mM 2-aminoethylphosphonate ,1.32 mM KCl instead of 1.32 mM KH2PO4,71,CHLUDWIG_Y150505_009_IDA_Lib9,CHLUDWIG_Y150510_009_SW_LIB9
+Lib-10,Colony 1,Colony growth,EQ 59,Phosphate buffered N-C- medium,0.2% glucose,10 mM NH4Cl,1% agar,grown on agar plate,,CHLUDWIG_Y150505_010_IDA_Lib10,CHLUDWIG_Y150510_010_SW_LIB10
+Lib-11,Nissle,Biofilm (strong clumping/flocking),Nissle1917,Special MOPS (see Methods),30 mM sodium acetate,10 mM NH4Cl,,biofilm formation induced,,CHLUDWIG_Y150505_011_IDA_Lib11,CHLUDWIG_Y150510_011_SW_LIB11
+Lib-12,LB/stat/salt/lowT,"LB + salt, Low temp. (25 °C), stationary state",MG1655 (CGSC#6300),LB,,,,grown at 25 °C into stationary phase,,CHLUDWIG_Y150505_012_IDA_Lib12,CHLUDWIG_Y150510_012_SW_LIB12
+Lib-13,Fixed RpoS,Fixed RpoS,NQ1527,MOPS (Record's),0.2% mannose,20 mM NH4Cl,,,104,CHLUDWIG_Y150505_013_IDA_Lib13,CHLUDWIG_Y150510_013_SW_LIB13
+Lib-14,Ox. stress,Oxidative stress,NCM3722,MOPS (Record's),20 mM glucose,10 mM NH4Cl,,added 400µM hydrogen peroxide at OD=0.58;sample collected 20 minutes later,,CHLUDWIG_Y150505_014_IDA_Lib14,CHLUDWIG_Y150510_014_SW_LIB14
+Lib-15,Poor N,Poor nitrogen source,NCM3722,MOPS (Record's),20 mM glucose,10 mM aspartate,,,173,CHLUDWIG_Y150505_015_IDA_Lib15,CHLUDWIG_Y150510_015_SW_LIB15
+Lib-16,Colony 2,Colony growth,EQ 59,Phosphate buffered N-C- medium,0.2% glucose,10 mM NH4Cl,1.5% agar,grown on agar plate,,CHLUDWIG_Y150505_016_IDA_Lib16,CHLUDWIG_Y150510_016_SW_LIB16
+Lib-17,Low pH (ac),Low pH (acetate),EQ 59,Phosphate buffered N-C- medium,0.2% glucose,10 mM NH4Cl,50mM acetic acid ,added acetic acid to preculture,57,CHLUDWIG_Y150505_017_IDA_Lib17,CHLUDWIG_Y150510_017_SW_LIB17
+Lib-18,Ethanol,Ethanol,EQ 59,Phosphate buffered N-C- medium,0.2% glucose,10 mM NH4Cl,500mM ethanol,added ethanol to preculture,59,CHLUDWIG_Y150505_018_IDA_Lib18,CHLUDWIG_Y150510_018_SW_LIB18
+Lib-19,LB stat 1,LB stationary,NCM3722,LB,,,,Collected at OD600=3.34,,CHLUDWIG_Y150505_019_IDA_Lib19,CHLUDWIG_Y150510_019_SW_LIB19
+Lib-20,LB mid log,LB log-phase,NCM3722,LB,,,,Collected at OD600=0.6,,CHLUDWIG_Y150505_020_IDA_Lib20,CHLUDWIG_Y150510_020_SW_LIB20
+Lib-21,LB late log,LB late log,NCM3722,LB,,,,Collected at OD600=2.5,,CHLUDWIG_Y150505_021_IDA_Lib21,CHLUDWIG_Y150510_021_SW_LIB21
+Lib-22,LB stat 2,LB stationary (repeat of Lib-19),NCM3722,LB,,,,Collected at OD600=3.34,,CHLUDWIG_Y150505_022_IDA_Lib22,CHLUDWIG_Y150510_022_SW_LIB22
+Lib-23,Low Osm,Maltose + pyruvate,MG1655 (CGSC#6300),Special MOPS (see Methods),20 mM maltose + 20 mM pyruvate,10 mM NH4Cl,,,,CHLUDWIG_Y150505_023_IDA_Lib23,CHLUDWIG_Y150510_023_SW_LIB23
+Lib-24,Carbon 46,Mannitol,NCM3722,MOPS (Record's),20 mM mannitol,20 mM NH4Cl,,,46,CHLUDWIG_Y150505_024_IDA_Lib24,CHLUDWIG_Y150510_024_SW_LIB24
+Lib-25,Carbon 61,Melibiose,EQ 59,Phosphate buffered N-C- medium,0.2% melibiose,10 mM NH4Cl,,,61,CHLUDWIG_Y150505_025_IDA_Lib25,CHLUDWIG_Y150510_025_SW_LIB25
+Lib-26,Carbon 37,G6P + gluconate,NCM3722,MOPS (Record's),10 mM glucose-6-phosphate + 10 mM gluconate,10 mM NH4Cl,,,37,CHLUDWIG_Y150505_026_IDA_Lib26,CHLUDWIG_Y150510_026_SW_LIB26
+Lib-27,Carbon 85,Galactose,NCM3722,MOPS (Record's),0.2% galactose,10 mM NH4Cl,,,85,CHLUDWIG_Y150505_027_IDA_Lib27,CHLUDWIG_Y150510_027_SW_LIB27
+Lib-28,Carbon 50,Xylose + oxaloacetate,NCM3722,MOPS (Neidhardt's),24 mM xylose + 20 mM oxaloacetate,20 mM NH4Cl,,,50,CHLUDWIG_Y150505_028_IDA_Lib28,CHLUDWIG_Y150510_028_SW_LIB28
+Lib-29,Carbon 54,Glycerol + succinate,NCM3722,MOPS (Record's),40 mM glycerol + 30 mM succinate,20 mM NH4Cl,,,54,CHLUDWIG_Y150505_029_IDA_Lib29,CHLUDWIG_Y150510_029_SW_LIB29
+Lib-30,Carbon 49,Arabinose,NCM3722,MOPS (Neidhardt's),12 mM arabinose,20 mM NH4Cl,,,49,CHLUDWIG_Y150505_030_IDA_Lib30,CHLUDWIG_Y150510_030_SW_LIB30
+Lib-31-A1,Hi Osm ,Hi Osmolarity w. glucose,NCM3722,MOPS (Record's),0.2% glucose,10 mM NH4Cl,0.4M NaCl instead of 0.1M,Seed culture: LB with 0.3M NaCl,,CHLUDWIG_K151202_001 ,
+Lib-31-A2,Hi Osm ,Technical injection replicate of Lib-31-A1,NCM3722,MOPS (Record's),0.2% glucose,10 mM NH4Cl,0.4M NaCl instead of 0.1M,Seed culture: LB with 0.3M NaCl,,CHLUDWIG_K151202_002,
+Lib-32-A1,Hi Osm ,Hi Osmolarity w. melibose,NCM3722,MOPS (Record's),0.2% melibiose,10 mM NH4Cl,0.4M NaCl instead of 0.1M,Seed culture: LB with 0.3M NaCl,,CHLUDWIG_K151202_003 ,
+Lib-32-A2,Hi Osm ,Technical injection replicate of Lib-32-A1,NCM3722,MOPS (Record's),0.2% melibiose,10 mM NH4Cl,0.4M NaCl instead of 0.1M,Seed culture: LB with 0.3M NaCl,,CHLUDWIG_K151202_004,
+OffGel1,Mix Lib-01 to Lib-30,peptide fractionation by isoelectric focussing,,,,,,,,CHLUDWIG_Y150505_043_IDA_OG1  ,
+OffGel2,Mix Lib-01 to Lib-30,peptide fractionation by isoelectric focussing,,,,,,,,CHLUDWIG_Y150505_032_IDA_OG2,
+OffGel3,Mix Lib-01 to Lib-30,peptide fractionation by isoelectric focussing,,,,,,,,CHLUDWIG_Y150505_033_IDA_OG3,
+OffGel4,Mix Lib-01 to Lib-30,peptide fractionation by isoelectric focussing,,,,,,,,CHLUDWIG_Y150505_034_IDA_OG4,
+OffGel5,Mix Lib-01 to Lib-30,peptide fractionation by isoelectric focussing,,,,,,,,CHLUDWIG_Y150505_035_IDA_OG5,
+OffGel6,Mix Lib-01 to Lib-30,peptide fractionation by isoelectric focussing,,,,,,,,CHLUDWIG_Y150505_036_IDA_OG6_7,
+OffGel7,Mix Lib-01 to Lib-30,peptide fractionation by isoelectric focussing,,,,,,,,CHLUDWIG_Y150505_037_IDA_OG8_9,
+OffGel8,Mix Lib-01 to Lib-30,peptide fractionation by isoelectric focussing,,,,,,,,CHLUDWIG_Y150505_038_IDA_OG10_11,
+OffGel9,Mix Lib-01 to Lib-30,peptide fractionation by isoelectric focussing,,,,,,,,CHLUDWIG_Y150505_039_IDA_OG12_13_14_15,
+OffGel10,Mix Lib-01 to Lib-30,peptide fractionation by isoelectric focussing,,,,,,,,CHLUDWIG_Y150505_040_IDA_OG16_17_18_19,
+OffGel11,Mix Lib-01 to Lib-30,peptide fractionation by isoelectric focussing,,,,,,,,CHLUDWIG_Y150505_041_IDA_OG20_21,
+OffGel12,Mix Lib-01 to Lib-30,peptide fractionation by isoelectric focussing,,,,,,,,CHLUDWIG_Y150505_042_IDA_OG22,
+OffGel13,Mix Lib-01 to Lib-30,peptide fractionation by isoelectric focussing,,,,,,,,CHLUDWIG_Y150505_031_IDA_OG23_24,
