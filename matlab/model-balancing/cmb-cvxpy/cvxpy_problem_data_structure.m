@@ -95,55 +95,55 @@ M_q_to_qall    = q_info.M_q_to_qall;
 M_qdep_to_qall = q_info.M_qdep_to_qall;
 index          = q_info.qall.index;
 
-% If reactions need to be reoriented ..
-
-if size(data.V.mean,2)>1,
-if sum(max(sign(data.V.mean),[],2)-min(sign(data.V.mean),[],2)==2),
-  warning('Data set with flux reversal: note that this cannot be handled by the convex pathyon solver');
-else
-  % reorient reactions and change all input data structures accordingly
-  ind_neg = find(data.V.mean(:,1)<0);
-  ind_pos = find(data.V.mean(:,1)>=0);
-  
-  % matrix for changes in qall parameter vector, due to reorientation:
-  signs = [];
-  signs(index.Keq) = 1;
-  signs(index.Keq(ind_neg)) = -1;
-  signs(index.KV) = 1;
-  signs(index.KM) = 1;
-  signs(index.KA) = 1;
-  signs(index.KI) = 1;
-  signs(index.Kcatf(ind_pos)) = 1;
-  signs(index.Kcatr(ind_pos)) = 1;
-  Mreorient = diag(signs);
-  Mreorient(index.Kcatf(ind_neg),index.Kcatr(ind_neg)) = eye(length(ind_neg));
-  Mreorient(index.Kcatr(ind_neg),index.Kcatf(ind_neg)) = eye(length(ind_neg));
-
-  M_q_to_qall = Mreorient * q_info.M_q_to_qall;
-  
-  % changes in network
-  network.N(:,ind_neg)            = - network.N(:,ind_neg);
-  network.kinetics.Keq(ind_neg)   = 1 ./ network.kinetics.Keq(ind_neg);
-  dum                             = network.kinetics.Kcatf(ind_neg);
-  network.kinetics.Kcatf(ind_neg) = network.kinetics.Kcatr(ind_neg); 
-  network.kinetics.Kcatr(ind_neg) = dum; 
-
-  % changes in true_model
-  if ~isempty(true_model.V),
-    true_model.V(ind_neg,:)               = - true_model.V(ind_neg,:);
-    true_model.A_forward(ind_neg,:)       = - true_model.A_forward(ind_neg,:);
-    true_model.kinetics.Keq(ind_neg)      = 1 ./ true_model.kinetics.Keq(ind_neg);
-    dum                                   = true_model.kinetics.Kcatf(ind_neg);
-    true_model.kinetics.Kcatf(ind_neg)    = true_model.kinetics.Kcatr(ind_neg); 
-    true_model.kinetics.Kcatr(ind_neg)    = dum; 
-  end
-  
-  % changes in data
-  data.V.mean(ind_neg,:)    = - data.V.mean(ind_neg,:);
-  data.qall.mean = Mreorient * data.qall.mean;
-  
-end
-end
+% % If reactions need to be reoriented ..
+% 
+% if size(data.V.mean,2)>1,
+% if sum(max(sign(data.V.mean),[],2)-min(sign(data.V.mean),[],2)==2),
+%   warning('Data set with flux reversal: note that this cannot be handled by the convex pathyon solver');
+% else
+%   % reorient reactions and change all input data structures accordingly
+%   ind_neg = find(data.V.mean(:,1)<0);
+%   ind_pos = find(data.V.mean(:,1)>=0);
+%   
+%   % matrix for changes in qall parameter vector, due to reorientation:
+%   signs = [];
+%   signs(index.Keq) = 1;
+%   signs(index.Keq(ind_neg)) = -1;
+%   signs(index.KV) = 1;
+%   signs(index.KM) = 1;
+%   signs(index.KA) = 1;
+%   signs(index.KI) = 1;
+%   signs(index.Kcatf(ind_pos)) = 1;
+%   signs(index.Kcatr(ind_pos)) = 1;
+%   Mreorient = diag(signs);
+%   Mreorient(index.Kcatf(ind_neg),index.Kcatr(ind_neg)) = eye(length(ind_neg));
+%   Mreorient(index.Kcatr(ind_neg),index.Kcatf(ind_neg)) = eye(length(ind_neg));
+% 
+%   M_q_to_qall = Mreorient * q_info.M_q_to_qall;
+%   
+%   % changes in network
+%   network.N(:,ind_neg)            = - network.N(:,ind_neg);
+%   network.kinetics.Keq(ind_neg)   = 1 ./ network.kinetics.Keq(ind_neg);
+%   dum                             = network.kinetics.Kcatf(ind_neg);
+%   network.kinetics.Kcatf(ind_neg) = network.kinetics.Kcatr(ind_neg); 
+%   network.kinetics.Kcatr(ind_neg) = dum; 
+% 
+%   % changes in true_model
+%   if ~isempty(true_model.V),
+%     true_model.V(ind_neg,:)               = - true_model.V(ind_neg,:);
+%     true_model.A_forward(ind_neg,:)       = - true_model.A_forward(ind_neg,:);
+%     true_model.kinetics.Keq(ind_neg)      = 1 ./ true_model.kinetics.Keq(ind_neg);
+%     dum                                   = true_model.kinetics.Kcatf(ind_neg);
+%     true_model.kinetics.Kcatf(ind_neg)    = true_model.kinetics.Kcatr(ind_neg); 
+%     true_model.kinetics.Kcatr(ind_neg)    = dum; 
+%   end
+%   
+%   % changes in data
+%   data.V.mean(ind_neg,:)    = - data.V.mean(ind_neg,:);
+%   data.qall.mean = Mreorient * data.qall.mean;
+%   
+% end
+% end
 
 problem.standard_concentration        = '1 mM';
 problem.state_names                   = data.samples;
