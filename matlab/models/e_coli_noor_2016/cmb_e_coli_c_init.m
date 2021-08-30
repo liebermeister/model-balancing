@@ -29,22 +29,22 @@ Keq_init = Keq;
 
 if 0,
   
-data_dir                 = [ecm_RESOURCEDIR 'model-files' filesep 'e_coli_noor_2016'];
-filename_model           = [data_dir filesep 'e_coli_noor_2016_ECM_Model.tsv'];
-filename_validation_data = [data_dir filesep 'e_coli_noor_2016_ECM_ValidationData.tsv'];
-result_dir               = tempdir; 
-
-[network,v,c_data,u_data, conc_min, conc_max, met_fix, conc_fix,positions, enzyme_cost_weights, warnings] = load_model_and_data_sbtab(filename_model, filename_validation_data);
-
-ecm_options            = ecm_default_options(network, 'E. coli central carbon metabolism');
-ecm_options.c_data     = c_data;
-ecm_options.u_data     = u_data;
-ecm_options.ecm_scores = {'emc4cm'};
-ecm_options            = ecm_update_options(network, ecm_options);
-
-[c, u, u_cost, up, A_forward] = ecm_enzyme_cost_minimization(network, network.kinetics, v, ecm_options);
-Keq = network.kinetics.Keq;
-
-save([cmb_basedir '/resources/models/e_coli_noor_2016/e_coli_example_reference_state'], 'c', 'u', 'v','Keq');
+  data_dir                 = [ecm_RESOURCEDIR 'model-files' filesep 'e_coli_noor_2016'];
+  filename_model           = [data_dir filesep 'e_coli_noor_2016_ECM_Model.tsv'];
+  filename_validation_data = [data_dir filesep 'e_coli_noor_2016_ECM_ValidationData.tsv'];
+  result_dir               = tempdir; 
+  
+  [network,v,c_data,u_data, conc_min, conc_max, met_fix, conc_fix,positions, enzyme_cost_weights, warnings] = load_model_and_data_sbtab(filename_model, filename_validation_data);
+  
+  ecm_options            = ecm_default_options(network, 'E. coli central carbon metabolism');
+  ecm_options.c_data     = c_data;
+  ecm_options.u_data     = u_data;
+  ecm_options.ecm_scores = {'emc4cm'};
+  ecm_options            = ecm_update_options(network, ecm_options);
+  
+  [c, u, u_cost, up, A_forward] = ecm_enzyme_cost_minimization(network, network.kinetics, v, ecm_options);
+  Keq = network.kinetics.Keq;
+  
+  save([cmb_basedir '/resources/models/e_coli_noor_2016/e_coli_example_reference_state'], 'c', 'u', 'v','Keq');
 
 end

@@ -80,12 +80,12 @@ else,
       + [qall(index.Kcatf) - preposterior.qtypes.Kcatf.mean]' * preposterior.qtypes.Kcatf.prec * [qall(index.Kcatf) - preposterior.qtypes.Kcatf.mean] ...
       + [qall(index.Kcatr) - preposterior.qtypes.Kcatr.mean]' * preposterior.qtypes.Kcatr.prec * [qall(index.Kcatr) - preposterior.qtypes.Kcatr.mean] ];
   
-%  z_Keq    = [qall(index.Keq)   - preposterior.qtypes.Keq.mean  ]' * preposterior.qtypes.Keq.prec   * [qall(index.Keq)   - preposterior.qtypes.Keq.mean  ] 
-%  z_KM     = [qall(index.KM)    - preposterior.qtypes.KM.mean   ]' * preposterior.qtypes.KM.prec    * [qall(index.KM)    - preposterior.qtypes.KM.mean   ] 
-%  z_KA     = [qall(index.KA)    - preposterior.qtypes.KA.mean   ]' * preposterior.qtypes.KA.prec    * [qall(index.KA)    - preposterior.qtypes.KA.mean   ] 
-%  z_KI     = [qall(index.KI)    - preposterior.qtypes.KI.mean   ]' * preposterior.qtypes.KI.prec    * [qall(index.KI)    - preposterior.qtypes.KI.mean   ] 
-%  z_Kcatf  = [qall(index.Kcatf) - preposterior.qtypes.Kcatf.mean]' * preposterior.qtypes.Kcatf.prec * [qall(index.Kcatf) - preposterior.qtypes.Kcatf.mean] 
-%  z_Kcatr  = [qall(index.Kcatr) - preposterior.qtypes.Kcatr.mean]' * preposterior.qtypes.Kcatr.prec * [qall(index.Kcatr) - preposterior.qtypes.Kcatr.mean]
+% z_Keq    = [qall(index.Keq)   - preposterior.qtypes.Keq.mean  ]' * preposterior.qtypes.Keq.prec   * [qall(index.Keq)   - preposterior.qtypes.Keq.mean  ] 
+% z_KM     = [qall(index.KM)    - preposterior.qtypes.KM.mean   ]' * preposterior.qtypes.KM.prec    * [qall(index.KM)    - preposterior.qtypes.KM.mean   ] 
+% z_KA     = [qall(index.KA)    - preposterior.qtypes.KA.mean   ]' * preposterior.qtypes.KA.prec    * [qall(index.KA)    - preposterior.qtypes.KA.mean   ] 
+% z_KI     = [qall(index.KI)    - preposterior.qtypes.KI.mean   ]' * preposterior.qtypes.KI.prec    * [qall(index.KI)    - preposterior.qtypes.KI.mean   ] 
+% z_Kcatf  = [qall(index.Kcatf) - preposterior.qtypes.Kcatf.mean]' * preposterior.qtypes.Kcatf.prec * [qall(index.Kcatf) - preposterior.qtypes.Kcatf.mean] 
+% z_Kcatr  = [qall(index.Kcatr) - preposterior.qtypes.Kcatr.mean]' * preposterior.qtypes.Kcatr.prec * [qall(index.Kcatr) - preposterior.qtypes.Kcatr.mean]
 
 end
 
@@ -116,11 +116,21 @@ if verbose,
 end
 
 % Avoid zero or negative enzyme levels (because of description on log scale)
-lnE(find(V==0))   = log(10^-10);
+
+% OLD
+%lnE(find(V==0))   = log(10^-10);
+%ok = ones(size(V));
+
 lnE(find(V.*A<0)) = inf;
 
-lnE_log_posterior_upper  = - 0.5 * sum(sum( [[lnE - preposterior.lnE.mean] ./ preposterior.lnE.std ].^2 .* double(lnE >= preposterior.lnE.mean)));
-lnE_log_posterior_lower  = - 0.5 * sum(sum( [[lnE - preposterior.lnE.mean] ./ preposterior.lnE.std ].^2 .* double(lnE <  preposterior.lnE.mean)));
+% format long
+% exp(lnE)
+% format short
+
+ok = find(V~=0);
+
+lnE_log_posterior_upper  = - 0.5 * sum([[lnE(ok) - preposterior.lnE.mean(ok)] ./ preposterior.lnE.std(ok) ].^2 .* double(lnE(ok) >= preposterior.lnE.mean(ok)));
+lnE_log_posterior_lower  = - 0.5 * sum([[lnE(ok) - preposterior.lnE.mean(ok)] ./ preposterior.lnE.std(ok) ].^2 .* double(lnE(ok) <  preposterior.lnE.mean(ok)));
 
 switch cmb_options.enzyme_score_type,
   case 'quadratic'
@@ -135,7 +145,7 @@ switch cmb_options.enzyme_score_type,
   otherwise('error');
 end
 
-log_posterior_lnE = my_alpha * lnE_log_posterior_lower + lnE_log_posterior_upper;
+log_posterior_lnE = my_alpha * lnE_log_posterior_lower + lnE_log_posterior_upper;  % EXTRA TERM  - 0.72;
 
 % -----------------------------------------------
 % c / KM pseudo values term
@@ -157,7 +167,7 @@ end
 
 log_posterior = log_posterior_q + log_posterior_x + log_posterior_lnE + log_posterior_ln_c_over_km;
 
-if verbose,
+if 1,%verbose,
   % show z-scores
   z_q = -2*log_posterior_q
   z_x =-2*log_posterior_x

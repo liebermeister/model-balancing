@@ -2,7 +2,9 @@ function f = cmb_variables_to_log_posterior(kinetics,X,network,q_info,cmb_option
 
 % f = cmb_variables_to_log_posterior(kinetics,X)
 % wrapper function around  cmb_log_posterior, using the original variables (not the vector y) as inputs
-  
+
+clear global
+
 pp = cmb_make_pp(network);
 nn = network;
 nn.kinetics = kinetics;
