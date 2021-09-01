@@ -1,0 +1,22 @@
+Metabolic states:    1
+Metabolites:         40
+Reactions:           30
+KM values:           107
+KA values:           0
+KI values:           0
+Data (kinetic):      197
+Data (metabolite):   25
+Data (enzyme):       26
+Fitted (metabolite): 40
+Fitted (enzyme):     30
+Fitted (kinetic):    167
+Fitted (TOTAL):      237
+Enzyme strgcy alpha: 1.000000
+c/KM stringency beta:0.000000
+Used bounds (1=yes): 1
+Used pseudo (1=yes): 0
+Used crsscov (1=yes): 0
+Initial values type: polytope center
+Geom. std errors:    c:1.341 e:1.077 Keq:3.293 Kcatf:2.815 Kcatr:1.784 KM:1.802
+Corr. on log scale:  c:0.990 e:0.996 Keq:0.992 Kcatf:0.760 Kcatr:0.981 KM:0.981
+Calculation time:    108.0 s

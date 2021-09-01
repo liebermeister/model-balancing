@@ -1,0 +1,34 @@
+!!SBtab TableName='Options for convex model balancing' TableID='ConfigureModelBalancing' TableType='Config' Method='convex-model-balancing'	
+!Option	!Value
+run	with_kinetic_data_balanced_alpha0_001
+ecm_score	emc4cm
+initial_values_variant	polytope center
+enzyme_score_type	interpolated
+enzyme_score_alpha	0.001
+use_kinetic_data	all
+parameterisation	Keq_KV_KM_KA_KI
+use_artificial_noise	0
+use_kinetic_data_noise	1
+prior_variant	original_prior
+use_safe_optimisation	1
+use_gradient	0
+score	neg_log_posterior
+kinetic_data_set	original
+random_seed	1
+verbose	0
+optim_display	off
+display	1
+show_graphics	1
+plot_true_vs_data	0
+save_results	1
+save_graphics	1
+quantities	{"Keq":{"max":1.0E+8,"mean_ln":0,"std_ln":18.420680743952367},"KV":{"min":1E-7,"max":10000,"mean_ln":5.2983173665480363,"std_ln":3.912023005428146},"KM":{"min":0.0001,"max":10000,"mean_ln":-2.3025850929940455,"std_ln":6.9077552789821368},"KA":{"min":0.0001,"max":100,"mean_ln":-2.3025850929940455,"std_ln":2.3025850929940459},"KI":{"min":0.0001,"max":100,"mean_ln":-2.3025850929940455,"std_ln":2.3025850929940459},"Kcatf":{"min":1,"max":1.0E+7,"mean_ln":5.2983173665480363,"std_ln":3.912023005428146},"Kcatr":{"min":1,"max":1.0E+7,"mean_ln":5.2983173665480363,"std_ln":3.912023005428146},"v":{"max":100},"c":{"min":1E-7,"max":1000,"mean_ln":-1.2039728043259361,"std_ln":2.3025850929940459,"data_geom_std":1.2},"e":{"max":0.5,"mean_ln":-6.9077552789821368,"std_ln":4.6051701859880918,"data_geom_std":1.2},"Aforward":{"min":0.0001,"max":100}}
+metabolic_prior_c_geom_mean	0.29999999999999993
+metabolic_prior_c_geom_std	10.000000000000002
+metabolic_prior_e_geom_mean	0.0010000000000000002
+metabolic_prior_e_geom_std	100.00000000000004
+data_C_geom_std	1.2
+data_E_geom_std	1.2
+data_V_geom_std	1.2
+data_kin_geom_std	1.5
+ns	1

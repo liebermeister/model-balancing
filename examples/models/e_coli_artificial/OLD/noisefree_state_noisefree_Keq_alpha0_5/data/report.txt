@@ -1,0 +1,18 @@
+Metabolic states:    4
+Metabolites:         40
+Reactions:           30
+KM values:           107
+KA values:           0
+KI values:           0
+Data (kinetic):      227
+Data (metabolite):   160
+Data (enzyme):       120
+Fitted (metabolite): 160
+Fitted (enzyme):     120
+Fitted (kinetic):    167
+Fitted (TOTAL):      447
+Relaxation alpha:    0.500000
+Initial values type: flat_objective
+Geom. std errors:    c:1.02 e:1.00 Keq:1.01 Kcatf:5.15 Kcatr:4.35 KM:4.87
+Corr. on log scale:  c:1.000 e:1.000 Keq:1.000 Kcatf:0.805 Kcatr:0.848 KM:0.457
+Calculation time:    622.0 s

@@ -1,0 +1,42 @@
+!!!SBtab Document='MBresult' DocumentName='MB result' StringencyAlpha='0.000000.2' CalculationTime='39.796897 s'				
+				
+!!SBtab TableID='Reaction' TableType='Reaction' TableName='Reaction'				
+!ID	!ReactionFormula	!Name	!IsReversible	
+E1	X1 <=> S2	E1	True	
+E2	S2 <=> X3	E2	True	
+E3	X3 <=> X4	E3	True	
+				
+!!SBtab TableID='Compound' TableType='Compound' TableName='Compound'				
+!ID	!Name	!IsConstant		
+X1	X1	True		
+S2	S2	False		
+X3	X3	False		
+X4	X4	True		
+				
+!!SBtab TableID='Parameter' TableType='Quantity' TableName='Parameter' StandardConcentration='mM'				
+!QuantityType	!Reaction	!Compound	!Mode	!Unit
+equilibrium constant	E1		0.052627583	dimensionless
+equilibrium constant	E2		22.808686	dimensionless
+equilibrium constant	E3		1.7598892	dimensionless
+catalytic rate constant geometric mean	E1		194.34705	1/s
+catalytic rate constant geometric mean	E2		249.04826	1/s
+catalytic rate constant geometric mean	E3		194.49554	1/s
+Michaelis constant	E1	X1	0.10032583	mM
+Michaelis constant	E1	S2	0.099755719	mM
+Michaelis constant	E2	S2	0.089126416	mM
+Michaelis constant	E2	X3	0.11133784	mM
+Michaelis constant	E3	X3	0.099994513	mM
+Michaelis constant	E3	X4	0.10014786	mM
+substrate catalytic rate constant	E1		44.711799	1/s
+substrate catalytic rate constant	E2		1064.181	1/s
+substrate catalytic rate constant	E3		257.82176	1/s
+product catalytic rate constant	E1		844.7608	1/s
+product catalytic rate constant	E2		58.284296	1/s
+product catalytic rate constant	E3		146.72352	1/s
+				
+!!SBtab TableID='ConcentrationConstraint' TableType='Quantity' TableName='Metabolite concentration constraints'				
+!QuantityType	!Compound	!Min	!Max	
+concentration	X1	1e-06	1000000	
+concentration	S2	1e-06	1000000	
+concentration	X3	1e-06	1000000	
+concentration	X4	1e-06	1000000	

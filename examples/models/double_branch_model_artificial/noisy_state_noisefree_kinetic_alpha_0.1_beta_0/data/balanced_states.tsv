@@ -1,0 +1,35 @@
+!!!SBtab DocumentName='MB result' Document='MBresult' StringencyAlpha='0.100000.2' CalculationTime='80.929395 s'							
+							
+!!SBtab TableName='Metabolic fluxes' TableID='Flux' TableType='QuantityMatrix' Unit='mM/s'							
+!QuantityType	!Reaction	state_1	state_2	state_3	state_4	state_5	state_6
+rate of reaction	E1	0.01474227	0.0089453935	0.021072826	0.015213348	0.01630512	0.023214548
+rate of reaction	E2	0.012265926	0.0059521535	0.023635647	0.0081077905	0.011146286	0.018618646
+rate of reaction	E3	0.012755753	0.0067357129	0.020542697	0.015322965	0.016819681	0.018739402
+rate of reaction	E4	-0.0017780129	-0.002770079	-0.0018675966	-0.0029959309	-0.002927026	-0.0041090144
+rate of reaction	E5	0.010979433	0.0093859453	0.031105221	0.017285596	0.011875333	0.022847606
+							
+!!SBtab TableName='Metabolite concentrations' TableID='MetaboliteConcentration' TableType='QuantityMatrix' Unit='mM'							
+!QuantityType	!Compound	state_1	state_2	state_3	state_4	state_5	state_6
+concentration	X1	9.5729019	3.5172415	32.572096	10.833894	6.701742	13.837027
+concentration	S2	0.20859073	0.14336871	0.21669235	0.22750159	0.37676766	0.21454591
+concentration	X3	1.6410026	0.51414944	1.202709	0.76018356	0.60561407	0.84961296
+concentration	S4	0.24564113	0.19461349	0.085469406	0.076028952	0.062663927	0.1738661
+concentration	S5	0.023786728	0.036656309	0.010815753	0.029832839	0.01029212	0.010663135
+concentration	X6	0.9075771	0.59854233	0.49410255	1.3567367	0.98054741	0.87656438
+concentration	X7	0.011878604	0.018185376	0.004650203	0.014791973	0.0050813605	0.0052184565
+							
+!!SBtab TableName='Enzyme concentrations' TableID='EnzymeConcentration' TableType='QuantityMatrix' Unit='mM'							
+!QuantityType	!Reaction	state_1	state_2	state_3	state_4	state_5	state_6
+concentration of enzyme	E1	0.00030147388	0.00034604817	0.00031171044	0.00030505365	0.0022061762	0.00040992227
+concentration of enzyme	E2	0.0013146779	0.0018256694	0.0011742022	0.00057621238	0.00082510638	0.0028138694
+concentration of enzyme	E3	0.00042306951	0.00040937843	0.00085352579	0.0008376904	0.000438086	0.0006165622
+concentration of enzyme	E4	0.00038401172	0.00073673254	0.00053153097	0.00056261936	0.0006062762	0.00088946135
+concentration of enzyme	E5	0.0012215721	0.00047594976	0.00016245392	0.00086138346	0.00056263454	0.00071343274
+							
+!!SBtab TableName='Gibbs free energies of reaction' TableID='ReactionGibbsFreeEnergy' TableType='QuantityMatrix' Unit='kJ/mol'							
+!QuantityType	!Reaction	state_1	state_2	state_3	state_4	state_5	state_6
+Gibbs energy of reaction	E1	2.6110517	1.0584687	5.5521236	2.7026741	0.26143818	3.4545469
+Gibbs energy of reaction	E2	6.5933455	4.2936357	8.4401243	7.5929965	7.5087399	5.8181867
+Gibbs energy of reaction	E3	6.0444272	3.4656469	5.4755448	2.7909046	6.2003986	7.2464701
+Gibbs energy of reaction	E4	10.539065	8.4350773	10.985497	10.974313	12.807513	12.44183
+Gibbs energy of reaction	E5	0.015305471	0.031614149	0.3864149	0.032995579	0.043591679	0.065385046

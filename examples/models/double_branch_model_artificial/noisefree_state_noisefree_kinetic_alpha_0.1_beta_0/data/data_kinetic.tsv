@@ -1,0 +1,28 @@
+!!SBtab TableID='ParameterData' TableType='Quantity'										
+!QuantityType	!Compound	!Reaction	!Unit	!Median	!Mean	!Std	!Lower	!Upper	!Compound:Identifiers:kegg.compound	!Reaction:Identifiers:kegg.reaction
+Michaelis constant	X1	E1	mM	0.0010869741	NaN	NaN	NaN	NaN		
+Michaelis constant	S2	E1	mM	0.0022263786	NaN	NaN	NaN	NaN		
+Michaelis constant	S2	E3	mM	43.651409	NaN	NaN	NaN	NaN		
+Michaelis constant	X3	E2	mM	20.30405	NaN	NaN	NaN	NaN		
+Michaelis constant	S4	E2	mM	0.0016615757	NaN	NaN	NaN	NaN		
+Michaelis constant	S4	E3	mM	0.041629691	NaN	NaN	NaN	NaN		
+Michaelis constant	S5	E3	mM	1.06107	NaN	NaN	NaN	NaN		
+Michaelis constant	S5	E4	mM	1.6155242	NaN	NaN	NaN	NaN		
+Michaelis constant	S5	E5	mM	0.02298619	NaN	NaN	NaN	NaN		
+Michaelis constant	X6	E4	mM	0.60949766	NaN	NaN	NaN	NaN		
+Michaelis constant	X7	E5	mM	0.0029920386	NaN	NaN	NaN	NaN		
+equilibrium constant		E1	dimensionless	0.052572571	NaN	NaN	NaN	NaN		
+equilibrium constant		E2	dimensionless	1.7597466	NaN	NaN	NaN	NaN		
+equilibrium constant		E3	dimensionless	4.3755067	NaN	NaN	NaN	NaN		
+equilibrium constant		E4	dimensionless	0.64455593	NaN	NaN	NaN	NaN		
+equilibrium constant		E5	dimensionless	0.63021124	NaN	NaN	NaN	NaN		
+substrate catalytic rate constant		E1	1/s	64.384649	NaN	NaN	NaN	NaN		
+substrate catalytic rate constant		E2	1/s	13577.651	NaN	NaN	NaN	NaN		
+substrate catalytic rate constant		E3	1/s	5429.0183	NaN	NaN	NaN	NaN		
+substrate catalytic rate constant		E4	1/s	9.3325559	NaN	NaN	NaN	NaN		
+substrate catalytic rate constant		E5	1/s	10074.972	NaN	NaN	NaN	NaN		
+product catalytic rate constant		E1	1/s	2508.4357	NaN	NaN	NaN	NaN		
+product catalytic rate constant		E2	1/s	0.63141074	NaN	NaN	NaN	NaN		
+product catalytic rate constant		E3	1/s	724.49523	NaN	NaN	NaN	NaN		
+product catalytic rate constant		E4	1/s	5.4625896	NaN	NaN	NaN	NaN		
+product catalytic rate constant		E5	1/s	2080.9321	NaN	NaN	NaN	NaN		
