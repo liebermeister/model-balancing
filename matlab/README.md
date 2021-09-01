@@ -1,5 +1,5 @@
 Matlab functions for model balancing
-------------------------------------
+====================================
 
 For documentation, see www.metabolic-economics.de/model-balancing/matlab-doc/
 

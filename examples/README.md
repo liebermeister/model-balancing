@@ -1,4 +1,5 @@
-# Model balancing example runs
+Model balancing example runs
+============================
 
 This directory contains input data and results for the models from `../resources/models`.
 
@@ -6,4 +7,4 @@ This directory contains input data and results for the models from `../resources
 
 * Model balancing results (computed by Matlab) are stored in `examples/results/[MODEL_NAME]`.
 
-* Scatter plots showing these results  can be found in `examples/graphics`.
+* Scatter plots showing these results  can be found in `examples/graphics`. Scatter plots comparing results from the matlab and python implementations are shown in  `examples/graphics/matlab_python_comparison`. 
