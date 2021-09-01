@@ -7,11 +7,11 @@ Main function
 
 Subfolders
 
-* `model-balancing` Matlab functions for model balancing
+* `model-balancing` Matlab functions for model balancing. For documentation, see www.metabolic-economics.de/model-balancing/matlab-doc/
 
-* `demo` Demo scripts for generating artificial data and running model balancing on them; and for running model balancing on a model with given data
+* `demo` Demo scripts for running model balancing with artificial or experimental data
 
-* `doc` HTML documentation: source code for the documentation of the matlab code at [https://www.metabolic-economics.de/model-balancing/matlab-doc/index.html](https://www.metabolic-economics.de/model-balancing/matlab-doc/index.html)
+* `doc` HTML source code for matlab code documentation at www.metabolic-economics.de/model-balancing/matlab-doc/
 
 Matlab scripts for generating the example models can be found in the folder `../resources/models`
 

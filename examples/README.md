@@ -6,4 +6,4 @@ This directory contains input data and results for the models from `../resources
 
 * Model balancing results (computed by Matlab) are stored in `examples/results/[MODEL_NAME]`.
 
-* Graphics (scatter plots for the same models) can be found in `examples/graphics`.
+* Scatter plots showing these results  can be found in `examples/graphics`.
