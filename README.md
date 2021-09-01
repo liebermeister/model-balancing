@@ -24,7 +24,7 @@ The folders `examples/results/[MODEL_NAME]` contains balancing results for a lar
 with these models: artificial data for all 4 models, experimental data for the E coli model (folder `e_coli_noor_2016`).
 
 ### How to balance your own model
-To balance your own model, we recommend getting acquainted with the matlab demo script `demo_cmb_experimental_data.m`.
+To balance your own model, please have a look at the matlab demo script `demo_cmb_experimental_data.m`.
 You need to prepare three input files in SBtab format, describing
 
 1. the network structure and metabolite constraints (tables Reaction, Compound, Position (optional), Parameter (optional))
