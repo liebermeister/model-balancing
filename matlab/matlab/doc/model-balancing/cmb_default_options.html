@@ -1,0 +1,173 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of cmb_default_options</title>
+  <meta name="keywords" content="cmb_default_options">
+  <meta name="description" content="cmb_options = cmb_default_options(flag_artificial)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">model-balancing</a> &gt; cmb_default_options.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for model-balancing&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>cmb_default_options
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>cmb_options = cmb_default_options(flag_artificial)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function cmb_options = cmb_default_options(flag_artificial) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> cmb_options = cmb_default_options(flag_artificial)
+
+ flag_artificial (Boolean, default 0) options for model with artificial data
+ 
+ Returns matlab struct with default options for model balancing
+ Fields and default values are shown below
+ Note that this function reads information about priors from the prior table (see 'cmb_prior_file')
+ and stores them in cmb_options.quantities; there they can be modified by the user
+
+ Algorithm settings
+ 
+   .run                     = 'my_run';            % name of estimation scenario (freely chosen by the user)
+   .kinetic_data_set        = 'original';          % name of kinetic data set    (freely chosen by the user)
+   .ecm_score               = 'emc4cm';            % ECM score function, see 'help ecm_scores'
+   .initial_values_variant  = 'average_sample';    % strategy for choosing initial values (see below and 'help cmb_estimation')
+                                                     possible choices: 'average_sample', 'preposterior_mode', 
+                                                     'random', 'true_values', 'given_values'
+   .enzyme_score_type       = 'interpolated';      % 'quadratic' (alpha=1), 'monotonic' (alpha =0), 'interpolated'
+                                                     (only &quot;monotonic&quot; guarantees that MB is convex!)
+   .enzyme_score_alpha      = 0.5;                 % stringency parameter alpha for enzyme_score_type='interpolated'
+   .beta_ln_c_over_km       = 0                    % beta = 1/sigma for penalty on sum_til ln(c_i(t)/km_il) = 1/ln(geom std of c/KM)!!
+   .parameterisation        = 'Keq_KV_KM_KA_KI';   % options: 'Keq_KV_KM_KA_KI', 'KV_KM_KA_KI';
+   .use_kinetic_data        = 'all';               % 'all', 'only_Keq', 'none'
+   .score                   = 'neg_log_posterior'; % options: 'neg_log_posterior', 'log_neg_log_posterior';
+   .use_gradient            = 0;                   % flag: set opt.SpecifyObjectiveGradient = true in fmincon optimisation
+   .use_safe_optimisation   = 1;                   % flag: run several rounds of optimisation (until convergence)
+   .random_seed             = 1;                   % random seed for optimisation
+ 
+ Display and output options
+
+   .verbose                 = 0;                   % flag: verbose
+   .optim_display           = 'off';               % flag: show graphical output during optimisation 
+   .display                 = 1;                   % flag: display table with scores after each optimisation round
+   .show_graphics           = 1;                   % flag: show graphics
+   .plot_true_vs_data       = 0;                   % flag: show extra plots: true values against data values 
+                                                     (only in the case of artificial data)
+   .save_results            = 1;                   % flag: save results to files
+   .save_graphics           = 1;                   % flag: save graphics to files
+
+ Options for generating artificial data (see 'help cmb_model_artificial_data')
+
+   .use_artificial_noise    = 0;                   % flag: generate artificial state data with noise
+   .use_kinetic_data_noise  = 1;                   % flag: generate artificial kinetic data with noise
+   .prior_variant           = 'original_prior';    % prior variants (see cmb_model_artificial_data)
+                                                   % also 'broad_prior', 'broad_prior_around_zero', 
+                                                   % 'prior_around_true_values', 'broad_prior_around_true_values'
+
+ Bounds and distributions for model variables
+   Default values are taken from the prior file, see 'cmb_prior_file'
+
+   .use_bounds                  Boolean (default 1) -&gt; if set to 0, lower and upper bounds are ignored for all variables
+   .use_pseudo_values           Boolean (default 0) -&gt; if set to 0, no pseudo values are used
+   .use_crosscovariances        Boolean (default 0) -&gt; if set to 0, crosscovariances (between types of kinetic constants) are ignored
+   .quantities.Keq.max          new value for upper_bound(ind.Keq);
+   .quantities.Keq.mean_ln      new value for prior_median_ln(ind.Keq);
+   .quantities.Keq.std_ln       new value for prior_geostd_ln(ind.Keq);
+   .quantities.KV.min           new value for lower_bound(ind.KV);
+   .quantities.KV.max           new value for upper_bound(ind.KV);
+   .quantities.KV.mean_ln       new value for prior_median_ln(ind.KV);
+   .quantities.KV.std_ln        new value for prior_std_ln(ind.KV), default log(5);
+   .quantities.KM.min           new value for lower_bound(ind.KM);
+   .quantities.KM.max           new value for upper_bound(ind.KM);
+   .quantities.KM.mean_ln       new value for prior_median_ln(ind.KM);
+   .quantities.KM.std_ln        new value for prior_geostd_ln(ind.KM), default log(5 mM)
+   .quantities.KA.min           new value for lower_bound(ind.KA);
+   .quantities.KA.max           new value for upper_bound(ind.A);
+   .quantities.KA.mean_ln       new value for prior_median_ln(ind.KA);
+   .quantities.KA.std_ln        new value for prior_geostd_ln(ind.KA);
+   .quantities.KI.min           new value for lower_bound(ind.KI);
+   .quantities.KI.max           new value for upper_bound(ind.KI);
+   .quantities.KI.mean_ln       new value for prior_median_ln(ind.KI);
+   .quantities.KI.std_ln        new value for prior_geostd_ln(ind.KI);
+   .quantities.Kcatf.min           new value for lower_bound(ind.Kcatf);
+   .quantities.Kcatf.max           new value for upper_bound(ind.Kcatf);
+   .quantities.Kcatf.mean_ln       new value for prior_median_ln(ind.Kcatf);
+   .quantities.Kcatf.std_ln        new value for prior_geostd_ln(ind.Kcatf);
+   .quantities.Kcatr.min           new value for lower_bound(ind.Kcatr);
+   .quantities.Kcatr.max           new value for upper_bound(ind.Kcatr);
+   .quantities.Kcatr.mean_ln       new value for prior_median_ln(ind.Kcatr);
+   .quantities.Kcatr.std_ln        new value for prior_geostd_ln(ind.Kcatr);
+   .quantities.v.max            new value for upper_bound(v), default 100 mM/s
+   .quantities.c.min            new value for lower_bound(ind.c);
+   .quantities.c.max            new value for upper_bound(ind.c);
+   .quantities.e.max            new value for upper_bound(ind.u);
+   .quantities.Aforward.min     new value for lower_bound(ind.A), default 0.0001 kJ/Mol
+   .quantities.Aforward.max     new value for upper_bound(ind.A);
+ 
+ Geometric standard deviations for priors 
+   (also used for sampling &quot;true&quot; values, in the case of artificial data)
+   default values are taken from the prior file, see 'cmb_prior_file'
+   .metabolic_prior_c_geom_mean   
+   .metabolic_prior_e_geom_mean   
+   .metabolic_prior_c_geom_std    
+   .metabolic_prior_e_geom_std    
+                           
+ Geometric standard deviations for data values (describing measurement uncertainties)
+   - used in 'state_data_to_data', to complete standard deviations not given in the data files
+   - also used in 'cmb_generate_artificial_data', for generating noise in artificial data
+   .data_C_geom_std     default from prior table
+   .data_E_geom_std     default from prior table
+   .data_V_geom_std     default 1.2 % currently not used
+   .data_kin_geom_std   default 1.5 
+ 
+ Distributions for &quot;true values&quot; inartificial data (in 'cmb_generate_artificial_data')
+   .metabolic_artificial_c_geom_std   default 1.5;
+   .metabolic_artificial_e_geom_std   default 1.5;
+  also used in 'cmb_generate_artificial_data':
+   .quantities.mu0.std                default RT * log(5);
+   .quantities.KV.mean_ln
+   .quantities.KV.std_ln
+   .quantities.KV.min
+   .quantities.KV.max
+   .quantities.KM.mean_ln
+   .quantities.KM.std_ln
+   .quantities.KM.min
+   .quantities.KM.max
+
+ Possible initial value variants (option 'cmb_options.initial_values_variant'):
+ 
+  'polytope center'   (default) center of mass of some random LP solutions
+  'preposterior_mode' use preposterior mode for kinetic constants and metabolite levels
+  'flat_objective'    pick a point in the solution space by using matlab's fmincon with a uniform objective function
+  'random'            initialise parameter vector with random values
+  'true_values'       true values: only with artificial data
+  'given_values'      use existing cmb_options.init
+  'average_sample'    first run a model balancing with concentrations and fluxes averaged over all samples; 
+                      and using initial value option &quot;preposterior_mode&quot;; use result to initialise values</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="cmb_prior_file.html" class="code" title="function prior_file = cmb_prior_file()">cmb_prior_file</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../demo/demo_cmb_artificial_data.html" class="code" title="">demo_cmb_artificial_data</a>	-------------------------------------------------------------------</li><li><a href="../demo/demo_cmb_experimental_data.html" class="code" title="">demo_cmb_experimental_data</a>	-------------------------------------------------------------</li></ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Wed 01-Sep-2021 12:25:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

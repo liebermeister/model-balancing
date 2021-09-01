@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of demo_cmb_experimental_data</title>
+  <meta name="keywords" content="demo_cmb_experimental_data">
+  <meta name="description" content="-------------------------------------------------------------">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">demo</a> &gt; demo_cmb_experimental_data.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for demo&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>demo_cmb_experimental_data
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>-------------------------------------------------------------</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> -------------------------------------------------------------
+ Model balancing - Simple test models
+ -------------------------------------------------------------
+
+ What this script does:
+ o read model and data from SBtab file
+ o run model balancing
+ o save results to output files
+
+ This script allows you to run model balancing for the four example models in the folder resources/models.
+ By default, it uses the example model &quot;branch_point_model&quot;. 
+ To use one of the other models, please uncomment the respective lines in the code.
+ To use your own model, please go to &quot;Your model&quot; below and see the instructions
+
+
+ -------------------------------------------------------------
+ How to define a model
+ -------------------------------------------------------------
+
+ Files that define model and data: 
+   network_file       (SBtab filename) SBtab file with tables 'Reaction', 'Compound', 
+                                          'Position' (optional), 'Parameter' (optional)
+   kinetic_data_file  (SBtab filename) SBtab file with table  'ParameterData' (optional; if kinetic_data_file == [],
+                                          kinetic data are read from table 'Parameter' in file network_file)
+   state_data_file    (SBtab filename) SBtab file with tables 'FluxData', 
+                                          'MetaboliteConcentrationData', 'EnzymeConcentrationData'
+
+ Other settings:
+   model                        (string) model name (freely chosen by the user)
+   prb                          (string) estimation scenario name (chosen by the user, should not refer to optimisation settings)
+   run                          (string) estimation scenario name (chosen by the user, may refer to optimisation settings)
+   file_options.match_data_by   'ModelElementId' (default) or 'KeggId'
+   file_options.columns_mean    (cell array of strings) column names for mean data values in metabolite, flux, and enzyme table
+   file_options.columns_std     (cell array of strings) column names for std deviations   in metabolite, flux, and enzyme table
+   file_options.constraint_file (SBtab filename): file with metabolite bounds (optional; set to [] to use default constraints)
+   result_dir                   (directory name) directory for output files (default = matlab's tempdir) 
+ -------------------------------------------------------------</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../model-balancing/cmb-cvxpy/cvxpy_problem_data_structure.html" class="code" title="function problem = cvxpy_problem_data_structure(network, q_info, prior, data, bounds, true_model, cmb_options)">cvxpy_problem_data_structure</a>	problem = cvxpy_problem_data_structure(network, q_info, prior, data, bounds, true_model, cmb_options)</li><li><a href="../model-balancing/cmb-file-input-output/cmb_load_and_convert_model_and_data.html" class="code" title="function [network, q_info, data, c_init, kinetic_data, state_data, conc_min, conc_max] = cmb_load_and_convert_model_and_data(cmb_options, file, file_options)">cmb_load_and_convert_model_and_data</a>	[network, q_info, data, c_init, kinetic_data, state_data, conc_min, conc_max] = cmb_load_and_convert_model_and_data(cmb_options, file, file_options)</li><li><a href="../model-balancing/cmb_default_options.html" class="code" title="function cmb_options = cmb_default_options(flag_artificial)">cmb_default_options</a>	cmb_options = cmb_default_options(flag_artificial)</li><li><a href="../model-balancing/cmb_filenames.html" class="code" title="function filenames = cmb_filenames(model_name, prb, run, result_dir, network_sbml_file, flag_artificial)">cmb_filenames</a>	filenames = cmb_filenames(model_name, prb, run, result_dir, network_sbml_file, flag_artificial)</li><li><a href="../model-balancing/cmb_model_and_data.html" class="code" title="function [bounds, prior, init] = cmb_model_and_data(model, network, data, q_info, c_init, cmb_options, conc_min, conc_max)">cmb_model_and_data</a>	[bounds, prior, init] = cmb_model_and_data(model, network, data, q_info, c_init, cmb_options)</li><li><a href="../model-balancing/cmb_resourcedir.html" class="code" title="function d = cmb_resourcedir()">cmb_resourcedir</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Wed 01-Sep-2021 12:25:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

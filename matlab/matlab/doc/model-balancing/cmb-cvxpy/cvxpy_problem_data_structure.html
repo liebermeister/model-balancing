@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of cvxpy_problem_data_structure</title>
+  <meta name="keywords" content="cvxpy_problem_data_structure">
+  <meta name="description" content="problem = cvxpy_problem_data_structure(network, q_info, prior, data, bounds, true_model, cmb_options)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">model-balancing</a> &gt; <a href="index.html">cmb-cvxpy</a> &gt; cvxpy_problem_data_structure.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for model-balancing/cmb-cvxpy&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>cvxpy_problem_data_structure
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>problem = cvxpy_problem_data_structure(network, q_info, prior, data, bounds, true_model, cmb_options)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function problem = cvxpy_problem_data_structure(network, q_info, prior, data, bounds, true_model, cmb_options) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> problem = cvxpy_problem_data_structure(network, q_info, prior, data, bounds, true_model, cmb_options)
+
+ Convert a model balancing problem (data structures: network, q_info, true_model, prior, data) 
+ into a single data structure, exported to json and then used by python model balancing tool (based on CVXpy)
+
+ Structure, default values, and matrix sizes for a network with nr reactions and nm metabolites (and ns metabolic states)
+   .standard_concentration: '1 mM'
+   .state_names:            {ns x 1 cell}
+   .use_pseudo_values:      Boolean
+
+   .network
+   .network.metabolite_names:      {nm x 1 cell}
+   .network.reaction_names:        {nr x 1 cell}
+   .network.stoichiometric_matrix: [nm x nr double]  (sparse matrix)
+   .network.activation_matrix:     [nm x nr double]  (sparse matrix)
+   .network.inhibition_matrix:     [nm x nr double]  (sparse matrix)
+
+   .kinetic_constants
+   .kinetic_constants.Keq
+   .kinetic_constants.Kcatf
+   .kinetic_constants.Kcatr
+   .kinetic_constants.KM
+   .kinetic_constants.KA
+   .kinetic_constants.KI
+
+     .. where each subfield of .kinetic_constants is a struct of the form
+       .unit:              string, typically 'mM' and '1/s'
+       .true:              (column vector or matrix; true values in the case of artificial data; otherwise empty)
+       .pprior_ln.mean     pseudoprior, mean vector of log values
+       .pprior_ln.cov      pseudoprior, covariance matrix of log values
+       .bounds_ln.min      lower bounds on log values
+       .bounds_ln.max      upper bounds on log values
+       .data_ln.mean       data mean vector of log values
+       .data_ln.cov        data covariance matrix of log values
+       .bounds.min         lower bounds on log values
+       .bounds.max         upper bounds on log values
+       .combined.geom_mean preposterior geometric mean vector
+       .combined.mean_ln   preposterior mean vector of log values
+       %.combined.cov_ln   preposterior covariance matrix of log values
+
+   .kinetic_constants.all
+   .kinetic_constants.all.names      parameter names, list of strings
+   .kinetic_constants.all.geom_mean  preposterior geometric mean vector
+   .kinetic_constants.all.mean_ln    preposterior mean vector of log values
+   .kinetic_constants.all.prec_ln    preposterior precision matrix of log values
+
+   .metabolite_concentrations
+   .metabolite_concentrations.unit:              string, default 'mM'
+   .metabolite_concentrations.true:              matrix of true values (only in models with artificial data; otherwise [])
+   .metabolite_concentrations.prior_ln.mean      matrix of prior mean values for metabolite log-concentrations
+   .metabolite_concentrations.prior_ln.std       matrix of prior std dev for metabolite log-concentrations
+   .metabolite_concentrations.bounds_ln.min      matrix of lower bounds on metabolite log-concentrations
+   .metabolite_concentrations.bounds_ln.max      matrix of upper bounds on metabolite log-concentrations
+   .metabolite_concentrations.data_ln.mean       matrix of data  mean values for metabolite log-concentrations
+   .metabolite_concentrations.data_ln.std        matrix of data  std dev for metabolite log-concentrations
+   .metabolite_concentrations.bounds.min         matrix of preposterior geom mean for metabolite concentrations
+   .metabolite_concentrations.bounds.max         matrix of preposterior geom std  for metabolite concentrations
+   .metabolite_concentrations.combined.geom_mean matrix of preposterior geom mean for metabolite concentrations
+   .metabolite_concentrations.combined.geom_std  matrix of preposterior geom std  for metabolite concentrations
+
+   .enzyme_concentrations
+    ...
+    (structure analogous to .metabolite_concentrations; note that lower bounds for log(e) are typically -inf)
+
+   .reaction_fluxes
+   .reaction_fluxes.unit:          string, default 'mM/s'
+   .reaction_fluxes.true:          (matrix of true values in the case of artificial data; otherwise empty)
+   .reaction_fluxes.data.mean      matrix of flux data mean values
+   .reaction_fluxes.data.std       matrix of flux data std values
+
+ 
+ Note:
+   o activations and inhibitions are described by separate (positive) matrices of the shape #metabolites x #reactions
+   o convention for order of KM, KA, and KI entries (in vectors) + their relation to entries in the matrix:
+     vector elements are ordered by their appearance in the respective (stoichiometric or regulation) matrix, in the format #reactions x # metabolites,
+     and following matlab's convention for indices in matrix elements (first column from top to bottom, then second column etc)
+     in python this corrresponds to matrix formatted as #metabolites x #reactions, and using the opposite convetion for indices 
+     (first row, then second row, etc)
+   fields called &quot;combined&quot; contain the preposterior distribution of the respective quantities</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="cvxpy_combine_prior_and_likelihood.html" class="code" title="function [posterior_mean, posterior_cov, posterior_std, posterior_prec] = combine_prior_and_likelihood(prior_mean,prior_cov,data_mean,data_std)">cvxpy_combine_prior_and_likelihood</a>	[posterior_mean, posterior_cov] = combine_prior_and_likelihood(prior_mean,prior_cov,data_mean,data_std)</li><li><a href="../../model-balancing/cmb_prepare_posterior.html" class="code" title="function preposterior = cmb_prepare_posterior(prior, data, cmb_options, q_info);">cmb_prepare_posterior</a>	--------------------------------------------------------</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../demo/demo_cmb_experimental_data.html" class="code" title="">demo_cmb_experimental_data</a>	-------------------------------------------------------------</li></ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Wed 01-Sep-2021 12:25:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>
