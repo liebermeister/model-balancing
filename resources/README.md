@@ -1,1 +1,4 @@
-This folder contains example models and general data (e.g. parameter priors) for usage in model balancing.
+Model balancing resource files
+------------------------------
+
+This folder contains example network models and data (e.g. parameter priors) for use in model balancing.
