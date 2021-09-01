@@ -1,3 +1,10 @@
+Prior distributions for model balancing
+---------------------------------------
+
+The prior table `cmb_prior.tsv` (in SBtab format) contains default information about priors, error bars, and constraints used in model balancing. The file is a modified version of the prior table `cmb_prior_ORIGINAL.tsv` used in parameter balancing (see [www.parameterbalancing.net] (www.parameterbalancing.net)).
+
+## Change log
+
 replaced KM min 0.0000001 -> 0.00001
 replaced KM geom std 20 -> 5
 replaced Keq geom std 100 -> 1e8

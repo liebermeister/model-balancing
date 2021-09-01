@@ -1,15 +1,24 @@
-Simple test model
-=================
+Simple test model (chain of three reactions)
+============================================
 
 Network structure:
 
+```
 X1 <-> S2 <-> S3 <-> X4
+```
 
+Files defining the model structure:
 
-SBML (model) and SBtab (model and data) files are provided
+* SBML file (network structure): in .xml file
 
-The SBML and SBtab files are used (alternatively) in demo_cmb_experimental_data
+* SBtab files: (network structure, constraints, and layout information in separate .tsv files
 
-The SBtab file is used in demo_cmb_experimental_data
+Other information
 
-The matlab scripts for generating the files can be found in the subfolder 'matlab'
+* Matlab scripts for generating the network files can be found in the subfolder `matlab`
+
+* Artificial data can be found in the subfolder `data`
+
+* The network layout can be found in the subfolder `graphics`
+
+For running model balancing on this example, please see `../matlab/demo/demo_cmb_experimental_data.m`

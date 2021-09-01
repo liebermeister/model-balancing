@@ -1,4 +1,24 @@
-Provenance:
+Example model: E. coli central metabolism 
+==========================================
+
+Files defining the model structure:
+
+* SBML file (network structure): in .xml file
+
+* SBtab files: (network structure, constraints, and layout information in separate .tsv files
+
+Other information
+
+* Matlab scripts for generating the network files can be found in the subfolder `matlab`
+
+* Artificial data can be found in the subfolder `data`
+
+* The network layout can be found in the subfolder `graphics`
+
+For running model balancing on this example, please see `../matlab/demo/demo_cmb_experimental_data.m`
+
+
+## Provenance:
 
 * file e_coli_noor_2016.xml  from /home/wolfram/projekte/enzyme_cost_minimization/html/data/ecoli_ccm/
   (original filename ecoli_ccm_ProteinComposition_Network.xml)
