@@ -1,0 +1,4 @@
+Model balancing: comparison between matlab and python results
+=============================================================
+
+To compare the model balancing implementations in matlab and python, we considered two models with articifial data. The scatter plots in this directory show the results. Each graphics shows the results of one test run (model, estimation scenario, and value of stringency alpha are indicated in the filename): in each panel (for one type of model variables), the x-axis shows the true values, and the y-axis shows the estimated (depending on the scenario: fitted or predicted) values obtain from matlab (blue) or python (red).
