@@ -9,8 +9,9 @@ Model balancing can be run in matlab or python. Data tables can be provided in [
 format, models can be provided in  [SBML](http://sbml.org) or  [SBtab](https://www.sbtab.net) format.
 
 ### Matlab
-To run model balancing in matlab, please have a look at the demo scripts in `matlab/demo` and adjust them to your model and data.
-For HTML documentation of the matlab code, see `matlab/doc`. For help in matlab, please type `help model-balancing`.
+To run model balancing in matlab, please adjust  the demo scripts in `matlab/demo`  to your model and data.
+For help, please type `help model-balancing`  in matlab, or see  the documentation at
+www.metabolic-economics.de/model-balancing/matlab-doc/. 
 
 ### Python
 For using model balancing in python, please refer to our [Read The Docs](https://model-balancing.readthedocs.io/en/latest/index.html) page,
