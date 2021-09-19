@@ -2,7 +2,7 @@ function cmb_diagnostic_network_graphics(network, data, optimal, cmb_options, q_
 
 % cmb_diagnostic_network_graphics(network, data, optimal, cmb_options, q_info, fignum, sample)
 
-eval(default('fignum','1','sample','1'));
+eval(default('fignum','1','sample','1','graphics_dir','[]'));
   
 kinetics_data = cmb_qall_to_kinetics(data.qall.mean,network,cmb_options,q_info);
 

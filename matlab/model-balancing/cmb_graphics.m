@@ -33,7 +33,7 @@ if length(graphics_dir),
 end
 
 fit_color  = [1 0 0];
-pred_color = [1 0 1];
+pred_color = [1 0 0];
 met_color  = [0 0 0.8];
 enz_color  = [.6 0.2 0.1];
 kapp_color = [.7 0 .7];
@@ -41,21 +41,26 @@ kapp_color = [.7 0 .7];
 switch cmb_options.use_kinetic_data,
   case 'all', 
     keq_color = fit_color; kcat_color = fit_color; km_color = fit_color;
+    keq_pred = 0; kcat_pred = 0; km_pred = 0;
   case 'only_Keq',
     keq_color = fit_color; kcat_color = pred_color; km_color = pred_color;
+    keq_pred = 0; kcat_pred = 1; km_pred = 1;
   case 'none',
     keq_color = pred_color; kcat_color = pred_color; km_color = pred_color;
+    keq_pred = 1; kcat_pred = 1; km_pred = 1;
 end
 
+pred = 0;
+
 % figure(1); 
-res.c = scatter_plot(data.X.mean,optimal.X,[],met_color,'Metabolite levels [mM] (data)', 'Metabolite levels [mM] (fit)', [], show_graphics,1,filenames.x);
+res.c = scatter_plot(data.X.mean,optimal.X,[],met_color,0,'Metabolite levels [mM] (data)', 'Metabolite levels [mM]', [], show_graphics,1,filenames.x);
 
 % figure(2); 
-%res = scatter_plot(log(data.E.mean),log(optimal.E),[],enz_color,'Enzyme levels [mM] (data)', 'Enzyme levels [mM] (fit)', [], show_graphics,2);
-res.e = scatter_plot(data.lnE.mean,log(optimal.E),[],enz_color,'Enzyme levels [mM] (data)', 'Enzyme levels [mM] (fit)', [], show_graphics,2,filenames.e);
+%res = scatter_plot(log(data.E.mean),log(optimal.E),[],enz_color,0,'Enzyme levels [mM] (data)', 'Enzyme levels [mM]', [], show_graphics,2);
+res.e = scatter_plot(data.lnE.mean,log(optimal.E),[],enz_color,0,'Enzyme levels [mM] (data)', 'Enzyme levels [mM]', [], show_graphics,2,filenames.e);
 
 % figure(3); 
-res.KV = scatter_plot(qall_data(index.KV),qall_optimal(index.KV),qall_names(index.KV),fit_color,'K_{V} values [1/s] (data)', 'K_{V} values [1/s] (fit)', [], show_graphics,3,filenames.KV);
+res.KV = scatter_plot(qall_data(index.KV),qall_optimal(index.KV),qall_names(index.KV),fit_color,1,'K_{V} [1/s] (data)', 'K_{V} [1/s]', [], show_graphics,3,filenames.KV);
     
 % figure(4);
 % % mark KM value if the minimum concentration, over all samples, is at least twice as large as KM value
@@ -65,29 +70,30 @@ res.KV = scatter_plot(qall_data(index.KV),qall_optimal(index.KV),qall_names(inde
 % C_min_mat = repmat(c_min_over_samples',nr,1);
 % mark_indices = find(C_min_mat(q_info.KM_matrix_indices) > 2 * exp(qall_optimal(index.KM)));
 
-res.KM = scatter_plot(qall_data(index.KM),qall_optimal(index.KM),qall_names(index.KM),km_color,'K_{M} values [mM] (data)', 'K_{M} values [mM] (fit)', [], show_graphics,4,filenames.KM);
+res.KM = scatter_plot(qall_data(index.KM),qall_optimal(index.KM),qall_names(index.KM),km_color,km_pred,'K_{M} [mM] (data)', 'K_{M} [mM]', [], show_graphics,4,filenames.KM);
 
 switch cmb_options.parameterisation,
   case 'Keq_KV_KM_KA_KI',
     
     % figure(5); 
-    res.Keq = scatter_plot(qall_data(index.Keq),qall_optimal(index.Keq),qall_names(index.Keq),keq_color,'K_{eq} values [unitless] (data)', 'K_{eq} values [unitless] (fit)', [], show_graphics,5,filenames.Keq);
+    res.Keq = scatter_plot(qall_data(index.Keq),qall_optimal(index.Keq),qall_names(index.Keq),keq_color,keq_pred,'K_{eq} [unitless] (data)', 'K_{eq} [unitless]', [], show_graphics,5,filenames.Keq);
       
     % figure(6); 
-    res.Kcatf = scatter_plot(qall_data(index.Kcatf),qall_optimal(index.Kcatf),qall_names(index.Kcatf),kcat_color,'k_{cat}^{+} values [1/s] (data)', 'k_{cat}^{+} values [1/s] (fit)', [], show_graphics,6,filenames.Kcatf);
+    res.Kcatf = scatter_plot(qall_data(index.Kcatf),qall_optimal(index.Kcatf),qall_names(index.Kcatf),kcat_color,kcat_pred,'k_{cat}^{+} [1/s] (data)', 'k_{cat}^{+} [1/s]', [], show_graphics,6,filenames.Kcatf);
     
     % figure(7); 
-    res.Kcatr = scatter_plot(qall_data(index.Kcatr),qall_optimal(index.Kcatr),qall_names(index.Kcatr),kcat_color,'k_{cat}^{-} values [1/s] (data)', 'k_{cat}^{-} values [1/s] (fit)', [], show_graphics,7,filenames.Kcatr);
+    res.Kcatr = scatter_plot(qall_data(index.Kcatr),qall_optimal(index.Kcatr),qall_names(index.Kcatr),kcat_color,kcat_pred,'k_{cat}^{-} [1/s] (data)', 'k_{cat}^{-} [1/s]', [], show_graphics,7,filenames.Kcatr);
       
     % figure(8); 
-    res.Kappf = scatter_plot(qall_data(index.Kcatf),log(kapp_max.forward),qall_names(index.Kcatf),kapp_color,'k_{cat}^{+} values [1/s] (data)', 'k_{app,max}^{+} values [1/s] (fit)', [], show_graphics,8,filenames.Kappmaxf);
+    res.Kappf = scatter_plot(qall_data(index.Kcatf),log(kapp_max.forward),qall_names(index.Kcatf),kapp_color,1,'k_{cat}^{+} [1/s] (data)', 'k_{app,max}^{+} [1/s]', [], show_graphics,8,filenames.Kappmaxf);
 
     % figure(9);
     %% plot only if some reverse kapp values have been determined
     if sum(isfinite(kapp_max.reverse)),
-      res.Kappr = scatter_plot(qall_data(index.Kcatr),log(kapp_max.reverse),qall_names(index.Kcatr),kapp_color,'k_{cat}^{-} values [1/s] (data)', 'k_{app,max}^{-} values [1/s] (fit)', [], show_graphics,9,filenames.Kappmaxr);
+      res.Kappr = scatter_plot(qall_data(index.Kcatr),log(kapp_max.reverse),qall_names(index.Kcatr),kapp_color,1,'k_{cat}^{-} [1/s] (data)', 'k_{app,max}^{-} [1/s]', [], show_graphics,9,filenames.Kappmaxr);
     elseif show_graphics,
       figure(9);
+      axis square;  noticks
       title('No reverse Kapp values determined');
       print(filenames.Kappmaxr, '-f9', '-depsc'); 
     end
@@ -112,13 +118,13 @@ if length(true),
   qall_true = cmb_q_to_qall(true.q,q_info);
 
   % figure(11); 
-  res_true.c = scatter_plot(true.X,optimal.X,[],met_color,'Metabolite levels [mM] (true)','Metabolite levels [mM] (fit)', [], show_graphics,11,filenames.x);
+  res_true.c = scatter_plot(true.X,optimal.X,[],met_color,0,'Metabolite levels [mM] (true)','Metabolite levels [mM]', [], show_graphics,11,filenames.x);
   
   % figure(12); 
-  res_true.e = scatter_plot(log(true.E),log(optimal.E),[],enz_color,'Enzyme levels [mM] (true)','Enzyme levels [mM] (fit)', [], show_graphics,12,filenames.e);
+  res_true.e = scatter_plot(log(true.E),log(optimal.E),[],enz_color,0,'Enzyme levels [mM] (true)','Enzyme levels [mM]', [], show_graphics,12,filenames.e);
 
   % figure(13); 
-  res_true.KV = scatter_plot(qall_true(index.KV),qall_optimal(index.KV),qall_names(index.KV),fit_color,'K_{V} values [1/s] (true)', 'K_{V} values [1/s] (fit)', [], show_graphics,13,filenames.KV);
+  res_true.KV = scatter_plot(qall_true(index.KV),qall_optimal(index.KV),qall_names(index.KV),fit_color,0,'K_{V} [1/s] (true)', 'K_{V} [1/s]', [], show_graphics,13,filenames.KV);
   
   % figure(14); 
   % % mark KM value if the minimum concentration, over all samples, is at least twice as large as KM value
@@ -128,29 +134,30 @@ if length(true),
   % C_min_mat = repmat(c_min_over_samples',nr,1);
   % mark_indices = find(C_min_mat(q_info.KM_matrix_indices) > 2 * exp(qall_optimal(index.KM)));
 
-  res_true.KM = scatter_plot(qall_true(index.KM),qall_optimal(index.KM),qall_names(index.KM),km_color,'K_{M} values [mM] (true)', 'K_{M} values [mM] (fit)', [], show_graphics,14,filenames.KM);
+  res_true.KM = scatter_plot(qall_true(index.KM),qall_optimal(index.KM),qall_names(index.KM),km_color,km_pred,'K_{M} [mM] (true)', 'K_{M} [mM]', [], show_graphics,14,filenames.KM);
 
   switch cmb_options.parameterisation,
     case 'Keq_KV_KM_KA_KI',
       
       % figure(15); 
-      res_true.Keq = scatter_plot(qall_true(index.Keq),qall_optimal(index.Keq),qall_names(index.Keq),keq_color,'K_{eq} values [unitless] (true)', 'K_{eq} values [unitless] (fit)', [], show_graphics,15,filenames.Keq);
+      res_true.Keq = scatter_plot(qall_true(index.Keq),qall_optimal(index.Keq),qall_names(index.Keq),keq_color,keq_pred,'K_{eq} [unitless] (true)', 'K_{eq} [unitless]', [], show_graphics,15,filenames.Keq);
 
       % figure(16); 
-      res_true.Kcatf = scatter_plot(qall_true(index.Kcatf),qall_optimal(index.Kcatf),qall_names(index.Kcatf),kcat_color,'k_{cat}^{+} values [1/s] (true)', 'k_{cat}^{+} values [1/s] (fit)', [], show_graphics,16,filenames.Kcatf);
+      res_true.Kcatf = scatter_plot(qall_true(index.Kcatf),qall_optimal(index.Kcatf),qall_names(index.Kcatf),kcat_color,kcat_pred,'k_{cat}^{+} [1/s] (true)', 'k_{cat}^{+} [1/s]', [], show_graphics,16,filenames.Kcatf);
       
       % figure(17); 
-      res_true.Kcatr = scatter_plot(qall_true(index.Kcatr),qall_optimal(index.Kcatr),qall_names(index.Kcatr),kcat_color,'k_{cat}^{-} values [1/s] (true)', 'k_{cat}^{-} values [1/s] (fit)', [], show_graphics,17,filenames.Kcatr);
+      res_true.Kcatr = scatter_plot(qall_true(index.Kcatr),qall_optimal(index.Kcatr),qall_names(index.Kcatr),kcat_color,kcat_pred,'k_{cat}^{-} [1/s] (true)', 'k_{cat}^{-} [1/s]', [], show_graphics,17,filenames.Kcatr);
 
       % figure(18); 
-      res_true.Kappf = scatter_plot(qall_true(index.Kcatf),log(kapp_max.forward),qall_names(index.Kcatf),kapp_color,'k_{cat}^{+} values [1/s] (true)', 'k_{app,max}^{+} values [1/s] (fit)', [], show_graphics,18,filenames.Kappmaxf);
+      res_true.Kappf = scatter_plot(qall_true(index.Kcatf),log(kapp_max.forward),qall_names(index.Kcatf),kapp_color,1,'k_{cat}^{+} [1/s] (true)', 'k_{app,max}^{+} [1/s]', [], show_graphics,18,filenames.Kappmaxf);
 
       % figure(19); 
       %% only if some reverse kapp values have been determined
       if sum(isfinite(kapp_max.reverse)),
-        res_true.Kappr = scatter_plot(qall_true(index.Kcatr),log(kapp_max.reverse),qall_names(index.Kcatr),kapp_color,'k_{cat}^{-} values [1/s] (true)', 'k_{app,max}^{-} values [1/s] (fit)', [], show_graphics,19,filenames.Kappmaxr);
+        res_true.Kappr = scatter_plot(qall_true(index.Kcatr),log(kapp_max.reverse),qall_names(index.Kcatr),kapp_color,1,'k_{cat}^{-} [1/s] (true)', 'k_{app,max}^{-} [1/s]', [], show_graphics,19,filenames.Kappmaxr);
       elseif show_graphics,
         figure(19); 
+        axis square; noticks
         title('No reverse Kapp values determined');
         print(filenames.Kappmaxr, '-f19', '-depsc'); 
       end
@@ -177,24 +184,30 @@ if length(true),
     case 'all',
       kin_color = fit_color;
       keq_color = fit_color;
+      kin_pred = 0;
+      keq_pred = 0;
     case 'only_Keq'
       kin_color = pred_color;
       keq_color = fit_color;
+      kin_pred = 1;
+      keq_pred = 0;
     case 'none'
       kin_color = pred_color;
       keq_color = pred_color;
+      kin_pred = 1;
+      keq_pred = 1;
   end
   
   qall_true = cmb_q_to_qall(true.q,q_info);
 
   % figure(21); 
-  res_true_data.c = scatter_plot(true.X,data.X.mean,[],met_color,'Metabolite levels [mM] (true)','Metabolite levels [mM] (data)', [], show_graphics,21,filenames.x);
+  res_true_data.c = scatter_plot(true.X,data.X.mean,[],met_color,0,'Metabolite levels [mM] (true)','Metabolite levels [mM] (data)', [], show_graphics,21,filenames.x);
   
   % figure(22); 
-  res_true_data.e = scatter_plot(log(true.E),log(data.E.mean),[],enz_color,'Enzyme levels [mM] (true)','Enzyme levels [mM] (data)', [], show_graphics,22,filenames.e);
+  res_true_data.e = scatter_plot(log(true.E),log(data.E.mean),[],enz_color,0,'Enzyme levels [mM] (true)','Enzyme levels [mM] (data)', [], show_graphics,22,filenames.e);
 
   % figure(23); 
-  res_true_data.KV = scatter_plot(qall_true(index.KV),qall_data(index.KV),qall_names(index.KV),kin_color,'K_{V} values [1/s] (true)', 'K_{V} values [1/s] (data)', [], show_graphics,23,filenames.KV);
+  res_true_data.KV = scatter_plot(qall_true(index.KV),qall_data(index.KV),qall_names(index.KV),kin_color,kin_pred,'K_{V} [1/s] (true)', 'K_{V} [1/s] (data)', [], show_graphics,23,filenames.KV);
   
   % figure(24); 
   % % mark KM value if the minimum concentration, over all samples, is at least twice as large as KM value
@@ -204,19 +217,19 @@ if length(true),
   % C_min_mat = repmat(c_min_over_samples',nr,1);
   % mark_indices = find(C_min_mat(q_info.KM_matrix_indices) > 2 * exp(qall_true(index.KM)));
 
-  res_true_data.KM = scatter_plot(qall_true(index.KM),qall_data(index.KM),qall_names(index.KM),kin_color,'K_{M} values [mM] (true)', 'K_{M} values [mM] (data)', [], show_graphics,24,filenames.KM);
+  res_true_data.KM = scatter_plot(qall_true(index.KM),qall_data(index.KM),qall_names(index.KM),kin_color,kin_pred,'K_{M} [mM] (true)', 'K_{M} [mM] (data)', [], show_graphics,24,filenames.KM);
 
   switch cmb_options.parameterisation,
     case 'Keq_KV_KM_KA_KI',
       
       % figure(25); 
-      res_true_data.Keq = scatter_plot(qall_true(index.Keq),qall_data(index.Keq),qall_names(index.Keq),keq_color,'K_{eq} values [unitless] (true)', 'K_{eq} values [unitless] (data)', [], show_graphics,25,filenames.Keq);
+      res_true_data.Keq = scatter_plot(qall_true(index.Keq),qall_data(index.Keq),qall_names(index.Keq),keq_color,keq_pred,'K_{eq} [unitless] (true)', 'K_{eq} [unitless] (data)', [], show_graphics,25,filenames.Keq);
 
       % figure(26); 
-      res_true_data.Kcatf = scatter_plot(qall_true(index.Kcatf),qall_data(index.Kcatf),qall_names(index.Kcatf),kin_color,'k_{cat}^{+} values [1/s] (true)', 'k_{cat}^{+} values [1/s] (data)', [], show_graphics,26,filenames.Kcatf);
+      res_true_data.Kcatf = scatter_plot(qall_true(index.Kcatf),qall_data(index.Kcatf),qall_names(index.Kcatf),kin_color,kin_pred,'k_{cat}^{+} [1/s] (true)', 'k_{cat}^{+} [1/s] (data)', [], show_graphics,26,filenames.Kcatf);
       
       % figure(27); 
-      res_true_data.Kcatr = scatter_plot(qall_true(index.Kcatr),qall_data(index.Kcatr),qall_names(index.Kcatr),kin_color,'k_{cat}^{-} values [1/s] (true)', 'k_{cat}^{-} values [1/s] (data)', [], show_graphics,27,filenames.Kcatr);
+      res_true_data.Kcatr = scatter_plot(qall_true(index.Kcatr),qall_data(index.Kcatr),qall_names(index.Kcatr),kin_color,kin_pred,'k_{cat}^{-} [1/s] (true)', 'k_{cat}^{-} [1/s] (data)', [], show_graphics,27,filenames.Kcatr);
   
   end
 
@@ -225,7 +238,7 @@ end
 
 % ================================================
 
-function out = scatter_plot(xvalues,yvalues,names,color,xtitle,ytitle,mark_indices, show_graphics, fignum, filename)
+function out = scatter_plot(xvalues,yvalues,names,color,pred,xtitle,ytitle,mark_indices, show_graphics, fignum, filename)
 
 eval(default('mark_indices','[]'));
 
@@ -236,6 +249,14 @@ yvalues = yvalues(ind_ok);
 % all data are assumed to be on natural log scale  
 
 geom_deviation = exp(sqrt(nanmean([yvalues(:) - xvalues(:)].^2)));
+
+switch pred,
+  %case 1, marker = '0'; markersize=10;
+  case 1, marker = '+'; markersize=12;
+    ytitle = [ ytitle ' (pred)'];
+  otherwise, marker = '.';markersize=20;
+    ytitle = [ ytitle ' (fit)'];
+end
 
 ind = find(isfinite(yvalues) .* isfinite(xvalues));
 if length(ind)>2,
@@ -255,17 +276,20 @@ if show_graphics,
   figure(fignum); 
   clf;
   plot([mmin,mmax],[mmin,mmax],'-','Color',[.5 .5 .5]); hold on
-  plot(exp(xvalues),exp(yvalues),'.','Markersize',20,'Color',color);
+  plot(exp(xvalues),exp(yvalues),marker,'Markersize',markersize,'Color',color);
   plot(exp(xvalues(mark_indices)),exp(yvalues(mark_indices)),'o','Markersize',10,'Color',color);
   %if length(names), text(exp(xvalues),exp(yvalues),names); end
   
   axis equal; axis square; axis tight
   set(gca,'XScale','log','YScale','log'); set(gca,'fontsize',16);
-  title(sprintf('GeomDev: %2.2f  CorrCoeff: %2.3f',geom_deviation,linear_correlation),'FontSize',10);
+  title(sprintf('GeomStd: %2.2f  Pearson r: %2.2f',geom_deviation,linear_correlation),'FontSize',13);
   xlabel(xtitle); ylabel(ytitle);
   
   a = axis; 
-  XTick = 10.^[floor(log10(min(axis))):ceil(log10(max(axis)))];
+  log10_xtickmin = floor(log10(min(axis)));
+  log10_xtickmax = ceil(log10(max(axis)));
+  log10_xtickdel = ceil([log10_xtickmax-log10_xtickmin]/5);
+  XTick = 10.^[log10_xtickmin:log10_xtickdel:log10_xtickmax];
   XTickLabels = cellstr(num2str(round(log10(XTick(:))), '10^{%d}'));
   set(gca,'xtick',XTick,'ytick',XTick,'xticklabels',XTickLabels,'yticklabels',XTickLabels);
 

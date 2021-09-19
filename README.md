@@ -18,7 +18,7 @@ For using model balancing in python, please refer to our [Read The Docs](https:/
 and the code itself is found on [our GitLab repository](https://gitlab.com/elad.noor/model-balancing)
 
 ### Example models
-Example model and data files can be found in the folder "resources". 
+Example model and data files can be found in the folder `resources`. 
 The folder `resources/models` contains files for four different example models. 
 Each model comes as an SBML (`.xml`) and an SBtab (`.tsv`) file. 
 The folders `examples/results/[MODEL_NAME]` contains balancing results for a large number of model balancing problems
@@ -43,7 +43,7 @@ This can be done in matlab and is shown in `demo_cmb_experimental_data.m`. For a
 type `help cvxpy_problem_data_structure` in matlab.
 
 ## Installation
-The following installation instructions are only for the Matlab version.
+The following installation instructions are only for the Matlab version (also see the file `INSTALLATION` in this directory).
 For Python, please refer to our [Read The Docs](https://model-balancing.readthedocs.io/en/latest/index.html) page.
 
 - [SBML toolbox](http://sbml.org/Software/SBMLToolbox) (optional - needed only if SBML files are used;
