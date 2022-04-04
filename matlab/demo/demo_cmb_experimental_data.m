@@ -7,7 +7,7 @@
 % o run model balancing
 % o save results to output files
 %
-% This script allows you to run model balancing for the four example models in the folder resources/models.
+% This script allows you to run model balancing for the four example models in the folder resource-data/models.
 % By default, it uses the example model "branch_point_model". 
 % To use one of the other models, please uncomment the respective lines in the code.
 % To use your own model, please go to "Your model" below and see the instructions
@@ -50,7 +50,7 @@ clear;
 %  /  
 % X
 % 
-% Use model and artificial data from folder ~/resources/models/branch_point_model/data/
+% Use model and artificial data from folder ~/resource-data/models/branch_point_model/data/
 % -------------------------------------------------------------
 
 % % To use other models, please comment out the following lines
@@ -78,7 +78,7 @@ filenames = cmb_filenames(model, prb, run, result_dir);
 %
 % X - O - O - X
 %
-% Model and artificial data from folder ~/resources/models/three_chain_model/data/
+% Model and artificial data from folder ~/resource-data/models/three_chain_model/data/
 % -------------------------------------------------------------
 
 % To use this model, please uncomment the following lines
@@ -110,7 +110,7 @@ filenames = cmb_filenames(model, prb, run, result_dir);
 %      /     \
 % X - O       X
 %
-% Use model and artificial data from folder ~/resources/models/double_branch_model/data/
+% Use model and artificial data from folder ~/resource-data/models/double_branch_model/data/
 % -------------------------------------------------------------
 
 % To use this model, please uncomment the following lines

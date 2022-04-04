@@ -18,8 +18,8 @@ For using model balancing in python, please refer to our [Read The Docs](https:/
 and the code itself is found on [our GitLab repository](https://gitlab.com/elad.noor/model-balancing)
 
 ### Example models
-Example model and data files can be found in the folder `resources`. 
-The folder `resources/models` contains files for four different example models. 
+Example model and data files can be found in the folder `resource-data`. 
+The folder `resource-data/models` contains files for four different example models. 
 Each model comes as an SBML (`.xml`) and an SBtab (`.tsv`) file. 
 The folders `examples/results/[MODEL_NAME]` contains balancing results for a large number of model balancing problems
 with these models: artificial data for all 4 models, experimental data for the E coli model (folder `e_coli_noor_2016`).

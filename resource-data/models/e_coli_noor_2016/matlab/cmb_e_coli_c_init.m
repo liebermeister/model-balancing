@@ -7,7 +7,7 @@ network    = network_import_model(model_file, struct('load_quantity_table',0));
 
 % set simple default concentrations
 
-load([cmb_basedir '/resources/models/e_coli_noor_2016/e_coli_example_reference_state']); % load 'c', 'u', 'v', 'Keq'
+load([cmb_basedir '/resource-data/models/e_coli_noor_2016/e_coli_example_reference_state']); % load 'c', 'u', 'v', 'Keq'
 
 v_init = v;
 c_init = c.emc4cm;
@@ -45,6 +45,6 @@ if 0,
   [c, u, u_cost, up, A_forward] = ecm_enzyme_cost_minimization(network, network.kinetics, v, ecm_options);
   Keq = network.kinetics.Keq;
   
-  save([cmb_basedir '/resources/models/e_coli_noor_2016/e_coli_example_reference_state'], 'c', 'u', 'v','Keq');
+  save([cmb_basedir '/resource-data/models/e_coli_noor_2016/e_coli_example_reference_state'], 'c', 'u', 'v','Keq');
 
 end

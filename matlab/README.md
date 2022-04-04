@@ -17,7 +17,7 @@ Subfolders
 
 * `doc` HTML source code for documentation at www.metabolic-economics.de/model-balancing/matlab-doc/
 
-Matlab scripts for generating the example models can be found in the folder `../resources/models`
+Matlab scripts for generating the example models can be found in the folder `../resource-data/models`
 
 ## Implementation notes
 

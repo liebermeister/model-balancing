@@ -9,7 +9,7 @@
 % X - O       X
 %
 % This script generates the artificial model and data files in 
-% ~/resources/models/double_branch_model/data, used in demo_cmb_experimental_data.m
+% ~/resource-data/models/double_branch_model/data, used in demo_cmb_experimental_data.m
 %
 % -------------------------------------------------------------
 
@@ -28,9 +28,9 @@ ns              = 6;
 
 filenames = cmb_filenames(model, run, result_dir, network_file);
 
-filenames.network_true = '/home/wolfram/projekte/model_balancing/github/model-balancing/resources/models/double_branch_model/data/artificial_network_true.tsv';
-filenames.kinetic_data = '/home/wolfram/projekte/model_balancing/github/model-balancing/resources/models/double_branch_model/data/artificial_kinetic_data.tsv';
-filenames.state_data = '/home/wolfram/projekte/model_balancing/github/model-balancing/resources/models/double_branch_model/data/artificial_state_data.tsv';
+filenames.network_true = '/home/wolfram/projekte/model_balancing/github/model-balancing/resource-data/models/double_branch_model/data/artificial_network_true.tsv';
+filenames.kinetic_data = '/home/wolfram/projekte/model_balancing/github/model-balancing/resource-data/models/double_branch_model/data/artificial_kinetic_data.tsv';
+filenames.state_data = '/home/wolfram/projekte/model_balancing/github/model-balancing/resource-data/models/double_branch_model/data/artificial_state_data.tsv';
 
 
 % -------------------------------------------------------------

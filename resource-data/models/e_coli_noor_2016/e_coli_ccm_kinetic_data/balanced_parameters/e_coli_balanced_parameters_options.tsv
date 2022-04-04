@@ -1,7 +1,7 @@
 !!SBtab TableName='Options for parameter balancing' TableID='OptionsPB' TableType='Config' Method='parameter-balancing'	
 !Option	!Value
 verbose	0
-parameter_prior_file	/home/wolfram/matlab/wolf_packages/model-balancing/matlab/model-balancing/../../resources/data/data-prior/cmb_prior.tsv
+parameter_prior_file	/home/wolfram/matlab/wolf_packages/model-balancing/matlab/model-balancing/../../resource-data/data/data-prior/cmb_prior.tsv
 kinetics	cs
 parametrisation	all
 reaction_units	concentration per time
