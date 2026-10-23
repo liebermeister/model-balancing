@@ -183,7 +183,7 @@ end
 
 log_posterior = log_posterior_q + log_posterior_x + log_posterior_lnE + log_posterior_ln_c_over_km;
 
-if 1,%verbose,
+if verbose,
   % show z-scores
   z_q = -2*log_posterior_q
   z_x =-2*log_posterior_x

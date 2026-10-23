@@ -25,7 +25,7 @@ function [network, kinetic_data, state_data, conc_min, conc_max] = cmb_load_mode
 %   state_data:     metabolite, enzyme, and flux data
 %   conc_min, conc_max: vectors of concentration bounds (empty if no constraint_sbtab_file is given)
 
-eval(default('kinetic_data_file', '[]', 'metabolite_data_file', '[]', 'enzyme_data_file', '[]', 'flux_data_file', '[]','replace_ids_in_network','[]','match_data_by','''KeggId'''));
+eval(default('kinetic_data_file', '[]', 'state_data_files', '[]', 'replace_ids_in_network','[]','match_data_by','''KeggId''','constraint_sbtab_file','[]'));
   
 options.use_sbml_ids         = 0;
 options.use_kegg_ids         = 1;

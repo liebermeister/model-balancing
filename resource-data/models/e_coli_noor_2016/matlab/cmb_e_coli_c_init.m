@@ -1,4 +1,4 @@
-function [c_init, ind_e_off, v_init, Keq_init] = e_coli_c_init(model,cmb_options)
+function [c_init, ind_e_off, v_init, Keq_init] = cmb_e_coli_c_init(model,cmb_options)
 
 % Set model name and input filenames
 

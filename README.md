@@ -66,7 +66,7 @@ You need to prepare three input files in SBtab format, describing
 
 1. the network structure and metabolite constraints (tables Reaction, Compound, Position (optional), Parameter (optional))
 2. kinetic data (table ParameterData)
-3. state data (tables MetabolicFluxData, MetaboliteConcentrationData, EnzymeConcentrationData)
+3. state data (tables FluxData, MetaboliteConcentrationData, EnzymeConcentrationData)
 
 For an example, please have a look at the files `artificial_network_true.tsv`, `artificial_kinetic_data.tsv`,
 and `artificial_state_data.tsv` in the folder `resource-data/models/branch_point_model/data/`.

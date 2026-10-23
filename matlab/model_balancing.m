@@ -273,11 +273,17 @@ calculation_time = toc(tstart_model_balancing);
 % Graphics - 'cmb_graphics' also provides data for statistics below
 % -----------------------------------------------
 
+if cmb_options.save_graphics,
+  graphics_dir = filenames.graphics_dir;
+else
+  graphics_dir = [];
+end
+
 display(' '); ca;
-[res, res_true, res_true_data] = cmb_graphics(prior, data, optimal, true, cmb_options, q_info, filenames.graphics_dir, kapp_max, cmb_options.show_graphics);
+[res, res_true, res_true_data] = cmb_graphics(prior, data, optimal, true, cmb_options, q_info, graphics_dir, kapp_max, cmb_options.show_graphics);
 
 if cmb_options.show_graphics,
-  cmb_diagnostic_network_graphics(network, data, optimal, cmb_options, q_info, 20, 1, filenames.graphics_dir);
+  cmb_diagnostic_network_graphics(network, data, optimal, cmb_options, q_info, 20, 1, graphics_dir);
 end
 
 % check which variables (parameters and concentrations) have no data attached and hit a bound

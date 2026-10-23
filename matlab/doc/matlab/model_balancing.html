@@ -348,64 +348,70 @@ This function is called by:
 0273 <span class="comment">% Graphics - 'cmb_graphics' also provides data for statistics below</span>
 0274 <span class="comment">% -----------------------------------------------</span>
 0275 
-0276 display(<span class="string">' '</span>); ca;
-0277 [res, res_true, res_true_data] = <a href="../matlab/model-balancing/cmb_graphics.html" class="code" title="function [res, res_true, res_true_data] = cmb_graphics(prior, data, optimal, true, cmb_options, q_info, graphics_dir, kapp_max, show_graphics)">cmb_graphics</a>(prior, data, optimal, true, cmb_options, q_info, filenames.graphics_dir, kapp_max, cmb_options.show_graphics);
-0278 
-0279 <span class="keyword">if</span> cmb_options.show_graphics,
-0280   <a href="../matlab/model-balancing/cmb_diagnostic_network_graphics.html" class="code" title="function cmb_diagnostic_network_graphics(network, data, optimal, cmb_options, q_info, fignum, sample, graphics_dir)">cmb_diagnostic_network_graphics</a>(network, data, optimal, cmb_options, q_info, 20, 1, filenames.graphics_dir);
-0281 <span class="keyword">end</span>
-0282 
-0283 <span class="comment">% check which variables (parameters and concentrations) have no data attached and hit a bound</span>
-0284 <span class="comment">% (should work, but has not been tested)</span>
-0285 
-0286 <span class="comment">% q_without_data     = ~isfinite(data.qall.mean(q_info.q.index_q));</span>
-0287 <span class="comment">% q_hits_lower_bound = optimal.q==bounds.q_min;</span>
-0288 <span class="comment">% q_hits_upper_bound = optimal.q==bounds.q_max;</span>
-0289 <span class="comment">%</span>
-0290 <span class="comment">% parameters_hitting_bound_and_no_data = q_info.q.names(find(q_without_data .* [q_hits_lower_bound + q_hits_upper_bound]))</span>
-0291 <span class="comment">%</span>
-0292 <span class="comment">% x_without_data     = ~isfinite(data.X.mean);</span>
-0293 <span class="comment">% x_hits_lower_bound = optimal.C == repmat(exp(bounds.x_min),1,ns)';</span>
-0294 <span class="comment">% x_hits_upper_bound = optimal.C == repmat(exp(bounds.x_min),1,ns)';</span>
+0276 <span class="keyword">if</span> cmb_options.save_graphics,
+0277   graphics_dir = filenames.graphics_dir;
+0278 <span class="keyword">else</span>
+0279   graphics_dir = [];
+0280 <span class="keyword">end</span>
+0281 
+0282 display(<span class="string">' '</span>); ca;
+0283 [res, res_true, res_true_data] = <a href="../matlab/model-balancing/cmb_graphics.html" class="code" title="function [res, res_true, res_true_data] = cmb_graphics(prior, data, optimal, true, cmb_options, q_info, graphics_dir, kapp_max, show_graphics)">cmb_graphics</a>(prior, data, optimal, true, cmb_options, q_info, graphics_dir, kapp_max, cmb_options.show_graphics);
+0284 
+0285 <span class="keyword">if</span> cmb_options.show_graphics,
+0286   <a href="../matlab/model-balancing/cmb_diagnostic_network_graphics.html" class="code" title="function cmb_diagnostic_network_graphics(network, data, optimal, cmb_options, q_info, fignum, sample, graphics_dir)">cmb_diagnostic_network_graphics</a>(network, data, optimal, cmb_options, q_info, 20, 1, graphics_dir);
+0287 <span class="keyword">end</span>
+0288 
+0289 <span class="comment">% check which variables (parameters and concentrations) have no data attached and hit a bound</span>
+0290 <span class="comment">% (should work, but has not been tested)</span>
+0291 
+0292 <span class="comment">% q_without_data     = ~isfinite(data.qall.mean(q_info.q.index_q));</span>
+0293 <span class="comment">% q_hits_lower_bound = optimal.q==bounds.q_min;</span>
+0294 <span class="comment">% q_hits_upper_bound = optimal.q==bounds.q_max;</span>
 0295 <span class="comment">%</span>
-0296 <span class="comment">% metabolites_hitting_bound_and_no_data = network.metabolites(find(sum(x_without_data .* [x_hits_lower_bound + x_hits_upper_bound])'))</span>
-0297 
-0298 <span class="comment">% -----------------------------------------------</span>
-0299 <span class="comment">% Save results as SBtab files and .mat files</span>
-0300 <span class="comment">% -----------------------------------------------</span>
-0301 
-0302 <span class="keyword">if</span> cmb_options.save_results,
-0303   display(<span class="string">' '</span>); 
-0304   
-0305   <a href="../matlab/model-balancing/cmb-file-input-output/cmb_save_results.html" class="code" title="function cmb_save_results(network, data, bounds, optimal, filenames, cmb_options, options, true)">cmb_save_results</a>(network, data, bounds, optimal, filenames, cmb_options, struct(<span class="string">'calculation_time'</span>, calculation_time, <span class="string">'consistent'</span>, 1), true);
-0306   
-0307   <span class="keyword">if</span> length(filenames.results_mat)
-0308     save(filenames.results_mat,<span class="string">'optimal'</span>, <span class="string">'calculation_time'</span>, <span class="string">'gradient_V'</span>, <span class="string">'init'</span>, <span class="string">'cmb_options'</span>, <span class="string">'V'</span>, <span class="string">'kapp_max'</span>, <span class="string">'preposterior'</span>, <span class="string">'pp'</span>, <span class="string">'filenames'</span>, <span class="string">'cmb_options'</span>, <span class="string">'network'</span>, <span class="string">'q_info'</span>, <span class="string">'prior'</span>, <span class="string">'bounds'</span>, <span class="string">'data'</span>, <span class="string">'true'</span>, <span class="string">'res'</span>, <span class="string">'res_true'</span>, <span class="string">'res_true_data'</span>);
-0309   <span class="keyword">end</span>
+0296 <span class="comment">% parameters_hitting_bound_and_no_data = q_info.q.names(find(q_without_data .* [q_hits_lower_bound + q_hits_upper_bound]))</span>
+0297 <span class="comment">%</span>
+0298 <span class="comment">% x_without_data     = ~isfinite(data.X.mean);</span>
+0299 <span class="comment">% x_hits_lower_bound = optimal.C == repmat(exp(bounds.x_min),1,ns)';</span>
+0300 <span class="comment">% x_hits_upper_bound = optimal.C == repmat(exp(bounds.x_min),1,ns)';</span>
+0301 <span class="comment">%</span>
+0302 <span class="comment">% metabolites_hitting_bound_and_no_data = network.metabolites(find(sum(x_without_data .* [x_hits_lower_bound + x_hits_upper_bound])'))</span>
+0303 
+0304 <span class="comment">% -----------------------------------------------</span>
+0305 <span class="comment">% Save results as SBtab files and .mat files</span>
+0306 <span class="comment">% -----------------------------------------------</span>
+0307 
+0308 <span class="keyword">if</span> cmb_options.save_results,
+0309   display(<span class="string">' '</span>); 
 0310   
-0311 <span class="keyword">end</span>
-0312 
-0313 
-0314 <span class="comment">% -----------------------------------------------</span>
-0315 <span class="comment">% Result statistics</span>
-0316 <span class="comment">% -----------------------------------------------</span>
-0317 
-0318 <span class="keyword">if</span> cmb_options.display + cmb_options.save_results,
-0319   display(<span class="string">' '</span>); 
-0320   report = <a href="../matlab/model-balancing/cmb_statistics.html" class="code" title="function report = cmb_statistics(network,cmb_options,prior,data,optimal,calculation_time,res,res_true)">cmb_statistics</a>(network,cmb_options,prior,data,optimal,calculation_time, res, res_true);
-0321 <span class="keyword">end</span>
-0322 
-0323 <span class="keyword">if</span> cmb_options.save_results,
-0324   <span class="keyword">if</span> ~isempty(filenames.report_txt),
-0325     mytable(report,0,filenames.report_txt);
-0326   <span class="keyword">end</span>
+0311   <a href="../matlab/model-balancing/cmb-file-input-output/cmb_save_results.html" class="code" title="function cmb_save_results(network, data, bounds, optimal, filenames, cmb_options, options, true)">cmb_save_results</a>(network, data, bounds, optimal, filenames, cmb_options, struct(<span class="string">'calculation_time'</span>, calculation_time, <span class="string">'consistent'</span>, 1), true);
+0312   
+0313   <span class="keyword">if</span> length(filenames.results_mat)
+0314     save(filenames.results_mat,<span class="string">'optimal'</span>, <span class="string">'calculation_time'</span>, <span class="string">'gradient_V'</span>, <span class="string">'init'</span>, <span class="string">'cmb_options'</span>, <span class="string">'V'</span>, <span class="string">'kapp_max'</span>, <span class="string">'preposterior'</span>, <span class="string">'pp'</span>, <span class="string">'filenames'</span>, <span class="string">'cmb_options'</span>, <span class="string">'network'</span>, <span class="string">'q_info'</span>, <span class="string">'prior'</span>, <span class="string">'bounds'</span>, <span class="string">'data'</span>, <span class="string">'true'</span>, <span class="string">'res'</span>, <span class="string">'res_true'</span>, <span class="string">'res_true_data'</span>);
+0315   <span class="keyword">end</span>
+0316   
+0317 <span class="keyword">end</span>
+0318 
+0319 
+0320 <span class="comment">% -----------------------------------------------</span>
+0321 <span class="comment">% Result statistics</span>
+0322 <span class="comment">% -----------------------------------------------</span>
+0323 
+0324 <span class="keyword">if</span> cmb_options.display + cmb_options.save_results,
+0325   display(<span class="string">' '</span>); 
+0326   report = <a href="../matlab/model-balancing/cmb_statistics.html" class="code" title="function report = cmb_statistics(network,cmb_options,prior,data,optimal,calculation_time,res,res_true)">cmb_statistics</a>(network,cmb_options,prior,data,optimal,calculation_time, res, res_true);
 0327 <span class="keyword">end</span>
 0328 
-0329 
-0330 <span class="comment">% --------------------------------------------------------------</span>
-0331 <span class="comment">%% Clear global variables</span>
-0332 clearvars -<span class="keyword">global</span> global_structure_matrices Mplus Mminus Wplus Wminus nm nr ind_M ind_Wp ind_Wm LP_info
-0333 <span class="comment">% --------------------------------------------------------------</span></pre></div>
-<hr><address>Generated on Fri 23-Oct-2026 20:27:13 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+0329 <span class="keyword">if</span> cmb_options.save_results,
+0330   <span class="keyword">if</span> ~isempty(filenames.report_txt),
+0331     mytable(report,0,filenames.report_txt);
+0332   <span class="keyword">end</span>
+0333 <span class="keyword">end</span>
+0334 
+0335 
+0336 <span class="comment">% --------------------------------------------------------------</span>
+0337 <span class="comment">%% Clear global variables</span>
+0338 clearvars -<span class="keyword">global</span> global_structure_matrices Mplus Mminus Wplus Wminus nm nr ind_M ind_Wp ind_Wm LP_info
+0339 <span class="comment">% --------------------------------------------------------------</span></pre></div>
+<hr><address>Generated on Fri 23-Oct-2026 21:10:48 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
 </body>
 </html>

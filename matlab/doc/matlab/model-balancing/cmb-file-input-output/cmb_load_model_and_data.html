@@ -92,7 +92,7 @@ This function is called by:
 0025 <span class="comment">%   state_data:     metabolite, enzyme, and flux data</span>
 0026 <span class="comment">%   conc_min, conc_max: vectors of concentration bounds (empty if no constraint_sbtab_file is given)</span>
 0027 
-0028 eval(default(<span class="string">'kinetic_data_file'</span>, <span class="string">'[]'</span>, <span class="string">'metabolite_data_file'</span>, <span class="string">'[]'</span>, <span class="string">'enzyme_data_file'</span>, <span class="string">'[]'</span>, <span class="string">'flux_data_file'</span>, <span class="string">'[]'</span>,<span class="string">'replace_ids_in_network'</span>,<span class="string">'[]'</span>,<span class="string">'match_data_by'</span>,<span class="string">'''KeggId'''</span>));
+0028 eval(default(<span class="string">'kinetic_data_file'</span>, <span class="string">'[]'</span>, <span class="string">'state_data_files'</span>, <span class="string">'[]'</span>, <span class="string">'replace_ids_in_network'</span>,<span class="string">'[]'</span>,<span class="string">'match_data_by'</span>,<span class="string">'''KeggId'''</span>,<span class="string">'constraint_sbtab_file'</span>,<span class="string">'[]'</span>));
 0029   
 0030 options.use_sbml_ids         = 0;
 0031 options.use_kegg_ids         = 1;
@@ -159,6 +159,6 @@ This function is called by:
 0092   conc_min  = sbtab_table_get_column(constraint_sbtab.tables.ConcentrationConstraint,<span class="string">'Min'</span>,1);
 0093   conc_max  = sbtab_table_get_column(constraint_sbtab.tables.ConcentrationConstraint,<span class="string">'Max'</span>,1);
 0094 <span class="keyword">end</span></pre></div>
-<hr><address>Generated on Fri 23-Oct-2026 20:27:13 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+<hr><address>Generated on Fri 23-Oct-2026 21:10:48 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
 </body>
 </html>

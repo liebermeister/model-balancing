@@ -1,6 +1,6 @@
 !!!SBtab													
 													
-!!SBtab TableName='Metabolic fluxes' TableID='MetabolicFluxData' TableType='QuantityMatrix' Unit='mM/s'													
+!!SBtab TableName='Metabolic fluxes' TableID='FluxData' TableType='QuantityMatrix' Unit='mM/s'													
 !QuantityType	!Reaction	S1_Mean	S1_Std	S2_Mean	S2_Std	S3_Mean	S3_Std	S4_Mean	S4_Std	S5_Mean	S5_Std	S6_Mean	S6_Std
 rate of reaction	E1	0.00018655498	0.00080673018	0.00080402375	0.00093022394	0.0032732496	0.0014240691	0.001286035	0.0010266262	0.0020090589	0.001171231	0.0045747006	0.0016843593
 rate of reaction	E2	0.04425306	0.0096200312	0.065563154	0.01388205	0.06411997	0.013593413	0.075655884	0.015900596	0.051170561	0.011003531	0.038194381	0.0084082954

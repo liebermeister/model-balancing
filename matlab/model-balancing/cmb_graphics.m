@@ -28,6 +28,9 @@ nr           = length(index.KV);
 % ---------------------
 % Graphics: plot data vs fitted
 
+% empty filenames: graphics are not saved
+filenames = struct('x',[],'e',[],'KV',[],'KM',[],'Keq',[],'Kcatf',[],'Kcatr',[],'Kappmaxf',[],'Kappmaxr',[]);
+
 if length(graphics_dir),
   display(sprintf('Writing graphics files with basename %s',graphics_dir));
   
@@ -105,7 +108,7 @@ switch cmb_options.parameterisation,
       figure(9);
       axis square;  noticks
       title('No reverse Kapp values determined');
-      print(filenames.Kappmaxr, '-f9', '-depsc'); 
+      if length(filenames.Kappmaxr), print(filenames.Kappmaxr, '-f9', '-depsc'); end
     end
 
 end
@@ -115,15 +118,17 @@ end
 
 if length(true),
 
-  filenames.x        = [graphics_dir 'true_x.eps'];
-  filenames.e        = [graphics_dir 'true_e.eps'];
-  filenames.KV       = [graphics_dir 'true_KV.eps'];
-  filenames.KM       = [graphics_dir 'true_KM.eps'];
-  filenames.Keq      = [graphics_dir 'true_Keq.eps'];
-  filenames.Kcatf    = [graphics_dir 'true_Kcatf.eps'];
-  filenames.Kcatr    = [graphics_dir 'true_Kcatr.eps'];
-  filenames.Kappmaxf = [graphics_dir 'true_Kappmaxf.eps'];
-  filenames.Kappmaxr = [graphics_dir 'true_Kappmaxr.eps'];
+  if length(graphics_dir),
+    filenames.x        = [graphics_dir 'true_x.eps'];
+    filenames.e        = [graphics_dir 'true_e.eps'];
+    filenames.KV       = [graphics_dir 'true_KV.eps'];
+    filenames.KM       = [graphics_dir 'true_KM.eps'];
+    filenames.Keq      = [graphics_dir 'true_Keq.eps'];
+    filenames.Kcatf    = [graphics_dir 'true_Kcatf.eps'];
+    filenames.Kcatr    = [graphics_dir 'true_Kcatr.eps'];
+    filenames.Kappmaxf = [graphics_dir 'true_Kappmaxf.eps'];
+    filenames.Kappmaxr = [graphics_dir 'true_Kappmaxr.eps'];
+  end
 
   qall_true = cmb_q_to_qall(true.q,q_info);
 
@@ -169,7 +174,7 @@ if length(true),
         figure(19); 
         axis square; noticks
         title('No reverse Kapp values determined');
-        print(filenames.Kappmaxr, '-f19', '-depsc'); 
+        if length(filenames.Kappmaxr), print(filenames.Kappmaxr, '-f19', '-depsc'); end
       end
 
   end
@@ -303,7 +308,7 @@ if show_graphics,
   XTickLabels = cellstr(num2str(round(log10(XTick(:))), '10^{%d}'));
   set(gca,'xtick',XTick,'ytick',XTick,'xticklabels',XTickLabels,'yticklabels',XTickLabels);
 
-  print(filename, ['-f' num2str(fignum)], '-depsc'); 
+  if length(filename), print(filename, ['-f' num2str(fignum)], '-depsc'); end
 end
 
 out.geometric_deviation = geom_deviation;

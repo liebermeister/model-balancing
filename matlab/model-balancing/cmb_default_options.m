@@ -3,6 +3,7 @@ function cmb_options = cmb_default_options(flag_artificial)
 % cmb_options = cmb_default_options(flag_artificial)
 %
 % flag_artificial (Boolean, default 0) options for model with artificial data
+%                 (currently without effect; kept for compatibility)
 % 
 % Returns matlab struct with default options for model balancing
 % Fields and default values are shown below
@@ -298,16 +299,14 @@ cmb_options.metabolic_prior_e_geom_std    = exp(cmb_options.quantities.e.std_ln)
 
 % ---------------------------------------------------------
 % distributions for artificial data
+% (always set: artificial data are also generated for finding initial values,
+%  see option initial_values_variant = 'average_sample')
 
-if flag_artificial,
+%% distributions from which "true values" are drawn
 
-  %% distributions from which "true values" are drawn
-  
-  cmb_options.quantities.mu0.std = RT * log(5);
-  
-  %% distributions for noise in artificial data
-  
-  cmb_options.metabolic_artificial_c_geom_std = 1.5;
-  cmb_options.metabolic_artificial_e_geom_std = 1.5;
+cmb_options.quantities.mu0.std = RT * log(5);
 
-end
+%% distributions for noise in artificial data
+
+cmb_options.metabolic_artificial_c_geom_std = 1.5;
+cmb_options.metabolic_artificial_e_geom_std = 1.5;
