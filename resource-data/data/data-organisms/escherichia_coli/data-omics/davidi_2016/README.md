@@ -4,6 +4,6 @@ Files used in article:
 * Davidi_2016_flux_mmolgCDW_s_KEGG_IDs.tsv
 
 Provenance
-* Davidi_2016_flux_mmolgCDW_s.tsv from /home/wolfram/arbeit/daten/omics_data/multi-omics_data/escherichia_coli/Davidi_2016_collected_data_for_bigg_iJO1366/Davidi_2016_flux_mmolgCDW_s.tsv
-* Davidi_2016_metabolite_concentrations_uM.tsv from /home/wolfram/arbeit/daten/omics_data/multi-omics_data/escherichia_coli/Davidi_2016_collected_data_for_bigg_iJO1366/Davidi_2016_metabolite_concentrations_uM.tsv
-* Davidi_2016_protein_abundance_mmolgCDW.tsv from /home/wolfram/arbeit/daten/omics_data/multi-omics_data/escherichia_coli/Davidi_2016_collected_data_for_bigg_iJO1366/Davidi_2016_protein_abundance_mmolgCDW.tsv
+* The files were taken from a collection of E. coli multi-omics data mapped to the model iJO1366 (BiGG IDs),
+  based on Davidi et al. (2016); KEGG IDs were added afterwards.
+* Older versions of the flux and protein files (without KEGG IDs) can be found in the subfolder `OLD`.

@@ -1,0 +1,359 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of demo_cmb_experimental_data</title>
+  <meta name="keywords" content="demo_cmb_experimental_data">
+  <meta name="description" content="-------------------------------------------------------------">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">matlab</a> &gt; <a href="index.html">demo</a> &gt; demo_cmb_experimental_data.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for matlab/demo&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>demo_cmb_experimental_data
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>-------------------------------------------------------------</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> -------------------------------------------------------------
+ Model balancing - Simple test models
+ -------------------------------------------------------------
+
+ What this script does:
+ o read model and data from SBtab file
+ o run model balancing
+ o save results to output files
+
+ This script allows you to run model balancing for the four example models in the folder resource-data/models.
+ By default, it uses the example model &quot;branch_point_model&quot;. 
+ To use one of the other models, please uncomment the respective lines in the code.
+ To use your own model, please go to &quot;Your model&quot; below and see the instructions
+
+
+ -------------------------------------------------------------
+ How to define a model
+ -------------------------------------------------------------
+
+ Files that define model and data: 
+   network_file       (SBtab filename) SBtab file with tables 'Reaction', 'Compound', 
+                                          'Position' (optional), 'Parameter' (optional)
+   kinetic_data_file  (SBtab filename) SBtab file with table  'ParameterData' (optional; if kinetic_data_file == [],
+                                          kinetic data are read from table 'Parameter' in file network_file)
+   state_data_file    (SBtab filename) SBtab file with tables 'FluxData', 
+                                          'MetaboliteConcentrationData', 'EnzymeConcentrationData'
+
+ Other settings:
+   model                        (string) model name (freely chosen by the user)
+   prb                          (string) estimation scenario name (chosen by the user, should not refer to optimisation settings)
+   run                          (string) estimation scenario name (chosen by the user, may refer to optimisation settings)
+   file_options.match_data_by   'ModelElementId' (default) or 'KeggId'
+   file_options.columns_mean    (cell array of strings) column names for mean data values in metabolite, flux, and enzyme table
+   file_options.columns_std     (cell array of strings) column names for std deviations   in metabolite, flux, and enzyme table
+   file_options.constraint_file (SBtab filename): file with metabolite bounds (optional; set to [] to use default constraints)
+   result_dir                   (directory name) directory for output files (default = matlab's tempdir) 
+ -------------------------------------------------------------</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../matlab/model-balancing/cmb-cvxpy/cvxpy_problem_data_structure.html" class="code" title="function problem = cvxpy_problem_data_structure(network, q_info, prior, data, bounds, true_model, cmb_options)">cvxpy_problem_data_structure</a>	problem = cvxpy_problem_data_structure(network, q_info, prior, data, bounds, true_model, cmb_options)</li><li><a href="../../matlab/model-balancing/cmb-file-input-output/cmb_load_and_convert_model_and_data.html" class="code" title="function [network, q_info, data, c_init, kinetic_data, state_data, conc_min, conc_max] = cmb_load_and_convert_model_and_data(cmb_options, file, file_options)">cmb_load_and_convert_model_and_data</a>	[network, q_info, data, c_init, kinetic_data, state_data, conc_min, conc_max] = cmb_load_and_convert_model_and_data(cmb_options, file, file_options)</li><li><a href="../../matlab/model-balancing/cmb_default_options.html" class="code" title="function cmb_options = cmb_default_options(flag_artificial)">cmb_default_options</a>	cmb_options = cmb_default_options(flag_artificial)</li><li><a href="../../matlab/model-balancing/cmb_filenames.html" class="code" title="function filenames = cmb_filenames(model_name, prb, run, result_dir, network_sbml_file, flag_artificial)">cmb_filenames</a>	filenames = cmb_filenames(model_name, prb, run, result_dir, network_sbml_file, flag_artificial)</li><li><a href="../../matlab/model-balancing/cmb_model_and_data.html" class="code" title="function [bounds, prior, init] = cmb_model_and_data(model, network, data, q_info, c_init, cmb_options, conc_min, conc_max)">cmb_model_and_data</a>	[bounds, prior, init] = cmb_model_and_data(model, network, data, q_info, c_init, cmb_options, conc_min, conc_max)</li><li><a href="../../matlab/model-balancing/cmb_resourcedir.html" class="code" title="function d = cmb_resourcedir()">cmb_resourcedir</a>	d = cmb_resourcedir()</li><li><a href="../../matlab/model_balancing.html" class="code" title="function [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max, preposterior, pp] = model_balancing(filenames, cmb_options, network, q_info, prior, bounds, data, true, init)">model_balancing</a>	[optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max, preposterior, pp] = model_balancing(filenames, cmb_options, network, q_info, prior, bounds, data, true, init)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% -------------------------------------------------------------</span>
+0002 <span class="comment">% Model balancing - Simple test models</span>
+0003 <span class="comment">% -------------------------------------------------------------</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% What this script does:</span>
+0006 <span class="comment">% o read model and data from SBtab file</span>
+0007 <span class="comment">% o run model balancing</span>
+0008 <span class="comment">% o save results to output files</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% This script allows you to run model balancing for the four example models in the folder resource-data/models.</span>
+0011 <span class="comment">% By default, it uses the example model &quot;branch_point_model&quot;.</span>
+0012 <span class="comment">% To use one of the other models, please uncomment the respective lines in the code.</span>
+0013 <span class="comment">% To use your own model, please go to &quot;Your model&quot; below and see the instructions</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% -------------------------------------------------------------</span>
+0017 <span class="comment">% How to define a model</span>
+0018 <span class="comment">% -------------------------------------------------------------</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">% Files that define model and data:</span>
+0021 <span class="comment">%   network_file       (SBtab filename) SBtab file with tables 'Reaction', 'Compound',</span>
+0022 <span class="comment">%                                          'Position' (optional), 'Parameter' (optional)</span>
+0023 <span class="comment">%   kinetic_data_file  (SBtab filename) SBtab file with table  'ParameterData' (optional; if kinetic_data_file == [],</span>
+0024 <span class="comment">%                                          kinetic data are read from table 'Parameter' in file network_file)</span>
+0025 <span class="comment">%   state_data_file    (SBtab filename) SBtab file with tables 'FluxData',</span>
+0026 <span class="comment">%                                          'MetaboliteConcentrationData', 'EnzymeConcentrationData'</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">% Other settings:</span>
+0029 <span class="comment">%   model                        (string) model name (freely chosen by the user)</span>
+0030 <span class="comment">%   prb                          (string) estimation scenario name (chosen by the user, should not refer to optimisation settings)</span>
+0031 <span class="comment">%   run                          (string) estimation scenario name (chosen by the user, may refer to optimisation settings)</span>
+0032 <span class="comment">%   file_options.match_data_by   'ModelElementId' (default) or 'KeggId'</span>
+0033 <span class="comment">%   file_options.columns_mean    (cell array of strings) column names for mean data values in metabolite, flux, and enzyme table</span>
+0034 <span class="comment">%   file_options.columns_std     (cell array of strings) column names for std deviations   in metabolite, flux, and enzyme table</span>
+0035 <span class="comment">%   file_options.constraint_file (SBtab filename): file with metabolite bounds (optional; set to [] to use default constraints)</span>
+0036 <span class="comment">%   result_dir                   (directory name) directory for output files (default = matlab's tempdir)</span>
+0037 <span class="comment">% -------------------------------------------------------------</span>
+0038 
+0039 clear;
+0040 
+0041 
+0042 <span class="comment">% -------------------------------------------------------------</span>
+0043 <span class="comment">% Small test model &quot;branch_point_model&quot; (network structure from SBML or SBtab file)</span>
+0044 <span class="comment">%</span>
+0045 <span class="comment">% Network structure</span>
+0046 <span class="comment">%</span>
+0047 <span class="comment">% X</span>
+0048 <span class="comment">%  \</span>
+0049 <span class="comment">%    O - X</span>
+0050 <span class="comment">%  /</span>
+0051 <span class="comment">% X</span>
+0052 <span class="comment">%</span>
+0053 <span class="comment">% Use model and artificial data from folder resource-data/models/branch_point_model/data/</span>
+0054 <span class="comment">% -------------------------------------------------------------</span>
+0055 
+0056 <span class="comment">% % To use other models, please comment out the following lines</span>
+0057 
+0058 model                        = <span class="string">'branch_point_model'</span>; 
+0059 prb                          = <span class="string">'with_kinetic_data'</span>;
+0060 run                          = <span class="string">'with_kinetic_data_alpha_0_5'</span>;
+0061 network_file                 = [<a href="../../matlab/model-balancing/cmb_resourcedir.html" class="code" title="function d = cmb_resourcedir()">cmb_resourcedir</a> <span class="string">'/models/branch_point_model/data/artificial_network_true.tsv'</span>];
+0062 kinetic_data_file            = [<a href="../../matlab/model-balancing/cmb_resourcedir.html" class="code" title="function d = cmb_resourcedir()">cmb_resourcedir</a> <span class="string">'/models/branch_point_model/data/artificial_kinetic_data.tsv'</span>];
+0063 state_data_file              = [<a href="../../matlab/model-balancing/cmb_resourcedir.html" class="code" title="function d = cmb_resourcedir()">cmb_resourcedir</a> <span class="string">'/models/branch_point_model/data/artificial_state_data.tsv'</span>];
+0064 file_options.constraint_file = [<a href="../../matlab/model-balancing/cmb_resourcedir.html" class="code" title="function d = cmb_resourcedir()">cmb_resourcedir</a> <span class="string">'/models/branch_point_model/branch_point_model_ConcentrationConstraint.tsv'</span>];
+0065 file_options.match_data_by   = <span class="string">'ModelElementId'</span>;
+0066 file_options.columns_mean    = {<span class="string">'S1_Mean'</span>,<span class="string">'S2_Mean'</span>,<span class="string">'S3_Mean'</span>,<span class="string">'S4_Mean'</span>,<span class="string">'S5_Mean'</span>,<span class="string">'S6_Mean'</span>};
+0067 file_options.columns_std     = {<span class="string">'S1_Std'</span>,<span class="string">'S2_Std'</span>,<span class="string">'S3_Std'</span>,<span class="string">'S4_Std'</span>,<span class="string">'S5_Std'</span>,<span class="string">'S6_Std'</span>};
+0068 alpha                        = 0.5;
+0069 result_dir                   = tempdir; <span class="comment">% replace by your desired output directory</span>
+0070 
+0071 filenames = <a href="../../matlab/model-balancing/cmb_filenames.html" class="code" title="function filenames = cmb_filenames(model_name, prb, run, result_dir, network_sbml_file, flag_artificial)">cmb_filenames</a>(model, prb, run, result_dir);
+0072 
+0073 
+0074 <span class="comment">% -------------------------------------------------------------</span>
+0075 <span class="comment">% Small test model &quot;three_chain_model&quot; (network structure from SBML or SBtab file)</span>
+0076 <span class="comment">%</span>
+0077 <span class="comment">% Network structure</span>
+0078 <span class="comment">%</span>
+0079 <span class="comment">% X - O - O - X</span>
+0080 <span class="comment">%</span>
+0081 <span class="comment">% Model and artificial data from folder resource-data/models/three_chain_model/data/</span>
+0082 <span class="comment">% -------------------------------------------------------------</span>
+0083 
+0084 <span class="comment">% To use this model, please uncomment the following lines</span>
+0085 <span class="comment">%</span>
+0086 <span class="comment">% model                      = 'three_chain_model';</span>
+0087 <span class="comment">% prb                        = 'with_kinetic_data';</span>
+0088 <span class="comment">% run                        = 'with_kinetic_data_alpha_0_5';</span>
+0089 <span class="comment">% network_file               = [cmb_resourcedir '/models/three_chain_model/data/artificial_network_true.tsv'];</span>
+0090 <span class="comment">% kinetic_data_file          = [cmb_resourcedir '/models/three_chain_model/data/artificial_kinetic_data.tsv'];</span>
+0091 <span class="comment">% state_data_file            = [cmb_resourcedir '/models/three_chain_model/data/artificial_state_data.tsv'];</span>
+0092 <span class="comment">% file_options.constraint_file = [cmb_resourcedir '/models/three_chain_model/three_chain_model_ConcentrationConstraint.tsv'];</span>
+0093 <span class="comment">% file_options.match_data_by = 'ModelElementId';</span>
+0094 <span class="comment">% file_options.columns_mean  = {'S1_Mean','S2_Mean','S3_Mean','S4_Mean','S5_Mean','S6_Mean'};</span>
+0095 <span class="comment">% file_options.columns_std   = {'S1_Std','S2_Std','S3_Std','S4_Std','S5_Std','S6_Std'};</span>
+0096 <span class="comment">% alpha                      = 0.5;</span>
+0097 <span class="comment">% result_dir                 = tempdir; % replace by your desired output directory</span>
+0098 <span class="comment">%</span>
+0099 <span class="comment">% filenames   = cmb_filenames(model, prb, run, result_dir);</span>
+0100 
+0101 
+0102 <span class="comment">% -------------------------------------------------------------</span>
+0103 <span class="comment">% Small test model &quot;double_branch_model&quot; (network structure from SBML or SBtab file)</span>
+0104 <span class="comment">%</span>
+0105 <span class="comment">% Network structure</span>
+0106 <span class="comment">%</span>
+0107 <span class="comment">% X - O       X</span>
+0108 <span class="comment">%      \     /</span>
+0109 <span class="comment">%       O - O</span>
+0110 <span class="comment">%      /     \</span>
+0111 <span class="comment">% X - O       X</span>
+0112 <span class="comment">%</span>
+0113 <span class="comment">% Use model and artificial data from folder resource-data/models/double_branch_model/data/</span>
+0114 <span class="comment">% -------------------------------------------------------------</span>
+0115 
+0116 <span class="comment">% To use this model, please uncomment the following lines</span>
+0117 <span class="comment">%</span>
+0118 <span class="comment">% model                      = 'double_branch_model';</span>
+0119 <span class="comment">% prb                          = 'with_kinetic_data';</span>
+0120 <span class="comment">% run                          = 'with_kinetic_data_alpha_0_5';</span>
+0121 <span class="comment">% network_file              = [cmb_resourcedir '/models/double_branch_model/data/artificial_network_true.tsv'];</span>
+0122 <span class="comment">% kinetic_data_file         = [cmb_resourcedir '/models/double_branch_model/data/artificial_kinetic_data.tsv'];</span>
+0123 <span class="comment">% state_data_file           = [cmb_resourcedir '/models/double_branch_model/data/artificial_state_data.tsv'];</span>
+0124 <span class="comment">% file_options.constraint_file = [cmb_resourcedir '/models/double_branch_model/double_branch_model_ConcentrationConstraint.tsv'];</span>
+0125 <span class="comment">% file_options.match_data_by = 'ModelElementId';</span>
+0126 <span class="comment">% file_options.columns_mean  = {'S1_Mean','S2_Mean','S3_Mean','S4_Mean','S5_Mean','S6_Mean'};</span>
+0127 <span class="comment">% file_options.columns_std   = {'S1_Std','S2_Std','S3_Std','S4_Std','S5_Std','S6_Std'};</span>
+0128 <span class="comment">% alpha                      = 0.5;</span>
+0129 <span class="comment">% result_dir                 = tempdir; % replace by your desired output directory</span>
+0130 <span class="comment">%</span>
+0131 <span class="comment">% filenames   = cmb_filenames(model, prb, run, result_dir);</span>
+0132 
+0133 
+0134 <span class="comment">% -------------------------------------------------------------</span>
+0135 <span class="comment">% E. coli CCM model (network structure from SBML file)</span>
+0136 <span class="comment">% (calculation time: a few minutes)</span>
+0137 <span class="comment">% -------------------------------------------------------------</span>
+0138 
+0139 <span class="comment">% To use this model, please uncomment the following lines</span>
+0140 <span class="comment">%</span>
+0141 <span class="comment">% model                        = 'e_coli_noor_2016';</span>
+0142 <span class="comment">% prb                          = 'with_kinetic_data';</span>
+0143 <span class="comment">% run                          = 'with_kinetic_data_alpha_0_5';</span>
+0144 <span class="comment">% network_file                 = [cmb_resourcedir '/models/e_coli_noor_2016/e_coli_noor_2016.tsv'];</span>
+0145 <span class="comment">% kinetic_data_file            = [cmb_resourcedir '/models/e_coli_noor_2016/e_coli_ccm_kinetic_data/e_coli_noor_2016_kinetic_data_modified.tsv'];</span>
+0146 <span class="comment">% state_data_file              = [cmb_resourcedir '/models/e_coli_noor_2016/e_coli_ccm_state_data_COPY_FOR_INFO.tsv'];</span>
+0147 <span class="comment">% %% Concentration constraints are given in a separate file:</span>
+0148 <span class="comment">% file_options.constraint_file = [cmb_resourcedir '/models/e_coli_noor_2016/e_coli_noor_2016_ConcentrationConstraint.tsv'];</span>
+0149 <span class="comment">% file_options.match_data_by   = 'ModelElementId';</span>
+0150 <span class="comment">% file_options.columns_mean    = {'S_1_Mean'};</span>
+0151 <span class="comment">% file_options.columns_std     = {};</span>
+0152 <span class="comment">% alpha                        = 0.5;</span>
+0153 <span class="comment">% result_dir                   = tempdir; % replace by your desired output directory</span>
+0154 <span class="comment">%</span>
+0155 <span class="comment">% filenames   = cmb_filenames(model, prb, run, result_dir);</span>
+0156 
+0157 <span class="comment">% -------------------------------------------------------------</span>
+0158 <span class="comment">% Your model (network structure from SBtab file)</span>
+0159 <span class="comment">% -------------------------------------------------------------</span>
+0160 
+0161 <span class="comment">% To balance your own model, please prepare your model and data in the</span>
+0162 <span class="comment">% form of three input files (in SBtab format), describing (i) the</span>
+0163 <span class="comment">% network structure and metabolite constraints (SBtab file with tables</span>
+0164 <span class="comment">% 'Reaction', 'Compound', 'Position' (optional), 'Parameter'</span>
+0165 <span class="comment">% (optional)); (ii) kinetic data (SBtab file with table</span>
+0166 <span class="comment">% 'ParameterData'); and (iii) state data (SBtab file with tables</span>
+0167 <span class="comment">% 'FluxData', 'MetaboliteConcentrationData',</span>
+0168 <span class="comment">% 'EnzymeConcentrationData'). Please have a look at the files</span>
+0169 <span class="comment">% 'artificial_network_true.tsv', 'artificial_kinetic_data.tsv', and</span>
+0170 <span class="comment">% 'artificial_state_data.tsv' in the folder</span>
+0171 <span class="comment">% ./resourcedir/models/branch_point_model/data/ for an example.</span>
+0172 <span class="comment">%</span>
+0173 <span class="comment">% Then, uncomment the following lines, and insert your information</span>
+0174 <span class="comment">%</span>
+0175 <span class="comment">% model                        = '...';                  % (string)    model name,   used for filenames (no special characters)</span>
+0176 <span class="comment">% prb                          = 'my_problem';           % (string)    problem name, used for filenames (no special characters)</span>
+0177 <span class="comment">% run                          = 'my_run';               % (string)    run name,     used for filenames (no special characters)</span>
+0178 <span class="comment">% network_file                 = 'FILEPATH_XXX.tsv'      % (file path) model file        (SBtab) - file should include Concentration constraint table</span>
+0179 <span class="comment">% kinetic_data_file            = 'FILEPATH_YYY.tsv'      % (file path) kinetic data file (SBtab)</span>
+0180 <span class="comment">% state_data_file              = 'FILEPATH_ZZZ.tsv'      % (file path) state data file   (SBtab)</span>
+0181 <span class="comment">% file_options.constraint_file = network_file;           % (file path) optionally, replace by SBtab file with metabolite constraints</span>
+0182 <span class="comment">% file_options.match_data_by   = 'ModelElementId';       % define that model and data will be matched by model element ids (not KEGG ids)</span>
+0183 <span class="comment">% file_options.columns_mean    = {'T1_Mean', 'T2_Mean'}; % (cell array of strings) columns in state data file containing sample mean values</span>
+0184 <span class="comment">% file_options.columns_std     = {'T1_Std', 'T2_Std'};   % (cell array of strings) columns in state data file containing sample std deviations (optional, default={})</span>
+0185 <span class="comment">% alpha                        = 0.5;                    % alpha value used in model balancing</span>
+0186 <span class="comment">% result_dir                   = 'OUTDIR_PATH';          % (directory path) desired output directory (default: tempdir)</span>
+0187 <span class="comment">%</span>
+0188 <span class="comment">% filenames   = cmb_filenames(model, prb, run, result_dir);</span>
+0189 
+0190 
+0191 <span class="comment">% -------------------------------------------------</span>
+0192 <span class="comment">% Set options (for other options, see 'help cmb_default_options')</span>
+0193 <span class="comment">% -------------------------------------------------</span>
+0194 
+0195 cmb_options                          = <a href="../../matlab/model-balancing/cmb_default_options.html" class="code" title="function cmb_options = cmb_default_options(flag_artificial)">cmb_default_options</a>;
+0196 cmb_options.run                      = run;
+0197 cmb_options.prior_variant            = <span class="string">'broad_prior'</span>;
+0198 cmb_options.initial_values_variant   = <span class="string">'average_sample'</span>; 
+0199 cmb_options.enzyme_score_alpha       = alpha;
+0200 cmb_options.metabolic_prior_geom_std = 10; <span class="comment">% set width of metabolite prior</span>
+0201 cmb_options.save_results             = 0;  <span class="comment">% set to 1 to save result files</span>
+0202 cmb_options.save_graphics            = 0;  <span class="comment">% set to 1 to save graphics files</span>
+0203 
+0204 
+0205 <span class="comment">% -------------------------------------------------</span>
+0206 <span class="comment">% Set specific options for different estimation scenarios</span>
+0207 <span class="comment">% (please modify for your own estimation scenarios; 'run' can be freely defined)</span>
+0208 <span class="comment">% -------------------------------------------------</span>
+0209 
+0210 <span class="keyword">switch</span> run, 
+0211   
+0212   <span class="keyword">case</span> <span class="string">'with_kinetic_data'</span>,
+0213     cmb_options.use_kinetic_data = <span class="string">'all'</span>;
+0214   
+0215   <span class="keyword">case</span> <span class="string">'with_Keq_data'</span>,
+0216     cmb_options.use_kinetic_data = <span class="string">'only_Keq'</span>;
+0217   
+0218   <span class="keyword">case</span> <span class="string">'no_kinetic_data'</span>,
+0219     cmb_options.use_kinetic_data = <span class="string">'none'</span>;
+0220 
+0221 <span class="keyword">end</span>
+0222 
+0223 
+0224 <span class="comment">% -----------------------------------------------</span>
+0225 <span class="comment">% Load model and data</span>
+0226 <span class="comment">% -----------------------------------------------</span>
+0227 
+0228 [network, q_info, data, c_init, kinetic_data, state_data, conc_min, conc_max] = <a href="../../matlab/model-balancing/cmb-file-input-output/cmb_load_and_convert_model_and_data.html" class="code" title="function [network, q_info, data, c_init, kinetic_data, state_data, conc_min, conc_max] = cmb_load_and_convert_model_and_data(cmb_options, file, file_options)">cmb_load_and_convert_model_and_data</a>(cmb_options, {network_file, kinetic_data_file, state_data_file}, file_options);
+0229 
+0230 <span class="comment">% Save model and data to SBtab files (in result directory)</span>
+0231 
+0232 <span class="keyword">if</span> cmb_options.save_results,
+0233   save_kinetic_and_state_data(network, kinetic_data, state_data, filenames.kinetic_data, filenames.state_data);
+0234 <span class="keyword">end</span>
+0235 
+0236 <span class="comment">% Please uncomment to show data</span>
+0237 
+0238 <span class="keyword">if</span> 0,
+0239   kinetic_data_print(kinetic_data,network);
+0240   [c_mean, c_std ] = lognormal_log2normal(data.X.mean, data.X.std);
+0241   [c_mean, c_std ]
+0242   [data.E.mean, data.E.std]
+0243   [data.V.mean, data.V.std]
+0244 <span class="keyword">end</span>
+0245 
+0246 <span class="comment">% Please uncomment to plot network and data (mean log concentrations and fluxes for sample #1 )</span>
+0247 
+0248 <span class="keyword">if</span> 0,
+0249   netgraph_concentrations(network, data.X.mean(:,1), data.V.mean(:,1),1);
+0250 <span class="keyword">end</span>
+0251 
+0252 
+0253 <span class="comment">% -----------------------------------------------</span>
+0254 <span class="comment">% Generate data structures for bounds and priors</span>
+0255 <span class="comment">% -----------------------------------------------</span>
+0256 
+0257 [bounds, prior, init] = <a href="../../matlab/model-balancing/cmb_model_and_data.html" class="code" title="function [bounds, prior, init] = cmb_model_and_data(model, network, data, q_info, c_init, cmb_options, conc_min, conc_max)">cmb_model_and_data</a>(model, network, data, q_info, c_init, cmb_options, conc_min, conc_max);
+0258 
+0259 
+0260 <span class="comment">% --------------------------------------------------------------</span>
+0261 <span class="comment">% Save model and data to JSON files (for python code) (in result directory)</span>
+0262 <span class="comment">% --------------------------------------------------------------</span>
+0263 
+0264 <span class="keyword">if</span> cmb_options.save_results,
+0265   cvxpy_problem = <a href="../../matlab/model-balancing/cmb-cvxpy/cvxpy_problem_data_structure.html" class="code" title="function problem = cvxpy_problem_data_structure(network, q_info, prior, data, bounds, true_model, cmb_options)">cvxpy_problem_data_structure</a>(network, q_info, prior, data, bounds, []);
+0266   save_json_file(cvxpy_problem, filenames.model_and_data_json);
+0267   display(sprintf(<span class="string">'Writing JSON file for cvxpy: %s'</span>, filenames.model_and_data_json));
+0268 <span class="keyword">end</span>
+0269 
+0270 
+0271 <span class="comment">% -----------------------------------------------</span>
+0272 <span class="comment">% Run model balancing and save output data</span>
+0273 <span class="comment">% (file locations are specified in struct 'filenames')</span>
+0274 <span class="comment">% -----------------------------------------------</span>
+0275 
+0276 <a href="../../matlab/model_balancing.html" class="code" title="function [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max, preposterior, pp] = model_balancing(filenames, cmb_options, network, q_info, prior, bounds, data, true, init)">model_balancing</a>(filenames, cmb_options, network, q_info, prior, bounds, data, [], init);</pre></div>
+<hr><address>Generated on Fri 23-Oct-2026 20:27:13 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

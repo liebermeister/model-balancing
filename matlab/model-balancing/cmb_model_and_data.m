@@ -1,6 +1,6 @@
 function [bounds, prior, init] = cmb_model_and_data(model, network, data, q_info, c_init, cmb_options, conc_min, conc_max)
 
-% [bounds, prior, init] = cmb_model_and_data(model, network, data, q_info, c_init, cmb_options)
+% [bounds, prior, init] = cmb_model_and_data(model, network, data, q_info, c_init, cmb_options, conc_min, conc_max)
 %
 % Prepare data structures describing a Convex Model Balancing problem 
 %

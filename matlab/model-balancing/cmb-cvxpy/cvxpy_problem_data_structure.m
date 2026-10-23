@@ -28,17 +28,15 @@ function problem = cvxpy_problem_data_structure(network, q_info, prior, data, bo
 %     .. where each subfield of .kinetic_constants is a struct of the form
 %       .unit:              string, typically 'mM' and '1/s'
 %       .true:              (column vector or matrix; true values in the case of artificial data; otherwise empty)
-%       .pprior_ln.mean     pseudoprior, mean vector of log values
-%       .pprior_ln.cov      pseudoprior, covariance matrix of log values
 %       .bounds_ln.min      lower bounds on log values
 %       .bounds_ln.max      upper bounds on log values
 %       .data_ln.mean       data mean vector of log values
-%       .data_ln.cov        data covariance matrix of log values
-%       .bounds.min         lower bounds on log values
-%       .bounds.max         upper bounds on log values
+%       .data_ln.std        data std dev vector of log values
+%       .bounds.min         lower bounds
+%       .bounds.max         upper bounds
 %       .combined.geom_mean preposterior geometric mean vector
 %       .combined.mean_ln   preposterior mean vector of log values
-%       %.combined.cov_ln   preposterior covariance matrix of log values
+%       .combined.prec_ln   preposterior precision matrix of log values
 %
 %   .kinetic_constants.all
 %   .kinetic_constants.all.names      parameter names, list of strings
@@ -55,8 +53,8 @@ function problem = cvxpy_problem_data_structure(network, q_info, prior, data, bo
 %   .metabolite_concentrations.bounds_ln.max      matrix of upper bounds on metabolite log-concentrations
 %   .metabolite_concentrations.data_ln.mean       matrix of data  mean values for metabolite log-concentrations
 %   .metabolite_concentrations.data_ln.std        matrix of data  std dev for metabolite log-concentrations
-%   .metabolite_concentrations.bounds.min         matrix of preposterior geom mean for metabolite concentrations
-%   .metabolite_concentrations.bounds.max         matrix of preposterior geom std  for metabolite concentrations
+%   .metabolite_concentrations.bounds.min         matrix of lower bounds on metabolite concentrations
+%   .metabolite_concentrations.bounds.max         matrix of upper bounds on metabolite concentrations
 %   .metabolite_concentrations.combined.geom_mean matrix of preposterior geom mean for metabolite concentrations
 %   .metabolite_concentrations.combined.geom_std  matrix of preposterior geom std  for metabolite concentrations
 %
@@ -76,7 +74,7 @@ function problem = cvxpy_problem_data_structure(network, q_info, prior, data, bo
 %   o convention for order of KM, KA, and KI entries (in vectors) + their relation to entries in the matrix:
 %     vector elements are ordered by their appearance in the respective (stoichiometric or regulation) matrix, in the format #reactions x # metabolites,
 %     and following matlab's convention for indices in matrix elements (first column from top to bottom, then second column etc)
-%     in python this corrresponds to matrix formatted as #metabolites x #reactions, and using the opposite convetion for indices 
+%     in python this corresponds to matrix formatted as #metabolites x #reactions, and using the opposite convention for indices 
 %     (first row, then second row, etc)
 %   fields called "combined" contain the preposterior distribution of the respective quantities
   

@@ -1,0 +1,145 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of cmb_make_prior</title>
+  <meta name="keywords" content="cmb_make_prior">
+  <meta name="description" content="prior = cmb_make_prior(network, q_info, cmb_options)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">matlab</a> &gt; <a href="index.html">model-balancing</a> &gt; cmb_make_prior.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for matlab/model-balancing&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>cmb_make_prior
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>prior = cmb_make_prior(network, q_info, cmb_options)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function prior = cmb_make_prior(network,q_info,cmb_options); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> prior = cmb_make_prior(network, q_info, cmb_options)
+
+ Construct prior distributions for model variables in the model balancing problem
+ (from the information in cmb_options.quantities, see cmb_default_options)
+
+ Output variables
+   prior  struct with fields
+     .q            prior for independent log kinetic constants (fields .names, .mean, .std, .prec)
+     .qdep_pseudo  pseudo prior for dependent log kinetic constants (fields .names, .mean, .std, .prec)
+     .X            prior for log metabolite concentrations (fields .mean, .std)
+     .lnE          prior for log enzyme concentrations (fields .mean, .std)
+     .V            prior for fluxes (fields .mean, .std)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="cmb_generate_artificial_data.html" class="code" title="function [kinetics, prior, bounds, data, true, kinetic_data, state_data] = cmb_generate_artificial_data(network, cmb_options, q_info, c_init, conc_min, conc_max, ind_e_off, Keq_init, v_init)">cmb_generate_artificial_data</a>	[kinetics, prior, bounds, data, true, kinetic_data, state_data] = cmb_generate_artificial_data(network, cmb_options, q_info, c_init, conc_min, conc_max, ind_e_off, Keq_init, v_init)</li><li><a href="cmb_model_and_data.html" class="code" title="function [bounds, prior, init] = cmb_model_and_data(model, network, data, q_info, c_init, cmb_options, conc_min, conc_max)">cmb_model_and_data</a>	[bounds, prior, init] = cmb_model_and_data(model, network, data, q_info, c_init, cmb_options, conc_min, conc_max)</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function prior = cmb_make_prior(network,q_info,cmb_options);</a>
+0002 
+0003 <span class="comment">% prior = cmb_make_prior(network, q_info, cmb_options)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% Construct prior distributions for model variables in the model balancing problem</span>
+0006 <span class="comment">% (from the information in cmb_options.quantities, see cmb_default_options)</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% Output variables</span>
+0009 <span class="comment">%   prior  struct with fields</span>
+0010 <span class="comment">%     .q            prior for independent log kinetic constants (fields .names, .mean, .std, .prec)</span>
+0011 <span class="comment">%     .qdep_pseudo  pseudo prior for dependent log kinetic constants (fields .names, .mean, .std, .prec)</span>
+0012 <span class="comment">%     .X            prior for log metabolite concentrations (fields .mean, .std)</span>
+0013 <span class="comment">%     .lnE          prior for log enzyme concentrations (fields .mean, .std)</span>
+0014 <span class="comment">%     .V            prior for fluxes (fields .mean, .std)</span>
+0015 
+0016 <span class="comment">% the following distribution can be improved (using the results of kinetic parameter balancing)</span>
+0017 <span class="comment">% the variables for KM, KA, KI are vector containing the relevant components</span>
+0018 
+0019 [nr,nm,nx,KM_ind,KA_ind,KI_ind,nKM,nKA,nKI] = network_numbers(network);
+0020 
+0021 
+0022 <span class="comment">% --------------------------------------------------------------</span>
+0023 <span class="comment">% Priors for model parameters</span>
+0024 
+0025 prior.q.names = q_info.q.names;
+0026 
+0027 <span class="keyword">switch</span> cmb_options.parameterisation,
+0028   <span class="keyword">case</span> <span class="string">'KV_KM_KA_KI'</span>,
+0029     prior.q.mean = [cmb_options.quantities.KV.mean_ln * repmat(1,nr,1); <span class="keyword">...</span>
+0030                     cmb_options.quantities.KM.mean_ln * repmat(1,nKM,1);  <span class="keyword">...</span>
+0031                     cmb_options.quantities.KA.mean_ln * repmat(1,nKA,1); <span class="keyword">...</span>
+0032                     cmb_options.quantities.KI.mean_ln * repmat(1,nKI,1)];
+0033     
+0034     prior.q.std  = [cmb_options.quantities.KV.std_ln  * repmat(1,nr,1); <span class="keyword">...</span>
+0035                     cmb_options.quantities.KM.std_ln  * repmat(1,nKM,1); <span class="keyword">...</span>
+0036                     cmb_options.quantities.KA.std_ln  * repmat(1,nKA,1); <span class="keyword">...</span>
+0037                     cmb_options.quantities.KI.std_ln  * repmat(1,nKI,1)];
+0038     
+0039   <span class="keyword">case</span> <span class="string">'Keq_KV_KM_KA_KI'</span>,
+0040     nKeqind = length(q_info.q.index.Keq);
+0041     prior.q.mean = [cmb_options.quantities.Keq.mean_ln * repmat(1,nKeqind,1); <span class="keyword">...</span>
+0042                     cmb_options.quantities.KV.mean_ln  * repmat(1,nr,1); <span class="keyword">...</span>
+0043                     cmb_options.quantities.KM.mean_ln  * repmat(1,nKM,1);  <span class="keyword">...</span>
+0044                     cmb_options.quantities.KA.mean_ln  * repmat(1,nKA,1); <span class="keyword">...</span>
+0045                     cmb_options.quantities.KI.mean_ln  * repmat(1,nKI,1)];
+0046     
+0047     prior.q.std  = [cmb_options.quantities.Keq.std_ln * repmat(1,nKeqind,1); <span class="keyword">...</span>
+0048                     cmb_options.quantities.KV.std_ln  * repmat(1,nr,1); <span class="keyword">...</span>
+0049                     cmb_options.quantities.KM.std_ln  * repmat(1,nKM,1); <span class="keyword">...</span>
+0050                     cmb_options.quantities.KA.std_ln  * repmat(1,nKA,1); <span class="keyword">...</span>
+0051                     cmb_options.quantities.KI.std_ln  * repmat(1,nKI,1)];
+0052 
+0053   <span class="keyword">otherwise</span> error(<span class="string">'cmb_options.parameterisation not supported'</span>);
+0054 <span class="keyword">end</span>
+0055 
+0056 prior.q.prec = diag(1./prior.q.std.^2);
+0057 
+0058 <span class="comment">% --------------------------------------------------------------</span>
+0059 <span class="comment">% Pseudo values for dependent model parameters</span>
+0060 
+0061 prior.qdep_pseudo.names = q_info.qdep.names;
+0062 
+0063 prior.qdep_pseudo.mean = [<span class="keyword">...</span>
+0064     cmb_options.quantities.Keq.mean_ln   * repmat(1,nr,1); <span class="keyword">...</span>
+0065     cmb_options.quantities.Kcatf.mean_ln * repmat(1,nr,1);  <span class="keyword">...</span>
+0066     cmb_options.quantities.Kcatr.mean_ln * repmat(1,nr,1)];
+0067 
+0068 prior.qdep_pseudo.std  = [<span class="keyword">...</span>
+0069     cmb_options.quantities.Keq.std_ln   * repmat(1,nr,1); <span class="keyword">...</span>
+0070     cmb_options.quantities.Kcatf.std_ln * repmat(1,nr,1); <span class="keyword">...</span>
+0071     cmb_options.quantities.Kcatr.std_ln * repmat(1,nr,1)];
+0072 
+0073 prior.qdep_pseudo.prec = diag(1./prior.qdep_pseudo.std.^2);
+0074 
+0075 
+0076 <span class="comment">% --------------------------------------------------------------</span>
+0077 <span class="comment">% Priors for metabolic variables</span>
+0078 
+0079 ns = cmb_options.ns; 
+0080 
+0081 prior.X.mean = log(cmb_options.metabolic_prior_c_geom_mean * ones(nm, ns));
+0082 prior.lnE.mean = log(cmb_options.metabolic_prior_e_geom_mean * ones(nr, ns));
+0083 prior.V.mean = zeros(nr, ns);
+0084 
+0085 prior.X.std  = log(cmb_options.metabolic_prior_c_geom_std) * ones(size(prior.X.mean));
+0086 prior.lnE.std = log(cmb_options.metabolic_prior_e_geom_std) * ones(size(prior.lnE.mean));
+0087 prior.V.std  = 1 * ones(size(prior.V.mean)); <span class="comment">% not used</span></pre></div>
+<hr><address>Generated on Fri 23-Oct-2026 20:27:13 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

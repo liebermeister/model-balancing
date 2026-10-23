@@ -1,0 +1,248 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of cmb_define_parameterisation</title>
+  <meta name="keywords" content="cmb_define_parameterisation">
+  <meta name="description" content="q_info = cmb_define_parameterisation(network, cmb_options)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">matlab</a> &gt; <a href="../index.html">model-balancing</a> &gt; <a href="index.html">cmb-variables</a> &gt; cmb_define_parameterisation.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for matlab/model-balancing/cmb-variables&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>cmb_define_parameterisation
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>q_info = cmb_define_parameterisation(network, cmb_options)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function q_info = cmb_define_parameterisation(network, cmb_options) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> q_info = cmb_define_parameterisation(network, cmb_options)
+
+ q_info is struct containing a description of the independent / all parameters
+                  as well as the conversion matrices between them 
+
+ Parameterisation 'KV_KM_KA_KI':
+  q contains independent parameters: KV, KM, KA, KI
+  qall contains all parameters:      KV, KM, KA, KI
+
+ Parameterisation 'Keq_KV_KM_KA_KI':
+  q contains independent parameters: Keq_ind, KV, KM, KA, KI
+  qall contains all parameters:      Keq,     KV, KM, KA, KI, Kcat_f, Kcat_r
+
+ Defining the independent equilibrium constants:  
+   split Ntot = A * B, where A has full column rank
+   then we know that we can write keq = B' * keqind, where keqind contains independent constants</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../matlab/model-balancing/cmb_model_artificial_data.html" class="code" title="function [network, bounds, prior, q_info, data, true, kinetic_data, state_data, conc_min, conc_max] = cmb_model_artificial_data(network_file, cmb_options, c_init, position_sbtab_file, constraint_sbtab_file, ind_e_off, Keq_init, v_init)">cmb_model_artificial_data</a>	[network, bounds, prior, q_info, data, true, kinetic_data, state_data, conc_min, conc_max] = cmb_model_artificial_data(network_file, cmb_options, c_init, position_sbtab_file, constraint_sbtab_file, ind_e_off, Keq_init, v_init)</li><li><a href="../../../matlab/model_balancing.html" class="code" title="function [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max, preposterior, pp] = model_balancing(filenames, cmb_options, network, q_info, prior, bounds, data, true, init)">model_balancing</a>	[optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max, preposterior, pp] = model_balancing(filenames, cmb_options, network, q_info, prior, bounds, data, true, init)</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function q_info = cmb_define_parameterisation(network, cmb_options)</a>
+0002 
+0003 <span class="comment">% q_info = cmb_define_parameterisation(network, cmb_options)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% q_info is struct containing a description of the independent / all parameters</span>
+0006 <span class="comment">%                  as well as the conversion matrices between them</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% Parameterisation 'KV_KM_KA_KI':</span>
+0009 <span class="comment">%  q contains independent parameters: KV, KM, KA, KI</span>
+0010 <span class="comment">%  qall contains all parameters:      KV, KM, KA, KI</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% Parameterisation 'Keq_KV_KM_KA_KI':</span>
+0013 <span class="comment">%  q contains independent parameters: Keq_ind, KV, KM, KA, KI</span>
+0014 <span class="comment">%  qall contains all parameters:      Keq,     KV, KM, KA, KI, Kcat_f, Kcat_r</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% Defining the independent equilibrium constants:</span>
+0017 <span class="comment">%   split Ntot = A * B, where A has full column rank</span>
+0018 <span class="comment">%   then we know that we can write keq = B' * keqind, where keqind contains independent constants</span>
+0019   
+0020 [nr,nm,nx,KM_ind,KA_ind,KI_ind,nKM,nKA,nKI] = network_numbers(network);
+0021 
+0022 h = ones(nr,1);
+0023 
+0024 <span class="keyword">switch</span> cmb_options.parameterisation,  
+0025   
+0026   <span class="keyword">case</span> <span class="string">'KV_KM_KA_KI'</span>, 
+0027     <span class="comment">%% assuming Keq are fixed, as given by model</span>
+0028 
+0029     <span class="comment">%% Independent parameters</span>
+0030     
+0031      q.names = [repmat({<span class="string">'KV'</span>},nr,1); <span class="keyword">...</span>
+0032                 repmat({<span class="string">'KM'</span>},nKM,1); <span class="keyword">...</span>
+0033                 repmat({<span class="string">'KA'</span>},nKA,1); <span class="keyword">...</span>
+0034                 repmat({<span class="string">'KI'</span>},nKI,1) ];
+0035      
+0036      q.index.KV  = 1:nr;    
+0037      q.index.KM  = nr + [1:nKM];
+0038      q.index.KA  = nr + nKM + [1:nKA];
+0039      q.index.KI  = nr + nKM + nKA + [1:nKI];
+0040 
+0041      q.index_q = [q.index.KV, q.index.KM, q.index.KA, q.index.KI];
+0042      
+0043      <span class="comment">%% All parameters</span>
+0044      qall = q;
+0045      
+0046   <span class="keyword">case</span> <span class="string">'Keq_KV_KM_KA_KI'</span>,
+0047     <span class="comment">%% include independent Keq values into parameter vector</span>
+0048     
+0049     <span class="comment">%%%% --------- NOT YET SURE IF THIS IS CORRECT .. CHECK AGAIN !!!!</span>
+0050     [Bt, At, independent_reactions] = reduce_N(network.N');
+0051     nKeqind = size(Bt,2);
+0052     
+0053     <span class="comment">%% Independent parameters</span>
+0054     
+0055     q.names = [repmat({<span class="string">'Keqind'</span>},nKeqind,1); <span class="keyword">...</span>
+0056                repmat({<span class="string">'KV'</span>},nr,1); <span class="keyword">...</span>
+0057                repmat({<span class="string">'KM'</span>},nKM,1); <span class="keyword">...</span>
+0058                repmat({<span class="string">'KA'</span>},nKA,1); <span class="keyword">...</span>
+0059                repmat({<span class="string">'KI'</span>},nKI,1) ];
+0060     
+0061     q.index.Keq = 1:nKeqind;
+0062     q.index.KV  = nKeqind + [1:nr];    
+0063     q.index.KM  = nKeqind + nr + [1:nKM];
+0064     q.index.KA  = nKeqind + nr + nKM + [1:nKA];
+0065     q.index.KI  = nKeqind + nr + nKM + nKA + [1:nKI];
+0066 
+0067     q.index_q = [q.index.Keq, q.index.KV, q.index.KM, q.index.KA, q.index.KI];
+0068 
+0069      <span class="comment">%% All parameters</span>
+0070 
+0071      qall.names = [repmat({<span class="string">'Keq'</span>},nr,1); <span class="keyword">...</span>
+0072                    repmat({<span class="string">'KV'</span>},nr,1); <span class="keyword">...</span>
+0073                    repmat({<span class="string">'KM'</span>},nKM,1); <span class="keyword">...</span>
+0074                    repmat({<span class="string">'KA'</span>},nKA,1); <span class="keyword">...</span>
+0075                    repmat({<span class="string">'KI'</span>},nKI,1);
+0076                    repmat({<span class="string">'Kcatf'</span>},nr,1); <span class="keyword">...</span>
+0077                    repmat({<span class="string">'Kcatr'</span>},nr,1); <span class="keyword">...</span>
+0078 ]; 
+0079      
+0080      qall.index.Keq   = 1:nr;
+0081      qall.index.KV    = nr + [1:nr];    
+0082      qall.index.KM    = 2 * nr + [1:nKM];
+0083      qall.index.KA    = 2 * nr + nKM + [1:nKA];
+0084      qall.index.KI    = 2 * nr + nKM + nKA + [1:nKI];
+0085      qall.index.Kcatf = 2 * nr + nKM + nKA + nKI + [1:nr];    
+0086      qall.index.Kcatr = 2 * nr + nKM + nKA + nKI + nr + [1:nr];    
+0087      
+0088   <span class="keyword">otherwise</span> error(<span class="string">'Parameterisation not supported'</span>);
+0089 
+0090 <span class="keyword">end</span>
+0091 
+0092 <span class="comment">% ---------------------------------------------------</span>
+0093               
+0094 q.number    = length(q.names);
+0095 qall.number = length(qall.names);
+0096 
+0097 
+0098 <span class="comment">% ---------------------------------------------------</span>
+0099 <span class="comment">% Conversion matrices</span>
+0100 
+0101 M_q_to_qall = zeros(qall.number, q.number);
+0102 M_qall_to_q = zeros(q.number, qall.number);
+0103 
+0104 M_q_to_qall(qall.index.KV, q.index.KV) = eye(nr);
+0105 M_q_to_qall(qall.index.KM, q.index.KM) = eye(nKM);
+0106 M_q_to_qall(qall.index.KA, q.index.KA) = eye(nKA);
+0107 M_q_to_qall(qall.index.KI, q.index.KI) = eye(nKI);
+0108 
+0109 M_qall_to_q(q.index.KV, qall.index.KV) = eye(nr);
+0110 M_qall_to_q(q.index.KM, qall.index.KM) = eye(nKM);
+0111 M_qall_to_q(q.index.KA, qall.index.KA) = eye(nKA);
+0112 M_qall_to_q(q.index.KI, qall.index.KI) = eye(nKI);
+0113 
+0114 <span class="keyword">switch</span> cmb_options.parameterisation,  
+0115   <span class="keyword">case</span> <span class="string">'Keq_KV_KM_KA_KI'</span>,
+0116     <span class="comment">%% formula for kcat+- (see Eq. 25 in modular rate law paper)</span>
+0117     stoich_matrix_reaction_KM = zeros(nr,nKM);
+0118     [ind_r,ind_m] = ind2sub([nr,nm],KM_ind);
+0119     <span class="keyword">for</span> it = 1:nKM,
+0120       stoich_matrix_reaction_KM(ind_r(it),it) = network.N(ind_m(it),ind_r(it));
+0121     <span class="keyword">end</span>
+0122     M_q_to_qall(qall.index.Keq,   q.index.Keq) = Bt;
+0123     M_q_to_qall(qall.index.Kcatf, q.index.KV)  = eye(nr);
+0124     M_q_to_qall(qall.index.Kcatf, q.index.Keq) =  0.5 * diag(h) * Bt;
+0125     M_q_to_qall(qall.index.Kcatf, q.index.KM)  = -0.5 * diag(h) * stoich_matrix_reaction_KM;
+0126     M_q_to_qall(qall.index.Kcatr, q.index.KV)  = eye(nr);                                               
+0127     M_q_to_qall(qall.index.Kcatr, q.index.Keq) = -0.5 * diag(h) * Bt;
+0128     M_q_to_qall(qall.index.Kcatr, q.index.KM)  =  0.5 * diag(h) * stoich_matrix_reaction_KM;
+0129 
+0130     M_qall_to_q(q.index.Keq, qall.index.Keq)   = pinv(full(Bt));
+0131     
+0132 <span class="keyword">end</span>
+0133 
+0134 
+0135 
+0136 
+0137 <span class="comment">% ------------------------------------------</span>
+0138 <span class="comment">% dependent q variables</span>
+0139 
+0140 qdep.names = [repmat({<span class="string">'Keq'</span>},nr,1); <span class="keyword">...</span>
+0141               repmat({<span class="string">'Kcatf'</span>},nr,1); <span class="keyword">...</span>
+0142               repmat({<span class="string">'Kcatr'</span>},nr,1); <span class="keyword">...</span>
+0143              ];
+0144 qdep.index.Keq    = 1:nr;
+0145 qdep.index.Kcatf  = nr + [1:nr];    
+0146 qdep.index.Kcatr  = 2 * nr + [1:nr];
+0147 qdep.number = length(qdep.names);
+0148 
+0149 M_q_to_qdep = zeros(qdep.number, q.number);
+0150 M_q_to_qdep(qdep.index.Keq,   q.index.Keq) = eye(nr);
+0151 M_q_to_qdep(qdep.index.Kcatf, q.index.KV)  = eye(nr);
+0152 M_q_to_qdep(qdep.index.Kcatf, q.index.Keq) =  0.5 * diag(h) * Bt;
+0153 M_q_to_qdep(qdep.index.Kcatf, q.index.KM)  = -0.5 * diag(h) * stoich_matrix_reaction_KM;
+0154 M_q_to_qdep(qdep.index.Kcatr, q.index.KV)  = eye(nr);                                               
+0155 M_q_to_qdep(qdep.index.Kcatr, q.index.Keq) = -0.5 * diag(h) * Bt;
+0156 M_q_to_qdep(qdep.index.Kcatr, q.index.KM)  =  0.5 * diag(h) * stoich_matrix_reaction_KM;
+0157 
+0158 M_qdep_to_qall = zeros(qall.number, qdep.number);
+0159 M_qdep_to_qall(qall.index.Keq,   qdep.index.Keq)    = eye(nr);
+0160 M_qdep_to_qall(qall.index.Kcatf, qdep.index.Kcatf) = eye(nr);
+0161 M_qdep_to_qall(qall.index.Kcatr, qdep.index.Kcatr) = eye(nr);
+0162 
+0163 <span class="comment">% ------------------------------------------</span>
+0164 <span class="comment">% Put together data structure q_info</span>
+0165 
+0166 q_info.q           = q;                 <span class="comment">% independent parameters</span>
+0167 q_info.qall        = qall;              <span class="comment">% all parameters</span>
+0168 q_info.qdep        = qdep;              <span class="comment">% all parameters</span>
+0169 q_info.M_q_to_qall = M_q_to_qall;       <span class="comment">% conversion independent -&gt; all</span>
+0170 q_info.M_qall_to_q = M_qall_to_q;       <span class="comment">% conversion all -&gt; independent</span>
+0171 q_info.M_q_to_qdep = M_q_to_qdep;       <span class="comment">% conversion independent -&gt; dependent</span>
+0172 q_info.M_qdep_to_qall = M_qdep_to_qall; <span class="comment">% conversion independent -&gt; dependent</span>
+0173 
+0174 <span class="keyword">switch</span> cmb_options.parameterisation,  
+0175   <span class="keyword">case</span> <span class="string">'Keq_KV_KM_KA_KI'</span>,
+0176     q_info.M_qallKeq_to_qKeqind = q_info.M_qall_to_q(q_info.q.index.Keq,q_info.qall.index.Keq);
+0177     q_info.M_qKeqind_to_qallKeq = q_info.M_q_to_qall(q_info.qall.index.Keq,q_info.q.index.Keq);
+0178 <span class="keyword">end</span>
+0179 
+0180 <span class="comment">% plot conversion matrices</span>
+0181 <span class="keyword">if</span> 0,
+0182   figure(1); im(q_info.M_qall_to_q,[],q_info.q.names,q_info.qall.names)   
+0183   figure(2); im(q_info.M_q_to_qall,[],q_info.qall.names,q_info.q.names)
+0184 <span class="keyword">end</span>
+0185 
+0186 q_info.KM_matrix_indices = KM_ind;</pre></div>
+<hr><address>Generated on Fri 23-Oct-2026 20:27:13 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

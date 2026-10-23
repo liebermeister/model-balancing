@@ -1,11 +1,12 @@
-Used in article (for glucose condictions):
+Used in article (for glucose conditions):
 
 * concentration_eco_glucose.tsv
 * enzyme_data.tsv
 * fluxes_eco_Chen_2010_aerobic.tsv
 
-Provenance:
+Provenance (all files taken from the enzyme cost minimization toolbox,
+https://github.com/liebermeister/enzyme-cost-minimization):
 
-* concentration_eco_glucose.tsv from /home/wolfram/projekte/enzyme_cost_minimization/matlab/resource-data/data-files/data-metabolite/concentration_eco_glucose.tsv
-* enzyme_data.tsv from /home/wolfram/projekte/enzyme_cost_minimization/matlab/example_ecoli/data-elad/enzyme_data.tsv
-* fluxes_eco_Chen_2010_aerobic.tsv from /home/wolfram/projekte/enzyme_cost_minimization/matlab/resource-data/data-files/data-flux/fluxes_eco_Chen_2010_aerobic.tsv
+* concentration_eco_glucose.tsv: metabolite data (folder resource-data/data-files/data-metabolite)
+* enzyme_data.tsv: enzyme data (E. coli example)
+* fluxes_eco_Chen_2010_aerobic.tsv: flux data (folder resource-data/data-files/data-flux)

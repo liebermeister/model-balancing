@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of cmb_model_and_data</title>
+  <meta name="keywords" content="cmb_model_and_data">
+  <meta name="description" content="[bounds, prior, init] = cmb_model_and_data(model, network, data, q_info, c_init, cmb_options, conc_min, conc_max)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">matlab</a> &gt; <a href="index.html">model-balancing</a> &gt; cmb_model_and_data.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for matlab/model-balancing&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>cmb_model_and_data
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>[bounds, prior, init] = cmb_model_and_data(model, network, data, q_info, c_init, cmb_options, conc_min, conc_max)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [bounds, prior, init] = cmb_model_and_data(model, network, data, q_info, c_init, cmb_options, conc_min, conc_max) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> [bounds, prior, init] = cmb_model_and_data(model, network, data, q_info, c_init, cmb_options, conc_min, conc_max)
+
+ Prepare data structures describing a Convex Model Balancing problem 
+
+ Input variables
+   model        (string) model name  
+   network      struct describing metabolic network (format as in Metabolic Network Toolbox)
+   data         struct describing data used in the optimality problem
+   q_info       struct describing the dependencies between model variables
+   c_init       matrix; initial guess of (non-logarithmic) metabolite concentrations
+   cmb_options  struct containing options 
+   conc_min, conc_max vectors of minimal and maximal metabolite concentrations
+
+ Output variables
+   bounds    struct describing bounds in the optimality problem (details see cmb_make_bounds)
+   prior     struct describing priors in the optimality problem (details see cmb_make_prior)
+   init      struct containing the initial model variables (fields init.q and init.X)
+ 
+ For problems with artificial data, use cmb_model_artificial_data instead</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../matlab/model-balancing/cmb-variables/cmb_kinetics_to_q.html" class="code" title="function q = cmb_kinetics_to_q(network, cmb_options, q_info)">cmb_kinetics_to_q</a>	q = cmb_kinetics_to_q(network, cmb_options, q_info)</li><li><a href="cmb_make_bounds.html" class="code" title="function bounds = cmb_make_bounds(network,q_info,cmb_options, conc_min, conc_max)">cmb_make_bounds</a>	bounds = cmb_make_bounds(network, q_info, cmb_options, conc_min, conc_max)</li><li><a href="cmb_make_prior.html" class="code" title="function prior = cmb_make_prior(network,q_info,cmb_options);">cmb_make_prior</a>	prior = cmb_make_prior(network, q_info, cmb_options)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../matlab/demo/demo_cmb_experimental_data.html" class="code" title="">demo_cmb_experimental_data</a>	-------------------------------------------------------------</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [bounds, prior, init] = cmb_model_and_data(model, network, data, q_info, c_init, cmb_options, conc_min, conc_max)</a>
+0002 
+0003 <span class="comment">% [bounds, prior, init] = cmb_model_and_data(model, network, data, q_info, c_init, cmb_options, conc_min, conc_max)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% Prepare data structures describing a Convex Model Balancing problem</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% Input variables</span>
+0008 <span class="comment">%   model        (string) model name</span>
+0009 <span class="comment">%   network      struct describing metabolic network (format as in Metabolic Network Toolbox)</span>
+0010 <span class="comment">%   data         struct describing data used in the optimality problem</span>
+0011 <span class="comment">%   q_info       struct describing the dependencies between model variables</span>
+0012 <span class="comment">%   c_init       matrix; initial guess of (non-logarithmic) metabolite concentrations</span>
+0013 <span class="comment">%   cmb_options  struct containing options</span>
+0014 <span class="comment">%   conc_min, conc_max vectors of minimal and maximal metabolite concentrations</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% Output variables</span>
+0017 <span class="comment">%   bounds    struct describing bounds in the optimality problem (details see cmb_make_bounds)</span>
+0018 <span class="comment">%   prior     struct describing priors in the optimality problem (details see cmb_make_prior)</span>
+0019 <span class="comment">%   init      struct containing the initial model variables (fields init.q and init.X)</span>
+0020 <span class="comment">%</span>
+0021 <span class="comment">% For problems with artificial data, use cmb_model_artificial_data instead</span>
+0022 
+0023 eval(default(<span class="string">'conc_min'</span>,<span class="string">'[]'</span>,<span class="string">'conc_max'</span>,<span class="string">'[]'</span>));
+0024   
+0025 <span class="comment">% Number of metabolic states</span>
+0026   
+0027 ns = size(data.X.mean,2);
+0028 cmb_options.ns = ns;
+0029 
+0030 <span class="comment">% Bounds</span>
+0031 
+0032 bounds = <a href="cmb_make_bounds.html" class="code" title="function bounds = cmb_make_bounds(network,q_info,cmb_options, conc_min, conc_max)">cmb_make_bounds</a>(network,q_info,cmb_options, conc_min, conc_max);
+0033 
+0034 <span class="comment">% Prior</span>
+0035 
+0036 prior = <a href="cmb_make_prior.html" class="code" title="function prior = cmb_make_prior(network,q_info,cmb_options);">cmb_make_prior</a>(network,q_info,cmb_options);
+0037 
+0038 <span class="comment">% Initial state for optimisation</span>
+0039 
+0040 init.q = <a href="../../matlab/model-balancing/cmb-variables/cmb_kinetics_to_q.html" class="code" title="function q = cmb_kinetics_to_q(network, cmb_options, q_info)">cmb_kinetics_to_q</a>(network, cmb_options, q_info);
+0041 init.X = log(c_init);</pre></div>
+<hr><address>Generated on Fri 23-Oct-2026 20:27:13 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

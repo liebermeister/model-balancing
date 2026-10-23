@@ -9,19 +9,21 @@ function [network, kinetic_data, state_data, conc_min, conc_max] = cmb_load_mode
 % Input:
 %   model_file:           model file (SBML or SBtab format)
 %   kinetic_data_file:    one (filename) or several (list of filenames) kinetic data files (SBtab format)
-%                         instead of a filename, one may directly rovide a kinetic data structure 
+%                         instead of a filename, one may directly provide a kinetic data structure
 %                         from which data will be selected
-%   metabolite_data_file: metabolite data (filename)
-%   enzyme_data_file:     enzyme data (filename)
-%   flux_data_file:       flux data (filename)
-%
-%   replace_ids_in_network = [];
-%   match_data_by          = 'KeggId'; % ModelElementId
+%   state_data_files:     struct describing the state data files, with subfields .metabolite, .enzyme, .flux
+%                         (and optionally .delta_g), each with fields .file, .type, .table
+%                         (optional field .samples: names of metabolic states)
+%   replace_ids_in_network (default [])
+%   match_data_by          'KeggId' (default) or 'ModelElementId'
+%   constraint_sbtab_file  (optional) SBtab file with metabolite concentration constraints
+%                          (table 'ConcentrationConstraint', columns 'Min' and 'Max')
 %
 % Output:
 %   network:        model data structure (as in MNT toolbox)
 %   kinetic_data:   kinetic data data structure (as in MNT toolbox, mnt_kinetic_data)
 %   state_data:     metabolite, enzyme, and flux data
+%   conc_min, conc_max: vectors of concentration bounds (empty if no constraint_sbtab_file is given)
 
 eval(default('kinetic_data_file', '[]', 'metabolite_data_file', '[]', 'enzyme_data_file', '[]', 'flux_data_file', '[]','replace_ids_in_network','[]','match_data_by','''KeggId'''));
   

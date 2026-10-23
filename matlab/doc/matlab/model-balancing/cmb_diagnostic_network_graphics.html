@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of cmb_diagnostic_network_graphics</title>
+  <meta name="keywords" content="cmb_diagnostic_network_graphics">
+  <meta name="description" content="cmb_diagnostic_network_graphics(network, data, optimal, cmb_options, q_info, fignum, sample, graphics_dir)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">matlab</a> &gt; <a href="index.html">model-balancing</a> &gt; cmb_diagnostic_network_graphics.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for matlab/model-balancing&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>cmb_diagnostic_network_graphics
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>cmb_diagnostic_network_graphics(network, data, optimal, cmb_options, q_info, fignum, sample, graphics_dir)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function cmb_diagnostic_network_graphics(network, data, optimal, cmb_options, q_info, fignum, sample, graphics_dir) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> cmb_diagnostic_network_graphics(network, data, optimal, cmb_options, q_info, fignum, sample, graphics_dir)
+
+ Network graphics for diagnosing model balancing results (for example, flux signs and estimation errors)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../matlab/model-balancing/cmb-variables/cmb_qall_to_kinetics.html" class="code" title="function r = cmb_qall_to_kinetics(qall,network,cmb_options,q_info)">cmb_qall_to_kinetics</a>	r = cmb_qall_to_kinetics(qall, network, cmb_options, q_info)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../matlab/model_balancing.html" class="code" title="function [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max, preposterior, pp] = model_balancing(filenames, cmb_options, network, q_info, prior, bounds, data, true, init)">model_balancing</a>	[optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max, preposterior, pp] = model_balancing(filenames, cmb_options, network, q_info, prior, bounds, data, true, init)</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function cmb_diagnostic_network_graphics(network, data, optimal, cmb_options, q_info, fignum, sample, graphics_dir)</a>
+0002 
+0003 <span class="comment">% cmb_diagnostic_network_graphics(network, data, optimal, cmb_options, q_info, fignum, sample, graphics_dir)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% Network graphics for diagnosing model balancing results (for example, flux signs and estimation errors)</span>
+0006 
+0007 eval(default(<span class="string">'fignum'</span>,<span class="string">'1'</span>,<span class="string">'sample'</span>,<span class="string">'1'</span>,<span class="string">'graphics_dir'</span>,<span class="string">'[]'</span>));
+0008   
+0009 kinetics_data = <a href="../../matlab/model-balancing/cmb-variables/cmb_qall_to_kinetics.html" class="code" title="function r = cmb_qall_to_kinetics(qall,network,cmb_options,q_info)">cmb_qall_to_kinetics</a>(data.qall.mean,network,cmb_options,q_info);
+0010 
+0011 <span class="comment">% note that numbers in plots below refer to reaction orientations, not flux directions!</span>
+0012 
+0013 figure(fignum+1); clf
+0014 flux_signs = sign(mean(sign(data.V.mean),2)+0.5);
+0015 netgraph_concentrations(network,[], flux_signs, 1, struct(<span class="string">'actprintnames'</span>,1));
+0016 title(<span class="string">'Reaction orientation w.r.t flux signs'</span>)
+0017 
+0018 figure(fignum); clf
+0019 subplot(2,3,1);
+0020 mm = exp(max(abs(optimal.X(:,sample)-data.X.mean(:,sample))));
+0021 netgraph_concentrations(network,optimal.X(:,sample)-data.X.mean(:,sample),[],0,struct(<span class="string">'keep_subplot'</span>,1));
+0022 title(sprintf(<span class="string">'met (fit/data) smpl %d f.c.&lt;%.2f'</span>,sample,mm));
+0023 
+0024 subplot(2,3,2);
+0025 mm = exp(max(abs(log(optimal.E(:,sample))-data.lnE.mean(:,sample))));
+0026 netgraph_concentrations(network,[],log(optimal.E(:,sample))-data.lnE.mean(:,sample),0,struct(<span class="string">'keep_subplot'</span>,1));
+0027 title(sprintf(<span class="string">'enz (fit/data) smpl %d f.c.&lt;%.2f'</span>,sample,mm));
+0028 
+0029 subplot(2,3,3);
+0030 mm = exp(max(abs(log(optimal.kinetics.Keq)-log(kinetics_data.Keq))));
+0031 netgraph_concentrations(network,[], log(optimal.kinetics.Keq)-log(kinetics_data.Keq),0,struct(<span class="string">'keep_subplot'</span>,1));
+0032 title(sprintf(<span class="string">'Keq (fit/data) f.c.&lt;%.2f'</span>,mm));
+0033 
+0034 subplot(2,3,4);
+0035 mm = exp(max(abs(log(optimal.kinetics.Kcatf)-log(kinetics_data.Kcatf))));
+0036 netgraph_concentrations(network,[],  log(optimal.kinetics.Kcatf)-log(kinetics_data.Kcatf),0,struct(<span class="string">'keep_subplot'</span>,1));
+0037 title(sprintf(<span class="string">'Kcatf (fit/data) f.c.&lt;%.2f'</span>,mm));
+0038 
+0039 subplot(2,3,5);
+0040 mm = exp(max(abs(log(optimal.kinetics.Kcatr)-log(kinetics_data.Kcatr))));
+0041 netgraph_concentrations(network,[], log(optimal.kinetics.Kcatr)-log(kinetics_data.Kcatr),0,struct(<span class="string">'keep_subplot'</span>,1));
+0042 title(sprintf(<span class="string">'Kcatr (fit/data) f.c.&lt;%.2f'</span>,mm));
+0043 
+0044 subplot(2,3,6);
+0045 dum = log(optimal.kinetics.KM)-log(kinetics_data.KM);
+0046 dum(isnan(dum)) = 0; 
+0047 mm = exp(max(full(abs(dum(:)))));
+0048 netgraph_concentrations(network,[], [], 0, struct(<span class="string">'edgevalues'</span>,dum',<span class="string">'edgestyle'</span>,<span class="string">'fixed'</span>,<span class="string">'keep_subplot'</span>,1));
+0049 title(sprintf(<span class="string">'KM (fit/data) f.c.&lt;%.2f'</span>,mm));
+0050 
+0051 set(gcf,<span class="string">'Position'</span>, [500,100,900,800]);
+0052 
+0053 <span class="keyword">if</span> length(graphics_dir),
+0054   print([graphics_dir <span class="string">'diagnostic_errors.eps'</span>],     sprintf(<span class="string">'-f%d'</span>,fignum), <span class="string">'-depsc'</span>); 
+0055   print([graphics_dir <span class="string">'diagnostic_flux_signs.eps'</span>], sprintf(<span class="string">'-f%d'</span>,fignum+1), <span class="string">'-depsc'</span>); 
+0056 
+0057 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Fri 23-Oct-2026 20:27:13 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

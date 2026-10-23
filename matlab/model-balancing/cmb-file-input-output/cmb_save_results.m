@@ -1,6 +1,6 @@
 function cmb_save_results(network, data, bounds, optimal, filenames, cmb_options, options, true)
 
-% cmb_save_results(network, data, optimal, filenames, cmb_options, options)
+% cmb_save_results(network, data, bounds, optimal, filenames, cmb_options, options, true)
 %
 % save results of model balancing as SBtab files
 % 

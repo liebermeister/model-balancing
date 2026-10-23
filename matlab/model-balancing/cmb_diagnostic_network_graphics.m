@@ -1,6 +1,8 @@
 function cmb_diagnostic_network_graphics(network, data, optimal, cmb_options, q_info, fignum, sample, graphics_dir)
 
-% cmb_diagnostic_network_graphics(network, data, optimal, cmb_options, q_info, fignum, sample)
+% cmb_diagnostic_network_graphics(network, data, optimal, cmb_options, q_info, fignum, sample, graphics_dir)
+%
+% Network graphics for diagnosing model balancing results (for example, flux signs and estimation errors)
 
 eval(default('fignum','1','sample','1','graphics_dir','[]'));
   

@@ -2,7 +2,7 @@ function q_info = cmb_define_parameterisation(network, cmb_options)
 
 % q_info = cmb_define_parameterisation(network, cmb_options)
 %
-% q_info is struct containing a description of the indepdendent / all parameters
+% q_info is struct containing a description of the independent / all parameters
 %                  as well as the conversion matrices between them 
 %
 % Parameterisation 'KV_KM_KA_KI':

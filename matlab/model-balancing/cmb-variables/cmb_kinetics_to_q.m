@@ -1,5 +1,9 @@
 function q = cmb_kinetics_to_q(network, cmb_options, q_info)
 
+% q = cmb_kinetics_to_q(network, cmb_options, q_info)
+%
+% Convert the kinetic constants in network.kinetics into a vector q of independent log kinetic constants
+
 [nr,nm,nx,KM_ind,KA_ind,KI_ind,nKM,nKA,nKI] = network_numbers(network);
 
 r = network.kinetics;

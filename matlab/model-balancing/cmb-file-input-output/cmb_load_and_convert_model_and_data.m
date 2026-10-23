@@ -22,7 +22,6 @@ function [network, q_info, data, c_init, kinetic_data, state_data, conc_min, con
 %    .columns_mean:         cell array of column names for mean data values
 %                           (same columns names in metabolite, flux, and enzyme table!)
 %    .columns_std:          same, for std dev columns
-%    .columns_std:          same, for std dev columns
 %    .constraint_sbtab_file (optional) SBtab file with metabolite concentration constraints 
 %                           (table 'ConcentrationConstraint')
 %

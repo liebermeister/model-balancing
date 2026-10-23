@@ -1,6 +1,22 @@
 function [log_posterior,log_posterior_gradient] = cmb_log_posterior(y,pp,preposterior,V,cmb_options,q_info,verbose)
 
 % [log_posterior,log_posterior_gradient] = cmb_log_posterior(y,pp,preposterior,V,cmb_options,q_info,verbose)
+%
+% Log posterior score of the model balancing problem (objective function to be maximised)
+%
+% Input variables
+%   y             vector of optimisation variables (log metabolite concentrations and independent
+%                 log kinetic constants; see cmb_qX_to_y and cmb_y_to_qX)
+%   pp            struct with network and other information (see cmb_make_pp)
+%   preposterior  struct describing the preposterior distributions (see cmb_prepare_posterior)
+%   V             flux matrix (reactions x metabolic states)
+%   cmb_options   struct containing options
+%   q_info        struct describing the dependencies between model variables
+%   verbose       (optional) flag
+%
+% Output variables
+%   log_posterior           log posterior score
+%   log_posterior_gradient  gradient of log posterior score with respect to y
 
 % ------------------------------
 % Initialise some variables

@@ -1,0 +1,204 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of cmb_model_artificial_data</title>
+  <meta name="keywords" content="cmb_model_artificial_data">
+  <meta name="description" content="[network, bounds, prior, q_info, data, true, kinetic_data, state_data, conc_min, conc_max] = cmb_model_artificial_data(network_file, cmb_options, c_init, position_sbtab_file, constraint_sbtab_file, ind_e_off, Keq_init, v_init)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">matlab</a> &gt; <a href="index.html">model-balancing</a> &gt; cmb_model_artificial_data.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for matlab/model-balancing&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>cmb_model_artificial_data
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>[network, bounds, prior, q_info, data, true, kinetic_data, state_data, conc_min, conc_max] = cmb_model_artificial_data(network_file, cmb_options, c_init, position_sbtab_file, constraint_sbtab_file, ind_e_off, Keq_init, v_init)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [network, bounds, prior, q_info, data, true, kinetic_data, state_data, conc_min, conc_max] = cmb_model_artificial_data(network_file, cmb_options, c_init, position_sbtab_file, constraint_sbtab_file, ind_e_off, Keq_init, v_init) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> [network, bounds, prior, q_info, data, true, kinetic_data, state_data, conc_min, conc_max] = cmb_model_artificial_data(network_file, cmb_options, c_init, position_sbtab_file, constraint_sbtab_file, ind_e_off, Keq_init, v_init)
+
+ Generate input data for a Convex Model Balancing problem with artificial data
+ 
+ Input variables
+   network_file filename of SBML or SBtab network model
+                an SBtab file must contain tables &quot;Reaction&quot;, &quot;Compound&quot; (and optionally &quot;Position&quot;)
+   cmb_options  struct containing options
+   .use_artificial_noise    = 0;                   % flag: generate artificial state data with noise
+   .use_kinetic_data_noise  = 1;                   % flag: generate artificial kinetic data with noise
+   .prior_variant           = 'original_prior';                original prior
+                              'broad_prior'                    broad prior around original prior means
+                              'broad_prior_around_zero'        broad prior around 0 values
+                              'prior_around_true_values'       prior around true values (only for artificial data)
+                              'broad_prior_around_true_values' broad prior around true values (only for artificial data)
+
+   c_init       (optional) matrix; initial guess of (non-logarithmic) metabolite concentrations; 
+                           also used for generating the artificial data 
+   position_sbtab_file (optional) filename of SBtab file (table &quot;Position&quot;) for network layout 
+                                  (overrides an existing table &quot;Position&quot; in network_file)
+   constraint_sbtab_file (optional) filename of SBtab file (table &quot;ConcentrationConstraint&quot;)
+   ind_e_off    (optional) indices of enzymes to be shut down
+   Keq_init     (optional) Keq vector to be used for artificial data
+   v_init       (optional) reference flux vector to be used for artificial data
+ 
+ Output variables
+   network      struct describing metabolic network (format as in Metabolic Network Toolbox)
+   bounds       struct describing bounds in the optimality problem (details see cmb_make_bounds)
+   prior        struct describing priors in the optimality problem (details see cmb_make_prior)
+   q_info       struct describing the dependencies between model variables
+   data         struct describing data used in the optimality problem
+   true         struct describing true model variables (optional; only for models with artificial data)
+   kinetic_data struct containing the artificial kinetic data
+   state_data   struct containing the artificial metabolic state data
+   conc_min, conc_max vectors of minimal and maximal metabolite concentrations
+
+ For CMB problems with &quot;real&quot; data, use cmb_model_and_data instead</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../matlab/model-balancing/cmb-variables/cmb_define_parameterisation.html" class="code" title="function q_info = cmb_define_parameterisation(network, cmb_options)">cmb_define_parameterisation</a>	q_info = cmb_define_parameterisation(network, cmb_options)</li><li><a href="cmb_generate_artificial_data.html" class="code" title="function [kinetics, prior, bounds, data, true, kinetic_data, state_data] = cmb_generate_artificial_data(network, cmb_options, q_info, c_init, conc_min, conc_max, ind_e_off, Keq_init, v_init)">cmb_generate_artificial_data</a>	[kinetics, prior, bounds, data, true, kinetic_data, state_data] = cmb_generate_artificial_data(network, cmb_options, q_info, c_init, conc_min, conc_max, ind_e_off, Keq_init, v_init)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../matlab/demo/demo_cmb_artificial_data.html" class="code" title="">demo_cmb_artificial_data</a>	-------------------------------------------------------------------</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [network, bounds, prior, q_info, data, true, kinetic_data, state_data, conc_min, conc_max] = cmb_model_artificial_data(network_file, cmb_options, c_init, position_sbtab_file, constraint_sbtab_file, ind_e_off, Keq_init, v_init)</a>
+0002 
+0003 <span class="comment">% [network, bounds, prior, q_info, data, true, kinetic_data, state_data, conc_min, conc_max] = cmb_model_artificial_data(network_file, cmb_options, c_init, position_sbtab_file, constraint_sbtab_file, ind_e_off, Keq_init, v_init)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% Generate input data for a Convex Model Balancing problem with artificial data</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% Input variables</span>
+0008 <span class="comment">%   network_file filename of SBML or SBtab network model</span>
+0009 <span class="comment">%                an SBtab file must contain tables &quot;Reaction&quot;, &quot;Compound&quot; (and optionally &quot;Position&quot;)</span>
+0010 <span class="comment">%   cmb_options  struct containing options</span>
+0011 <span class="comment">%   .use_artificial_noise    = 0;                   % flag: generate artificial state data with noise</span>
+0012 <span class="comment">%   .use_kinetic_data_noise  = 1;                   % flag: generate artificial kinetic data with noise</span>
+0013 <span class="comment">%   .prior_variant           = 'original_prior';                original prior</span>
+0014 <span class="comment">%                              'broad_prior'                    broad prior around original prior means</span>
+0015 <span class="comment">%                              'broad_prior_around_zero'        broad prior around 0 values</span>
+0016 <span class="comment">%                              'prior_around_true_values'       prior around true values (only for artificial data)</span>
+0017 <span class="comment">%                              'broad_prior_around_true_values' broad prior around true values (only for artificial data)</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">%   c_init       (optional) matrix; initial guess of (non-logarithmic) metabolite concentrations;</span>
+0020 <span class="comment">%                           also used for generating the artificial data</span>
+0021 <span class="comment">%   position_sbtab_file (optional) filename of SBtab file (table &quot;Position&quot;) for network layout</span>
+0022 <span class="comment">%                                  (overrides an existing table &quot;Position&quot; in network_file)</span>
+0023 <span class="comment">%   constraint_sbtab_file (optional) filename of SBtab file (table &quot;ConcentrationConstraint&quot;)</span>
+0024 <span class="comment">%   ind_e_off    (optional) indices of enzymes to be shut down</span>
+0025 <span class="comment">%   Keq_init     (optional) Keq vector to be used for artificial data</span>
+0026 <span class="comment">%   v_init       (optional) reference flux vector to be used for artificial data</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">% Output variables</span>
+0029 <span class="comment">%   network      struct describing metabolic network (format as in Metabolic Network Toolbox)</span>
+0030 <span class="comment">%   bounds       struct describing bounds in the optimality problem (details see cmb_make_bounds)</span>
+0031 <span class="comment">%   prior        struct describing priors in the optimality problem (details see cmb_make_prior)</span>
+0032 <span class="comment">%   q_info       struct describing the dependencies between model variables</span>
+0033 <span class="comment">%   data         struct describing data used in the optimality problem</span>
+0034 <span class="comment">%   true         struct describing true model variables (optional; only for models with artificial data)</span>
+0035 <span class="comment">%   kinetic_data struct containing the artificial kinetic data</span>
+0036 <span class="comment">%   state_data   struct containing the artificial metabolic state data</span>
+0037 <span class="comment">%   conc_min, conc_max vectors of minimal and maximal metabolite concentrations</span>
+0038 <span class="comment">%</span>
+0039 <span class="comment">% For CMB problems with &quot;real&quot; data, use cmb_model_and_data instead</span>
+0040   
+0041 eval(default(<span class="string">'c_init'</span>,<span class="string">'[]'</span>,<span class="string">'position_sbtab_file'</span>,<span class="string">'[]'</span>,<span class="string">'ind_e_off'</span>,<span class="string">'[]'</span>,<span class="string">'Keq_init'</span>,<span class="string">'[]'</span>,<span class="string">'v_init'</span>,<span class="string">'[]'</span>));
+0042 
+0043 <span class="comment">% load network</span>
+0044 
+0045 <span class="keyword">if</span> cmb_options.verbose,
+0046   display(sprintf(<span class="string">'Reading file %s'</span>, network_file));
+0047 <span class="keyword">end</span>
+0048 
+0049 network = network_import(network_file, struct(<span class="string">'load_quantity_table'</span>,0));
+0050 
+0051 <span class="keyword">if</span> length(position_sbtab_file),
+0052   network = netgraph_read_positions(network, position_sbtab_file);
+0053 <span class="keyword">end</span>
+0054 
+0055 <span class="comment">% concentration bounds</span>
+0056 conc_min = [];
+0057 conc_max = [];
+0058 
+0059 <span class="keyword">if</span> length(constraint_sbtab_file),
+0060   constraint_sbtab = sbtab_document_load_from_one(constraint_sbtab_file);
+0061   conc_min  = sbtab_table_get_column(constraint_sbtab.tables.ConcentrationConstraint,<span class="string">'Min'</span>,1);
+0062   conc_max  = sbtab_table_get_column(constraint_sbtab.tables.ConcentrationConstraint,<span class="string">'Max'</span>,1);
+0063 <span class="keyword">end</span>
+0064 
+0065 <span class="comment">% parameter structure (depends on cmb_options.parameterisation)</span>
+0066 
+0067 q_info = <a href="../../matlab/model-balancing/cmb-variables/cmb_define_parameterisation.html" class="code" title="function q_info = cmb_define_parameterisation(network, cmb_options)">cmb_define_parameterisation</a>(network, cmb_options);
+0068 
+0069 <span class="comment">% generate model kinetics and artificial data</span>
+0070 
+0071 [kinetics, prior, bounds, data, true, kinetic_data, state_data] = <a href="cmb_generate_artificial_data.html" class="code" title="function [kinetics, prior, bounds, data, true, kinetic_data, state_data] = cmb_generate_artificial_data(network, cmb_options, q_info, c_init, conc_min, conc_max, ind_e_off, Keq_init, v_init)">cmb_generate_artificial_data</a>(network, cmb_options, q_info, c_init, conc_min, conc_max, ind_e_off, Keq_init, v_init);
+0072 
+0073 network.kinetics = kinetics;
+0074 
+0075 <span class="comment">% possibly, use different kinetic constants prior (for reconstruction) than prior used to generate the model kinetics</span>
+0076 
+0077 <span class="keyword">switch</span> cmb_options.prior_variant,
+0078   
+0079   <span class="keyword">case</span> <span class="string">'original_prior'</span>,
+0080   
+0081   <span class="keyword">case</span> <span class="string">'prior_around_true_values'</span>,
+0082     prior.q.mean = true.q;
+0083     prior.qdep_pseudo.mean = q_info.M_q_to_qdep * true.q; 
+0084     prior.X.mean = true.X;
+0085     prior.lnE.mean = log(true.E);
+0086     prior.lnE.mean(true.E==0) = 10^-15;
+0087     prior.lnE.std(true.E==0) = 10^-15;
+0088 
+0089   <span class="keyword">case</span> <span class="string">'broad_prior'</span>,
+0090     prior.q.std   = log(10^10)*ones(size(prior.q.std));
+0091     prior.qdep_pseudo.std  = log(10^10)*ones(size(prior.qdep_pseudo.std));
+0092     prior.X.std   = log(10^10)*ones(size(prior.X.std));
+0093     prior.lnE.std = log(10^10)*ones(size(prior.lnE.std));
+0094   
+0095   <span class="keyword">case</span> <span class="string">'broad_prior_around_zero'</span>,
+0096     prior.q.mean = zeros(size(prior.q.std));
+0097     prior.q.std  = log(10^10)*ones(size(prior.q.std));
+0098     prior.qdep_pseudo.mean = zeros(size(prior.qdep_pseudo.std)); 
+0099     prior.qdep_pseudo.std  = log(10^10)*ones(size(prior.qdep_pseudo.std));
+0100     prior.X.mean = 0 * prior.X.mean;
+0101     prior.X.std  = log(10^10)*ones(size(prior.X.std));
+0102     prior.lnE.mean = 0 * prior.lnE.mean;
+0103     prior.lnE.std  = log(10^10)*ones(size(prior.lnE.std));
+0104   
+0105   <span class="keyword">case</span> <span class="string">'broad_prior_around_true_values'</span>,
+0106     prior.q.mean = true.q;
+0107     prior.q.std  = log(10^10)*ones(size(prior.q.std));
+0108     prior.qdep_pseudo.mean = q_info.M_q_to_qdep * true.q; 
+0109     prior.qdep_pseudo.std  = log(10^10)*ones(size(prior.qdep_pseudo.std));
+0110     prior.X.mean = true.X;
+0111     prior.X.std  = log(10^10)*ones(size(prior.X.std));
+0112     prior.lnE.mean = log(true.E);
+0113     prior.lnE.std  = log(10^10)*ones(size(prior.lnE.std));
+0114     prior.lnE.mean(true.E==0) = 10^-15;
+0115     prior.lnE.std(true.E==0) = 10^-15;
+0116 
+0117   <span class="keyword">otherwise</span>, error(<span class="string">''</span>);
+0118 <span class="keyword">end</span>
+0119 
+0120 prior.q.prec           = diag(1./prior.q.std.^2);
+0121 prior.qdep_pseudo.prec = diag(1./prior.qdep_pseudo.std.^2);</pre></div>
+<hr><address>Generated on Fri 23-Oct-2026 20:27:13 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

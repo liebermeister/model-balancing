@@ -1,3 +1,8 @@
-Balancing results from script cmb_e_coli_balance_parameters.m
+Balanced kinetic parameters for the E. coli model
+=================================================
 
-File e_coli_balanced_parameters.tsv is also used in the article
+Balancing results from the script `cmb_e_coli_balance_parameters.m` (not included in this repository).
+
+The file `e_coli_balanced_parameters.tsv` is also used in the article.
+
+The files `e_coli_balanced_parameters_fig_1.pdf` and `e_coli_balanced_parameters_fig_2.pdf` show graphics of the balancing results.

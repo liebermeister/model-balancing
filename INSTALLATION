@@ -1,54 +1,26 @@
---------------------------------------
-MATLAB code for Model Balancing
+Model balancing - matlab code
+=============================
 
-Wolfram Liebermeister (2020)
--------------------------------------
+Installation instructions, requirements, and a quick-start guide
+can be found in the file README.md (section "Installation").
 
+In short:
 
-INSTALLATION
+  1. Clone this repository and the toolboxes
+       matlab-utils               (https://github.com/liebermeister/matlab-utils)
+       metabolic-network-toolbox  (https://github.com/liebermeister/metabolic-network-toolbox)
+       sbtab-matlab               (https://github.com/liebermeister/sbtab-matlab)
+       enzyme-cost-minimization   (https://github.com/liebermeister/enzyme-cost-minimization)
+     and, optionally (only needed for SBML files), the SBML Toolbox
+     (https://sbml.org/software/sbmltoolbox/).
 
-  1. Unpack the files
-  2. Include the subdirectory 'convex-model-balancing' into your Matlab path
-  3. Make sure that the following toolboxes are installed:
-      o Metabolic Network Toolbox  (https://github.com/liebermeister/metabolic-network-toolbox)
-      o SBtab toolbox              (https://github.com/liebermeister/sbtab-matlab)
-      o SBML Toolbox               (http://sbml.org/Software/SBMLToolbox)
+  2. Add all these directories, including subdirectories, to your matlab path,
+     e.g. addpath(genpath('model-balancing/matlab')).
 
+  3. Run the demo scripts in matlab/demo.
 
-REQUIREMENTS
+The code was tested with Matlab R2019b on Linux.
 
-  The functions were developed and tested with matlab6
+License: GNU General Public License, version 2 (see file LICENSE).
 
-  They also require
-
-    Metabolic Network Toolbox - (https://github.com/liebermeister/metabolic-network-toolbox)
-    SBtab toolbox             - SBtab format (https://github.com/liebermeister/sbtab-matlab)
-    SBMLtoolbox               - SBML import / export  (see http://sbml.org/Software/SBMLToolbox)
-
-
-STATE OF THE SOFTWARE.
-
-  The functions are under development and provided 'as is'.
-  If you would like to contribute extensions to the toolbox, please let me know.
-
-
-DOCUMENTATION
-
-  Documentation (in directory 'doc') has been built automatically with M2HMTL
-
-
-LICENSE
-
-  The toolbox is free software; you can redistribute it and/or modify it under 
-  the terms of the GNU General Public License as published by the Free Software 
-  Foundation; either version 2, or (at your option) any later version.
-
-  The toolbox is distributed in the hope that it will be useful, but WITHOUT ANY 
-  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
-  PARTICULAR PURPOSE.  See the file COPYING for more details.
-
-
-ANY QUESTIONS?
-
-  Please send questions, comments, and bug reports to 
-  <wolfram.liebermeister@gmail.com>
+Questions, comments, and bug reports: wolfram.liebermeister@gmail.com

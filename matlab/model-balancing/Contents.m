@@ -35,8 +35,67 @@
 % Output files
 % ------------
 % 
-% kinetic_model.tsv    SBtab - Metabolic network and kinetic constants (optionally: include kinetic rate law formulae)
-% metabolic_states.tsv SBtab - Predicted metabolite concentrations, enzyme concentrations, Gibbs free energies, fluxes (for all states)
+% Output files are written to [result_dir]/[model]/[run]/data/ (see cmb_filenames):
+%
+% balanced_model.tsv   SBtab - Metabolic network and balanced kinetic constants
+% balanced_states.tsv  SBtab - Balanced metabolite concentrations, enzyme concentrations, Gibbs free energies, fluxes (for all states)
+% data_kinetic.tsv     SBtab - Kinetic data used
+% data_states.tsv      SBtab - Metabolic state data used
+% true_model.tsv       SBtab - True model (only for artificial data)
+% true_states.tsv      SBtab - True metabolic states (only for artificial data)
 % report.txt           text  - Number of data points / of fitted variables (by category), and calculation time
 % options.tsv          SBtab - Options
 % results.mat          .mat  - Results
+%
+% Graphics files are written to [result_dir]/[model]/[run]/ps-files/
+%
+% ---------
+% Functions
+% ---------
+%
+% Main function (in the folder above): model_balancing
+%
+% Problem setup and options
+%   cmb_default_options                  - Default options for model balancing
+%   cmb_filenames                        - Filenames for input and output files
+%   cmb_model_and_data                   - Prepare a model balancing problem (bounds, prior, initial values)
+%   cmb_model_artificial_data            - Prepare a model balancing problem with artificial data
+%   cmb_generate_artificial_data         - Generate artificial kinetic data and state data for a network
+%   cmb_make_bounds                      - Bounds on model variables
+%   cmb_make_prior                       - Prior distributions for model variables
+%   cmb_make_pp                          - Struct with network information for enzyme cost functions
+%   cmb_project_fluxes                   - Project fluxes (e.g., to complete missing flux values)
+%   cmb_prior_file                       - Filename of the default prior table
+%   cmb_basedir                          - Main directory of the model balancing repository
+%   cmb_resourcedir                      - Directory with example models and data
+%
+% Estimation
+%   cmb_estimation                       - Run the optimisation (called by model_balancing)
+%   cmb_prepare_posterior                - Preposterior distributions (prior and data combined)
+%   cmb_objective                        - Objective function for fmincon
+%   cmb_log_posterior                    - Log posterior score
+%   cmb_variables_to_log_posterior       - Log posterior score for given kinetic constants and concentrations
+%
+% Results and graphics
+%   cmb_display_scores                   - Display log posterior scores (true, initial, optimised values)
+%   cmb_statistics                       - Report about a model balancing run
+%   cmb_graphics                         - Scatter plots: balanced vs. data values and vs. true values
+%   cmb_diagnostic_network_graphics      - Diagnostic network graphics
+%
+% Subfolder cmb-variables: conversion between variables
+%   cmb_define_parameterisation          - Define the parameterisation (independent and dependent kinetic constants)
+%   cmb_kinetics_to_q, cmb_q_to_kinetics - Convert between kinetics struct and vector q
+%   cmb_qall_to_kinetics                 - Convert vector qall into kinetics struct
+%   cmb_q_to_qall, cmb_qall_to_q         - Convert between vectors q and qall
+%   cmb_qX_to_y, cmb_y_to_qX             - Convert between (q, X) and optimisation vector y
+%   cmb_qX_to_variables                  - Compute all model variables from q, X, and fluxes
+%
+% Subfolder cmb-file-input-output: file input and output
+%   cmb_load_model_and_data              - Load model and data from SBML / SBtab files
+%   cmb_load_and_convert_model_and_data  - Load model and data from SBtab files and convert them for model balancing
+%   cmb_save_results                     - Save model balancing results as SBtab files
+%   cmb_read_prepared_model_and_data     - Wrapper for older function es_load_data (currently not working)
+%
+% Subfolder cmb-cvxpy: export for the python implementation
+%   cvxpy_problem_data_structure         - Convert a model balancing problem into a struct for JSON export
+%   cvxpy_combine_prior_and_likelihood   - Combine prior and likelihood (Gaussian distributions on log scale)

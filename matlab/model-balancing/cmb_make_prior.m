@@ -1,5 +1,18 @@
 function prior = cmb_make_prior(network,q_info,cmb_options);
 
+% prior = cmb_make_prior(network, q_info, cmb_options)
+%
+% Construct prior distributions for model variables in the model balancing problem
+% (from the information in cmb_options.quantities, see cmb_default_options)
+%
+% Output variables
+%   prior  struct with fields
+%     .q            prior for independent log kinetic constants (fields .names, .mean, .std, .prec)
+%     .qdep_pseudo  pseudo prior for dependent log kinetic constants (fields .names, .mean, .std, .prec)
+%     .X            prior for log metabolite concentrations (fields .mean, .std)
+%     .lnE          prior for log enzyme concentrations (fields .mean, .std)
+%     .V            prior for fluxes (fields .mean, .std)
+
 % the following distribution can be improved (using the results of kinetic parameter balancing) 
 % the variables for KM, KA, KI are vector containing the relevant components
 

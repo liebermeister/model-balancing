@@ -1,6 +1,6 @@
-function [posterior_mean, posterior_cov, posterior_std, posterior_prec] = combine_prior_and_likelihood(prior_mean,prior_cov,data_mean,data_std)
- 
-% [posterior_mean, posterior_cov] = combine_prior_and_likelihood(prior_mean,prior_cov,data_mean,data_std)
+function [posterior_mean, posterior_cov, posterior_std, posterior_prec] = cvxpy_combine_prior_and_likelihood(prior_mean,prior_cov,data_mean,data_std)
+
+% [posterior_mean, posterior_cov, posterior_std, posterior_prec] = cvxpy_combine_prior_and_likelihood(prior_mean,prior_cov,data_mean,data_std)
 %
 % combine prior and likelihood information for a vector of variables (on log scale)
 % use formula from convenience kinetics / Bayesian estimation paper
@@ -13,6 +13,8 @@ function [posterior_mean, posterior_cov, posterior_std, posterior_prec] = combin
 % Outputs:
 %   posterior_mean: vector of posterior means
 %   posterior_cov:  posterior covariance matrix
+%   posterior_std:  vector of posterior standard deviations
+%   posterior_prec: posterior precision matrix
 
 % projector matrix P (from all variables to those for which valid data values are available)
 

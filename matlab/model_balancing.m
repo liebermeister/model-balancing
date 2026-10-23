@@ -16,7 +16,7 @@ function [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max,
 %   prior        struct, priors in the optimality problem (details see cmb_make_prior)
 %   bounds       struct, bounds in the optimality problem (details see cmb_make_bounds)
 %   data         struct, data used in the optimality problem
-%                  flux maxtrix: data.V.mean
+%                  flux matrix: data.V.mean
 %   true         struct, true model variables (optional; only for models with artificial data)
 %   init         struct, initial values
 %

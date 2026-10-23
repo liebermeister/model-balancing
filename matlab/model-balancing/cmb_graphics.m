@@ -1,5 +1,15 @@
 function [res, res_true, res_true_data] = cmb_graphics(prior, data, optimal, true, cmb_options, q_info, graphics_dir, kapp_max, show_graphics)
 
+% [res, res_true, res_true_data] = cmb_graphics(prior, data, optimal, true, cmb_options, q_info, graphics_dir, kapp_max, show_graphics)
+%
+% Scatter plots comparing balanced values to data values and (for artificial data) to true values;
+% optionally, save the graphics as EPS files in the directory graphics_dir
+%
+% Output variables
+%   res            struct with comparison statistics: balanced vs. data values
+%   res_true       struct with comparison statistics: balanced vs. true values (only for artificial data)
+%   res_true_data  struct with comparison statistics: data vs. true values (only for artificial data)
+
 eval(default('graphics_dir','[]','show_graphics','1'));
 
 res = []; res_true = []; res_true_data = [];

@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the article below."
+title: "Model balancing (matlab implementation)"
+authors:
+  - family-names: Liebermeister
+    given-names: Wolfram
+  - family-names: Noor
+    given-names: Elad
+license: GPL-2.0-only
+repository-code: "https://github.com/liebermeister/model-balancing"
+url: "https://www.metabolic-economics.de/model-balancing/"
+preferred-citation:
+  type: article
+  authors:
+    - family-names: Liebermeister
+      given-names: Wolfram
+    - family-names: Noor
+      given-names: Elad
+  title: "Model balancing: a search for in-vivo kinetic constants and consistent metabolic states"
+  journal: Metabolites
+  year: 2021
+  volume: 11
+  issue: 11
+  start: 749
+  doi: "10.3390/metabo11110749"

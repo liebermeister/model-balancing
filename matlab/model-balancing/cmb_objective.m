@@ -1,7 +1,12 @@
 function [score,gradient] = cmb_objective(y,pp,preposterior,V,cmb_options,q_info,verbose)
 
-%% CURRENTLY NOT USED  
-  
+% [score, gradient] = cmb_objective(y, pp, preposterior, V, cmb_options, q_info, verbose)
+%
+% Objective function for the optimisation with fmincon (called in cmb_estimation)
+% Score function (option cmb_options.score):
+%   'neg_log_posterior'      negative log posterior
+%   'log_neg_log_posterior'  logarithm of negative log posterior
+
 switch cmb_options.score,
   case 'neg_log_posterior',
     switch nargout,

@@ -1,0 +1,305 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of cmb_log_posterior</title>
+  <meta name="keywords" content="cmb_log_posterior">
+  <meta name="description" content="[log_posterior,log_posterior_gradient] = cmb_log_posterior(y,pp,preposterior,V,cmb_options,q_info,verbose)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">matlab</a> &gt; <a href="index.html">model-balancing</a> &gt; cmb_log_posterior.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for matlab/model-balancing&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>cmb_log_posterior
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>[log_posterior,log_posterior_gradient] = cmb_log_posterior(y,pp,preposterior,V,cmb_options,q_info,verbose)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [log_posterior,log_posterior_gradient] = cmb_log_posterior(y,pp,preposterior,V,cmb_options,q_info,verbose) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> [log_posterior,log_posterior_gradient] = cmb_log_posterior(y,pp,preposterior,V,cmb_options,q_info,verbose)
+
+ Log posterior score of the model balancing problem (objective function to be maximised)
+
+ Input variables
+   y             vector of optimisation variables (log metabolite concentrations and independent
+                 log kinetic constants; see cmb_qX_to_y and cmb_y_to_qX)
+   pp            struct with network and other information (see cmb_make_pp)
+   preposterior  struct describing the preposterior distributions (see cmb_prepare_posterior)
+   V             flux matrix (reactions x metabolic states)
+   cmb_options   struct containing options
+   q_info        struct describing the dependencies between model variables
+   verbose       (optional) flag
+
+ Output variables
+   log_posterior           log posterior score
+   log_posterior_gradient  gradient of log posterior score with respect to y</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../matlab/model-balancing/cmb-variables/cmb_qX_to_y.html" class="code" title="function y = cmb_qX_to_y(q,X,nm,ns)">cmb_qX_to_y</a>	y = cmb_qX_to_y(q, X, nm, ns)</li><li><a href="../../matlab/model-balancing/cmb-variables/cmb_q_to_kinetics.html" class="code" title="function r = cmb_q_to_kinetics(q,network,cmb_options,q_info)">cmb_q_to_kinetics</a>	r = cmb_q_to_kinetics(q, network, cmb_options, q_info)</li><li><a href="../../matlab/model-balancing/cmb-variables/cmb_q_to_qall.html" class="code" title="function qall = cmb_q_to_qall(q, q_info)">cmb_q_to_qall</a>	qall = cmb_q_to_qall(q, q_info)</li><li><a href="../../matlab/model-balancing/cmb-variables/cmb_y_to_qX.html" class="code" title="function [q,X] = cmb_y_to_qX(y,nm,ns)">cmb_y_to_qX</a>	[q, X] = cmb_y_to_qX(y, nm, ns)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="cmb_display_scores.html" class="code" title="function improvement = cmb_display_scores(network, q_info, cmb_options, pp, preposterior, init, optimal, true, V, verbose)">cmb_display_scores</a>	improvement = cmb_display_scores(network, q_info, cmb_options, pp, preposterior, init, optimal, true, V, verbose)</li><li><a href="cmb_estimation.html" class="code" title="function [optimal, gradient_V, init, time] = cmb_estimation(network, q_info, bounds, data, prior, preposterior, pp, V, cmb_options)">cmb_estimation</a>	[optimal, gradient_V, init, time] = cmb_estimation(network, q_info, bounds, data, prior, preposterior, pp, V, cmb_options)</li><li><a href="cmb_objective.html" class="code" title="function [score,gradient] = cmb_objective(y,pp,preposterior,V,cmb_options,q_info,verbose)">cmb_objective</a>	[score, gradient] = cmb_objective(y, pp, preposterior, V, cmb_options, q_info, verbose)</li><li><a href="cmb_variables_to_log_posterior.html" class="code" title="function f = cmb_variables_to_log_posterior(kinetics,X,network,q_info,cmb_options,prior,data,verbose)">cmb_variables_to_log_posterior</a>	f = cmb_variables_to_log_posterior(kinetics,X,network,q_info,cmb_options,prior,data,verbose)</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [log_posterior,log_posterior_gradient] = cmb_log_posterior(y,pp,preposterior,V,cmb_options,q_info,verbose)</a>
+0002 
+0003 <span class="comment">% [log_posterior,log_posterior_gradient] = cmb_log_posterior(y,pp,preposterior,V,cmb_options,q_info,verbose)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% Log posterior score of the model balancing problem (objective function to be maximised)</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% Input variables</span>
+0008 <span class="comment">%   y             vector of optimisation variables (log metabolite concentrations and independent</span>
+0009 <span class="comment">%                 log kinetic constants; see cmb_qX_to_y and cmb_y_to_qX)</span>
+0010 <span class="comment">%   pp            struct with network and other information (see cmb_make_pp)</span>
+0011 <span class="comment">%   preposterior  struct describing the preposterior distributions (see cmb_prepare_posterior)</span>
+0012 <span class="comment">%   V             flux matrix (reactions x metabolic states)</span>
+0013 <span class="comment">%   cmb_options   struct containing options</span>
+0014 <span class="comment">%   q_info        struct describing the dependencies between model variables</span>
+0015 <span class="comment">%   verbose       (optional) flag</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">% Output variables</span>
+0018 <span class="comment">%   log_posterior           log posterior score</span>
+0019 <span class="comment">%   log_posterior_gradient  gradient of log posterior score with respect to y</span>
+0020 
+0021 <span class="comment">% ------------------------------</span>
+0022 <span class="comment">% Initialise some variables</span>
+0023   
+0024 eval(default(<span class="string">'verbose'</span>,<span class="string">'0'</span>))  
+0025 
+0026 <span class="keyword">global</span> LP_info <span class="comment">% variable defined in cmb_estimation</span>
+0027 
+0028 <span class="keyword">if</span> verbose,
+0029   <span class="keyword">if</span> length(LP_info),
+0030     <span class="keyword">if</span> sum(LP_info.y_ineq_A * y &gt; LP_info.y_ineq_b - LP_info.epsilon) ~=0,
+0031       warning(<span class="string">'Constraint violation detected'</span>);
+0032       max_violation = max(LP_info.y_ineq_A * y - [ LP_info.y_ineq_b - LP_info.epsilon])
+0033     <span class="keyword">end</span>
+0034   <span class="keyword">end</span>
+0035 <span class="keyword">end</span>
+0036 
+0037 no_warnings = 1;
+0038 
+0039 [nr,nm,nx,KM_indices,KA_indices,KI_indices,nKM,nKA,nKI] = network_numbers(pp.network);
+0040 
+0041 ns = size(preposterior.X.mean,2);
+0042 
+0043 <span class="comment">% ------------------------------</span>
+0044 <span class="comment">% Extract X matrix and log kinetic constants from optimization vector z</span>
+0045 
+0046 [q,X] = <a href="../../matlab/model-balancing/cmb-variables/cmb_y_to_qX.html" class="code" title="function [q,X] = cmb_y_to_qX(y,nm,ns)">cmb_y_to_qX</a>(y,nm,ns);
+0047 
+0048 <span class="keyword">if</span> cmb_options.use_crosscovariances,
+0049 
+0050   <span class="comment">% version A: consider only basic kinetic constants</span>
+0051   log_posterior_q = - 0.5 * [q - preposterior.q.mean]' * preposterior.q.prec * [q - preposterior.q.mean];
+0052   
+0053   <span class="comment">% äquivalent zu version A</span>
+0054   <span class="comment">% consider only basic kinetic constants</span>
+0055   <span class="comment">% mean and prec for &quot;qmod&quot; (vector of kinetic constants as they are used in the model)</span>
+0056   <span class="comment">% index           = q_info.qall.index;</span>
+0057   <span class="comment">% ind             = [index.Keq, index.KM, index.KA, index.KI, index.Kcatf, index.Kcatr];</span>
+0058   <span class="comment">% M_q_qmod        = q_info.M_q_to_qall(ind,:);</span>
+0059   <span class="comment">% iM_q_qmod       = pinv(M_q_qmod);</span>
+0060   <span class="comment">% qall            = cmb_q_to_qall(q, q_info);</span>
+0061   <span class="comment">% qmod            = qall(ind);</span>
+0062   <span class="comment">% qmod_mean       = M_q_qmod * preposterior.q.mean;</span>
+0063   <span class="comment">% qmod_prec       = iM_q_qmod' * preposterior.q.prec * iM_q_qmod;</span>
+0064   <span class="comment">% log_posterior_q = - 0.5 * [qmod - qmod_mean]' * qmod_prec * [qmod - qmod_mean];</span>
+0065   
+0066   <span class="comment">% äquivalent zu version A</span>
+0067   <span class="comment">% consider all kinetic constants</span>
+0068   <span class="comment">% index     = q_info.qall.index;</span>
+0069   <span class="comment">% ind       = [index.Keq, index.KM, index.KA, index.KI, index.Kcatf, index.Kcatr];</span>
+0070   <span class="comment">% qall      = cmb_q_to_qall(q, q_info);</span>
+0071   <span class="comment">% qall_mean = preposterior.qall.mean;</span>
+0072   <span class="comment">% qall_prec = preposterior.qall.prec;</span>
+0073   <span class="comment">% qall_cov  = preposterior.qall.cov;</span>
+0074   <span class="comment">% log_posterior_q = - 0.5 * [qall(ind) - qall_mean(ind)]' * pinv(qall_cov(ind,ind)) * [qall(ind) - qall_mean(ind)];</span>
+0075   
+0076   <span class="comment">% version B: consider all kinetic constants (ignore covariances between them)</span>
+0077   <span class="comment">% nicht äquivalent zu version A</span>
+0078   <span class="comment">% index     = q_info.qall.index;</span>
+0079   <span class="comment">% ind       = [index.Keq, index.KM, index.KA, index.KI, index.Kcatf, index.Kcatr];</span>
+0080   <span class="comment">% qall      = cmb_q_to_qall(q, q_info);</span>
+0081   <span class="comment">% qall_mean = preposterior.qall.mean;</span>
+0082   <span class="comment">% qall_prec = preposterior.qall.prec;</span>
+0083   <span class="comment">% qall_cov  = preposterior.qall.cov;</span>
+0084   <span class="comment">% log_posterior_q = - 0.5 * [qall(ind) - qall_mean(ind)]' * qall_prec(ind,ind) * [qall(ind) - qall_mean(ind)];</span>
+0085 
+0086 <span class="keyword">else</span>,
+0087 
+0088   index = q_info.qall.index;
+0089   qall  = <a href="../../matlab/model-balancing/cmb-variables/cmb_q_to_qall.html" class="code" title="function qall = cmb_q_to_qall(q, q_info)">cmb_q_to_qall</a>(q, q_info);
+0090 
+0091   log_posterior_q = - 0.5 * [<span class="keyword">...</span>
+0092         [qall(index.Keq)   - preposterior.qtypes.Keq.mean  ]' * preposterior.qtypes.Keq.prec   * [qall(index.Keq)   - preposterior.qtypes.Keq.mean  ] <span class="keyword">...</span>
+0093       + [qall(index.KM)    - preposterior.qtypes.KM.mean   ]' * preposterior.qtypes.KM.prec    * [qall(index.KM)    - preposterior.qtypes.KM.mean   ] <span class="keyword">...</span>
+0094       + [qall(index.KA)    - preposterior.qtypes.KA.mean   ]' * preposterior.qtypes.KA.prec    * [qall(index.KA)    - preposterior.qtypes.KA.mean   ] <span class="keyword">...</span>
+0095       + [qall(index.KI)    - preposterior.qtypes.KI.mean   ]' * preposterior.qtypes.KI.prec    * [qall(index.KI)    - preposterior.qtypes.KI.mean   ] <span class="keyword">...</span>
+0096       + [qall(index.Kcatf) - preposterior.qtypes.Kcatf.mean]' * preposterior.qtypes.Kcatf.prec * [qall(index.Kcatf) - preposterior.qtypes.Kcatf.mean] <span class="keyword">...</span>
+0097       + [qall(index.Kcatr) - preposterior.qtypes.Kcatr.mean]' * preposterior.qtypes.Kcatr.prec * [qall(index.Kcatr) - preposterior.qtypes.Kcatr.mean] ];
+0098   
+0099 <span class="comment">% z_Keq    = [qall(index.Keq)   - preposterior.qtypes.Keq.mean  ]' * preposterior.qtypes.Keq.prec   * [qall(index.Keq)   - preposterior.qtypes.Keq.mean  ]</span>
+0100 <span class="comment">% z_KM     = [qall(index.KM)    - preposterior.qtypes.KM.mean   ]' * preposterior.qtypes.KM.prec    * [qall(index.KM)    - preposterior.qtypes.KM.mean   ]</span>
+0101 <span class="comment">% z_KA     = [qall(index.KA)    - preposterior.qtypes.KA.mean   ]' * preposterior.qtypes.KA.prec    * [qall(index.KA)    - preposterior.qtypes.KA.mean   ]</span>
+0102 <span class="comment">% z_KI     = [qall(index.KI)    - preposterior.qtypes.KI.mean   ]' * preposterior.qtypes.KI.prec    * [qall(index.KI)    - preposterior.qtypes.KI.mean   ]</span>
+0103 <span class="comment">% z_Kcatf  = [qall(index.Kcatf) - preposterior.qtypes.Kcatf.mean]' * preposterior.qtypes.Kcatf.prec * [qall(index.Kcatf) - preposterior.qtypes.Kcatf.mean]</span>
+0104 <span class="comment">% z_Kcatr  = [qall(index.Kcatr) - preposterior.qtypes.Kcatr.mean]' * preposterior.qtypes.Kcatr.prec * [qall(index.Kcatr) - preposterior.qtypes.Kcatr.mean]</span>
+0105 
+0106 <span class="keyword">end</span>
+0107 
+0108 <span class="comment">% ------------------------------</span>
+0109 
+0110 log_posterior_x = - 0.5 * sum(sum([[X - preposterior.X.mean] ./ preposterior.X.std ].^2));
+0111 
+0112 <span class="comment">% ------------------------------</span>
+0113 <span class="comment">% compute enzyme levels (ECM code)</span>
+0114 
+0115 pp.network.kinetics = <a href="../../matlab/model-balancing/cmb-variables/cmb_q_to_kinetics.html" class="code" title="function r = cmb_q_to_kinetics(q,network,cmb_options,q_info)">cmb_q_to_kinetics</a>(q,pp.network,cmb_options,q_info);
+0116 
+0117 <span class="keyword">for</span> it = 1:ns,
+0118   v      = V(:,it);
+0119   x      = X(:,it);
+0120   c      = exp(x);
+0121   pp.v   = v;
+0122   [~, E] = ecm_get_score(cmb_options.ecm_score,x,pp,no_warnings);
+0123   lnE(:,it) = log(E);
+0124   A(:,it) = RT * [log(pp.network.kinetics.Keq) - pp.network.N' * x];
+0125 <span class="keyword">end</span>
+0126 
+0127 <span class="comment">% check</span>
+0128 <span class="keyword">if</span> verbose,
+0129   <span class="keyword">if</span> find(V.*A&lt;0),
+0130     display(<span class="string">'WARNING: Constraint violation detected!'</span>);
+0131   <span class="keyword">end</span>
+0132 <span class="keyword">end</span>
+0133 
+0134 <span class="comment">% Avoid zero or negative enzyme levels (because of description on log scale)</span>
+0135 
+0136 <span class="comment">% OLD</span>
+0137 <span class="comment">%lnE(find(V==0))   = log(10^-10);</span>
+0138 <span class="comment">%ok = ones(size(V));</span>
+0139 
+0140 lnE(find(V.*A&lt;0)) = inf;
+0141 
+0142 <span class="comment">% format long</span>
+0143 <span class="comment">% exp(lnE)</span>
+0144 <span class="comment">% format short</span>
+0145 
+0146 ok = find(V~=0);
+0147 
+0148 lnE_log_posterior_upper  = - 0.5 * sum([[lnE(ok) - preposterior.lnE.mean(ok)] ./ preposterior.lnE.std(ok) ].^2 .* double(lnE(ok) &gt;= preposterior.lnE.mean(ok)));
+0149 lnE_log_posterior_lower  = - 0.5 * sum([[lnE(ok) - preposterior.lnE.mean(ok)] ./ preposterior.lnE.std(ok) ].^2 .* double(lnE(ok) &lt;  preposterior.lnE.mean(ok)));
+0150 
+0151 <span class="keyword">switch</span> cmb_options.enzyme_score_type,
+0152   <span class="keyword">case</span> <span class="string">'quadratic'</span>
+0153     <span class="comment">% with this option, MB is not guaranteed to be convex!</span>
+0154     my_alpha = 1;
+0155   <span class="keyword">case</span> <span class="string">'monotonic'</span>,
+0156     <span class="comment">% set likehood for E values below posterior mean to 0</span>
+0157     <span class="comment">% -&gt; monotonically increasing enzyme posterior score; overall MP problem is convex</span>
+0158     my_alpha = 0;
+0159   <span class="keyword">case</span> <span class="string">'interpolated'</span>,
+0160     my_alpha = cmb_options.enzyme_score_alpha;
+0161   <span class="keyword">otherwise</span>(<span class="string">'error'</span>);
+0162 <span class="keyword">end</span>
+0163 
+0164 log_posterior_lnE = my_alpha * lnE_log_posterior_lower + lnE_log_posterior_upper;  <span class="comment">% EXTRA TERM  - 0.72;</span>
+0165 
+0166 <span class="comment">% -----------------------------------------------</span>
+0167 <span class="comment">% c / KM pseudo values term</span>
+0168 
+0169 log_posterior_ln_c_over_km = 0;
+0170 
+0171 <span class="keyword">if</span> cmb_options.beta_ln_c_over_km &gt; 0,
+0172   <span class="comment">%% 1/sigma for pseudo value term for sum_til ln(c_i(t)/km_il)</span>
+0173   <span class="keyword">for</span> it = 1:size(X,2),  
+0174     x = X(:,it);
+0175     log_c_over_km   = [repmat(x',nr,1) - log(pp.network.kinetics.KM)];
+0176     log_c_over_km(find(pp.network.kinetics.KM==0)) = 0;
+0177     c_over_km_score = - 0.5 * cmb_options.beta_ln_c_over_km^2 * sum(sum(log_c_over_km.^2));
+0178     log_posterior_ln_c_over_km = log_posterior_ln_c_over_km + c_over_km_score;
+0179   <span class="keyword">end</span>
+0180 <span class="keyword">end</span>
+0181 
+0182 <span class="comment">% -----------------------------------------------</span>
+0183 
+0184 log_posterior = log_posterior_q + log_posterior_x + log_posterior_lnE + log_posterior_ln_c_over_km;
+0185 
+0186 <span class="keyword">if</span> 1,<span class="comment">%verbose,</span>
+0187   <span class="comment">% show z-scores</span>
+0188   z_q = -2*log_posterior_q
+0189   z_x =-2*log_posterior_x
+0190   z_lne = -2*log_posterior_lnE
+0191   z_lnckm = -2*log_posterior_ln_c_over_km
+0192 <span class="keyword">end</span>
+0193 
+0194 
+0195 <span class="comment">% ---------------------------------------------------------------------------</span>
+0196 <span class="comment">% Compute gradient</span>
+0197 
+0198 <span class="keyword">if</span> cmb_options.use_gradient,
+0199 
+0200   <span class="keyword">switch</span> cmb_options.enzyme_score_type,
+0201   <span class="keyword">case</span> <span class="string">'quadratic'</span>,
+0202   <span class="keyword">otherwise</span>,
+0203     error(<span class="string">'Gradient not supported'</span>); 
+0204 <span class="keyword">end</span>
+0205 
+0206   <span class="keyword">if</span> ~strcmp(cmb_options.parameterisation, <span class="string">'Keq_KV_KM_KA_KI'</span>),
+0207     error(<span class="string">'Gradient not supported'</span>); 
+0208   <span class="keyword">end</span>
+0209 
+0210   <span class="keyword">if</span> cmb_options.beta_ln_c_over_km ~= 0,
+0211     error(<span class="string">'Gradient not supported'</span>); 
+0212   <span class="keyword">end</span>
+0213 
+0214   <span class="comment">%% Compute posterior terms due to enzyme levels</span>
+0215   <span class="keyword">for</span> it = 1:ns,
+0216     v = V(:,it);
+0217     x = X(:,it);
+0218     e = E(:,it);
+0219     c = exp(x);
+0220     k = exp(q);
+0221     <span class="comment">%% Compute metabolite and parameter elasticties</span>
+0222     pp.network.kinetics.u = e;
+0223     [Eun_c,Eun_p,parameters] = elasticities(pp.network,c);
+0224     <span class="comment">%% reorder parameter elasticities (different convention in elasticities.m)</span>
+0225     <span class="keyword">for</span> itt = 1:nr,
+0226       Eun_kin      = ms_vector2par(Eun_p(itt,:)',pp.network.kinetics,pp.network);
+0227       Eun_k(itt,:) = [Eun_kin.Keq; Eun_kin.KV; Eun_kin.KM(KM_indices); Eun_kin.KA(KA_indices); Eun_kin.KI(KI_indices)]';
+0228     <span class="keyword">end</span>
+0229     <span class="comment">%% Compute posterior terms due to enzyme levels</span>
+0230     de_dx  = - diag(e./v) * Eun_c * diag(c);
+0231     de_dq  = - diag(e./v) * Eun_k * diag(k);
+0232     lnE_mean = preposterior.lnE.mean(:,it);
+0233     lnE_std  = preposterior.lnE.std(:,it);
+0234     log_preposterior_gradient_eX(:,it) = [[log(e) - lnE_mean] ./ [lnE_std.^2]]' * de_dx;
+0235     log_preposterior_gradient_eq(:,it) = [[log(e) - lnE_mean] ./ [lnE_std.^2]]' * de_dq;
+0236   <span class="keyword">end</span>
+0237 
+0238   log_posterior_gradient_q = - preposterior.q.prec * [q-preposterior.q.mean] + sum(log_preposterior_gradient_eq')';
+0239   log_posterior_gradient_X = - [X-preposterior.X.mean]./[preposterior.X.std.^2] + log_preposterior_gradient_eX;
+0240   log_posterior_gradient   = <a href="../../matlab/model-balancing/cmb-variables/cmb_qX_to_y.html" class="code" title="function y = cmb_qX_to_y(q,X,nm,ns)">cmb_qX_to_y</a>(log_posterior_gradient_q,log_posterior_gradient_X,nm,ns);
+0241   
+0242 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Fri 23-Oct-2026 20:27:13 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

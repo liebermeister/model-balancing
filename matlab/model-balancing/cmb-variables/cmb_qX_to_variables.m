@@ -1,5 +1,17 @@
 function res = cmb_qX_to_variables(q,X,V,network,cmb_options,q_info,ecm_score,pp)
 
+% res = cmb_qX_to_variables(q, X, V, network, cmb_options, q_info, ecm_score, pp)
+%
+% Compute all model variables from log kinetic constants q, log metabolite concentrations X, and fluxes V
+%
+% Output variables
+%   res  struct with fields
+%     .kinetics  kinetic constants (format as in network.kinetics)
+%     .q, .X     input vectors q and X
+%     .C         metabolite concentrations (exp(X))
+%     .E         enzyme concentrations (from enzyme cost function ecm_score)
+%     .A         reaction affinities (kJ/mol)
+
 [nr,nm,nx,KM_ind,KA_ind,KI_ind,nKM,nKA,nKI] = network_numbers(network);
 
 ns = size(X,2);

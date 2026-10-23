@@ -1,6 +1,6 @@
 function [kinetics, prior, bounds, data, true, kinetic_data, state_data] = cmb_generate_artificial_data(network, cmb_options, q_info, c_init, conc_min, conc_max, ind_e_off, Keq_init, v_init)
 
-% [kinetics, prior, bounds, data, true, kinetic_data, state_data] = cmb_generate_artificial_data(network, cmb_options, q_info, e_init)
+% [kinetics, prior, bounds, data, true, kinetic_data, state_data] = cmb_generate_artificial_data(network, cmb_options, q_info, c_init, conc_min, conc_max, ind_e_off, Keq_init, v_init)
 %
 % Generate an artificial data set for a given metabolic network structure
 % 
@@ -11,8 +11,9 @@ function [kinetics, prior, bounds, data, true, kinetic_data, state_data] = cmb_g
 %   c_init       (optional) matrix; initial guess of (non-logarithmic) metabolite concentrations; 
 %                           also used for generating the artificial data 
 %   conc_min, conc_max vectors with minimal and maximal metabolite concentrations
-%   ind_e_off    indices of enyzmes to be shot off
-%   Keq_init Keq vector to be used  for artificial data
+%   ind_e_off    indices of enzymes to be shut off
+%   Keq_init     Keq vector to be used for artificial data
+%   v_init       (optional) reference flux vector to be used for artificial data
 % 
 %   prior        struct describing priors in the optimality problem (details see cmb_make_prior)
 %   bounds       struct describing bounds in the optimality problem (details see cmb_make_bounds)

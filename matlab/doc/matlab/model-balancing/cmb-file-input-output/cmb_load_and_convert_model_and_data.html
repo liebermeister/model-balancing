@@ -1,0 +1,145 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of cmb_load_and_convert_model_and_data</title>
+  <meta name="keywords" content="cmb_load_and_convert_model_and_data">
+  <meta name="description" content="[network, q_info, data, c_init, kinetic_data, state_data, conc_min, conc_max] = cmb_load_and_convert_model_and_data(cmb_options, file, file_options)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">matlab</a> &gt; <a href="../index.html">model-balancing</a> &gt; <a href="index.html">cmb-file-input-output</a> &gt; cmb_load_and_convert_model_and_data.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for matlab/model-balancing/cmb-file-input-output&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>cmb_load_and_convert_model_and_data
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>[network, q_info, data, c_init, kinetic_data, state_data, conc_min, conc_max] = cmb_load_and_convert_model_and_data(cmb_options, file, file_options)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [network, q_info, data, c_init, kinetic_data, state_data, conc_min, conc_max] = cmb_load_and_convert_model_and_data(cmb_options, file, file_options) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> [network, q_info, data, c_init, kinetic_data, state_data, conc_min, conc_max] = cmb_load_and_convert_model_and_data(cmb_options, file, file_options)
+
+ Load model and data from SBtab files for model balancing
+ 
+ Wrapper function around:
+  - sbtab_load_network_model_and_data
+  - state_data_to_data
+
+ This function does not accept SBML files as inputs (to be implemented)
+
+ Function arguments:
+  'cmb_options':      data structure with model balancing options; 
+                        for list of options used in this function, see state_data_to_data
+  'file':             either a single SBtab filename or a cell array of such filenames (files to be combined)
+  'file_options':     struct with (optional) fields
+    .match_data_by         'ModelElementId' or 'KeggId';
+    .metabolite_table_id   (default 'MetaboliteConcentration')
+    .flux_table_id         (default 'Flux')
+    .enzyme_table_id       (default 'EnzymeConcentration')
+    .columns_mean:         cell array of column names for mean data values
+                           (same columns names in metabolite, flux, and enzyme table!)
+    .columns_std:          same, for std dev columns
+    .constraint_sbtab_file (optional) SBtab file with metabolite concentration constraints 
+                           (table 'ConcentrationConstraint')
+
+ Outputs
+ conc_min, conc_max        vectors of concentration bounds (or empty, if no constraint_sbtab_file is given)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../matlab/demo/demo_cmb_experimental_data.html" class="code" title="">demo_cmb_experimental_data</a>	-------------------------------------------------------------</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [network, q_info, data, c_init, kinetic_data, state_data, conc_min, conc_max] = cmb_load_and_convert_model_and_data(cmb_options, file, file_options)</a>
+0002 
+0003 <span class="comment">% [network, q_info, data, c_init, kinetic_data, state_data, conc_min, conc_max] = cmb_load_and_convert_model_and_data(cmb_options, file, file_options)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% Load model and data from SBtab files for model balancing</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% Wrapper function around:</span>
+0008 <span class="comment">%  - sbtab_load_network_model_and_data</span>
+0009 <span class="comment">%  - state_data_to_data</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% This function does not accept SBML files as inputs (to be implemented)</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% Function arguments:</span>
+0014 <span class="comment">%  'cmb_options':      data structure with model balancing options;</span>
+0015 <span class="comment">%                        for list of options used in this function, see state_data_to_data</span>
+0016 <span class="comment">%  'file':             either a single SBtab filename or a cell array of such filenames (files to be combined)</span>
+0017 <span class="comment">%  'file_options':     struct with (optional) fields</span>
+0018 <span class="comment">%    .match_data_by         'ModelElementId' or 'KeggId';</span>
+0019 <span class="comment">%    .metabolite_table_id   (default 'MetaboliteConcentration')</span>
+0020 <span class="comment">%    .flux_table_id         (default 'Flux')</span>
+0021 <span class="comment">%    .enzyme_table_id       (default 'EnzymeConcentration')</span>
+0022 <span class="comment">%    .columns_mean:         cell array of column names for mean data values</span>
+0023 <span class="comment">%                           (same columns names in metabolite, flux, and enzyme table!)</span>
+0024 <span class="comment">%    .columns_std:          same, for std dev columns</span>
+0025 <span class="comment">%    .constraint_sbtab_file (optional) SBtab file with metabolite concentration constraints</span>
+0026 <span class="comment">%                           (table 'ConcentrationConstraint')</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">% Outputs</span>
+0029 <span class="comment">% conc_min, conc_max        vectors of concentration bounds (or empty, if no constraint_sbtab_file is given)</span>
+0030   
+0031 eval(default(<span class="string">'file_options'</span>,<span class="string">'struct'</span>));
+0032 
+0033 file_options = join_struct(struct(<span class="string">'constraint_sbtab_file'</span>,[]), file_options);
+0034 
+0035 <span class="comment">% --------------------------------------------------------------</span>
+0036 <span class="comment">% Load data files -&gt; network, kinetic_data, state_data</span>
+0037 <span class="comment">% --------------------------------------------------------------</span>
+0038 
+0039 result = sbtab_load_network_model_and_data(file, file_options);
+0040 
+0041 network          = result.network;
+0042 network.kinetics = set_kinetics(network,<span class="string">'cs'</span>);
+0043 kinetic_data     = result.kinetic_data;
+0044 state_data       = result.state_data;
+0045 
+0046 <span class="comment">% --------------------------------------------------------------</span>
+0047 <span class="comment">% Initial state for optimisation (using parameters from network.kinetics and concentrations = 1)</span>
+0048 <span class="comment">% --------------------------------------------------------------</span>
+0049 
+0050 nm = size(network.N,1);
+0051 c_init = ones(nm,1);
+0052 
+0053 
+0054 <span class="comment">% --------------------------------------------------------------</span>
+0055 <span class="comment">% Convert metabolic data to struct 'data'</span>
+0056 <span class="comment">% --------------------------------------------------------------</span>
+0057 
+0058 [data, q_info] = state_data_to_data(kinetic_data, state_data, cmb_options, network);
+0059 
+0060 
+0061 <span class="comment">% --------------------------------------------------------------</span>
+0062 <span class="comment">% concentration bound vectors</span>
+0063 <span class="comment">% --------------------------------------------------------------</span>
+0064 
+0065 conc_min = [];
+0066 conc_max = [];
+0067 
+0068 <span class="keyword">if</span> length(file_options.constraint_sbtab_file),
+0069   constraint_sbtab = sbtab_document_load_from_one(file_options.constraint_sbtab_file);
+0070   conc_min  = sbtab_table_get_column(constraint_sbtab.tables.ConcentrationConstraint,<span class="string">'Min'</span>,1);
+0071   conc_max  = sbtab_table_get_column(constraint_sbtab.tables.ConcentrationConstraint,<span class="string">'Max'</span>,1);
+0072 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Fri 23-Oct-2026 20:27:13 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

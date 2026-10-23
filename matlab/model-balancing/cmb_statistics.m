@@ -1,5 +1,13 @@
 function report = cmb_statistics(network,cmb_options,prior,data,optimal,calculation_time,res,res_true)
 
+% report = cmb_statistics(network, cmb_options, prior, data, optimal, calculation_time, res, res_true)
+%
+% Display and return a short report about a model balancing run (problem size, numbers of
+% data points and fitted variables, options used, estimation errors, calculation time)
+%
+% Output variables
+%   report  cell array of strings (written to file report.txt by model_balancing)
+
 [nr,nm,nx,KM_indices,KA_indices,KI_indices,nKM,nKA,nKI] = network_numbers(network);
 
 ns = size(data.X.mean,2);

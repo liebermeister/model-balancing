@@ -1,7 +1,8 @@
 Matlab functions for model balancing
 ====================================
 
-For documentation, see www.metabolic-economics.de/model-balancing/matlab-doc/
+For documentation, see [www.metabolic-economics.de/model-balancing/matlab-doc/](https://www.metabolic-economics.de/model-balancing/matlab-doc/)
+or type `help model-balancing` in matlab.
 
 ## Contents of this folder
 
@@ -15,7 +16,7 @@ Subfolders
 
 * `demo` Demo scripts for running model balancing with artificial or experimental data
 
-* `doc` HTML source code for documentation at www.metabolic-economics.de/model-balancing/matlab-doc/
+* `doc` HTML documentation (generated with m2html), also available at www.metabolic-economics.de/model-balancing/matlab-doc/
 
 Matlab scripts for generating the example models can be found in the folder `../resource-data/models`
 
@@ -25,6 +26,6 @@ Matlab scripts for generating the example models can be found in the folder `../
 
 * Optimisation is performed by the fmincon function with the interior-point method.
 
-* For numerical reasons, the matlab implementation does not tolerate equal lower and upper bounds for metabolites. If c_min == c_max,  10^-5 is added automatically to ln c_max. This also speeds up the calculation.
+* For numerical reasons, the matlab implementation does not tolerate equal lower and upper bounds for metabolites. If c_min == c_max, 10^-5 is added automatically to ln c_max. This also speeds up the calculation.
 
 * By default, the algorithm starts by running model balancing on an average model state (with metabolic state data given by the geometric mean over the metabolic states). The resulting kinetic constants are used as initial values for the following full calculation with several metabolic states.

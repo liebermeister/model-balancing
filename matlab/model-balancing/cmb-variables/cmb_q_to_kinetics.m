@@ -1,5 +1,10 @@
 function r = cmb_q_to_kinetics(q,network,cmb_options,q_info)
 
+% r = cmb_q_to_kinetics(q, network, cmb_options, q_info)
+%
+% Convert a vector q of independent log kinetic constants into a kinetics struct
+% (format as in network.kinetics, Metabolic Network Toolbox); kcat values are computed from KV and Keq
+
 [nr,nm,nx,KM_ind,KA_ind,KI_ind,nKM,nKA,nKI] = network_numbers(network);
 
 r = network.kinetics;

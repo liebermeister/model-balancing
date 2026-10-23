@@ -50,7 +50,7 @@ clear;
 %  /  
 % X
 % 
-% Use model and artificial data from folder ~/resource-data/models/branch_point_model/data/
+% Use model and artificial data from folder resource-data/models/branch_point_model/data/
 % -------------------------------------------------------------
 
 % % To use other models, please comment out the following lines
@@ -78,7 +78,7 @@ filenames = cmb_filenames(model, prb, run, result_dir);
 %
 % X - O - O - X
 %
-% Model and artificial data from folder ~/resource-data/models/three_chain_model/data/
+% Model and artificial data from folder resource-data/models/three_chain_model/data/
 % -------------------------------------------------------------
 
 % To use this model, please uncomment the following lines
@@ -89,7 +89,7 @@ filenames = cmb_filenames(model, prb, run, result_dir);
 % network_file               = [cmb_resourcedir '/models/three_chain_model/data/artificial_network_true.tsv'];
 % kinetic_data_file          = [cmb_resourcedir '/models/three_chain_model/data/artificial_kinetic_data.tsv'];
 % state_data_file            = [cmb_resourcedir '/models/three_chain_model/data/artificial_state_data.tsv'];
-% file_options.constraint_file = [cmb_resourcedir '/models/branch_point_model/three_chain_model_ConcentrationConstraint.tsv'];
+% file_options.constraint_file = [cmb_resourcedir '/models/three_chain_model/three_chain_model_ConcentrationConstraint.tsv'];
 % file_options.match_data_by = 'ModelElementId';
 % file_options.columns_mean  = {'S1_Mean','S2_Mean','S3_Mean','S4_Mean','S5_Mean','S6_Mean'};
 % file_options.columns_std   = {'S1_Std','S2_Std','S3_Std','S4_Std','S5_Std','S6_Std'};
@@ -110,7 +110,7 @@ filenames = cmb_filenames(model, prb, run, result_dir);
 %      /     \
 % X - O       X
 %
-% Use model and artificial data from folder ~/resource-data/models/double_branch_model/data/
+% Use model and artificial data from folder resource-data/models/double_branch_model/data/
 % -------------------------------------------------------------
 
 % To use this model, please uncomment the following lines
@@ -121,7 +121,7 @@ filenames = cmb_filenames(model, prb, run, result_dir);
 % network_file              = [cmb_resourcedir '/models/double_branch_model/data/artificial_network_true.tsv'];
 % kinetic_data_file         = [cmb_resourcedir '/models/double_branch_model/data/artificial_kinetic_data.tsv'];
 % state_data_file           = [cmb_resourcedir '/models/double_branch_model/data/artificial_state_data.tsv'];
-% file_options.constraint_file = [cmb_resourcedir '/models/branch_point_model/double_branch_model_ConcentrationConstraint.tsv'];
+% file_options.constraint_file = [cmb_resourcedir '/models/double_branch_model/double_branch_model_ConcentrationConstraint.tsv'];
 % file_options.match_data_by = 'ModelElementId';
 % file_options.columns_mean  = {'S1_Mean','S2_Mean','S3_Mean','S4_Mean','S5_Mean','S6_Mean'};
 % file_options.columns_std   = {'S1_Std','S2_Std','S3_Std','S4_Std','S5_Std','S6_Std'};
@@ -142,10 +142,10 @@ filenames = cmb_filenames(model, prb, run, result_dir);
 % prb                          = 'with_kinetic_data';
 % run                          = 'with_kinetic_data_alpha_0_5';
 % network_file                 = [cmb_resourcedir '/models/e_coli_noor_2016/e_coli_noor_2016.tsv'];
-% kinetic_data_file            = [cmb_resourcedir '/models/e_coli_noor_2016/e_coli_ccm_kinetic_data.tsv'];
-% state_data_file              = [cmb_resourcedir '/models/e_coli_noor_2016/e_coli_ccm_state_data.tsv'];
-% %% Concentration constraint table is part of the model file:
-% file_options.constraint_file = [cmb_resourcedir '/models/e_coli_noor_2016/e_coli_noor_2016.tsv'];
+% kinetic_data_file            = [cmb_resourcedir '/models/e_coli_noor_2016/e_coli_ccm_kinetic_data/e_coli_noor_2016_kinetic_data_modified.tsv'];
+% state_data_file              = [cmb_resourcedir '/models/e_coli_noor_2016/e_coli_ccm_state_data_COPY_FOR_INFO.tsv'];
+% %% Concentration constraints are given in a separate file:
+% file_options.constraint_file = [cmb_resourcedir '/models/e_coli_noor_2016/e_coli_noor_2016_ConcentrationConstraint.tsv'];
 % file_options.match_data_by   = 'ModelElementId';
 % file_options.columns_mean    = {'S_1_Mean'};
 % file_options.columns_std     = {};

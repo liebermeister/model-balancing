@@ -1,0 +1,367 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of cmb_graphics</title>
+  <meta name="keywords" content="cmb_graphics">
+  <meta name="description" content="[res, res_true, res_true_data] = cmb_graphics(prior, data, optimal, true, cmb_options, q_info, graphics_dir, kapp_max, show_graphics)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">matlab</a> &gt; <a href="index.html">model-balancing</a> &gt; cmb_graphics.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for matlab/model-balancing&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>cmb_graphics
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>[res, res_true, res_true_data] = cmb_graphics(prior, data, optimal, true, cmb_options, q_info, graphics_dir, kapp_max, show_graphics)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [res, res_true, res_true_data] = cmb_graphics(prior, data, optimal, true, cmb_options, q_info, graphics_dir, kapp_max, show_graphics) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> [res, res_true, res_true_data] = cmb_graphics(prior, data, optimal, true, cmb_options, q_info, graphics_dir, kapp_max, show_graphics)
+
+ Scatter plots comparing balanced values to data values and (for artificial data) to true values;
+ optionally, save the graphics as EPS files in the directory graphics_dir
+
+ Output variables
+   res            struct with comparison statistics: balanced vs. data values
+   res_true       struct with comparison statistics: balanced vs. true values (only for artificial data)
+   res_true_data  struct with comparison statistics: data vs. true values (only for artificial data)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../matlab/model-balancing/cmb-variables/cmb_q_to_qall.html" class="code" title="function qall = cmb_q_to_qall(q, q_info)">cmb_q_to_qall</a>	qall = cmb_q_to_qall(q, q_info)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../matlab/model_balancing.html" class="code" title="function [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max, preposterior, pp] = model_balancing(filenames, cmb_options, network, q_info, prior, bounds, data, true, init)">model_balancing</a>	[optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max, preposterior, pp] = model_balancing(filenames, cmb_options, network, q_info, prior, bounds, data, true, init)</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function out = scatter_plot(xvalues,yvalues,names,color,pred,xtitle,ytitle,mark_indices, show_graphics, fignum, filename)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [res, res_true, res_true_data] = cmb_graphics(prior, data, optimal, true, cmb_options, q_info, graphics_dir, kapp_max, show_graphics)</a>
+0002 
+0003 <span class="comment">% [res, res_true, res_true_data] = cmb_graphics(prior, data, optimal, true, cmb_options, q_info, graphics_dir, kapp_max, show_graphics)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% Scatter plots comparing balanced values to data values and (for artificial data) to true values;</span>
+0006 <span class="comment">% optionally, save the graphics as EPS files in the directory graphics_dir</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% Output variables</span>
+0009 <span class="comment">%   res            struct with comparison statistics: balanced vs. data values</span>
+0010 <span class="comment">%   res_true       struct with comparison statistics: balanced vs. true values (only for artificial data)</span>
+0011 <span class="comment">%   res_true_data  struct with comparison statistics: data vs. true values (only for artificial data)</span>
+0012 
+0013 eval(default(<span class="string">'graphics_dir'</span>,<span class="string">'[]'</span>,<span class="string">'show_graphics'</span>,<span class="string">'1'</span>));
+0014 
+0015 res = []; res_true = []; res_true_data = [];
+0016 
+0017 <span class="comment">% ---------------------</span>
+0018 <span class="comment">% set some variables</span>
+0019   
+0020 eval(default(<span class="string">'true'</span>,<span class="string">'[]'</span>));
+0021 
+0022 qall_names   = q_info.qall.names;
+0023 qall_data    = data.qall.mean;
+0024 qall_optimal = <a href="../../matlab/model-balancing/cmb-variables/cmb_q_to_qall.html" class="code" title="function qall = cmb_q_to_qall(q, q_info)">cmb_q_to_qall</a>(optimal.q,q_info);
+0025 index        = q_info.qall.index;
+0026 nr           = length(index.KV);
+0027 
+0028 <span class="comment">% ---------------------</span>
+0029 <span class="comment">% Graphics: plot data vs fitted</span>
+0030 
+0031 <span class="keyword">if</span> length(graphics_dir),
+0032   display(sprintf(<span class="string">'Writing graphics files with basename %s'</span>,graphics_dir));
+0033   
+0034   filenames.x        = [graphics_dir <span class="string">'data_x.eps'</span>];
+0035   filenames.e        = [graphics_dir <span class="string">'data_e.eps'</span>];
+0036   filenames.KV       = [graphics_dir <span class="string">'data_KV.eps'</span>];
+0037   filenames.KM       = [graphics_dir <span class="string">'data_KM.eps'</span>];
+0038   filenames.Keq      = [graphics_dir <span class="string">'data_Keq.eps'</span>];
+0039   filenames.Kcatf    = [graphics_dir <span class="string">'data_Kcatf.eps'</span>];
+0040   filenames.Kcatr    = [graphics_dir <span class="string">'data_Kcatr.eps'</span>];
+0041   filenames.Kappmaxf = [graphics_dir <span class="string">'data_Kappmaxf.eps'</span>];
+0042   filenames.Kappmaxr = [graphics_dir <span class="string">'data_Kappmaxr.eps'</span>];
+0043 <span class="keyword">end</span>
+0044 
+0045 fit_color  = [1 0 0];
+0046 pred_color = [1 0 0];
+0047 met_color  = [0 0 0.8];
+0048 enz_color  = [.6 0.2 0.1];
+0049 kapp_color = [.7 0 .7];
+0050 
+0051 <span class="keyword">switch</span> cmb_options.use_kinetic_data,
+0052   <span class="keyword">case</span> <span class="string">'all'</span>, 
+0053     keq_color = fit_color; kcat_color = fit_color; km_color = fit_color;
+0054     keq_pred = 0; kcat_pred = 0; km_pred = 0;
+0055   <span class="keyword">case</span> <span class="string">'only_Keq'</span>,
+0056     keq_color = fit_color; kcat_color = pred_color; km_color = pred_color;
+0057     keq_pred = 0; kcat_pred = 1; km_pred = 1;
+0058   <span class="keyword">case</span> <span class="string">'none'</span>,
+0059     keq_color = pred_color; kcat_color = pred_color; km_color = pred_color;
+0060     keq_pred = 1; kcat_pred = 1; km_pred = 1;
+0061 <span class="keyword">end</span>
+0062 
+0063 pred = 0;
+0064 
+0065 <span class="comment">% figure(1);</span>
+0066 res.c = <a href="#_sub1" class="code" title="subfunction out = scatter_plot(xvalues,yvalues,names,color,pred,xtitle,ytitle,mark_indices, show_graphics, fignum, filename)">scatter_plot</a>(data.X.mean,optimal.X,[],met_color,0,<span class="string">'Metabolite levels [mM] (data)'</span>, <span class="string">'Metabolite levels [mM]'</span>, [], show_graphics,1,filenames.x);
+0067 
+0068 <span class="comment">% figure(2);</span>
+0069 <span class="comment">%res = scatter_plot(log(data.E.mean),log(optimal.E),[],enz_color,0,'Enzyme levels [mM] (data)', 'Enzyme levels [mM]', [], show_graphics,2);</span>
+0070 res.e = <a href="#_sub1" class="code" title="subfunction out = scatter_plot(xvalues,yvalues,names,color,pred,xtitle,ytitle,mark_indices, show_graphics, fignum, filename)">scatter_plot</a>(data.lnE.mean,log(optimal.E),[],enz_color,0,<span class="string">'Enzyme levels [mM] (data)'</span>, <span class="string">'Enzyme levels [mM]'</span>, [], show_graphics,2,filenames.e);
+0071 
+0072 <span class="comment">% figure(3);</span>
+0073 res.KV = <a href="#_sub1" class="code" title="subfunction out = scatter_plot(xvalues,yvalues,names,color,pred,xtitle,ytitle,mark_indices, show_graphics, fignum, filename)">scatter_plot</a>(qall_data(index.KV),qall_optimal(index.KV),qall_names(index.KV),fit_color,1,<span class="string">'K_{V} [1/s] (data)'</span>, <span class="string">'K_{V} [1/s]'</span>, [], show_graphics,3,filenames.KV);
+0074     
+0075 <span class="comment">% figure(4);</span>
+0076 <span class="comment">% % mark KM value if the minimum concentration, over all samples, is at least twice as large as KM value</span>
+0077 <span class="comment">% % (consider optimal values for this criterion)</span>
+0078 <span class="comment">% % log metabolite concentrations, minimum across all samples</span>
+0079 <span class="comment">% c_min_over_samples = min(exp(optimal.X),[],2);</span>
+0080 <span class="comment">% C_min_mat = repmat(c_min_over_samples',nr,1);</span>
+0081 <span class="comment">% mark_indices = find(C_min_mat(q_info.KM_matrix_indices) &gt; 2 * exp(qall_optimal(index.KM)));</span>
+0082 
+0083 res.KM = <a href="#_sub1" class="code" title="subfunction out = scatter_plot(xvalues,yvalues,names,color,pred,xtitle,ytitle,mark_indices, show_graphics, fignum, filename)">scatter_plot</a>(qall_data(index.KM),qall_optimal(index.KM),qall_names(index.KM),km_color,km_pred,<span class="string">'K_{M} [mM] (data)'</span>, <span class="string">'K_{M} [mM]'</span>, [], show_graphics,4,filenames.KM);
+0084 
+0085 <span class="keyword">switch</span> cmb_options.parameterisation,
+0086   <span class="keyword">case</span> <span class="string">'Keq_KV_KM_KA_KI'</span>,
+0087     
+0088     <span class="comment">% figure(5);</span>
+0089     res.Keq = <a href="#_sub1" class="code" title="subfunction out = scatter_plot(xvalues,yvalues,names,color,pred,xtitle,ytitle,mark_indices, show_graphics, fignum, filename)">scatter_plot</a>(qall_data(index.Keq),qall_optimal(index.Keq),qall_names(index.Keq),keq_color,keq_pred,<span class="string">'K_{eq} [unitless] (data)'</span>, <span class="string">'K_{eq} [unitless]'</span>, [], show_graphics,5,filenames.Keq);
+0090       
+0091     <span class="comment">% figure(6);</span>
+0092     res.Kcatf = <a href="#_sub1" class="code" title="subfunction out = scatter_plot(xvalues,yvalues,names,color,pred,xtitle,ytitle,mark_indices, show_graphics, fignum, filename)">scatter_plot</a>(qall_data(index.Kcatf),qall_optimal(index.Kcatf),qall_names(index.Kcatf),kcat_color,kcat_pred,<span class="string">'k_{cat}^{+} [1/s] (data)'</span>, <span class="string">'k_{cat}^{+} [1/s]'</span>, [], show_graphics,6,filenames.Kcatf);
+0093     
+0094     <span class="comment">% figure(7);</span>
+0095     res.Kcatr = <a href="#_sub1" class="code" title="subfunction out = scatter_plot(xvalues,yvalues,names,color,pred,xtitle,ytitle,mark_indices, show_graphics, fignum, filename)">scatter_plot</a>(qall_data(index.Kcatr),qall_optimal(index.Kcatr),qall_names(index.Kcatr),kcat_color,kcat_pred,<span class="string">'k_{cat}^{-} [1/s] (data)'</span>, <span class="string">'k_{cat}^{-} [1/s]'</span>, [], show_graphics,7,filenames.Kcatr);
+0096       
+0097     <span class="comment">% figure(8);</span>
+0098     res.Kappf = <a href="#_sub1" class="code" title="subfunction out = scatter_plot(xvalues,yvalues,names,color,pred,xtitle,ytitle,mark_indices, show_graphics, fignum, filename)">scatter_plot</a>(qall_data(index.Kcatf),log(kapp_max.forward),qall_names(index.Kcatf),kapp_color,1,<span class="string">'k_{cat}^{+} [1/s] (data)'</span>, <span class="string">'k_{app,max}^{+} [1/s]'</span>, [], show_graphics,8,filenames.Kappmaxf);
+0099 
+0100     <span class="comment">% figure(9);</span>
+0101     <span class="comment">%% plot only if some reverse kapp values have been determined</span>
+0102     <span class="keyword">if</span> sum(isfinite(kapp_max.reverse)),
+0103       res.Kappr = <a href="#_sub1" class="code" title="subfunction out = scatter_plot(xvalues,yvalues,names,color,pred,xtitle,ytitle,mark_indices, show_graphics, fignum, filename)">scatter_plot</a>(qall_data(index.Kcatr),log(kapp_max.reverse),qall_names(index.Kcatr),kapp_color,1,<span class="string">'k_{cat}^{-} [1/s] (data)'</span>, <span class="string">'k_{app,max}^{-} [1/s]'</span>, [], show_graphics,9,filenames.Kappmaxr);
+0104     <span class="keyword">elseif</span> show_graphics,
+0105       figure(9);
+0106       axis square;  noticks
+0107       title(<span class="string">'No reverse Kapp values determined'</span>);
+0108       print(filenames.Kappmaxr, <span class="string">'-f9'</span>, <span class="string">'-depsc'</span>); 
+0109     <span class="keyword">end</span>
+0110 
+0111 <span class="keyword">end</span>
+0112   
+0113 <span class="comment">% -----------------------------------------------------------</span>
+0114 <span class="comment">% Graphics: plot true vs fitted (only in the case of artificial data)</span>
+0115 
+0116 <span class="keyword">if</span> length(true),
+0117 
+0118   filenames.x        = [graphics_dir <span class="string">'true_x.eps'</span>];
+0119   filenames.e        = [graphics_dir <span class="string">'true_e.eps'</span>];
+0120   filenames.KV       = [graphics_dir <span class="string">'true_KV.eps'</span>];
+0121   filenames.KM       = [graphics_dir <span class="string">'true_KM.eps'</span>];
+0122   filenames.Keq      = [graphics_dir <span class="string">'true_Keq.eps'</span>];
+0123   filenames.Kcatf    = [graphics_dir <span class="string">'true_Kcatf.eps'</span>];
+0124   filenames.Kcatr    = [graphics_dir <span class="string">'true_Kcatr.eps'</span>];
+0125   filenames.Kappmaxf = [graphics_dir <span class="string">'true_Kappmaxf.eps'</span>];
+0126   filenames.Kappmaxr = [graphics_dir <span class="string">'true_Kappmaxr.eps'</span>];
+0127 
+0128   qall_true = <a href="../../matlab/model-balancing/cmb-variables/cmb_q_to_qall.html" class="code" title="function qall = cmb_q_to_qall(q, q_info)">cmb_q_to_qall</a>(true.q,q_info);
+0129 
+0130   <span class="comment">% figure(11);</span>
+0131   res_true.c = <a href="#_sub1" class="code" title="subfunction out = scatter_plot(xvalues,yvalues,names,color,pred,xtitle,ytitle,mark_indices, show_graphics, fignum, filename)">scatter_plot</a>(true.X,optimal.X,[],met_color,0,<span class="string">'Metabolite levels [mM] (true)'</span>,<span class="string">'Metabolite levels [mM]'</span>, [], show_graphics,11,filenames.x);
+0132   
+0133   <span class="comment">% figure(12);</span>
+0134   res_true.e = <a href="#_sub1" class="code" title="subfunction out = scatter_plot(xvalues,yvalues,names,color,pred,xtitle,ytitle,mark_indices, show_graphics, fignum, filename)">scatter_plot</a>(log(true.E),log(optimal.E),[],enz_color,0,<span class="string">'Enzyme levels [mM] (true)'</span>,<span class="string">'Enzyme levels [mM]'</span>, [], show_graphics,12,filenames.e);
+0135 
+0136   <span class="comment">% figure(13);</span>
+0137   res_true.KV = <a href="#_sub1" class="code" title="subfunction out = scatter_plot(xvalues,yvalues,names,color,pred,xtitle,ytitle,mark_indices, show_graphics, fignum, filename)">scatter_plot</a>(qall_true(index.KV),qall_optimal(index.KV),qall_names(index.KV),fit_color,0,<span class="string">'K_{V} [1/s] (true)'</span>, <span class="string">'K_{V} [1/s]'</span>, [], show_graphics,13,filenames.KV);
+0138   
+0139   <span class="comment">% figure(14);</span>
+0140   <span class="comment">% % mark KM value if the minimum concentration, over all samples, is at least twice as large as KM value</span>
+0141   <span class="comment">% % (consider optimal values for this criterion)</span>
+0142   <span class="comment">% % log metabolite concentrations, minimum across all samples</span>
+0143   <span class="comment">% c_min_over_samples = min(exp(optimal.X),[],2);</span>
+0144   <span class="comment">% C_min_mat = repmat(c_min_over_samples',nr,1);</span>
+0145   <span class="comment">% mark_indices = find(C_min_mat(q_info.KM_matrix_indices) &gt; 2 * exp(qall_optimal(index.KM)));</span>
+0146 
+0147   res_true.KM = <a href="#_sub1" class="code" title="subfunction out = scatter_plot(xvalues,yvalues,names,color,pred,xtitle,ytitle,mark_indices, show_graphics, fignum, filename)">scatter_plot</a>(qall_true(index.KM),qall_optimal(index.KM),qall_names(index.KM),km_color,km_pred,<span class="string">'K_{M} [mM] (true)'</span>, <span class="string">'K_{M} [mM]'</span>, [], show_graphics,14,filenames.KM);
+0148 
+0149   <span class="keyword">switch</span> cmb_options.parameterisation,
+0150     <span class="keyword">case</span> <span class="string">'Keq_KV_KM_KA_KI'</span>,
+0151       
+0152       <span class="comment">% figure(15);</span>
+0153       res_true.Keq = <a href="#_sub1" class="code" title="subfunction out = scatter_plot(xvalues,yvalues,names,color,pred,xtitle,ytitle,mark_indices, show_graphics, fignum, filename)">scatter_plot</a>(qall_true(index.Keq),qall_optimal(index.Keq),qall_names(index.Keq),keq_color,keq_pred,<span class="string">'K_{eq} [unitless] (true)'</span>, <span class="string">'K_{eq} [unitless]'</span>, [], show_graphics,15,filenames.Keq);
+0154 
+0155       <span class="comment">% figure(16);</span>
+0156       res_true.Kcatf = <a href="#_sub1" class="code" title="subfunction out = scatter_plot(xvalues,yvalues,names,color,pred,xtitle,ytitle,mark_indices, show_graphics, fignum, filename)">scatter_plot</a>(qall_true(index.Kcatf),qall_optimal(index.Kcatf),qall_names(index.Kcatf),kcat_color,kcat_pred,<span class="string">'k_{cat}^{+} [1/s] (true)'</span>, <span class="string">'k_{cat}^{+} [1/s]'</span>, [], show_graphics,16,filenames.Kcatf);
+0157       
+0158       <span class="comment">% figure(17);</span>
+0159       res_true.Kcatr = <a href="#_sub1" class="code" title="subfunction out = scatter_plot(xvalues,yvalues,names,color,pred,xtitle,ytitle,mark_indices, show_graphics, fignum, filename)">scatter_plot</a>(qall_true(index.Kcatr),qall_optimal(index.Kcatr),qall_names(index.Kcatr),kcat_color,kcat_pred,<span class="string">'k_{cat}^{-} [1/s] (true)'</span>, <span class="string">'k_{cat}^{-} [1/s]'</span>, [], show_graphics,17,filenames.Kcatr);
+0160 
+0161       <span class="comment">% figure(18);</span>
+0162       res_true.Kappf = <a href="#_sub1" class="code" title="subfunction out = scatter_plot(xvalues,yvalues,names,color,pred,xtitle,ytitle,mark_indices, show_graphics, fignum, filename)">scatter_plot</a>(qall_true(index.Kcatf),log(kapp_max.forward),qall_names(index.Kcatf),kapp_color,1,<span class="string">'k_{cat}^{+} [1/s] (true)'</span>, <span class="string">'k_{app,max}^{+} [1/s]'</span>, [], show_graphics,18,filenames.Kappmaxf);
+0163 
+0164       <span class="comment">% figure(19);</span>
+0165       <span class="comment">%% only if some reverse kapp values have been determined</span>
+0166       <span class="keyword">if</span> sum(isfinite(kapp_max.reverse)),
+0167         res_true.Kappr = <a href="#_sub1" class="code" title="subfunction out = scatter_plot(xvalues,yvalues,names,color,pred,xtitle,ytitle,mark_indices, show_graphics, fignum, filename)">scatter_plot</a>(qall_true(index.Kcatr),log(kapp_max.reverse),qall_names(index.Kcatr),kapp_color,1,<span class="string">'k_{cat}^{-} [1/s] (true)'</span>, <span class="string">'k_{app,max}^{-} [1/s]'</span>, [], show_graphics,19,filenames.Kappmaxr);
+0168       <span class="keyword">elseif</span> show_graphics,
+0169         figure(19); 
+0170         axis square; noticks
+0171         title(<span class="string">'No reverse Kapp values determined'</span>);
+0172         print(filenames.Kappmaxr, <span class="string">'-f19'</span>, <span class="string">'-depsc'</span>); 
+0173       <span class="keyword">end</span>
+0174 
+0175   <span class="keyword">end</span>
+0176 
+0177 <span class="keyword">end</span>
+0178 
+0179 <span class="comment">% -----------------------------------------------------------</span>
+0180 <span class="comment">% Graphics: plot true vs data (only in the case of artificial data)</span>
+0181 
+0182 <span class="keyword">if</span> cmb_options.plot_true_vs_data,
+0183 <span class="keyword">if</span> length(true),
+0184 
+0185   filenames.x        = [graphics_dir <span class="string">'trueVSdata_x.eps'</span>];
+0186   filenames.e        = [graphics_dir <span class="string">'trueVSdata_e.eps'</span>];
+0187   filenames.KV       = [graphics_dir <span class="string">'trueVSdata_KV.eps'</span>];
+0188   filenames.KM       = [graphics_dir <span class="string">'trueVSdata_KM.eps'</span>];
+0189   filenames.Keq      = [graphics_dir <span class="string">'trueVSdata_Keq.eps'</span>];
+0190   filenames.Kcatf    = [graphics_dir <span class="string">'trueVSdata_Kcatf.eps'</span>];
+0191   filenames.Kcatr    = [graphics_dir <span class="string">'trueVSdata_Kcatr.eps'</span>];
+0192 
+0193   <span class="keyword">switch</span> cmb_options.use_kinetic_data
+0194     <span class="keyword">case</span> <span class="string">'all'</span>,
+0195       kin_color = fit_color;
+0196       keq_color = fit_color;
+0197       kin_pred = 0;
+0198       keq_pred = 0;
+0199     <span class="keyword">case</span> <span class="string">'only_Keq'</span>
+0200       kin_color = pred_color;
+0201       keq_color = fit_color;
+0202       kin_pred = 1;
+0203       keq_pred = 0;
+0204     <span class="keyword">case</span> <span class="string">'none'</span>
+0205       kin_color = pred_color;
+0206       keq_color = pred_color;
+0207       kin_pred = 1;
+0208       keq_pred = 1;
+0209   <span class="keyword">end</span>
+0210   
+0211   qall_true = <a href="../../matlab/model-balancing/cmb-variables/cmb_q_to_qall.html" class="code" title="function qall = cmb_q_to_qall(q, q_info)">cmb_q_to_qall</a>(true.q,q_info);
+0212 
+0213   <span class="comment">% figure(21);</span>
+0214   res_true_data.c = <a href="#_sub1" class="code" title="subfunction out = scatter_plot(xvalues,yvalues,names,color,pred,xtitle,ytitle,mark_indices, show_graphics, fignum, filename)">scatter_plot</a>(true.X,data.X.mean,[],met_color,0,<span class="string">'Metabolite levels [mM] (true)'</span>,<span class="string">'Metabolite levels [mM] (data)'</span>, [], show_graphics,21,filenames.x);
+0215   
+0216   <span class="comment">% figure(22);</span>
+0217   res_true_data.e = <a href="#_sub1" class="code" title="subfunction out = scatter_plot(xvalues,yvalues,names,color,pred,xtitle,ytitle,mark_indices, show_graphics, fignum, filename)">scatter_plot</a>(log(true.E),log(data.E.mean),[],enz_color,0,<span class="string">'Enzyme levels [mM] (true)'</span>,<span class="string">'Enzyme levels [mM] (data)'</span>, [], show_graphics,22,filenames.e);
+0218 
+0219   <span class="comment">% figure(23);</span>
+0220   res_true_data.KV = <a href="#_sub1" class="code" title="subfunction out = scatter_plot(xvalues,yvalues,names,color,pred,xtitle,ytitle,mark_indices, show_graphics, fignum, filename)">scatter_plot</a>(qall_true(index.KV),qall_data(index.KV),qall_names(index.KV),kin_color,kin_pred,<span class="string">'K_{V} [1/s] (true)'</span>, <span class="string">'K_{V} [1/s] (data)'</span>, [], show_graphics,23,filenames.KV);
+0221   
+0222   <span class="comment">% figure(24);</span>
+0223   <span class="comment">% % mark KM value if the minimum concentration, over all samples, is at least twice as large as KM value</span>
+0224   <span class="comment">% % (consider true values for this criterion)</span>
+0225   <span class="comment">% % log metabolite concentrations, minimum across all samples</span>
+0226   <span class="comment">% c_min_over_samples = min(exp(true.X),[],2);</span>
+0227   <span class="comment">% C_min_mat = repmat(c_min_over_samples',nr,1);</span>
+0228   <span class="comment">% mark_indices = find(C_min_mat(q_info.KM_matrix_indices) &gt; 2 * exp(qall_true(index.KM)));</span>
+0229 
+0230   res_true_data.KM = <a href="#_sub1" class="code" title="subfunction out = scatter_plot(xvalues,yvalues,names,color,pred,xtitle,ytitle,mark_indices, show_graphics, fignum, filename)">scatter_plot</a>(qall_true(index.KM),qall_data(index.KM),qall_names(index.KM),kin_color,kin_pred,<span class="string">'K_{M} [mM] (true)'</span>, <span class="string">'K_{M} [mM] (data)'</span>, [], show_graphics,24,filenames.KM);
+0231 
+0232   <span class="keyword">switch</span> cmb_options.parameterisation,
+0233     <span class="keyword">case</span> <span class="string">'Keq_KV_KM_KA_KI'</span>,
+0234       
+0235       <span class="comment">% figure(25);</span>
+0236       res_true_data.Keq = <a href="#_sub1" class="code" title="subfunction out = scatter_plot(xvalues,yvalues,names,color,pred,xtitle,ytitle,mark_indices, show_graphics, fignum, filename)">scatter_plot</a>(qall_true(index.Keq),qall_data(index.Keq),qall_names(index.Keq),keq_color,keq_pred,<span class="string">'K_{eq} [unitless] (true)'</span>, <span class="string">'K_{eq} [unitless] (data)'</span>, [], show_graphics,25,filenames.Keq);
+0237 
+0238       <span class="comment">% figure(26);</span>
+0239       res_true_data.Kcatf = <a href="#_sub1" class="code" title="subfunction out = scatter_plot(xvalues,yvalues,names,color,pred,xtitle,ytitle,mark_indices, show_graphics, fignum, filename)">scatter_plot</a>(qall_true(index.Kcatf),qall_data(index.Kcatf),qall_names(index.Kcatf),kin_color,kin_pred,<span class="string">'k_{cat}^{+} [1/s] (true)'</span>, <span class="string">'k_{cat}^{+} [1/s] (data)'</span>, [], show_graphics,26,filenames.Kcatf);
+0240       
+0241       <span class="comment">% figure(27);</span>
+0242       res_true_data.Kcatr = <a href="#_sub1" class="code" title="subfunction out = scatter_plot(xvalues,yvalues,names,color,pred,xtitle,ytitle,mark_indices, show_graphics, fignum, filename)">scatter_plot</a>(qall_true(index.Kcatr),qall_data(index.Kcatr),qall_names(index.Kcatr),kin_color,kin_pred,<span class="string">'k_{cat}^{-} [1/s] (true)'</span>, <span class="string">'k_{cat}^{-} [1/s] (data)'</span>, [], show_graphics,27,filenames.Kcatr);
+0243   
+0244   <span class="keyword">end</span>
+0245 
+0246 <span class="keyword">end</span>
+0247 <span class="keyword">end</span>
+0248 
+0249 <span class="comment">% ================================================</span>
+0250 
+0251 <a name="_sub1" href="#_subfunctions" class="code">function out = scatter_plot(xvalues,yvalues,names,color,pred,xtitle,ytitle,mark_indices, show_graphics, fignum, filename)</a>
+0252 
+0253 eval(default(<span class="string">'mark_indices'</span>,<span class="string">'[]'</span>));
+0254 
+0255 ind_ok  = find(isfinite(xvalues).*isfinite(yvalues));
+0256 xvalues = xvalues(ind_ok); 
+0257 yvalues = yvalues(ind_ok); 
+0258 
+0259 <span class="comment">% all data are assumed to be on natural log scale</span>
+0260 
+0261 geom_deviation = exp(sqrt(nanmean([yvalues(:) - xvalues(:)].^2)));
+0262 
+0263 <span class="keyword">switch</span> pred,
+0264   <span class="comment">%case 1, marker = '0'; markersize=10;</span>
+0265   <span class="keyword">case</span> 1, marker = <span class="string">'+'</span>; markersize=12;
+0266     ytitle = [ ytitle <span class="string">' (pred)'</span>];
+0267   <span class="keyword">otherwise</span>, marker = <span class="string">'.'</span>;markersize=20;
+0268     ytitle = [ ytitle <span class="string">' (fit)'</span>];
+0269 <span class="keyword">end</span>
+0270 
+0271 ind = find(isfinite(yvalues) .* isfinite(xvalues));
+0272 <span class="keyword">if</span> length(ind)&gt;2,
+0273   linear_correlation = corrcoef(yvalues(ind),xvalues(ind)); 
+0274   linear_correlation = linear_correlation(1,2);
+0275 <span class="keyword">else</span> 
+0276   linear_correlation = nan;
+0277 <span class="keyword">end</span>
+0278 
+0279 mmin = min([exp(xvalues); exp(yvalues)]);
+0280 mmax = max([exp(xvalues); exp(yvalues)]);
+0281 
+0282 mmin = 10.^floor(log10(mmin));
+0283 mmax = 10.^ceil(log10(mmax));
+0284 
+0285 <span class="keyword">if</span> show_graphics,
+0286   figure(fignum); 
+0287   clf;
+0288   plot([mmin,mmax],[mmin,mmax],<span class="string">'-'</span>,<span class="string">'Color'</span>,[.5 .5 .5]); hold on
+0289   plot(exp(xvalues),exp(yvalues),marker,<span class="string">'Markersize'</span>,markersize,<span class="string">'Color'</span>,color);
+0290   plot(exp(xvalues(mark_indices)),exp(yvalues(mark_indices)),<span class="string">'o'</span>,<span class="string">'Markersize'</span>,10,<span class="string">'Color'</span>,color);
+0291   <span class="comment">%if length(names), text(exp(xvalues),exp(yvalues),names); end</span>
+0292   
+0293   axis equal; axis square; axis tight
+0294   set(gca,<span class="string">'XScale'</span>,<span class="string">'log'</span>,<span class="string">'YScale'</span>,<span class="string">'log'</span>); set(gca,<span class="string">'fontsize'</span>,16);
+0295   title(sprintf(<span class="string">'GeomStd: %2.2f  Pearson r: %2.2f'</span>,geom_deviation,linear_correlation),<span class="string">'FontSize'</span>,13);
+0296   xlabel(xtitle); ylabel(ytitle);
+0297   
+0298   a = axis; 
+0299   log10_xtickmin = floor(log10(min(axis)));
+0300   log10_xtickmax = ceil(log10(max(axis)));
+0301   log10_xtickdel = ceil([log10_xtickmax-log10_xtickmin]/5);
+0302   XTick = 10.^[log10_xtickmin:log10_xtickdel:log10_xtickmax];
+0303   XTickLabels = cellstr(num2str(round(log10(XTick(:))), <span class="string">'10^{%d}'</span>));
+0304   set(gca,<span class="string">'xtick'</span>,XTick,<span class="string">'ytick'</span>,XTick,<span class="string">'xticklabels'</span>,XTickLabels,<span class="string">'yticklabels'</span>,XTickLabels);
+0305 
+0306   print(filename, [<span class="string">'-f'</span> num2str(fignum)], <span class="string">'-depsc'</span>); 
+0307 <span class="keyword">end</span>
+0308 
+0309 out.geometric_deviation = geom_deviation;
+0310 out.linear_correlation  = linear_correlation;</pre></div>
+<hr><address>Generated on Fri 23-Oct-2026 20:27:13 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

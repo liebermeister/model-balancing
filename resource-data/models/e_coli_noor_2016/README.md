@@ -1,35 +1,46 @@
-Example model: E. coli central metabolism 
-==========================================
+Example model: E. coli central metabolism
+=========================================
+
+Model of E. coli central metabolism from Noor et al. (2016) (see `../README.md` for the reference).
 
 Files defining the model structure:
 
-* SBML file (network structure): in .xml file
+* `e_coli_noor_2016.xml`: SBML file (network structure)
 
-* SBtab files: (network structure, constraints, and layout information in separate .tsv files
+* `e_coli_noor_2016.tsv`: SBtab file (network structure)
+
+* `e_coli_noor_2016_ConcentrationConstraint.tsv`: SBtab file (metabolite concentration constraints)
+
+* `e_coli_noor_2016_Position.tsv`: SBtab file (layout information for network graphics)
+
+Data files:
+
+* `e_coli_ccm_kinetic_data`: kinetic data (see the README file in that folder)
+
+* `e_coli_ccm_state_data_COPY_FOR_INFO.tsv`: metabolic state data (copy, for information)
+
+* `e_coli_example_reference_state.mat`: reference state for the E. coli model, determined by enzyme cost minimization
+  and written by `matlab/cmb_e_coli_c_init.m`. It is only used for the E. coli test model with artificial data,
+  as a starting point for generating realistic artificial data.
+
+* `mat-files`: model and data from the enzyme cost minimization toolbox (see the README file in that folder)
 
 Other information
 
-* Matlab scripts for generating the network files can be found in the subfolder `matlab`
+* The matlab script for computing the reference state can be found in the subfolder `matlab`
 
-* Artificial data can be found in the subfolder `data`
+For running model balancing on this example, please see the demo scripts
+`demo_cmb_artificial_data.m` and `demo_cmb_experimental_data.m` in the folder `matlab/demo`
+(in the main directory of this repository).
 
-* The network layout can be found in the subfolder `graphics`
+## Provenance
 
-For running model balancing on this example, please see `../matlab/demo/demo_cmb_experimental_data.m`
+* `e_coli_noor_2016.xml`: from the enzyme cost minimization example model for E. coli
+  (original filename `ecoli_ccm_ProteinComposition_Network.xml`).
+  Note: the information about external metabolites (boundaryCondition=True) in this file is wrong and needs to be fixed.
 
+* `e_coli_noor_2016.tsv`: from the Metabolic Network Toolbox (parameter balancing models, `mnt_parameter_balancing/models`);
+  modified: oxaloacetate set to internal.
 
-## Provenance:
-
-* file e_coli_noor_2016.xml  from /home/wolfram/projekte/enzyme_cost_minimization/html/data/ecoli_ccm/
-  (original filename ecoli_ccm_ProteinComposition_Network.xml)
-  -> NOTE WRONG information about external metablites (boundaryCondition=True; needs to be fixed) 
-
-* file e_coli_noor_2016.tsv from MNT repository: mnt/mnt/mnt-extensions/mnt_parameter_balancing/models/
-  modified: set oxaloacetate to internal
-
-* file ecoli_ccm_kinetic_data.tsv from /home/wolfram/projekte/model_balancing/matlab/results/e_coli_noor_2016/no_kinetic_data_balanced/data/kinetic_data.tsv
-
-* file ecoli_ccm_state_data.tsv from /home/wolfram/projekte/model_balancing/matlab/results/e_coli_noor_2016/no_kinetic_data_balanced/data/state_data.tsv
-
-* file e_coli_example_reference_state contains a reference state for the e coli model, determined by ECM, and written by cmb_e_coli_c_init.m
-  It is only used for the E coli test model with artificial data, as a starting point for generating realistic artificial data.
+* `e_coli_ccm_state_data_COPY_FOR_INFO.tsv`: state data used in model balancing runs for this model
+  (results folder `e_coli_noor_2016/no_kinetic_data_balanced`).

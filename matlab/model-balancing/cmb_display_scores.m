@@ -1,5 +1,12 @@
 function improvement = cmb_display_scores(network, q_info, cmb_options, pp, preposterior, init, optimal, true, V, verbose)
 
+% improvement = cmb_display_scores(network, q_info, cmb_options, pp, preposterior, init, optimal, true, V, verbose)
+%
+% Display the log posterior scores for the true values (if given), the initial values, and the optimised values
+%
+% Output variables
+%   improvement  Boolean, true if the optimised values have a higher log posterior than the initial values
+
 [nm,nr] = size(network.N);
 
 eval(default('true','[]','verbose','0'));

@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------
-% Demo script "Model balancing - test with articifial data"
+% Demo script "Model balancing - test with artificial data"
 %
 % What this script does:
 % o read model from SBML or SBtab file
@@ -17,8 +17,8 @@
 % Files that define a model: 
 %   network_file    (filename)        network file in SBML format(.xml) or SBtab format (.tsv)
 %   constraint_file (SBtab filename): metabolite bounds    (optional; set to [] to use default constraints)
-%   position_file   (SBtab filename): coordinates for network graphics (optional, othewise set to []); needed to 
-%                                     defined layout for SBML network files; overrides a Position table in SBtab network file
+%   position_file   (SBtab filename): coordinates for network graphics (optional, otherwise set to []); needed to
+%                                     define layout for SBML network files; overrides a Position table in SBtab network file
 %
 % Other settings:
 %   model           (string) model name (can be freely chosen)
@@ -113,8 +113,8 @@ result_dir      = tempdir;
 % flag_artificial = 1;
 % result_dir      = tempdir;
 % network_file    = [cmb_resourcedir '/models/e_coli_noor_2016/e_coli_noor_2016.tsv'];
-% constraint_file = [cmb_resourcedir '/models/e_coli_noor_2016/e_coli_noor_2016.tsv'];
-% position_file   = [cmb_resourcedir '/models/e_coli_noor_2016/e_coli_noor_2016.tsv'];
+% constraint_file = [cmb_resourcedir '/models/e_coli_noor_2016/e_coli_noor_2016_ConcentrationConstraint.tsv'];
+% position_file   = [cmb_resourcedir '/models/e_coli_noor_2016/e_coli_noor_2016_Position.tsv'];
 % c_init          = cmb_e_coli_c_init(model,cmb_default_options);
 % alpha           = 0.5;
 % ns              = 4;

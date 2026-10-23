@@ -1,0 +1,164 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of cmb_load_model_and_data</title>
+  <meta name="keywords" content="cmb_load_model_and_data">
+  <meta name="description" content="[network, kinetic_data, state_data, conc_min, conc_max] = cmb_load_model_and_data(model_file, kinetic_data_file, state_data_files, replace_ids_in_network, match_data_by, constraint_sbtab_file)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">matlab</a> &gt; <a href="../index.html">model-balancing</a> &gt; <a href="index.html">cmb-file-input-output</a> &gt; cmb_load_model_and_data.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for matlab/model-balancing/cmb-file-input-output&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>cmb_load_model_and_data
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>[network, kinetic_data, state_data, conc_min, conc_max] = cmb_load_model_and_data(model_file, kinetic_data_file, state_data_files, replace_ids_in_network, match_data_by, constraint_sbtab_file)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [network, kinetic_data, state_data, conc_min, conc_max] = cmb_load_model_and_data(model_file, kinetic_data_file, state_data_files, replace_ids_in_network, match_data_by, constraint_sbtab_file) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> [network, kinetic_data, state_data, conc_min, conc_max] = cmb_load_model_and_data(model_file, kinetic_data_file, state_data_files, replace_ids_in_network, match_data_by, constraint_sbtab_file)
+
+ Load model and (kinetic and state) data from (SBML and SBtab) files into matlab data structures
+   1. load a model structure (from sbml or sbtab file) (possibly including default metabolite levels c_init)
+   2. load kinetic data and metabolic data (from sbtab files) and map them to the model via KEGG IDs
+
+ Input:
+   model_file:           model file (SBML or SBtab format)
+   kinetic_data_file:    one (filename) or several (list of filenames) kinetic data files (SBtab format)
+                         instead of a filename, one may directly provide a kinetic data structure
+                         from which data will be selected
+   state_data_files:     struct describing the state data files, with subfields .metabolite, .enzyme, .flux
+                         (and optionally .delta_g), each with fields .file, .type, .table
+                         (optional field .samples: names of metabolic states)
+   replace_ids_in_network (default [])
+   match_data_by          'KeggId' (default) or 'ModelElementId'
+   constraint_sbtab_file  (optional) SBtab file with metabolite concentration constraints
+                          (table 'ConcentrationConstraint', columns 'Min' and 'Max')
+
+ Output:
+   network:        model data structure (as in MNT toolbox)
+   kinetic_data:   kinetic data data structure (as in MNT toolbox, mnt_kinetic_data)
+   state_data:     metabolite, enzyme, and flux data
+   conc_min, conc_max: vectors of concentration bounds (empty if no constraint_sbtab_file is given)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../matlab/model-balancing/cmb_prior_file.html" class="code" title="function prior_file = cmb_prior_file()">cmb_prior_file</a>	prior_file = cmb_prior_file()</li><li><a href="../../../matlab/model-balancing/cmb_project_fluxes.html" class="code" title="function [V, Vstd] = cmb_project_fluxes(V,Vstd,network,flag_project_fluxes)">cmb_project_fluxes</a>	[V, Vstd] = cmb_project_fluxes(V,Vstd,network,flag_project_fluxes)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [network, kinetic_data, state_data, conc_min, conc_max] = cmb_load_model_and_data(model_file, kinetic_data_file, state_data_files, replace_ids_in_network, match_data_by, constraint_sbtab_file)</a>
+0002 
+0003 <span class="comment">% [network, kinetic_data, state_data, conc_min, conc_max] = cmb_load_model_and_data(model_file, kinetic_data_file, state_data_files, replace_ids_in_network, match_data_by, constraint_sbtab_file)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% Load model and (kinetic and state) data from (SBML and SBtab) files into matlab data structures</span>
+0006 <span class="comment">%   1. load a model structure (from sbml or sbtab file) (possibly including default metabolite levels c_init)</span>
+0007 <span class="comment">%   2. load kinetic data and metabolic data (from sbtab files) and map them to the model via KEGG IDs</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Input:</span>
+0010 <span class="comment">%   model_file:           model file (SBML or SBtab format)</span>
+0011 <span class="comment">%   kinetic_data_file:    one (filename) or several (list of filenames) kinetic data files (SBtab format)</span>
+0012 <span class="comment">%                         instead of a filename, one may directly provide a kinetic data structure</span>
+0013 <span class="comment">%                         from which data will be selected</span>
+0014 <span class="comment">%   state_data_files:     struct describing the state data files, with subfields .metabolite, .enzyme, .flux</span>
+0015 <span class="comment">%                         (and optionally .delta_g), each with fields .file, .type, .table</span>
+0016 <span class="comment">%                         (optional field .samples: names of metabolic states)</span>
+0017 <span class="comment">%   replace_ids_in_network (default [])</span>
+0018 <span class="comment">%   match_data_by          'KeggId' (default) or 'ModelElementId'</span>
+0019 <span class="comment">%   constraint_sbtab_file  (optional) SBtab file with metabolite concentration constraints</span>
+0020 <span class="comment">%                          (table 'ConcentrationConstraint', columns 'Min' and 'Max')</span>
+0021 <span class="comment">%</span>
+0022 <span class="comment">% Output:</span>
+0023 <span class="comment">%   network:        model data structure (as in MNT toolbox)</span>
+0024 <span class="comment">%   kinetic_data:   kinetic data data structure (as in MNT toolbox, mnt_kinetic_data)</span>
+0025 <span class="comment">%   state_data:     metabolite, enzyme, and flux data</span>
+0026 <span class="comment">%   conc_min, conc_max: vectors of concentration bounds (empty if no constraint_sbtab_file is given)</span>
+0027 
+0028 eval(default(<span class="string">'kinetic_data_file'</span>, <span class="string">'[]'</span>, <span class="string">'metabolite_data_file'</span>, <span class="string">'[]'</span>, <span class="string">'enzyme_data_file'</span>, <span class="string">'[]'</span>, <span class="string">'flux_data_file'</span>, <span class="string">'[]'</span>,<span class="string">'replace_ids_in_network'</span>,<span class="string">'[]'</span>,<span class="string">'match_data_by'</span>,<span class="string">'''KeggId'''</span>));
+0029   
+0030 options.use_sbml_ids         = 0;
+0031 options.use_kegg_ids         = 1;
+0032 options.parameter_prior_file = <a href="../../../matlab/model-balancing/cmb_prior_file.html" class="code" title="function prior_file = cmb_prior_file()">cmb_prior_file</a>;
+0033   
+0034 display(sprintf(<span class="string">'Importing model and data from file %s'</span>,model_file));
+0035 
+0036 network          = network_import_model(model_file, struct(<span class="string">'load_quantity_table'</span>,0));
+0037 network.kinetics = set_kinetics(network,<span class="string">'cs'</span>);
+0038 
+0039 <span class="keyword">if</span> ~isfield(network,<span class="string">'metabolite_KEGGID'</span>), network.metabolite_KEGGID = {}; <span class="keyword">end</span>
+0040 <span class="keyword">if</span> ~isfield(network,<span class="string">'reaction_KEGGID'</span>),   network.reaction_KEGGID = {};   <span class="keyword">end</span>
+0041 
+0042 <span class="keyword">if</span> length(kinetic_data_file),
+0043   parameter_prior = parameter_balancing_prior([],options.parameter_prior_file,0); 
+0044   [model_quantities, basic_quantities, data_quantities, pseudo_quantities] = parameter_balancing_quantities(parameter_prior, network, options);
+0045   <span class="keyword">if</span> isempty(find(cellfun(<span class="string">'length'</span>,network.metabolite_KEGGID))), warning(<span class="string">'No KEGG species annotations found in model'</span>);  <span class="keyword">end</span>
+0046   <span class="keyword">if</span> isempty(find(cellfun(<span class="string">'length'</span>,network.reaction_KEGGID))),   warning(<span class="string">'No KEGG species annotations found in model'</span>);  <span class="keyword">end</span>
+0047   opt = struct(<span class="string">'use_sbml_ids'</span>, options.use_sbml_ids, <span class="string">'use_kegg_ids'</span>, options.use_kegg_ids, <span class="string">'verbose'</span>, 0);
+0048   kinetic_data = kinetic_data_load(data_quantities, parameter_prior, network, kinetic_data_file, opt);
+0049 <span class="keyword">else</span>
+0050   kinetic_data = [];
+0051 <span class="keyword">end</span>
+0052 
+0053 metabolite_data = [];
+0054 enzyme_data     = [];
+0055 flux_data       = [];
+0056 
+0057 <span class="keyword">if</span> length(state_data_files),
+0058   sdf = state_data_files;
+0059   <span class="keyword">if</span> isfield(state_data_files,<span class="string">'samples'</span>),
+0060     state_data.samples = state_data_files.samples;
+0061   <span class="keyword">end</span>
+0062   sdf.metabolite.replace_ids_in_network = replace_ids_in_network;
+0063   sdf.enzyme.replace_ids_in_network     = replace_ids_in_network;
+0064   sdf.flux.replace_ids_in_network       = replace_ids_in_network;
+0065   sdf.metabolite.match_data_by          = match_data_by;
+0066   sdf.enzyme.match_data_by              = match_data_by;
+0067   sdf.flux.match_data_by                = match_data_by;
+0068 
+0069   state_data.metabolite_data = load_state_data_for_network(network, sdf.metabolite.file, sdf.metabolite.type, sdf.metabolite, sdf.metabolite.table);
+0070   state_data.enzyme_data     = load_state_data_for_network(network, sdf.enzyme.file, sdf.enzyme.type, sdf.enzyme, sdf.enzyme.table);
+0071   state_data.flux_data       = load_state_data_for_network(network, sdf.flux.file, sdf.flux.type, sdf.flux, sdf.flux.table);
+0072   <span class="keyword">if</span> isfield(sdf,<span class="string">'delta_g'</span>), 
+0073     state_data.delta_g_data  = load_state_data_for_network(network, sdf.delta_g.file, sdf.delta_g.type, sdf.delta_g, sdf.delta_g.table);
+0074   <span class="keyword">end</span>
+0075 <span class="keyword">end</span>
+0076 
+0077 <span class="comment">% project fluxes or complete missing fluxes by projections</span>
+0078 <span class="comment">% NOTE THAT PROJECTION REQUIRES ASSUMES THAT ALL FLUXES MUST BE IN FORWARD DIRECTION</span>
+0079 
+0080 <span class="keyword">if</span> find(isnan(state_data.flux_data.Mean)),
+0081   display(<span class="string">'- (cmb_load_model_and_data.m): projecting fluxes to complete missing values'</span>);
+0082   flag_project_fluxes = <span class="string">'missing'</span>; <span class="comment">% 'all', 'missing', 'none'</span>
+0083   [state_data.flux_data.Mean, state_data.flux_data.Std] = <a href="../../../matlab/model-balancing/cmb_project_fluxes.html" class="code" title="function [V, Vstd] = cmb_project_fluxes(V,Vstd,network,flag_project_fluxes)">cmb_project_fluxes</a>(state_data.flux_data.Mean,state_data.flux_data.Std,network,flag_project_fluxes);
+0084 <span class="keyword">end</span>
+0085 
+0086 
+0087 <span class="comment">% concentration bounds</span>
+0088 conc_min = [];
+0089 conc_max = [];
+0090 <span class="keyword">if</span> length(constraint_sbtab_file),
+0091   constraint_sbtab = sbtab_document_load_from_one(constraint_sbtab_file);
+0092   conc_min  = sbtab_table_get_column(constraint_sbtab.tables.ConcentrationConstraint,<span class="string">'Min'</span>,1);
+0093   conc_max  = sbtab_table_get_column(constraint_sbtab.tables.ConcentrationConstraint,<span class="string">'Max'</span>,1);
+0094 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Fri 23-Oct-2026 20:27:13 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

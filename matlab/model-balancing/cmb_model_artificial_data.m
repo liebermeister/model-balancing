@@ -1,8 +1,8 @@
 function [network, bounds, prior, q_info, data, true, kinetic_data, state_data, conc_min, conc_max] = cmb_model_artificial_data(network_file, cmb_options, c_init, position_sbtab_file, constraint_sbtab_file, ind_e_off, Keq_init, v_init)
 
-% [network, bounds, prior, q_info, data, true, kinetic_data, state_data] = cmb_model_artificial_data(network_file, cmb_options, c_init, position_sbtab_file, constraint_sbtab_file)
+% [network, bounds, prior, q_info, data, true, kinetic_data, state_data, conc_min, conc_max] = cmb_model_artificial_data(network_file, cmb_options, c_init, position_sbtab_file, constraint_sbtab_file, ind_e_off, Keq_init, v_init)
 %
-% Generate input data for a Convex Model Balancing problem with artifical data
+% Generate input data for a Convex Model Balancing problem with artificial data
 % 
 % Input variables
 %   network_file filename of SBML or SBtab network model
@@ -15,14 +15,15 @@ function [network, bounds, prior, q_info, data, true, kinetic_data, state_data, 
 %                              'broad_prior_around_zero'        broad prior around 0 values
 %                              'prior_around_true_values'       prior around true values (only for artificial data)
 %                              'broad_prior_around_true_values' broad prior around true values (only for artificial data)
-
+%
 %   c_init       (optional) matrix; initial guess of (non-logarithmic) metabolite concentrations; 
 %                           also used for generating the artificial data 
 %   position_sbtab_file (optional) filename of SBtab file (table "Position") for network layout 
 %                                  (overrides an existing table "Position" in network_file)
-%   constraint_sbtab_file (optional) filename of SBtab file (tables "Position") 
-%   ind_e_off:        indices of enzymes to be shut down
-%   Keq_init Keq vector to be used  for artificial data
+%   constraint_sbtab_file (optional) filename of SBtab file (table "ConcentrationConstraint")
+%   ind_e_off    (optional) indices of enzymes to be shut down
+%   Keq_init     (optional) Keq vector to be used for artificial data
+%   v_init       (optional) reference flux vector to be used for artificial data
 % 
 % Output variables
 %   network      struct describing metabolic network (format as in Metabolic Network Toolbox)
@@ -31,8 +32,9 @@ function [network, bounds, prior, q_info, data, true, kinetic_data, state_data, 
 %   q_info       struct describing the dependencies between model variables
 %   data         struct describing data used in the optimality problem
 %   true         struct describing true model variables (optional; only for models with artificial data)
-%   kinetic_data
-%   state_data
+%   kinetic_data struct containing the artificial kinetic data
+%   state_data   struct containing the artificial metabolic state data
+%   conc_min, conc_max vectors of minimal and maximal metabolite concentrations
 %
 % For CMB problems with "real" data, use cmb_model_and_data instead
   

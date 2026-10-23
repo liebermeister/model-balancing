@@ -1,5 +1,26 @@
 function bounds = cmb_make_bounds(network,q_info,cmb_options, conc_min, conc_max)
 
+% bounds = cmb_make_bounds(network, q_info, cmb_options, conc_min, conc_max)
+%
+% Construct bounds on model variables for the model balancing problem
+% (from the information in cmb_options.quantities, see cmb_default_options)
+%
+% Input variables
+%   network            struct describing metabolic network (format as in Metabolic Network Toolbox)
+%   q_info             struct describing the dependencies between model variables
+%   cmb_options        struct containing options
+%   conc_min, conc_max (optional) vectors of minimal and maximal metabolite concentrations
+%
+% Output variables
+%   bounds  struct with fields (all on log scale, except for v, e, and a_forward):
+%     .q_min, .q_max                   bounds on independent kinetic constants (vector q)
+%     .q_dep_min, .q_dep_max           bounds on dependent kinetic constants
+%     .q_all_min, .q_all_max           bounds on all kinetic constants
+%     .x_min, .x_max                   bounds on log metabolite concentrations
+%     .v_min, .v_max                   bounds on fluxes
+%     .e_min, .e_max                   bounds on enzyme concentrations
+%     .a_forward_min, .a_forward_max   bounds on forward thermodynamic forces
+
 eval(default('conc_min','[]','conc_max','[]'));
   
 [nr,nm,nx,KM_ind,KA_ind,KI_ind,nKM,nKA,nKI] = network_numbers(network);

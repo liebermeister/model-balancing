@@ -1,5 +1,7 @@
 function pp = cmb_make_pp(network)
 
+% pp = cmb_make_pp(network)
+%
 % Structure pp contains the network and other information (needed to call ecm enzyme cost score function)
 
 pp.network             = network;

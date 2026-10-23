@@ -1,5 +1,18 @@
 function preposterior = cmb_prepare_posterior(prior, data, cmb_options, q_info);
 
+% preposterior = cmb_prepare_posterior(prior, data, cmb_options, q_info)
+%
+% Compute the "preposterior" distributions, i.e. prior and data combined for each type of variable
+% (without the terms that couple kinetic constants and metabolic states)
+%
+% Output variables
+%   preposterior  struct with fields
+%     .X     log metabolite concentrations (fields .mean, .std)
+%     .V     fluxes (fields .mean, .std)
+%     .lnE   log enzyme concentrations (fields .mean, .std)
+%     .q     independent log kinetic constants (fields .names, .mean, .cov, .prec)
+%     .qall  all log kinetic constants (fields .names, .mean, .cov, .prec)
+
 % --------------------------------------------------------
 % Compute posterior distributions for X and q (formulae, see Liebermeister 2006 "Bringing .. data integration")
 
