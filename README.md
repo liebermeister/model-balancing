@@ -39,7 +39,8 @@ This repository contains the matlab implementation, example models and data, and
 
 | Folder          | Contents |
 |-----------------|----------|
-| `matlab`        | Matlab code: main function `model_balancing.m`, functions (`matlab/model-balancing`), demo scripts (`matlab/demo`), HTML documentation (`matlab/doc`) |
+| `matlab`        | Matlab code: main function `model_balancing.m`, functions (`matlab/model-balancing`), demo scripts (`matlab/demo`) |
+| `doc`           | HTML documentation of the Matlab code |
 | `resource-data` | Example models (`resource-data/models`) and the prior table (`resource-data/data/data-prior`) |
 | `examples`      | Input files for the python implementation (`examples/json`), model balancing results (`examples/results`), and result graphics (`examples/graphics`) |
 
@@ -47,7 +48,7 @@ This repository contains the matlab implementation, example models and data, and
 To run model balancing in matlab, please adjust the demo scripts in `matlab/demo` to your model and data.
 For help, please type `help model-balancing` in matlab, or see the documentation at
 [www.metabolic-economics.de/model-balancing/matlab-doc/](https://www.metabolic-economics.de/model-balancing/matlab-doc/)
-(also contained in this repository in `matlab/doc`).
+(also contained in this repository in `doc`).
 
 ### Python
 For using model balancing in python, please refer to our [Read The Docs](https://model-balancing.readthedocs.io/en/latest/index.html) page;
