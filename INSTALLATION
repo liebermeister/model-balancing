@@ -17,7 +17,7 @@ In short:
   2. Add all these directories, including subdirectories, to your matlab path,
      e.g. addpath(genpath('model-balancing/matlab')).
 
-  3. Run the demo scripts in matlab/demo.
+  3. Run the demo scripts in model-balancing/demo.
 
 The code was tested with Matlab R2019b on Linux.
 

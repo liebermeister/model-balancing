@@ -39,13 +39,13 @@ This repository contains the matlab implementation, example models and data, and
 
 | Folder          | Contents |
 |-----------------|----------|
-| `matlab`        | Matlab code: main function `model_balancing.m`, functions (`matlab/model-balancing`), demo scripts (`matlab/demo`) |
+| `model-balancing` | Matlab code: main function `model_balancing.m`, functions (`model-balancing/model-balancing`), demo scripts (`model-balancing/demo`) |
 | `doc`           | HTML documentation of the Matlab code |
 | `resource-data` | Example models (`resource-data/models`) and the prior table (`resource-data/data/data-prior`) |
 | `examples`      | Input files for the python implementation (`examples/json`), model balancing results (`examples/results`), and result graphics (`examples/graphics`) |
 
 ### Matlab
-To run model balancing in matlab, please adjust the demo scripts in `matlab/demo` to your model and data.
+To run model balancing in matlab, please adjust the demo scripts in `model-balancing/demo` to your model and data.
 For help, please type `help model-balancing` in matlab, or see the documentation at
 [www.metabolic-economics.de/model-balancing/matlab-doc/](https://www.metabolic-economics.de/model-balancing/matlab-doc/)
 (also contained in this repository in `doc`).
@@ -62,7 +62,7 @@ The folders `examples/results/[MODEL_NAME]` contain balancing results for a larg
 with these models: artificial data for all 4 models, experimental data for the E. coli model (folder `e_coli_noor_2016`).
 
 ### How to balance your own model
-To balance your own model, please have a look at the matlab demo script `matlab/demo/demo_cmb_experimental_data.m`.
+To balance your own model, please have a look at the matlab demo script `model-balancing/demo/demo_cmb_experimental_data.m`.
 You need to prepare three input files in SBtab format, describing
 
 1. the network structure and metabolite constraints (tables Reaction, Compound, Position (optional), Parameter (optional))
