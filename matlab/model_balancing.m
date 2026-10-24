@@ -45,8 +45,9 @@ filenames = join_struct(filenames_default,filenames);
   
 tstart_model_balancing = tic;
 
-  % --------------------------------------------------------------
-%% Set global variables to speed up function modular_velocities
+% --------------------------------------------------------------
+% Set global variables to speed up function modular_velocities
+
 global global_structure_matrices
 global_structure_matrices = 1;
 global Mplus Mminus Wplus Wminus nm nr ind_M ind_Wp ind_Wm
