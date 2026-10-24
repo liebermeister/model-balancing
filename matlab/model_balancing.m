@@ -7,16 +7,15 @@ function [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max,
 %
 % Input variables:
 %   filenames    struct, (model- and run-specific) filenames for input and output files
-%     .graphics_dir optional; output directory for saving graphics
-%     .report_txt   optional; output report file (.txt)
-%     .results_mat  optional;  output results file (.mat)
+%                filenames.graphics_dir optional; output directory for saving graphics
+%                filenames.report_txt   optional; output report file (.txt)
+%                filenames.results_mat  optional;  output results file (.mat)
 %   cmb_options  struct, options 
 %   network      struct, metabolic network (format as in Metabolic Network Toolbox)
 %   q_info       struct, the dependencies between model variables
 %   prior        struct, priors in the optimality problem (details see cmb_make_prior)
 %   bounds       struct, bounds in the optimality problem (details see cmb_make_bounds)
-%   data         struct, data used in the optimality problem
-%                  flux matrix: data.V.mean
+%   data         struct, data used in the optimality problem (data.V.mean contains the flux matrix)
 %   true         struct, true model variables (optional; only for models with artificial data)
 %   init         struct, initial values
 %

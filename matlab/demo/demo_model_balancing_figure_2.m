@@ -1,4 +1,4 @@
-% Generate Figure 2 from "Model balancing: a search for in-vivo kinetic constants and consistent metabolic states", Liebermeister and Noor
+% Generate Figure 2 from article "Model balancing: a search for in-vivo kinetic constants and consistent metabolic states", Liebermeister and Noor
 
 v = 1;
 s = 1;
