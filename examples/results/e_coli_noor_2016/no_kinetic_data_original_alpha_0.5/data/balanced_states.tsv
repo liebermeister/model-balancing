@@ -1,4 +1,4 @@
-!!!SBtab DocumentName='MB result' Document='MBresult' StringencyAlpha='0.500000.2' CalculationTime='344.274311 s'		
+!!!SBtab SBtabVersion='1.2' DocumentName='MB result' Document='MBresult' StringencyAlpha='0.500000.2' CalculationTime='344.274311 s'		
 		
 !!SBtab TableName='Metabolic fluxes' TableID='Flux' TableType='QuantityMatrix' Unit='mM/s'		
 !QuantityType	!Reaction	S1

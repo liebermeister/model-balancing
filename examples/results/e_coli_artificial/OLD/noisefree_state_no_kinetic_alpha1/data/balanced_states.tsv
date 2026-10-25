@@ -1,4 +1,4 @@
-!!!SBtab DocumentName='CMB result' Document='CMBresult' RelaxationAlpha='1.000000' CalculationTime='7291.612746 s'					
+!!!SBtab SBtabVersion='1.2' DocumentName='CMB result' Document='CMBresult' RelaxationAlpha='1.000000' CalculationTime='7291.612746 s'					
 					
 !!SBtab TableName='Metabolic fluxes' TableID='Flux' TableType='QuantityMatrix' Unit='mM/s'					
 !QuantityType	!Reaction	state_1	state_2	state_3	state_4

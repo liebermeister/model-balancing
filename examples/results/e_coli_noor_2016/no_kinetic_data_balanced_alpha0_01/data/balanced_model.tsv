@@ -1,4 +1,4 @@
-!!!SBtab Document='MBresult' DocumentName='MB result' StringencyAlpha='0.010000.2' CalculationTime='11.590050 s'						
+!!!SBtab SBtabVersion='1.2' Document='MBresult' DocumentName='MB result' StringencyAlpha='0.010000.2' CalculationTime='11.590050 s'						
 						
 !!SBtab TableID='Reaction' TableType='Reaction' TableName='Reaction'						
 !ID	!ReactionFormula	!Name	!NameForPlots	!Identifiers:kegg.reaction	!IsReversible	!Gene

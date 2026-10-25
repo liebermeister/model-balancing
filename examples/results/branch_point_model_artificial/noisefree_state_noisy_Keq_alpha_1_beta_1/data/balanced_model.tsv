@@ -1,4 +1,4 @@
-!!!SBtab Document='MBresult' DocumentName='MB result' StringencyAlpha='1.000000.2' CalculationTime='11.010498 s'				
+!!!SBtab SBtabVersion='1.2' Document='MBresult' DocumentName='MB result' StringencyAlpha='1.000000.2' CalculationTime='11.010498 s'				
 				
 !!SBtab TableID='Reaction' TableType='Reaction' TableName='Reaction'				
 !ID	!ReactionFormula	!Name	!IsReversible	

@@ -1,4 +1,4 @@
-!!!SBtab DocumentName='CMB result' Document='CMBresult' CalculationTime='145.092226 s'			
+!!!SBtab SBtabVersion='1.2' DocumentName='CMB result' Document='CMBresult' CalculationTime='145.092226 s'			
 			
 !!SBtab TableName='Metabolite concentrations' TableID='MetaboliteConcentration' TableType='QuantityMatrix' Unit='mM'			
 !QuantityType	!Compound	!Compound:Identifiers:kegg.compound	S1
