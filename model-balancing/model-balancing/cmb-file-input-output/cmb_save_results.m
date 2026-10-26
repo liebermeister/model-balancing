@@ -82,7 +82,7 @@ end
 % ----------------------------------------
 % save cmb_options as sbtab file
 
-cmb_options_sbtab = options_to_sbtab(cmb_options,struct('TableName','Options for convex model balancing','TableID','ConfigureModelBalancing','Method','convex-model-balancing'));
+cmb_options_sbtab = options_to_sbtab(cmb_options,struct('TableName','ConfigureModelBalancing','TableTitle','Options for convex model balancing','TableID','ConfigureModelBalancing','Method','convex-model-balancing'));
 
 if length(filenames.options_sbtab)
   sbtab_table_save(cmb_options_sbtab,struct('filename',filenames.options_sbtab));
