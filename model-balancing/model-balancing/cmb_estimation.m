@@ -170,7 +170,6 @@ switch cmb_options.initial_values_variant,
       y_init = y_preposterior_mean;
     else
       %% find preposterior mode under constraints
-      %% in the future, use cplexqp (to account for constraints)
       opt_quadprog = struct('Algorithm','interior-point-convex','MaxFunEvals',10^10,'MaxIter',10^10,'TolX',10^-5,'Display','off','OptimalityTolerance', 10^-5,'StepTolerance', 10^-10);
       [y_init,~,err] = quadprog(y_preposterior_prec, -y_preposterior_prec * y_preposterior_mean, y_bounds_ineq_A, y_bounds_ineq_b-epsilon,[],[], y_bound_min, y_bound_max,[],opt_quadprog);
       if err<0, error(sprintf('Error in computing initial values: quadprog error flag %d',err)); end
