@@ -30,7 +30,7 @@ function [network, q_info, data, c_init, kinetic_data, state_data, conc_min, con
   
 eval(default('file_options','struct'));
 
-file_options = join_struct(struct('constraint_sbtab_file',[]), file_options);
+file_options = join_struct(struct('constraint_sbtab_file',[],'prior_file',cmb_prior_file), file_options);
 
 % --------------------------------------------------------------
 % Load data files -> network, kinetic_data, state_data

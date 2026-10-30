@@ -14,5 +14,6 @@ First numbered version.
 - `cmb_estimation`: fixed misspelled variable names that crashed model balancing when the initial point had to be computed
 - `model_balancing_dependencies` also checks Enzyme Cost Minimization
 - Minimal test suite (folder `tests`)
+- `cmb_load_and_convert_model_and_data` passes the prior table of this package (`cmb_prior_file`) to `sbtab_load_network_model_and_data`
 
 The state before the cleanup of October 2026 is available under the git tag `v0.9-legacy`.
