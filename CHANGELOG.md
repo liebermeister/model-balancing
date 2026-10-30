@@ -10,5 +10,6 @@ First numbered version.
 - Improved documentation; bug fixes in demo scripts
 - SBtab 1.1 options tables
 - `state_data_to_data` moved here from the Metabolic Network Toolbox
+- `model_balancing` checks the dependencies automatically, once per Matlab session
 
 The state before the cleanup of October 2026 is available under the git tag `v0.9-legacy`.
