@@ -11,5 +11,8 @@ First numbered version.
 - SBtab 1.1 options tables
 - `state_data_to_data` moved here from the Metabolic Network Toolbox
 - `model_balancing` checks the dependencies automatically, once per Matlab session
+- `cmb_estimation`: fixed misspelled variable names that crashed model balancing when the initial point had to be computed
+- `model_balancing_dependencies` also checks Enzyme Cost Minimization
+- Minimal test suite (folder `tests`)
 
 The state before the cleanup of October 2026 is available under the git tag `v0.9-legacy`.

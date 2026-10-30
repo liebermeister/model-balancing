@@ -36,3 +36,7 @@ end
 if exist('package_version_check','file')
   package_version_check('Parameter balancing for Matlab', 'parameter_balancing_version', '1.0.0');
 end
+
+if ~exist('ecm_get_score','file')
+  warning('Please install Enzyme Cost Minimization (https://github.com/liebermeister/enzyme-cost-minimization) - It is required.');
+end
