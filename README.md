@@ -95,6 +95,10 @@ For python, please refer to our [Read The Docs](https://model-balancing.readthed
 The code was tested with Matlab R2019b on Linux. The optimisation uses `fmincon`
 (Optimization Toolbox).
 
+## Versions
+
+To see the installed version, type `model_balancing_version`. Older versions can be downloaded from the [releases page](https://github.com/liebermeister/model-balancing/releases) of this repository, and changes between versions are listed in `CHANGELOG.md`.
+
 ## License
 This package is released under the [GNU General Public License, version 2](LICENSE).
 
