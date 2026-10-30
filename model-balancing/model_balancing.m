@@ -32,6 +32,10 @@ function [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max,
 %
 % For generating the input data, see 'cmb_model_and_data' and 'cmb_model_artificial_data'
 
+if exist('dependencies_check_once','file')
+  dependencies_check_once('model_balancing_dependencies');
+end
+
 if cmb_options.display,
   display(sprintf('\n---------------'));
   display(sprintf('Model balancing'));
