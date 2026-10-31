@@ -16,7 +16,7 @@ Other bug fixes:
 - New function `cmb_save_json_file`, used in `demo_cmb_experimental_data` (the function `save_json_file` is not part of this package)
 - Tests for these fixes (`tests/test_data_handling.m`)
 
-Known issue: with precise kinetic data, the initial value variant `preposterior_mode` can make `fmincon` fail (flag -2); the default `polytope center` works.
+Known issue: with precise kinetic data, the initial value variant `preposterior_mode` can make `fmincon` stop at the initial point, with flag -2 or without an error. This point lies on the boundary of the allowed region, where the interior-point algorithm cannot move. The default `polytope center` works.
 
 ## 1.0.0 (2026-10-31)
 
