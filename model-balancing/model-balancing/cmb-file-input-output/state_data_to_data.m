@@ -101,13 +101,14 @@ data.qall.mean(q_info.qall.index.KI)    = log(nn.kinetics.KI(KI_indices));
 data.qall.mean(q_info.qall.index.Kcatf) = log(nn.kinetics.Kcatf);
 data.qall.mean(q_info.qall.index.Kcatr) = log(nn.kinetics.Kcatr);
 
+% STD_nat contains the standard deviations of the log values (std_ln), so no logarithm is taken here
 data.qall.std = nan * ones(q_info.qall.number,1);
-data.qall.std(q_info.qall.index.Keq)   = log(nn.kinetics.STD_nat.Keq);
-data.qall.std(q_info.qall.index.KM)    = log(nn.kinetics.STD_nat.KM(KM_indices));
-data.qall.std(q_info.qall.index.KA)    = log(nn.kinetics.STD_nat.KA(KA_indices));
-data.qall.std(q_info.qall.index.KI)    = log(nn.kinetics.STD_nat.KI(KI_indices));
-data.qall.std(q_info.qall.index.Kcatf) = log(nn.kinetics.STD_nat.Kcatf);
-data.qall.std(q_info.qall.index.Kcatr) = log(nn.kinetics.STD_nat.Kcatr);
+data.qall.std(q_info.qall.index.Keq)   = nn.kinetics.STD_nat.Keq;
+data.qall.std(q_info.qall.index.KM)    = nn.kinetics.STD_nat.KM(KM_indices);
+data.qall.std(q_info.qall.index.KA)    = nn.kinetics.STD_nat.KA(KA_indices);
+data.qall.std(q_info.qall.index.KI)    = nn.kinetics.STD_nat.KI(KI_indices);
+data.qall.std(q_info.qall.index.Kcatf) = nn.kinetics.STD_nat.Kcatf;
+data.qall.std(q_info.qall.index.Kcatr) = nn.kinetics.STD_nat.Kcatr;
 
-data.qall.std(~isfinite(data.qall.std)) = log(cmb_options.data_kin_geom_std);
+data.qall.std(~isfinite(data.qall.std) | data.qall.std <= 0) = log(cmb_options.data_kin_geom_std);
 data.qall.std(isnan(data.qall.mean)) = nan;

@@ -207,7 +207,7 @@ end
 
 % Thermodynamic forces, directions
 
-my_ln_Keq       = init.q(q_info.q.index.Keq);
+my_ln_Keq       = q_info.M_qKeqind_to_qallKeq * init.q(q_info.q.index.Keq);
 my_theta_matrix = repmat(my_ln_Keq,1,ns) - network.N' * init.X;
 
 if sum(sum(my_theta_matrix .* data.V.mean < 0)),

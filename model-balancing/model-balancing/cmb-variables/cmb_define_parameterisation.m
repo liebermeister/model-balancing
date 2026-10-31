@@ -147,7 +147,7 @@ qdep.index.Kcatr  = 2 * nr + [1:nr];
 qdep.number = length(qdep.names);
 
 M_q_to_qdep = zeros(qdep.number, q.number);
-M_q_to_qdep(qdep.index.Keq,   q.index.Keq) = eye(nr);
+M_q_to_qdep(qdep.index.Keq,   q.index.Keq) = Bt;
 M_q_to_qdep(qdep.index.Kcatf, q.index.KV)  = eye(nr);
 M_q_to_qdep(qdep.index.Kcatf, q.index.Keq) =  0.5 * diag(h) * Bt;
 M_q_to_qdep(qdep.index.Kcatf, q.index.KM)  = -0.5 * diag(h) * stoich_matrix_reaction_KM;

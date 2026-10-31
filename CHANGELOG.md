@@ -2,6 +2,22 @@
 
 Version numbers have the form MAJOR.MINOR.PATCH. MAJOR changes when existing calls may stop working.
 
+## Unreleased
+
+Bug fixes that change results for real data:
+
+- `cmb_prepare_posterior`: metabolite and enzyme levels without data now keep their prior mean and standard deviation. Before, metabolites without data kept a tightened standard deviation (when no error bars were given) and enzymes without data got a standard deviation of about 1e15
+- `state_data_to_data`: the logarithm of the kinetic data errors was taken twice (`log(std_ln)` instead of `std_ln`), so kinetic data had a wrong weight and JSON files contained negative standard deviations. Example JSON files and results made before this fix are affected
+
+Other bug fixes:
+
+- Networks with closed cycles (rank-deficient stoichiometric matrix) can now be balanced: `cmb_define_parameterisation`, `cmb_estimation`, `cmb_qall_to_kinetics`, `cmb_make_bounds`, `cmb_prepare_posterior`
+- `cmb_default_options`: upper bound of KA was taken from the row of the prior table for A
+- New function `cmb_save_json_file`, used in `demo_cmb_experimental_data` (the function `save_json_file` is not part of this package)
+- Tests for these fixes (`tests/test_data_handling.m`)
+
+Known issue: with precise kinetic data, the initial value variant `preposterior_mode` can make `fmincon` fail (flag -2); the default `polytope center` works.
+
 ## 1.0.0 (2026-10-31)
 
 First numbered version.
