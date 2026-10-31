@@ -10,6 +10,25 @@ format, models can be provided in [SBML](https://sbml.org) or [SBtab](https://ww
 
 This repository contains the matlab implementation, example models and data, and example results.
 
+## Bug fixes of October 2026: effect on earlier results
+
+Two bugs in versions up to 1.0.0 affected results for real data. Both are fixed in the current code (see `CHANGELOG.md`).
+
+* **Missing data** (`cmb_prepare_posterior`): metabolites without data kept a too narrow distribution if the data file had no error bars, which pulled them towards the prior mean. Enzymes without data got a standard deviation of about 1e15 instead of the prior value.
+* **Kinetic data errors** (`state_data_to_data`): the logarithm of the error was taken twice. For example, a geometric standard deviation of 1.5 acted like a standard deviation of 0.90 on the log scale, instead of 0.405, so kinetic data had about one fifth of their intended weight. JSON files written by the old code contain negative standard deviations.
+
+The results for real data in the article (Liebermeister & Noor, 2021) were computed with the old code; the article has not been changed. Results for artificial data are not affected, since they have no missing values and set the kinetic data errors directly. The results in the folder `examples/results` and the files in `examples/json` were also made with the old code, so please regenerate them before using them.
+
+The table shows the effect on the *E. coli* model with real data (balanced kinetic data, alpha = 0.5), as the median of |ln(fit/data)|, old code -> fixed code.
+
+| Scenario          | Keq          | kcat+        | kcat-        | KM           | Metabolites  |
+|-------------------|--------------|--------------|--------------|--------------|--------------|
+| With kinetic data | 0.46 -> 0.22 | 0.54 -> 0.32 | 0.24 -> 0.10 | 0.43 -> 0.15 | 0.10 -> 0.22 |
+| Keq data only     | 0.18 -> 0.03 | 1.78 -> 2.15 | 2.48 -> 2.31 | 1.67 -> 1.68 | 0.05 -> 0.06 |
+| No kinetic data   | 3.28 -> 3.20 | 1.57 -> 1.57 | 1.30 -> 1.33 | 1.75 -> 1.75 | 0.01 -> 0.01 |
+
+With kinetic data, the model now fits the kinetic data better, and estimates moved by a median factor of about 1.3 (Keq: 1.65). Metabolites without data moved most, by a median factor of about 2, and up to about 40 (up to about 100 with Keq data only). Without kinetic data, the estimates hardly changed.
+
 ## Quick start (matlab)
 
 1. Clone this repository and the four required toolboxes (see [Installation](#installation)):
