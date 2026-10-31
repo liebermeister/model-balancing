@@ -61,6 +61,8 @@ With kinetic data, the model now fits the kinetic data better, and estimates mov
 | `model-balancing` | Matlab code: main function `model_balancing.m`, functions (`model-balancing/model-balancing`), demo scripts (`model-balancing/demo`) |
 | `resource-data` | Example models (`resource-data/models`) and the prior table (`resource-data/data/data-prior`) |
 | `examples`      | Input files for the python implementation (`examples/json`), model balancing results (`examples/results`), and result graphics (`examples/graphics`) |
+| `python-sbtab-to-json` | Stand-alone python script that converts SBtab input files into the JSON files for the python implementation |
+| `matlab-python-comparison` | Test that compares the matlab implementation, the converter, and the python implementation |
 
 ### Matlab
 To run model balancing in matlab, please adjust the demo scripts in `model-balancing/demo` to your model and data.
@@ -71,6 +73,7 @@ For help, please type `help model-balancing` in matlab, or see the documentation
 ### Python
 For using model balancing in python, please refer to our [Read The Docs](https://model-balancing.readthedocs.io/en/latest/index.html) page;
 the code itself can be found on [our GitLab repository](https://gitlab.com/elad.noor/model-balancing).
+The script `python-sbtab-to-json/sbtab_to_json.py` makes the JSON input files from the same SBtab files as used in matlab, so matlab is not needed for this step.
 
 ### Example models
 Example model and data files can be found in the folder `resource-data`.

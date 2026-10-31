@@ -1,0 +1,23 @@
+!!!SBtab SBtabVersion='1.2' Document='test_model'
+
+!!SBtab TableID='Reaction' TableType='Reaction' TableName='Reaction'
+!ID	!ReactionFormula	!IsReversible	!MetabolicRegulation
+R1	Xa <=> A	True	+ Xb
+R2	2 A <=> B	True	
+R3	B <=> C + Xd	True	- Xc
+R4	Xg <=> C	True	
+R5	A <=> Xe	True	
+R6	B <=> Xf	True	
+
+!!SBtab TableID='Compound' TableType='Compound' TableName='Compound'
+!ID	!Name	!IsConstant
+Xa	Xa	True
+Xb	Xb	True
+Xc	Xc	True
+Xd	Xd	True
+Xe	Xe	True
+Xf	Xf	True
+Xg	Xg	True
+A	A	False
+B	B	False
+C	C	False
