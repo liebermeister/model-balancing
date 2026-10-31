@@ -16,7 +16,7 @@ Subfolders
 
 * `demo` Demo scripts for running model balancing with artificial or experimental data
 
-* `doc` HTML documentation (generated with m2html), also available at www.metabolic-economics.de/model-balancing/matlab-doc/
+* HTML documentation is available at www.metabolic-economics.de/model-balancing/matlab-doc/
 
 Matlab scripts for generating the example models can be found in the folder `../resource-data/models`
 
