@@ -1,4 +1,4 @@
-!!!SBtab SBtabVersion='1.2' Document='Model'					
+!!!SBtab SBtabVersion='1.1' Document='Model'					
 					
 !!SBtab TableID='Reaction' TableType='Reaction' TableName='Reaction'					
 !ID	!ReactionFormula	!Name	!IsReversible	!KineticLaw:Name	!KineticLaw:Formula

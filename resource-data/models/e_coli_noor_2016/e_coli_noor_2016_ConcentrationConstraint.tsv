@@ -1,4 +1,4 @@
-!!!SBtab Document='E. coli central carbon metabolism - concentration constraints' SBtabVersion='1.2'
+!!!SBtab Document='E. coli central carbon metabolism - concentration constraints' SBtabVersion='1.1'
 % lower bound on NADplus was relaxed from 0.1 to 0.0000001 (because it had a fixed values that contradicted some data)
 % lower bounds on Ubinquinone and Ubiquinol were relaxed from 0.1 to 0.001 (because they had fixed values that may not be realistic)
 

@@ -1,4 +1,4 @@
-!!!SBtab SBtabVersion='1.2' Document='CMBresult' DocumentName='CMB result' CalculationTime='785.895287 s'				
+!!!SBtab SBtabVersion='1.1' Document='CMBresult' DocumentName='CMB result' CalculationTime='785.895287 s'				
 				
 !!SBtab TableID='Reaction' TableType='Reaction' TableName='Reaction'				
 !ID	!ReactionFormula	!Name	!IsReversible	

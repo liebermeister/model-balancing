@@ -1,4 +1,4 @@
-!!!SBtab SBtabVersion='1.2'													
+!!!SBtab SBtabVersion='1.1'													
 													
 !!SBtab TableName='Metabolic fluxes' TableID='FluxData' TableType='QuantityMatrix' Unit='mM/s'													
 !QuantityType	!Reaction	state_1_Mean	state_1_Std	state_2_Mean	state_2_Std	state_3_Mean	state_3_Std	state_4_Mean	state_4_Std	state_5_Mean	state_5_Std	state_6_Mean	state_6_Std

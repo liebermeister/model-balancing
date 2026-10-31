@@ -103,7 +103,7 @@ def write(name, text):
         fp.write(text)
 
 
-lines = ["!!!SBtab SBtabVersion='1.2' Document='test_model'", "",
+lines = ["!!!SBtab SBtabVersion='1.1' Document='test_model'", "",
          "!!SBtab TableID='Reaction' TableType='Reaction' TableName='Reaction'",
          "!ID\t!ReactionFormula\t!IsReversible\t!MetabolicRegulation"]
 for r, f in zip(rxns, formulas):
@@ -140,13 +140,13 @@ def block(name, tid, unit, idcol, qt, ids, M, S):
     return out + [""]
 
 
-lines = ["!!!SBtab SBtabVersion='1.2'", ""]
+lines = ["!!!SBtab SBtabVersion='1.1'", ""]
 lines += block("Metabolic fluxes", "FluxData", "mM/s", "Reaction", "rate of reaction", rxns, V, Vstd)
 lines += block("Metabolite concentrations", "MetaboliteConcentrationData", "mM", "Compound", "concentration", mets, Cdata, Cstd)
 lines += block("Enzyme concentrations", "EnzymeConcentrationData", "mM", "Reaction", "concentration of enzyme", rxns, Edata, Estd)
 write("test_model_state_data.tsv", "\n".join(lines))
 
-lines = ["!!!SBtab SBtabVersion='1.2' Document='test_model'", "",
+lines = ["!!!SBtab SBtabVersion='1.1' Document='test_model'", "",
          "!!SBtab TableID='ConcentrationConstraint' TableType='Quantity' Unit='mM'", "!QuantityType\t!Compound\t!Min\t!Max"]
 lines += [f"concentration\t{m}\t0.000001\t1000" for m in mets]
 write("test_model_constraints.tsv", "\n".join(lines) + "\n")
