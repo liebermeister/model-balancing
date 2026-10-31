@@ -6,6 +6,7 @@ Version numbers have the form MAJOR.MINOR.PATCH. MAJOR changes when existing cal
 
 First numbered version.
 
+- HTML documentation removed from the repository (it can be regenerated with m2html)
 - Version function `model_balancing_version` and dependency check `model_balancing_dependencies`
 - Improved documentation; bug fixes in demo scripts
 - SBtab 1.1 options tables

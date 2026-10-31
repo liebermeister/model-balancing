@@ -40,7 +40,6 @@ This repository contains the matlab implementation, example models and data, and
 | Folder          | Contents |
 |-----------------|----------|
 | `model-balancing` | Matlab code: main function `model_balancing.m`, functions (`model-balancing/model-balancing`), demo scripts (`model-balancing/demo`) |
-| `doc`           | HTML documentation of the Matlab code |
 | `resource-data` | Example models (`resource-data/models`) and the prior table (`resource-data/data/data-prior`) |
 | `examples`      | Input files for the python implementation (`examples/json`), model balancing results (`examples/results`), and result graphics (`examples/graphics`) |
 
