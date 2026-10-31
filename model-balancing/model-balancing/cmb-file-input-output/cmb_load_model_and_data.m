@@ -41,7 +41,7 @@ if ~isfield(network,'reaction_KEGGID'),   network.reaction_KEGGID = {};   end
 
 if length(kinetic_data_file),
   parameter_prior = parameter_balancing_prior([],options.parameter_prior_file,0); 
-  [model_quantities, basic_quantities, data_quantities, pseudo_quantities] = parameter_balancing_quantities(parameter_prior, network, options);
+  [model_quantities, basic_quantities, data_quantities, pseudo_quantities] = pb_quantities(parameter_prior, network, options);
   if isempty(find(cellfun('length',network.metabolite_KEGGID))), warning('No KEGG species annotations found in model');  end
   if isempty(find(cellfun('length',network.reaction_KEGGID))),   warning('No KEGG species annotations found in model');  end
   opt = struct('use_sbml_ids', options.use_sbml_ids, 'use_kegg_ids', options.use_kegg_ids, 'verbose', 0);
