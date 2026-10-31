@@ -16,31 +16,9 @@ function preposterior = cmb_prepare_posterior(prior, data, cmb_options, q_info);
 % --------------------------------------------------------
 % Compute posterior distributions for X and q (formulae, see Liebermeister 2006 "Bringing .. data integration")
 
-preposterior.X.mean = [];
-preposterior.X.std  = 1 ./ sqrt( 1./[data.X.std .^2] + 1./[prior.X.std .^2] );
-preposterior.X.mean = preposterior.X.std.^2 .* [ data.X.mean ./ data.X.std.^2 + prior.X.mean ./ prior.X.std.^2 ];
-
-preposterior.V.mean = [];
-preposterior.V.std  = 1 ./ sqrt( 1./[data.V.std .^2] + 1./[prior.V.std .^2] );
-preposterior.V.mean = preposterior.V.std.^2 .* [ data.V.mean ./ data.V.std.^2 + prior.V.mean ./ prior.V.std.^2 ];
-
-preposterior.lnE.mean = [];
-preposterior.lnE.std  = 1 ./ sqrt( 1./[data.lnE.std .^2] + 1./[prior.lnE.std .^2] );
-preposterior.lnE.mean = preposterior.lnE.std.^2 .* [ data.lnE.mean ./ data.lnE.std.^2 + prior.lnE.mean ./ prior.lnE.std.^2 ];
-
-% deal with undefined points (eg from zero enzyme concentrations in data)
-preposterior.lnE.std(~isfinite(preposterior.lnE.mean)) = 10^15;
-preposterior.lnE.mean(~isfinite(preposterior.lnE.mean)) = 0;
-
-% posterior, where data values are undefined
-preposterior.X.mean(isnan(preposterior.X.mean)) = prior.X.mean(isnan(preposterior.X.mean));
-preposterior.X.std(isnan(preposterior.X.std))   = prior.X.std(isnan(preposterior.X.std));
-
-preposterior.V.mean(isnan(preposterior.V.mean)) = prior.V.mean(isnan(preposterior.V.mean));
-preposterior.V.std(isnan(preposterior.V.std))   = prior.V.std(isnan(preposterior.V.std));
-
-preposterior.lnE.mean(isnan(preposterior.lnE.mean)) = prior.lnE.mean(isnan(preposterior.lnE.mean));
-preposterior.lnE.std(isnan(preposterior.lnE.std))   = prior.lnE.std(isnan(preposterior.lnE.std));
+preposterior.X   = combine_prior_and_data(prior.X,   data.X);
+preposterior.V   = combine_prior_and_data(prior.V,   data.V);
+preposterior.lnE = combine_prior_and_data(prior.lnE, data.lnE);
 
 
 % --------------------------------------------------------------------------------
@@ -128,7 +106,8 @@ preposterior.qtypes.KA.mean    = preposterior.qall.mean(index.KA);
 preposterior.qtypes.KI.mean    = preposterior.qall.mean(index.KI); 
 preposterior.qtypes.Kcatf.mean = preposterior.qall.mean(index.Kcatf);
 preposterior.qtypes.Kcatr.mean = preposterior.qall.mean(index.Kcatr);
-preposterior.qtypes.Keq.prec   = inv(preposterior.qall.cov(index.Keq,index.Keq));
+% pinv: in networks with closed cycles, the Keq vector is restricted by Wegscheider conditions and its covariance is singular
+preposterior.qtypes.Keq.prec   = pinv(preposterior.qall.cov(index.Keq,index.Keq));
 preposterior.qtypes.KM.prec    = inv(preposterior.qall.cov(index.KM,index.KM));
 preposterior.qtypes.KA.prec    = inv(preposterior.qall.cov(index.KA,index.KA));
 preposterior.qtypes.KI.prec    = inv(preposterior.qall.cov(index.KI,index.KI)); 
@@ -161,3 +140,24 @@ preposterior.qtypes.Kcatr.prec = inv(preposterior.qall.cov(index.Kcatr,index.Kca
 % preposterior.q.mean    = qall_mean(q_info.q.index_q);
 % preposterior.q.cov     = preposterior.qall.cov(q_info.q.index_q,q_info.q.index_q);
 % preposterior.q.prec    = pinv(preposterior.q.cov);
+
+
+% --------------------------------------------------------------------------------
+
+function posterior = combine_prior_and_data(prior, data)
+
+% posterior = combine_prior_and_data(prior, data)
+%
+% Elementwise combination of a Gaussian prior and Gaussian data (fields .mean, .std)
+% Elements without a valid data value (mean or std not finite) keep the prior mean and std.
+% The same rule is used for the JSON export (see cvxpy_combine_prior_and_likelihood)
+
+has_data = isfinite(data.mean) & isfinite(data.std);
+
+posterior.mean = prior.mean;
+posterior.std  = prior.std;
+
+posterior_var = 1 ./ [1./data.std(has_data).^2 + 1./prior.std(has_data).^2];
+
+posterior.std(has_data)  = sqrt(posterior_var);
+posterior.mean(has_data) = posterior_var .* [ data.mean(has_data) ./ data.std(has_data).^2 + prior.mean(has_data) ./ prior.std(has_data).^2 ];

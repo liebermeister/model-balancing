@@ -66,7 +66,7 @@ function cmb_options = cmb_default_options(flag_artificial)
 %   .quantities.KM.mean_ln       new value for prior_median_ln(ind.KM);
 %   .quantities.KM.std_ln        new value for prior_geostd_ln(ind.KM), default log(5 mM)
 %   .quantities.KA.min           new value for lower_bound(ind.KA);
-%   .quantities.KA.max           new value for upper_bound(ind.A);
+%   .quantities.KA.max           new value for upper_bound(ind.KA);
 %   .quantities.KA.mean_ln       new value for prior_median_ln(ind.KA);
 %   .quantities.KA.std_ln        new value for prior_geostd_ln(ind.KA);
 %   .quantities.KI.min           new value for lower_bound(ind.KI);
@@ -211,7 +211,7 @@ cmb_options.quantities.KM.mean_ln   = prior_median_ln(ind.KM);
 cmb_options.quantities.KM.std_ln    = prior_geostd_ln(ind.KM);
  
 cmb_options.quantities.KA.min       = lower_bound(ind.KA);
-cmb_options.quantities.KA.max       = upper_bound(ind.A);
+cmb_options.quantities.KA.max       = upper_bound(ind.KA);
 cmb_options.quantities.KA.mean_ln   = prior_median_ln(ind.KA);
 cmb_options.quantities.KA.std_ln    = prior_geostd_ln(ind.KA);
 
