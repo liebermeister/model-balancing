@@ -4,6 +4,9 @@ Version numbers have the form MAJOR.MINOR.PATCH. MAJOR changes when existing cal
 
 ## Unreleased
 
+- New folder `python-sbtab-to-json`: stand-alone conversion of SBtab input files to JSON files for the python implementation
+- New folder `matlab-python-comparison`: test comparing the matlab and python implementations
+
 Bug fixes that change results for real data:
 
 - `cmb_prepare_posterior`: metabolite and enzyme levels without data now keep their prior mean and standard deviation. Before, metabolites without data kept a tightened standard deviation (when no error bars were given) and enzymes without data got a standard deviation of about 1e15

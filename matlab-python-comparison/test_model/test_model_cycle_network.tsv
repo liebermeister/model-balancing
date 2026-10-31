@@ -1,0 +1,17 @@
+!!!SBtab SBtabVersion='1.2' Document='test_model_cycle'
+
+!!SBtab TableID='Reaction' TableType='Reaction' TableName='Reaction'
+!ID	!ReactionFormula	!IsReversible
+R1	Xa <=> A	True
+R2	A <=> B	True
+R3	B <=> C	True
+R4	A <=> C	True
+R5	C <=> Xb	True
+
+!!SBtab TableID='Compound' TableType='Compound' TableName='Compound'
+!ID	!Name	!IsConstant
+Xa	Xa	True
+Xb	Xb	True
+A	A	False
+B	B	False
+C	C	False

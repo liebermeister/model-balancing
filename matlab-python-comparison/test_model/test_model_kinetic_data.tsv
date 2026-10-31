@@ -1,0 +1,25 @@
+!!SBtab TableID='ParameterData' TableType='Quantity'
+!QuantityType	!Compound	!Reaction	!Unit	!Median
+Michaelis constant	Xa	R1	mM	0.6592319545
+Michaelis constant	A	R2	mM	0.6512917896
+Michaelis constant	Xd	R3	mM	1.031627356
+Michaelis constant	C	R3	mM	0.3253968486
+Michaelis constant	C	R4	mM	0.6693225058
+Michaelis constant	A	R5	mM	0.5114991336
+Michaelis constant	B	R6	mM	0.2773956507
+activation constant	Xb	R1	mM	0.4
+inhibitory constant	Xc	R3	mM	0.5
+equilibrium constant		R1	dimensionless	1.223226823
+substrate catalytic rate constant		R1	1/s	81.57034638
+product catalytic rate constant		R1	1/s	97.59250048
+equilibrium constant		R2	dimensionless	1.553303902
+substrate catalytic rate constant		R2	1/s	137.9536469
+equilibrium constant		R3	dimensionless	1.90279728
+substrate catalytic rate constant		R3	1/s	306.0619185
+product catalytic rate constant		R3	1/s	75.56080075
+equilibrium constant		R4	dimensionless	0.07357588823
+equilibrium constant		R5	dimensionless	1.12687234
+substrate catalytic rate constant		R5	1/s	77.78038941
+product catalytic rate constant		R5	1/s	85.37143716
+equilibrium constant		R6	dimensionless	0.5436563657
+substrate catalytic rate constant		R6	1/s	25.52985309

@@ -1,0 +1,25 @@
+!!!SBtab SBtabVersion='1.2'
+
+!!SBtab TableName='Metabolic fluxes' TableID='FluxData' TableType='QuantityMatrix' Unit='mM/s'
+!QuantityType	!Reaction	S1_Mean	S1_Std	S2_Mean	S2_Std
+rate of reaction	R1	1	0.21	1.2	0.25
+rate of reaction	R2	0.4	0.09	0.5	0.11
+rate of reaction	R3	0.4	0.09	0.5	0.11
+rate of reaction	R4	0.6	0.13	0.7	0.15
+rate of reaction	R5	1	0.21	1.2	0.25
+
+!!SBtab TableName='Metabolite concentrations' TableID='MetaboliteConcentrationData' TableType='QuantityMatrix' Unit='mM'
+!QuantityType	!Compound	S1_Mean	S1_Std	S2_Mean	S2_Std
+concentration	Xa	2	0.41	2.2	0.45
+concentration	Xb	0.1	0.03	0.12	0.034
+concentration	A	1	0.21	1.1	0.23
+concentration	B	0.6	0.13	0.7	0.15
+concentration	C	0.3	0.07	0.35	0.08
+
+!!SBtab TableName='Enzyme concentrations' TableID='EnzymeConcentrationData' TableType='QuantityMatrix' Unit='mM'
+!QuantityType	!Reaction	S1_Mean	S1_Std	S2_Mean	S2_Std
+concentration of enzyme	R1	0.01	0.012	0.012	0.0124
+concentration of enzyme	R2	0.01	0.012	0.012	0.0124
+concentration of enzyme	R3	0.01	0.012	0.012	0.0124
+concentration of enzyme	R4	0.01	0.012	0.012	0.0124
+concentration of enzyme	R5	0.01	0.012	0.012	0.0124

@@ -1,0 +1,14 @@
+!!!SBtab SBtabVersion='1.2' Document='test_model'
+
+!!SBtab TableID='ConcentrationConstraint' TableType='Quantity' Unit='mM'
+!QuantityType	!Compound	!Min	!Max
+concentration	Xa	0.000001	1000
+concentration	Xb	0.000001	1000
+concentration	Xc	0.000001	1000
+concentration	Xd	0.000001	1000
+concentration	Xe	0.000001	1000
+concentration	Xf	0.000001	1000
+concentration	Xg	0.000001	1000
+concentration	A	0.000001	1000
+concentration	B	0.000001	1000
+concentration	C	0.000001	1000
