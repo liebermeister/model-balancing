@@ -6,7 +6,7 @@ authors:
     given-names: Wolfram
   - family-names: Noor
     given-names: Elad
-license: GPL-2.0-only
+license: MIT
 repository-code: "https://github.com/liebermeister/model-balancing"
 url: "https://www.metabolic-economics.de/model-balancing/"
 preferred-citation:

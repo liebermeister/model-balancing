@@ -21,7 +21,28 @@ Other bug fixes:
 - New function `mb_save_json_file`, used in `demo_mb_experimental_data` (the function `save_json_file` is not part of this package)
 - Tests for these fixes (`tests/test_data_handling.m`)
 
-Known issue: with precise kinetic data, the initial value variant `preposterior_mode` can make `fmincon` stop at the initial point, with flag -2 or without an error. This point lies on the boundary of the allowed region, where the interior-point algorithm cannot move. The default `polytope center` works.
+- `mb_estimation`: with the initial value variant `preposterior_mode`, `fmincon` could stop at the initial point (flag -2, or a wrong result without an error), because this point lay on the boundary of the allowed region. It is now moved slightly towards the polytope centre (test: `tests/test_preposterior_mode.m`)
+- `mb_estimation`: the variant `flat_objective` crashed, and the variant `average_sample` ignored the result of its first run. The first run of `average_sample` also did not receive the enzyme data (`model_balancing`)
+- `mb_save_results`: `true_model.tsv` contained the balanced kinetic constants instead of the true ones. The Gibbs free energies in `balanced_states.tsv` had the wrong sign, and those in `true_states.tsv` had the wrong sign for negative fluxes
+- `mb_generate_artificial_data`: true reaction affinities are now given in kJ/mol, like the balanced ones (before: in units of RT)
+- `mb_graphics`: option `plot_true_vs_data` crashed
+- `mb_log_posterior`: infeasible points gave the score NaN instead of -inf; an unknown enzyme score type now gives an error
+- `mb_objective`: wrong value for the score `neg_log_posterior` when a gradient was requested
+
+Changes that can affect results:
+
+- The lower bound for Keq is now `quantities.Keq.min` from the prior table (before: 1 / `quantities.Keq.max`), both here and in `python-sbtab-to-json`
+- Without a constraint file, the upper bound for metabolite concentrations is now `quantities.c.max` (before: 100 times this value), both here and in `python-sbtab-to-json`
+
+Other changes:
+
+- `sbtab_to_json.py`: kinetic data are limited to the bounds in the prior table, as in Matlab; new option `--km-max` (default 1000 mM) for data and bounds of KM
+- New function `mb_log_posterior_gradient`: analytic gradient, used by default (option `use_gradient`, now 1; test: `tests/test_gradient.m`). The old gradient code in `mb_log_posterior` was wrong and has been removed
+- The variable `true` is now called `true_model` (also in the file `results.mat`)
+- Parameterisation `KV_KM_KA_KI` removed (it crashed), together with the option `parameterisation`
+- Unused code commented out: `mb_read_prepared_model_and_data`, `mb_variables_to_log_posterior`, `mb_qall_to_q`, the tighter bounds in `mb_estimation`, and the computation of `gradient_V`
+- Folder `resource-data` renamed to `resources`, folder `model-balancing/model-balancing` to `model-balancing/model-balancing-functions`
+- Corrections in function headers and comments
 
 ## 1.0.0 (2026-10-31)
 

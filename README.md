@@ -58,8 +58,8 @@ With kinetic data, the model now fits the kinetic data better, and estimates mov
 
 | Folder          | Contents |
 |-----------------|----------|
-| `model-balancing` | Matlab code: main function `model_balancing.m`, functions (`model-balancing/model-balancing`), demo scripts (`model-balancing/demo`) |
-| `resource-data` | Example models (`resource-data/models`) and the prior table (`resource-data/data/data-prior`) |
+| `model-balancing` | Matlab code: main function `model_balancing.m`, functions (`model-balancing/model-balancing-functions`), demo scripts (`model-balancing/demo`) |
+| `resources` | Example models (`resources/models`) and the prior table (`resources/data/data-prior`) |
 | `examples`      | Input files for the python implementation (`examples/json`), model balancing results (`examples/results`), and result graphics (`examples/graphics`) |
 | `python-sbtab-to-json` | Stand-alone python script that converts SBtab input files into the JSON files for the python implementation |
 | `matlab-python-comparison` | Test that compares the matlab implementation, the converter, and the python implementation |
@@ -76,8 +76,8 @@ the code itself can be found on [our GitLab repository](https://gitlab.com/elad.
 The script `python-sbtab-to-json/sbtab_to_json.py` makes the JSON input files from the same SBtab files as used in matlab, so matlab is not needed for this step.
 
 ### Example models
-Example model and data files can be found in the folder `resource-data`.
-The folder `resource-data/models` contains files for four different example models.
+Example model and data files can be found in the folder `resources`.
+The folder `resources/models` contains files for four different example models.
 Each model comes as an SBML (`.xml`) and an SBtab (`.tsv`) file.
 The folders `examples/results/[MODEL_NAME]` contain balancing results for a large number of model balancing problems
 with these models: artificial data for all 4 models, experimental data for the E. coli model (folder `e_coli_noor_2016`).
@@ -91,7 +91,7 @@ You need to prepare three input files in SBtab format, describing
 3. state data (tables FluxData, MetaboliteConcentrationData, EnzymeConcentrationData)
 
 For an example, please have a look at the files `artificial_network_true.tsv`, `artificial_kinetic_data.tsv`,
-and `artificial_state_data.tsv` in the folder `resource-data/models/branch_point_model/data/`.
+and `artificial_state_data.tsv` in the folder `resources/models/branch_point_model/data/`.
 
 To balance your model in matlab, you can then use the code from `demo_mb_experimental_data.m`.
 Please note that there are many more settings that you can change. For an overview, type `help mb_default_options` in matlab.
@@ -129,7 +129,7 @@ results = runtests('tests')
 To see the installed version, type `model_balancing_version`. Older versions can be downloaded from the [releases page](https://github.com/liebermeister/model-balancing/releases) of this repository, and changes between versions are listed in `CHANGELOG.md`.
 
 ## License
-This package is released under the [GNU General Public License, version 2](LICENSE).
+This package is released under the [MIT License](LICENSE).
 
 ## Contact
 Please contact [Wolfram Liebermeister](mailto:wolfram.liebermeister@gmail.com)

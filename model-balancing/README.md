@@ -8,7 +8,7 @@ or type `help model-balancing` in matlab.
 
 Main function
 
-* `model_balancing.m` (calls functions in subfolder `model-balancing`)
+* `model_balancing.m` (calls functions in subfolder `model-balancing-functions`)
 
 Subfolders
 
@@ -18,7 +18,7 @@ Subfolders
 
 * HTML documentation is available at www.metabolic-economics.de/model-balancing/matlab-doc/
 
-Matlab scripts for generating the example models can be found in the folder `../resource-data/models`
+Matlab scripts for generating the example models can be found in the folder `../resources/models`
 
 ## Implementation notes
 

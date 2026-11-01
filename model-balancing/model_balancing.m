@@ -1,8 +1,8 @@
-function [optimal, calculation_time, gradient_V, init, mb_options, V, kapp_max, preposterior, pp] = model_balancing(filenames, mb_options, network, q_info, prior, bounds, data, true, init)
+function [optimal, calculation_time, gradient_V, init, mb_options, V, kapp_max, preposterior, pp] = model_balancing(filenames, mb_options, network, q_info, prior, bounds, data, true_model, init)
 
-% [optimal, calculation_time, gradient_V, init, mb_options, V, kapp_max, preposterior, pp] = model_balancing(filenames, mb_options, network, q_info, prior, bounds, data, true, init)
+% [optimal, calculation_time, gradient_V, init, mb_options, V, kapp_max, preposterior, pp] = model_balancing(filenames, mb_options, network, q_info, prior, bounds, data, true_model, init)
 %
-% Convex model balancing
+% Model balancing
 % For usage examples, see the demo files 'demo_mb_artificial_data.m' and 'demo_mb_experimental_data.m'
 %
 % Input variables:
@@ -16,13 +16,13 @@ function [optimal, calculation_time, gradient_V, init, mb_options, V, kapp_max, 
 %   prior        struct, priors in the optimality problem (details see mb_make_prior)
 %   bounds       struct, bounds in the optimality problem (details see mb_make_bounds)
 %   data         struct, data used in the optimality problem (data.V.mean contains the flux matrix)
-%   true         struct, true model variables (optional; only for models with artificial data)
+%   true_model         struct, true model variables (optional; only for models with artificial data)
 %   init         struct, initial values
 %
 % Output variables:
 %   optimal          struct containing the model variables obtained from optimisation
 %   calculation_time calculation time in seconds
-%   gradient_V       gradient of enzyme posterior loss w.r.t. fluxes (currently not computed)
+%   gradient_V       gradient of enzyme posterior loss w.r.t. fluxes (not computed: always nan)
 %   init             struct containing the initial model variables (fields init.q and init.X)
 %   mb_options      struct containing options (updated by the function)
 %   V                flux data 
@@ -50,7 +50,7 @@ filenames = join_struct(filenames_default,filenames);
 tstart_model_balancing = tic;
 
 % --------------------------------------------------------------
-% Set global variables to speed up function modular_velocities
+% Global variables for function modular_velocities (the Metabolic Network Toolbox currently does not read them)
 
 global global_structure_matrices
 global_structure_matrices = 1;
@@ -59,7 +59,7 @@ global LP_info % variable used in mb_log_posterior
 
 % --------------------------------------------------------------
 
-eval(default('true','[]'));
+eval(default('true_model','[]'));
 
 ns = size(data.X.mean,2);
 mb_options.ns = ns;
@@ -115,7 +115,7 @@ V = data.V.mean;
 
 pp = mb_make_pp(network);
 
-if isempty(true),
+if isempty(true_model),
   if strcmp(mb_options.initial_values_variant,'true_values'),
     warning('No true values given; using method "preposterior_mode" for choosing initial values');
     mb_options.initial_values_variant = 'preposterior_mode';
@@ -159,8 +159,8 @@ switch mb_options.initial_values_variant,
     mb_options.init.X = 0.01 * randn(size(data.X.mean));
   case 'true_values',
     display('Using true values as the initial point');
-    mb_options.init.q = true.q;
-    mb_options.init.X = true.X;
+    mb_options.init.q = true_model.q;
+    mb_options.init.X = true_model.X;
   case 'given_values';
     display('Using given initial values');
     if ~isfield(mb_options,'init'), 
@@ -182,17 +182,17 @@ switch mb_options.initial_values_variant,
     
     my_data.V.mean = nanmean(data.V.mean,2);
     my_data.X.mean = nanmean(data.X.mean,2);
-    my_data.E.mean = exp(nanmean(data.lnE.mean,2));
+    my_data.lnE.mean = nanmean(data.lnE.mean,2);
     %% taking the average over standard deviations is not ideal .. maybe change this?
     my_data.V.std  = nanmean(data.V.std,2); 
     my_data.X.std  = nanmean(data.X.std,2);
-    my_data.E.std  = exp(nanmean(data.lnE.std,2));
+    my_data.lnE.std  = nanmean(data.lnE.std,2);
     
-    if length(true),
-      my_true   = true;
-      my_true.V = nanmean(true.V,2);
-      my_true.X = nanmean(true.X,2);
-      my_true.E = exp(nanmean(log(true.E),2));
+    if length(true_model),
+      my_true   = true_model;
+      my_true.V = nanmean(true_model.V,2);
+      my_true.X = nanmean(true_model.X,2);
+      my_true.E = exp(nanmean(log(true_model.E),2));
     else
       my_true = [];
     end
@@ -229,16 +229,13 @@ display('Running optimisation ..');
 
 [optimal, gradient_V, init] = mb_estimation(network, q_info, bounds, data, prior, preposterior, pp, V, mb_options);
 
-optimal.A_forward = optimal.A .* sign(sign(V)+0.5);
-
-
 % -----------------------------------------------
 % Compare posterior loss scores for true values, 
 % initial guess, and predicted solution
 % -----------------------------------------------
 
 if mb_options.display,
-  mb_display_scores(network, q_info, mb_options, pp, preposterior, init, optimal, true, V, mb_options.verbose);
+  mb_display_scores(network, q_info, mb_options, pp, preposterior, init, optimal, true_model, V, mb_options.verbose);
 end
 
 
@@ -254,7 +251,7 @@ if mb_options.use_safe_optimisation,
     my_mb_options.init = optimal;
     my_mb_options.initial_values_variant = 'given_values';
     [optimal, gradient_V, my_init] = mb_estimation(network, q_info, bounds, data, prior, preposterior, pp, V, my_mb_options);
-    cont = mb_display_scores(network, q_info, my_mb_options, pp, preposterior, my_init, optimal, true, V, mb_options.verbose);
+    cont = mb_display_scores(network, q_info, my_mb_options, pp, preposterior, my_init, optimal, true_model, V, mb_options.verbose);
   end
 end
 
@@ -284,7 +281,7 @@ else
 end
 
 display(' '); ca;
-[res, res_true, res_true_data] = mb_graphics(prior, data, optimal, true, mb_options, q_info, graphics_dir, kapp_max, mb_options.show_graphics);
+[res, res_true, res_true_data] = mb_graphics(prior, data, optimal, true_model, mb_options, q_info, graphics_dir, kapp_max, mb_options.show_graphics);
 
 if mb_options.show_graphics,
   mb_diagnostic_network_graphics(network, data, optimal, mb_options, q_info, 20, 1, graphics_dir);
@@ -312,10 +309,10 @@ end
 if mb_options.save_results,
   display(' '); 
   
-  mb_save_results(network, data, bounds, optimal, filenames, mb_options, struct('calculation_time', calculation_time, 'consistent', 1), true);
+  mb_save_results(network, data, bounds, optimal, filenames, mb_options, struct('calculation_time', calculation_time, 'consistent', 1), true_model);
   
   if length(filenames.results_mat)
-    save(filenames.results_mat,'optimal', 'calculation_time', 'gradient_V', 'init', 'mb_options', 'V', 'kapp_max', 'preposterior', 'pp', 'filenames', 'mb_options', 'network', 'q_info', 'prior', 'bounds', 'data', 'true', 'res', 'res_true', 'res_true_data');
+    save(filenames.results_mat,'optimal', 'calculation_time', 'gradient_V', 'init', 'mb_options', 'V', 'kapp_max', 'preposterior', 'pp', 'filenames', 'mb_options', 'network', 'q_info', 'prior', 'bounds', 'data', 'true_model', 'res', 'res_true', 'res_true_data');
   end
   
 end

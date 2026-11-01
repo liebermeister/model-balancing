@@ -2,7 +2,7 @@ Model balancing results for test models
 =======================================
 
 This directory contains model balancing results (computed with the matlab implementation)
-for the example models in `resource-data/models`. There is one subdirectory per model and data type:
+for the example models in `resources/models`. There is one subdirectory per model and data type:
 
 * `branch_point_model_artificial`, `double_branch_model_artificial`, `three_chain_model_artificial`, `e_coli_artificial`:
   toy models and E. coli model with artificial data
@@ -27,7 +27,7 @@ E. coli model with experimental data: `[KINETIC]_data_[KINETIC_DATA_SET]_alpha[A
 
 * `[KINETIC]`: `no_kinetic`, `with_Keq`, or `with_kinetic`
 * `[KINETIC_DATA_SET]`: name of the kinetic data set (`original` or `balanced`; option `mb_options.kinetic_data_set`);
-  see `resource-data/models/e_coli_noor_2016/e_coli_ccm_kinetic_data`
+  see `resources/models/e_coli_noor_2016/e_coli_ccm_kinetic_data`
 * `[ALPHA]`: stringency parameter alpha (for example, `alpha0_01` means alpha = 0.01)
 
 ## Files in each result folder

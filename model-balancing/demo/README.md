@@ -12,6 +12,6 @@ Matlab demo scripts for model balancing
 * `model_balancing_figure_2.m`: generates Figure 2 of the article (Liebermeister and Noor, 2021), showing the enzyme
   posterior score for different values of the stringency parameter alpha.
 
-By default, the demo scripts use the model `branch_point_model`. The other example models (from `resource-data/models`)
+By default, the demo scripts use the model `branch_point_model`. The other example models (from `resources/models`)
 can be used by uncommenting the respective lines in the scripts. Output files are written to matlab's `tempdir`
 (variable `result_dir`).
