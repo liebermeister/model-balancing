@@ -3,11 +3,11 @@
 %
 % This script generates the artificial data files 
 % in      ~/resource-data/models/double_branch_model/data
-% used in demo_cmb_experimental_data.m
+% used in demo_mb_experimental_data.m
 % -------------------------------------------------------------
 
 % -------------------------------------------------------------
-% MOST OF THE CODE BELOW STEMS FROM demo_cmb_artificial_data.m
+% MOST OF THE CODE BELOW STEMS FROM demo_mb_artificial_data.m
 % -------------------------------------------------------------
 
 model           = 'branch_point_model';

@@ -5,12 +5,12 @@
 % X1 <-> S2 <-> S3 <-> X4
 %
 % This script generates the artificial model and data files in 
-% ~/resource-data/models/three_chain_model/data, used in demo_cmb_experimental_data.m
+% ~/resource-data/models/three_chain_model/data, used in demo_mb_experimental_data.m
 %
 % -------------------------------------------------------------
 
 % -------------------------------------------------------------
-% MOST OF THE CODE BELOW STEMS FROM demo_cmb_artificial_data.m
+% MOST OF THE CODE BELOW STEMS FROM demo_mb_artificial_data.m
 % -------------------------------------------------------------
 
 model           = 'three_chain_model';

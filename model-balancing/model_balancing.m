@@ -3,7 +3,7 @@ function [optimal, calculation_time, gradient_V, init, mb_options, V, kapp_max, 
 % [optimal, calculation_time, gradient_V, init, mb_options, V, kapp_max, preposterior, pp] = model_balancing(filenames, mb_options, network, q_info, prior, bounds, data, true, init)
 %
 % Convex model balancing
-% For usage examples, see the demo files 'demo_cmb_artificial_data.m' and 'demo_cmb_experimental_data.m'
+% For usage examples, see the demo files 'demo_mb_artificial_data.m' and 'demo_mb_experimental_data.m'
 %
 % Input variables:
 %   filenames    struct, (model- and run-specific) filenames for input and output files
@@ -169,16 +169,16 @@ switch mb_options.initial_values_variant,
   case 'average_sample';
     display(sprintf('Using model-balancing random data as the initial point'));
 
-    my_cmb_options                        = mb_options;
-    my_cmb_options.ns                     = 1;
-    my_cmb_options.initial_values_variant = 'preposterior_mode'; 
-    my_cmb_options.show_graphics          = 0;
-    my_cmb_options.verbose                = 0;
-    my_cmb_options.display                = 0;
-    my_cmb_options.save_results           = 0;
+    my_mb_options                        = mb_options;
+    my_mb_options.ns                     = 1;
+    my_mb_options.initial_values_variant = 'preposterior_mode'; 
+    my_mb_options.show_graphics          = 0;
+    my_mb_options.verbose                = 0;
+    my_mb_options.display                = 0;
+    my_mb_options.save_results           = 0;
     
-    my_q_info        = mb_define_parameterisation(network, my_cmb_options); 
-    [~, my_prior, my_bounds, my_data] = mb_generate_artificial_data(network, my_cmb_options, my_q_info,ones(size(network.metabolites)), conc_min, conc_max);
+    my_q_info        = mb_define_parameterisation(network, my_mb_options); 
+    [~, my_prior, my_bounds, my_data] = mb_generate_artificial_data(network, my_mb_options, my_q_info,ones(size(network.metabolites)), conc_min, conc_max);
     
     my_data.V.mean = nanmean(data.V.mean,2);
     my_data.X.mean = nanmean(data.X.mean,2);
@@ -197,7 +197,7 @@ switch mb_options.initial_values_variant,
       my_true = [];
     end
     
-    my_optimal = model_balancing(filenames, my_cmb_options, network, my_q_info, my_prior, my_bounds, my_data, my_true);
+    my_optimal = model_balancing(filenames, my_mb_options, network, my_q_info, my_prior, my_bounds, my_data, my_true);
     mb_options.init.q = my_optimal.q;
     mb_options.init.X = repmat(my_optimal.X,1,mb_options.ns);
     %display(sprintf('Initial point found\n-------------------'));
@@ -249,12 +249,12 @@ end
 
 if mb_options.use_safe_optimisation,
   cont = 1;
-  my_cmb_options = mb_options;
+  my_mb_options = mb_options;
   while cont,
-    my_cmb_options.init = optimal;
-    my_cmb_options.initial_values_variant = 'given_values';
-    [optimal, gradient_V, my_init] = mb_estimation(network, q_info, bounds, data, prior, preposterior, pp, V, my_cmb_options);
-    cont = mb_display_scores(network, q_info, my_cmb_options, pp, preposterior, my_init, optimal, true, V, mb_options.verbose);
+    my_mb_options.init = optimal;
+    my_mb_options.initial_values_variant = 'given_values';
+    [optimal, gradient_V, my_init] = mb_estimation(network, q_info, bounds, data, prior, preposterior, pp, V, my_mb_options);
+    cont = mb_display_scores(network, q_info, my_mb_options, pp, preposterior, my_init, optimal, true, V, mb_options.verbose);
   end
 end
 

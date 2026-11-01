@@ -4,7 +4,7 @@ Version numbers have the form MAJOR.MINOR.PATCH. MAJOR changes when existing cal
 
 ## Unreleased
 
-All functions and files starting with `cmb_` now start with `mb_` (for example `mb_estimation`, `mb_default_options` and `mb_prior.tsv`), and the struct `cmb_options` is now `mb_options`. Folder names and the demo scripts keep their names.
+All functions and files starting with `cmb_` now start with `mb_` (for example `mb_estimation`, `mb_default_options` and `mb_prior.tsv`), and the struct `cmb_options` is now `mb_options`. The folders `cmb-variables`, `cmb-file-input-output` and `cmb-cvxpy` and the demo scripts `demo_cmb_...` now use `mb` as well.
 
 - New folder `python-sbtab-to-json`: stand-alone conversion of SBtab input files to JSON files for the python implementation
 - New folder `matlab-python-comparison`: test comparing the matlab and python implementations
@@ -18,7 +18,7 @@ Other bug fixes:
 
 - Networks with closed cycles (rank-deficient stoichiometric matrix) can now be balanced: `mb_define_parameterisation`, `mb_estimation`, `mb_qall_to_kinetics`, `mb_make_bounds`, `mb_prepare_posterior`
 - `mb_default_options`: upper bound of KA was taken from the row of the prior table for A
-- New function `mb_save_json_file`, used in `demo_cmb_experimental_data` (the function `save_json_file` is not part of this package)
+- New function `mb_save_json_file`, used in `demo_mb_experimental_data` (the function `save_json_file` is not part of this package)
 - Tests for these fixes (`tests/test_data_handling.m`)
 
 Known issue: with precise kinetic data, the initial value variant `preposterior_mode` can make `fmincon` stop at the initial point, with flag -2 or without an error. This point lies on the boundary of the allowed region, where the interior-point algorithm cannot move. The default `polytope center` works.

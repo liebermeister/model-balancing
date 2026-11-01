@@ -74,7 +74,7 @@ network.kinetics = kinetics;
 
 % -------------------------------------------------------------
 
-% [qind, qall, M_qind_to_qall, M_qall_to_qind] = cmb_analyse_network(network);
+% [qind, qall, M_qind_to_qall, M_qall_to_qind] = mb_analyse_network(network);
 % NOTE THAT THE FUNCTION NEEDS TO BE FIXED
  
 % -------------------------------------------------------------

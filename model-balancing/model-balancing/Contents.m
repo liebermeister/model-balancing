@@ -5,7 +5,7 @@
 % Matlab files for model balancing
 %
 % o Main function: model_balancing.m
-% o For usage examples, see m-files 'demo_cmb_artificial_data' and 'demo_cmb_experimental_data' 
+% o For usage examples, see m-files 'demo_mb_artificial_data' and 'demo_mb_experimental_data' 
 % o For algorithm options, see 'mb_default_options'
 % 
 % ------------
@@ -82,7 +82,7 @@
 %   mb_graphics                         - Scatter plots: balanced vs. data values and vs. true values
 %   mb_diagnostic_network_graphics      - Diagnostic network graphics
 %
-% Subfolder cmb-variables: conversion between variables
+% Subfolder mb-variables: conversion between variables
 %   mb_define_parameterisation          - Define the parameterisation (independent and dependent kinetic constants)
 %   mb_kinetics_to_q, mb_q_to_kinetics - Convert between kinetics struct and vector q
 %   mb_qall_to_kinetics                 - Convert vector qall into kinetics struct
@@ -90,12 +90,12 @@
 %   mb_qX_to_y, mb_y_to_qX             - Convert between (q, X) and optimisation vector y
 %   mb_qX_to_variables                  - Compute all model variables from q, X, and fluxes
 %
-% Subfolder cmb-file-input-output: file input and output
+% Subfolder mb-file-input-output: file input and output
 %   mb_load_model_and_data              - Load model and data from SBML / SBtab files
 %   mb_load_and_convert_model_and_data  - Load model and data from SBtab files and convert them for model balancing
 %   mb_save_results                     - Save model balancing results as SBtab files
 %   mb_read_prepared_model_and_data     - Wrapper for older function es_load_data (currently not working)
 %
-% Subfolder cmb-cvxpy: export for the python implementation
+% Subfolder mb-cvxpy: export for the python implementation
 %   cvxpy_problem_data_structure         - Convert a model balancing problem into a struct for JSON export
 %   cvxpy_combine_prior_and_likelihood   - Combine prior and likelihood (Gaussian distributions on log scale)

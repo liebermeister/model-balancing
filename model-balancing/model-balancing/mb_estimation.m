@@ -33,7 +33,7 @@ N = network.N; W = network.regulation_matrix; ind_ext = find(network.external); 
 % --------------------------------------------------------
 % Initialise some variables
 
-tstart_cmb_estimation = tic;
+tstart_mb_estimation = tic;
 
 epsilon = 10^-9;
 
@@ -343,7 +343,7 @@ end
 gradient_V = [[log(optimal.E) - preposterior.lnE.mean] ./ preposterior.lnE.std] .* [optimal.E ./ V];
 gradient_V = nan; 
 
-time = toc(tstart_cmb_estimation);
+time = toc(tstart_mb_estimation);
 display(sprintf('\nCalculation time: %3.2f s',time));
 
 % --------------------------------------------------------------

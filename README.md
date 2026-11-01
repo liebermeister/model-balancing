@@ -49,8 +49,8 @@ With kinetic data, the model now fits the kinetic data better, and estimates mov
    ```
 3. Run one of the demo scripts:
    ```matlab
-   demo_cmb_artificial_data      % generate artificial data for a small model and balance it
-   demo_cmb_experimental_data    % balance a model with data read from SBtab files
+   demo_mb_artificial_data      % generate artificial data for a small model and balance it
+   demo_mb_experimental_data    % balance a model with data read from SBtab files
    ```
    By default, output files are written to matlab's `tempdir`.
 
@@ -83,7 +83,7 @@ The folders `examples/results/[MODEL_NAME]` contain balancing results for a larg
 with these models: artificial data for all 4 models, experimental data for the E. coli model (folder `e_coli_noor_2016`).
 
 ### How to balance your own model
-To balance your own model, please have a look at the matlab demo script `model-balancing/demo/demo_cmb_experimental_data.m`.
+To balance your own model, please have a look at the matlab demo script `model-balancing/demo/demo_mb_experimental_data.m`.
 You need to prepare three input files in SBtab format, describing
 
 1. the network structure and metabolite constraints (tables Reaction, Compound, Position (optional), Parameter (optional))
@@ -93,11 +93,11 @@ You need to prepare three input files in SBtab format, describing
 For an example, please have a look at the files `artificial_network_true.tsv`, `artificial_kinetic_data.tsv`,
 and `artificial_state_data.tsv` in the folder `resource-data/models/branch_point_model/data/`.
 
-To balance your model in matlab, you can then use the code from `demo_cmb_experimental_data.m`.
+To balance your model in matlab, you can then use the code from `demo_mb_experimental_data.m`.
 Please note that there are many more settings that you can change. For an overview, type `help mb_default_options` in matlab.
 
 To balance your model in python, you first need to convert your model and data into a JSON file.
-This can be done in matlab and is shown in `demo_cmb_experimental_data.m`. For an overview of the JSON format,
+This can be done in matlab and is shown in `demo_mb_experimental_data.m`. For an overview of the JSON format,
 type `help cvxpy_problem_data_structure` in matlab, or see `examples/json/README.md`.
 
 ## Installation
