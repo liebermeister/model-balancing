@@ -37,6 +37,10 @@ Changes that can affect results:
 Other changes:
 
 - `sbtab_to_json.py`: kinetic data are limited to the bounds in the prior table, as in Matlab; new option `--km-max` (default 1000 mM) for data and bounds of KM
+- Example files with `e_coli` or `ecoli` in their names renamed to `escherichia-coli` (`escherichia_coli` in Matlab function and script names)
+- The 36 E. coli results in `examples/results/escherichia-coli_noor_2016` were recomputed with the corrected code
+- Installation notes and demo descriptions moved from `INSTALLATION` and the inner `README.md` files to the main `README.md`, which also had a wrong folder in the Quick start
+- `Contents.m` moved to the folder `model-balancing`, so that `help model-balancing` works again
 - New function `mb_log_posterior_gradient`: analytic gradient, used by default (option `use_gradient`, now 1; test: `tests/test_gradient.m`). The old gradient code in `mb_log_posterior` was wrong and has been removed
 - The variable `true` is now called `true_model` (also in the file `results.mat`)
 - Parameterisation `KV_KM_KA_KI` removed (it crashed), together with the option `parameterisation`

@@ -24,9 +24,9 @@ ns              = 6;
 
 filenames = mb_filenames(model, run, result_dir, network_file);
 
-filenames.network_true = '/home/wolfram/projekte/model_balancing/github/model-balancing/resources/models/three_chain_model/data/artificial_network_true.tsv';
-filenames.kinetic_data = '/home/wolfram/projekte/model_balancing/github/model-balancing/resources/models/three_chain_model/data/artificial_kinetic_data.tsv';
-filenames.state_data = '/home/wolfram/projekte/model_balancing/github/model-balancing/resources/models/three_chain_model/data/artificial_state_data.tsv';
+filenames.network_true = [mb_resourcedir '/models/three_chain_model/data/artificial_network_true.tsv'];
+filenames.kinetic_data = [mb_resourcedir '/models/three_chain_model/data/artificial_kinetic_data.tsv'];
+filenames.state_data = [mb_resourcedir '/models/three_chain_model/data/artificial_state_data.tsv'];
 
 
 % -------------------------------------------------------------

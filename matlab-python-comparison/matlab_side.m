@@ -50,10 +50,10 @@ c = struct('files',{{[m 'data/artificial_network_true.tsv'],[m 'data/artificial_
            'mean',{{'S1_Mean','S2_Mean','S3_Mean','S4_Mean','S5_Mean','S6_Mean'}},'std',{{'S1_Std','S2_Std','S3_Std','S4_Std','S5_Std','S6_Std'}});
 c.name = 'branch_point_model'; c.alpha = 0.5; c.use_kinetic_data = 'all'; cases{8} = c;
 
-m = [res '/models/e_coli_noor_2016/'];
-c = struct('files',{{[m 'e_coli_noor_2016.tsv'],[m 'e_coli_ccm_kinetic_data/e_coli_noor_2016_kinetic_data_modified.tsv'],[m 'e_coli_ccm_state_data_COPY_FOR_INFO.tsv']}}, ...
-           'constraints',[m 'e_coli_noor_2016_ConcentrationConstraint.tsv'],'mean',{{'S_1_Mean'}},'std',{{}});
-c.name = 'e_coli_noor_2016'; c.alpha = 0.5; c.use_kinetic_data = 'all'; cases{9} = c;
+m = [res '/models/escherichia-coli_noor_2016/'];
+c = struct('files',{{[m 'escherichia-coli_noor_2016.tsv'],[m 'escherichia-coli_ccm_kinetic_data/escherichia-coli_noor_2016_kinetic_data_modified.tsv'],[m 'escherichia-coli_ccm_state_data_COPY_FOR_INFO.tsv']}}, ...
+           'constraints',[m 'escherichia-coli_noor_2016_ConcentrationConstraint.tsv'],'mean',{{'S_1_Mean'}},'std',{{}});
+c.name = 'escherichia-coli_noor_2016'; c.alpha = 0.5; c.use_kinetic_data = 'all'; cases{9} = c;
 
 manifest = {};
 

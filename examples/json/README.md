@@ -72,6 +72,6 @@ described in this dataset).
   the metabolites and not the reactions (although rows correspond to the latter). In Python, the convention for ordering
   matrix elements is the opposite and therefore care must be taken.
 - Fields called `combined` contain the preposterior distribution of the respective quantities
-- The files in `e_coli_noor_2016` were generated from the SBtab files in `resources/models/e_coli_noor_2016` with
+- The files in `escherichia-coli_noor_2016` were generated from the SBtab files in `resources/models/escherichia-coli_noor_2016` with
   `python-sbtab-to-json/sbtab_to_json.py` (option `--fill-true-values`). These data have no true values: the fields `true`
   contain the preposterior means, because the Python reader requires them. The other example files were written by matlab.

@@ -138,14 +138,14 @@ filenames = mb_filenames(model, prb, run, result_dir);
 
 % To use this model, please uncomment the following lines
 % 
-% model                        = 'e_coli_noor_2016';  
+% model                        = 'escherichia-coli_noor_2016';  
 % prb                          = 'with_kinetic_data';
 % run                          = 'with_kinetic_data_alpha_0_5';
-% network_file                 = [mb_resourcedir '/models/e_coli_noor_2016/e_coli_noor_2016.tsv'];
-% kinetic_data_file            = [mb_resourcedir '/models/e_coli_noor_2016/e_coli_ccm_kinetic_data/e_coli_noor_2016_kinetic_data_modified.tsv'];
-% state_data_file              = [mb_resourcedir '/models/e_coli_noor_2016/e_coli_ccm_state_data_COPY_FOR_INFO.tsv'];
+% network_file                 = [mb_resourcedir '/models/escherichia-coli_noor_2016/escherichia-coli_noor_2016.tsv'];
+% kinetic_data_file            = [mb_resourcedir '/models/escherichia-coli_noor_2016/escherichia-coli_ccm_kinetic_data/escherichia-coli_noor_2016_kinetic_data_modified.tsv'];
+% state_data_file              = [mb_resourcedir '/models/escherichia-coli_noor_2016/escherichia-coli_ccm_state_data_COPY_FOR_INFO.tsv'];
 % %% Concentration constraints are given in a separate file:
-% file_options.constraint_sbtab_file = [mb_resourcedir '/models/e_coli_noor_2016/e_coli_noor_2016_ConcentrationConstraint.tsv'];
+% file_options.constraint_sbtab_file = [mb_resourcedir '/models/escherichia-coli_noor_2016/escherichia-coli_noor_2016_ConcentrationConstraint.tsv'];
 % file_options.match_data_by   = 'ModelElementId';
 % file_options.columns_mean    = {'S_1_Mean'};
 % file_options.columns_std     = {};

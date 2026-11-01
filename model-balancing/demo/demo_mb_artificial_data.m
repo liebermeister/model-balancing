@@ -107,15 +107,15 @@ result_dir      = tempdir;
 
 % To use this example model, please uncomment the following lines
 
-% model           = 'e_coli_artificial';  
+% model           = 'escherichia-coli_artificial';  
 % prb             = 'test';
 % run             = 'test_alpha_0_5';
 % flag_artificial = 1;
 % result_dir      = tempdir;
-% network_file    = [mb_resourcedir '/models/e_coli_noor_2016/e_coli_noor_2016.tsv'];
-% constraint_file = [mb_resourcedir '/models/e_coli_noor_2016/e_coli_noor_2016_ConcentrationConstraint.tsv'];
-% position_file   = [mb_resourcedir '/models/e_coli_noor_2016/e_coli_noor_2016_Position.tsv'];
-% c_init          = mb_e_coli_c_init(model,mb_default_options);
+% network_file    = [mb_resourcedir '/models/escherichia-coli_noor_2016/escherichia-coli_noor_2016.tsv'];
+% constraint_file = [mb_resourcedir '/models/escherichia-coli_noor_2016/escherichia-coli_noor_2016_ConcentrationConstraint.tsv'];
+% position_file   = [mb_resourcedir '/models/escherichia-coli_noor_2016/escherichia-coli_noor_2016_Position.tsv'];
+% c_init          = mb_escherichia_coli_c_init(model,mb_default_options);
 % alpha           = 0.5;
 % ns              = 4;
 

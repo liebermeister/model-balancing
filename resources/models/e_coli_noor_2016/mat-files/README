@@ -1,8 +1,0 @@
-Provenance:
-
-* ecoli_ccm_ProteinComposition_Haverkorn_model_data
-* ecoli_ccm_ProteinComposition_Haverkorn_options
-* ecoli_ccm_ProteinComposition_Haverkorn
-
-from the E. coli example in the enzyme cost minimization toolbox
-(https://github.com/liebermeister/enzyme-cost-minimization, folder matlab/example_ecoli/data/data-matlab)

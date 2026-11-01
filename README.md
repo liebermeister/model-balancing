@@ -23,8 +23,8 @@ The table shows the effect on the *E. coli* model with real data (balanced kinet
 
 | Scenario          | Keq          | kcat+        | kcat-        | KM           | Metabolites  |
 |-------------------|--------------|--------------|--------------|--------------|--------------|
-| With kinetic data | 0.46 -> 0.22 | 0.54 -> 0.32 | 0.24 -> 0.10 | 0.43 -> 0.15 | 0.10 -> 0.22 |
-| Keq data only     | 0.18 -> 0.03 | 1.78 -> 2.15 | 2.48 -> 2.31 | 1.67 -> 1.68 | 0.05 -> 0.06 |
+| With kinetic data | 0.46 -> 0.22 | 0.54 -> 0.32 | 0.24 -> 0.09 | 0.43 -> 0.15 | 0.10 -> 0.22 |
+| Keq data only     | 0.18 -> 0.03 | 1.78 -> 2.14 | 2.48 -> 2.31 | 1.67 -> 1.68 | 0.05 -> 0.06 |
 | No kinetic data   | 3.28 -> 3.20 | 1.57 -> 1.57 | 1.30 -> 1.33 | 1.75 -> 1.75 | 0.01 -> 0.01 |
 
 With kinetic data, the model now fits the kinetic data better, and estimates moved by a median factor of about 1.3 (Keq: 1.65). Metabolites without data moved most, by a median factor of about 2, and up to about 40 (up to about 100 with Keq data only). Without kinetic data, the estimates hardly changed.
@@ -41,7 +41,7 @@ With kinetic data, the model now fits the kinetic data better, and estimates mov
    ```
 2. In matlab, add all of them (including subdirectories) to your matlab path, for example
    ```matlab
-   addpath(genpath('model-balancing/matlab'));
+   addpath(genpath('model-balancing/model-balancing'));
    addpath(genpath('matlab-utils'));
    addpath(genpath('metabolic-network-toolbox'));
    addpath(genpath('sbtab-matlab'));
@@ -53,6 +53,22 @@ With kinetic data, the model now fits the kinetic data better, and estimates mov
    demo_mb_experimental_data    % balance a model with data read from SBtab files
    ```
    By default, output files are written to matlab's `tempdir`.
+
+## Installation
+The following installation instructions are only for the matlab version.
+For python, please refer to our [Read The Docs](https://model-balancing.readthedocs.io/en/latest/index.html) page.
+
+- Clone the following [GitHub](https://github.com/liebermeister) repositories
+    - [`matlab-utils`](https://github.com/liebermeister/matlab-utils) - utility functions
+    - [`metabolic-network-toolbox`](https://github.com/liebermeister/metabolic-network-toolbox) - metabolic network toolbox
+    - [`sbtab-matlab`](https://github.com/liebermeister/sbtab-matlab) - SBtab toolbox
+    - [`enzyme-cost-minimization`](https://github.com/liebermeister/enzyme-cost-minimization) - enzyme cost minimization toolbox
+- [SBML toolbox](https://sbml.org/software/sbmltoolbox/) (optional - needed only if SBML files are used;
+  the version needs to match your matlab version and requires a matching version of libSBML)
+- Make sure that all these directories and their subdirectories are included in your matlab path.
+
+The code was tested with Matlab R2025b on Linux. The optimisation uses `fmincon`
+(Optimization Toolbox).
 
 ## Contents of this repository
 
@@ -67,8 +83,29 @@ With kinetic data, the model now fits the kinetic data better, and estimates mov
 ### Matlab
 To run model balancing in matlab, please adjust the demo scripts in `model-balancing/demo` to your model and data.
 For help, please type `help model-balancing` in matlab, or see the documentation at
-[www.metabolic-economics.de/model-balancing/matlab-doc/](https://www.metabolic-economics.de/model-balancing/matlab-doc/)
-(also contained in this repository in `doc`).
+[www.metabolic-economics.de/model-balancing/matlab-doc/](https://www.metabolic-economics.de/model-balancing/matlab-doc/).
+
+Demo scripts (folder `model-balancing/demo`):
+
+* `demo_mb_artificial_data.m`: reads a model from an SBML or SBtab file, generates artificial data
+  (kinetic constants and metabolic state data), and runs model balancing to try and recover the true model and states.
+* `demo_mb_experimental_data.m`: reads a model and data (kinetic data and metabolic state data) from SBtab files,
+  runs model balancing, and saves the results. This script is the best starting point for balancing your own model
+  (see the section "Your model" in the script). It also shows how to export a model balancing problem to a JSON file
+  for the python implementation.
+* `demo_model_balancing_figure_2.m`: generates Figure 2 of the article (Liebermeister and Noor, 2021), showing the enzyme
+  posterior score for different values of the stringency parameter alpha.
+
+By default, the demo scripts use the model `branch_point_model`. The other example models (from `resources/models`)
+can be used by uncommenting the respective lines in the scripts. Output files are written to matlab's `tempdir`
+(variable `result_dir`). Matlab scripts for generating the example models can be found in the subfolders `matlab`
+of the model folders.
+
+Implementation notes:
+
+* Optimisation is performed by the fmincon function with the interior-point method.
+* For numerical reasons, the matlab implementation does not tolerate equal lower and upper bounds for metabolites. If c_min == c_max, 10^-5 is added automatically to ln c_max. This also speeds up the calculation.
+* With the option `initial_values_variant = 'average_sample'`, the algorithm starts by running model balancing on an average model state (with metabolic state data given by the geometric mean over the metabolic states). The resulting kinetic constants are used as initial values for the full calculation with several metabolic states.
 
 ### Python
 For using model balancing in python, please refer to our [Read The Docs](https://model-balancing.readthedocs.io/en/latest/index.html) page;
@@ -80,7 +117,7 @@ Example model and data files can be found in the folder `resources`.
 The folder `resources/models` contains files for four different example models.
 Each model comes as an SBML (`.xml`) and an SBtab (`.tsv`) file.
 The folders `examples/results/[MODEL_NAME]` contain balancing results for a large number of model balancing problems
-with these models: artificial data for all 4 models, experimental data for the E. coli model (folder `e_coli_noor_2016`).
+with these models: artificial data for all 4 models, experimental data for the E. coli model (folder `escherichia-coli_noor_2016`).
 
 ### How to balance your own model
 To balance your own model, please have a look at the matlab demo script `model-balancing/demo/demo_mb_experimental_data.m`.
@@ -99,22 +136,6 @@ Please note that there are many more settings that you can change. For an overvi
 To balance your model in python, you first need to convert your model and data into a JSON file.
 This can be done in matlab and is shown in `demo_mb_experimental_data.m`. For an overview of the JSON format,
 type `help cvxpy_problem_data_structure` in matlab, or see `examples/json/README.md`.
-
-## Installation
-The following installation instructions are only for the matlab version.
-For python, please refer to our [Read The Docs](https://model-balancing.readthedocs.io/en/latest/index.html) page.
-
-- Clone the following [GitHub](https://github.com/liebermeister) repositories
-    - [`matlab-utils`](https://github.com/liebermeister/matlab-utils) - utility functions
-    - [`metabolic-network-toolbox`](https://github.com/liebermeister/metabolic-network-toolbox) - metabolic network toolbox
-    - [`sbtab-matlab`](https://github.com/liebermeister/sbtab-matlab) - SBtab toolbox
-    - [`enzyme-cost-minimization`](https://github.com/liebermeister/enzyme-cost-minimization) - enzyme cost minimization toolbox
-- [SBML toolbox](https://sbml.org/software/sbmltoolbox/) (optional - needed only if SBML files are used;
-  the version needs to match your matlab version and requires a matching version of libSBML)
-- Make sure that all these directories and their subdirectories are included in your matlab path.
-
-The code was tested with Matlab R2019b on Linux. The optimisation uses `fmincon`
-(Optimization Toolbox).
 
 ## Tests
 

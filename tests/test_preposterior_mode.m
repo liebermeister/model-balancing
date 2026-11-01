@@ -4,13 +4,13 @@
 % moving it into the interior, fmincon stops at the initial point.
 
 setup_test_path;
-m     = [mb_resourcedir '/models/e_coli_noor_2016/'];
-files = {[m 'e_coli_noor_2016.tsv'], [m 'e_coli_ccm_kinetic_data/e_coli_noor_2016_kinetic_data_modified.tsv'], ...
-         [m 'e_coli_ccm_state_data_COPY_FOR_INFO.tsv']};
+m     = [mb_resourcedir '/models/escherichia-coli_noor_2016/'];
+files = {[m 'escherichia-coli_noor_2016.tsv'], [m 'escherichia-coli_ccm_kinetic_data/escherichia-coli_noor_2016_kinetic_data_modified.tsv'], ...
+         [m 'escherichia-coli_ccm_state_data_COPY_FOR_INFO.tsv']};
 file_options.match_data_by = 'ModelElementId';
 file_options.columns_mean  = {'S_1_Mean'};
 file_options.columns_std   = {};
-file_options.constraint_sbtab_file = [m 'e_coli_noor_2016_ConcentrationConstraint.tsv'];
+file_options.constraint_sbtab_file = [m 'escherichia-coli_noor_2016_ConcentrationConstraint.tsv'];
 
 for alpha = [0.5, 1]
   value = [nan, nan];
