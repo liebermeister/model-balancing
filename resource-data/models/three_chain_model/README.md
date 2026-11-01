@@ -26,5 +26,5 @@ Other information
 * A network graphics (`three_chain_model.pdf`) can be found in the subfolder `graphics`
 
 For running model balancing on this example, please see the demo scripts
-`demo_cmb_artificial_data.m` and `demo_cmb_experimental_data.m` in the folder `model-balancing/demo`
+`demo_mb_artificial_data.m` and `demo_mb_experimental_data.m` in the folder `model-balancing/demo`
 (in the main directory of this repository).

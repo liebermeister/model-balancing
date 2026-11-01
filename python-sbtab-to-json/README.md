@@ -4,10 +4,10 @@ Converts the input files of model balancing (SBtab) into the JSON problem file, 
 Python version of model balancing can start from the same files as the Matlab version, without
 Matlab. It is a stand-alone port of this Matlab code path:
 
-    cmb_load_and_convert_model_and_data -> cmb_model_and_data
-      -> cmb_prepare_posterior -> cvxpy_problem_data_structure
+    mb_load_and_convert_model_and_data -> mb_model_and_data
+      -> mb_prepare_posterior -> cvxpy_problem_data_structure
 
-It needs Python 3 and numpy. The prior table is bundled in `data/cmb_prior.tsv`.
+It needs Python 3 and numpy. The prior table is bundled in `data/mb_prior.tsv`.
 It does not change the Python package, and it is written so that it can be moved into it.
 
 ## Usage
@@ -60,7 +60,7 @@ the branch point model it reaches an objective of 0.08245 (Matlab: 0.08250).
   Python reader.
 - Concentration constraints are matched by metabolite. Matlab uses the row order.
 
-The converter reproduces the Matlab code after the fixes in `cmb_prepare_posterior` and
+The converter reproduces the Matlab code after the fixes in `mb_prepare_posterior` and
 `state_data_to_data` of October 2026. It does not reproduce older Matlab versions or the example
 JSON files made with them.
 

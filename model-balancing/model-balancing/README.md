@@ -7,6 +7,6 @@ For an overview of all functions, type `help model-balancing` in matlab (or see 
 
 Subfolders
 
-* `cmb-variables`: conversion between different representations of model variables
-* `cmb-file-input-output`: loading models and data, saving results
-* `cmb-cvxpy`: export of model balancing problems (JSON format) for the python implementation
+* `mb-variables`: conversion between different representations of model variables
+* `mb-file-input-output`: loading models and data, saving results
+* `mb-cvxpy`: export of model balancing problems (JSON format) for the python implementation

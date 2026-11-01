@@ -24,7 +24,7 @@ for package = {'parameter-balancing/parameter-balancing','enzyme-cost-minimizati
   addpath(strjoin(p(~contains(p,[filesep '.'])),pathsep));
 end
 
-res = cmb_resourcedir;
+res = mb_resourcedir;
 tm  = fullfile(here,'test_model');
 fn  = @(name) fullfile(tm,['test_model_' name '.tsv']);
 s3  = {'S1_Mean','S2_Mean','S3_Mean'};
@@ -68,43 +68,43 @@ for it = 1:length(cases)
   if ~isempty(c.constraints), file_options.constraint_sbtab_file = c.constraints; end
 
   rng(1); % the default initial point is computed from random LP solutions
-  o = cmb_default_options;
+  o = mb_default_options;
   o.run = c.name;
   o.enzyme_score_alpha = c.alpha;
   o.use_kinetic_data = c.use_kinetic_data;
   o.save_results = 0; o.save_graphics = 0; o.show_graphics = 0;
 
-  [network,q_info,data,c_init,~,~,conc_min,conc_max] = cmb_load_and_convert_model_and_data(o,c.files,file_options);
-  [bounds,prior] = cmb_model_and_data(c.name,network,data,q_info,c_init,o,conc_min,conc_max);
+  [network,q_info,data,c_init,~,~,conc_min,conc_max] = mb_load_and_convert_model_and_data(o,c.files,file_options);
+  [bounds,prior] = mb_model_and_data(c.name,network,data,q_info,c_init,o,conc_min,conc_max);
 
-  cmb_save_json_file(cvxpy_problem_data_structure(network,q_info,prior,data,bounds,[],o),fullfile(outdir,[c.name '_problem.json']));
+  mb_save_json_file(cvxpy_problem_data_structure(network,q_info,prior,data,bounds,[],o),fullfile(outdir,[c.name '_problem.json']));
 
-  pre = cmb_prepare_posterior(prior,data,o,q_info);
-  pp  = cmb_make_pp(network);
+  pre = mb_prepare_posterior(prior,data,o,q_info);
+  pp  = mb_make_pp(network);
   V   = data.V.mean;
-  opt = cmb_estimation(network,q_info,bounds,data,prior,pre,pp,V,o);
+  opt = mb_estimation(network,q_info,bounds,data,prior,pre,pp,V,o);
 
   [nr,nm,~,KM_i,KA_i,KI_i] = network_numbers(network);
   ns = size(V,2);
-  y  = cmb_qX_to_y(opt.q,opt.X,nm,ns);
+  y  = mb_qX_to_y(opt.q,opt.X,nm,ns);
   o2 = o; o2.beta_ln_c_over_km = 2;
-  r  = cmb_q_to_kinetics(opt.q,network,o,q_info);
+  r  = mb_q_to_kinetics(opt.q,network,o,q_info);
 
-  result = struct('log_posterior',cmb_log_posterior(y,pp,pre,V,o,q_info), ...
-                  'log_posterior_beta_2',cmb_log_posterior(y,pp,pre,V,o2,q_info), ...
+  result = struct('log_posterior',mb_log_posterior(y,pp,pre,V,o,q_info), ...
+                  'log_posterior_beta_2',mb_log_posterior(y,pp,pre,V,o2,q_info), ...
                   'alpha',c.alpha,'X',{num2cell_matrix(opt.X)},'E',{num2cell_matrix(opt.E)},'V',{num2cell_matrix(V)}, ...
                   'lnEmean',{num2cell_matrix(pre.lnE.mean)},'lnEstd',{num2cell_matrix(pre.lnE.std)}, ...
                   'Xmean',{num2cell_matrix(pre.X.mean)},'Xstd',{num2cell_matrix(pre.X.std)}, ...
                   'lnKeq',{num2cell(log(r.Keq(:)))},'lnKcatf',{num2cell(log(r.Kcatf(:)))},'lnKcatr',{num2cell(log(r.Kcatr(:)))}, ...
                   'lnKM',{num2cell(full(log(r.KM(KM_i))))},'lnKA',{num2cell(full(log(r.KA(KA_i))))},'lnKI',{num2cell(full(log(r.KI(KI_i))))});
-  cmb_save_json_file(result,fullfile(outdir,[c.name '_matlab.json']));
+  mb_save_json_file(result,fullfile(outdir,[c.name '_matlab.json']));
 
   files = c.files; if ~isempty(c.constraints), files{4} = c.constraints; else, files{4} = ''; end
   manifest{end+1} = struct('name',c.name,'network',files{1},'kinetic',files{2},'state',files{3},'constraints',files{4}, ...
                            'mean',{c.mean},'std',{c.std},'use_kinetic_data',c.use_kinetic_data,'alpha',c.alpha);
 end
 
-cmb_save_json_file(manifest,fullfile(outdir,'manifest.json'));
+mb_save_json_file(manifest,fullfile(outdir,'manifest.json'));
 
 
 % ---------------------------------------------------
