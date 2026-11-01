@@ -41,7 +41,7 @@ venv/
 # ---------------------------------------------------------------
 # Graphics
 # Result graphics are stored as PDF only; EPS files written by
-# cmb_graphics (or LaTeX "-eps-converted-to.pdf" files) are not tracked
+# mb_graphics (or LaTeX "-eps-converted-to.pdf" files) are not tracked
 # ---------------------------------------------------------------
 *.eps
 *-eps-converted-to.pdf

@@ -1,6 +1,6 @@
-function problem = cvxpy_problem_data_structure(network, q_info, prior, data, bounds, true_model, cmb_options)
+function problem = cvxpy_problem_data_structure(network, q_info, prior, data, bounds, true_model, mb_options)
 
-% problem = cvxpy_problem_data_structure(network, q_info, prior, data, bounds, true_model, cmb_options)
+% problem = cvxpy_problem_data_structure(network, q_info, prior, data, bounds, true_model, mb_options)
 %
 % Convert a model balancing problem (data structures: network, q_info, true_model, prior, data) 
 % into a single data structure, exported to json and then used by python model balancing tool (based on CVXpy)
@@ -145,7 +145,7 @@ index          = q_info.qall.index;
 
 problem.standard_concentration        = '1 mM';
 problem.state_names                   = data.samples;
-problem.use_pseudo_values             = cmb_options.use_pseudo_values;
+problem.use_pseudo_values             = mb_options.use_pseudo_values;
 problem.network.metabolite_names      = network.metabolites;
 problem.network.reaction_names        = network.actions;
 problem.network.stoichiometric_matrix = full(network.N);
@@ -158,7 +158,7 @@ problem.network.inhibition_matrix     = full(-[network.regulation_matrix .* [net
 
 qall_struct.names        = q_info.qall.names;
 qall_struct.true         = true_model.qall;
-% if cmb_options.use_pseudo_values,
+% if mb_options.use_pseudo_values,
 %   qall_struct.pprior.prec  = M_q_to_qall * prior.q.prec * M_q_to_qall' + M_qdep_to_qall * prior.qdep_pseudo.prec * M_qdep_to_qall';
 %   qall_struct.pprior.mean  = qall_struct.pprior.prec \ [M_q_to_qall * prior.q.prec * prior.q.mean + M_qdep_to_qall * prior.qdep_pseudo.prec * prior.qdep_pseudo.mean];
 %   qall_struct.pprior.cov   = inv(qall_struct.pprior.prec);
@@ -171,7 +171,7 @@ qall_struct.bounds.min   = bounds.q_all_min;
 qall_struct.bounds.max   = bounds.q_all_max;
 
 % hide data that are not supposed to be known 
-switch cmb_options.use_kinetic_data,
+switch mb_options.use_kinetic_data,
   case 'all',      remove_data = [];
   case 'only_Keq', remove_data = setdiff(1:length(data.qall.mean),index.Keq);
   case 'none',     remove_data = 1:length(data.qall.mean);
@@ -185,7 +185,7 @@ qall_struct.data.std(remove_data)  = nan;
 
 %[qall_struct.combined.mean_ln, qall_struct.combined.cov_ln, ~, qall_struct.combined.prec_ln] = cvxpy_combine_prior_and_likelihood(qall_struct.pprior.mean,qall_struct.pprior.cov,qall_struct.data.mean,qall_struct.data.std);
 
-preposterior = cmb_prepare_posterior(prior, data, cmb_options, q_info);
+preposterior = mb_prepare_posterior(prior, data, mb_options, q_info);
 
 qall_struct.combined.mean_ln = preposterior.qall.mean;
 qall_struct.combined.cov_ln  = preposterior.qall.cov;

@@ -1,6 +1,6 @@
-function [data, q_info] = state_data_to_data(kinetic_data, state_data, cmb_options, network)
+function [data, q_info] = state_data_to_data(kinetic_data, state_data, mb_options, network)
 
-% [data, q_info] = state_data_to_data(kinetic_data, state_data, cmb_options, network)
+% [data, q_info] = state_data_to_data(kinetic_data, state_data, mb_options, network)
 %
 % This function requires the model balancing package
 % (https://github.com/liebermeister/model-balancing)
@@ -8,13 +8,13 @@ function [data, q_info] = state_data_to_data(kinetic_data, state_data, cmb_optio
 % kinetic_data, state_data: matlab structs, describing kinetic data and metabolic state data
 %                           defined Metabolic Network Toolbox (see 'help kinetic data', 'help state_data')
 %
-% options used in this function (fields of cmb_options):
-%   cmb_options.quantities.c.min
-%   cmb_options.quantities.c.max
-%   cmb_options.data_kin_geom_std
-%   cmb_options.data_C_geom_std
-%   cmb_options.data_E_geom_std
-%   cmb_options.define_parameterisation
+% options used in this function (fields of mb_options):
+%   mb_options.quantities.c.min
+%   mb_options.quantities.c.max
+%   mb_options.data_kin_geom_std
+%   mb_options.data_C_geom_std
+%   mb_options.data_E_geom_std
+%   mb_options.define_parameterisation
 
 [nm,ns] = size(state_data.metabolite_data.Mean);
 
@@ -31,8 +31,8 @@ if find(state_data.metabolite_data.Mean == 0)
   warning('- Metabolite concentration data contain zero values - replacing them by minimal metabolite concentration');
 end
 
-state_data.metabolite_data.Mean(state_data.metabolite_data.Mean < cmb_options.quantities.c.min) = cmb_options.quantities.c.min;
-state_data.metabolite_data.Mean(state_data.metabolite_data.Mean > cmb_options.quantities.c.max) = cmb_options.quantities.c.max;
+state_data.metabolite_data.Mean(state_data.metabolite_data.Mean < mb_options.quantities.c.min) = mb_options.quantities.c.min;
+state_data.metabolite_data.Mean(state_data.metabolite_data.Mean > mb_options.quantities.c.max) = mb_options.quantities.c.max;
 
 if find(state_data.enzyme_data.Mean == 0)
   error('Enzyme concentration data contain zero values');
@@ -55,18 +55,18 @@ end
 
 if length(state_data.metabolite_data.Std)
   [data.X.mean,data.X.std] = lognormal_normal2log(state_data.metabolite_data.Mean,state_data.metabolite_data.Std);
-  data.X.std(~isfinite(data.X.std)) = log(cmb_options.data_C_geom_std);
+  data.X.std(~isfinite(data.X.std)) = log(mb_options.data_C_geom_std);
 else
   data.X.mean = log(state_data.metabolite_data.Mean);
-  data.X.std  = log(cmb_options.data_C_geom_std) * ones(size(data.X.mean));
+  data.X.std  = log(mb_options.data_C_geom_std) * ones(size(data.X.mean));
 end
 
 if length(state_data.enzyme_data.Std)
   [data.lnE.mean, data.lnE.std] = lognormal_normal2log(state_data.enzyme_data.Mean,state_data.enzyme_data.Std);
-  data.lnE.std(~isfinite(data.lnE.std)) = log(cmb_options.data_E_geom_std);
+  data.lnE.std(~isfinite(data.lnE.std)) = log(mb_options.data_E_geom_std);
 else
   data.lnE.mean = log(state_data.enzyme_data.Mean);
-  data.lnE.std  = log(cmb_options.data_E_geom_std) * ones(size(data.lnE.mean));
+  data.lnE.std  = log(mb_options.data_E_geom_std) * ones(size(data.lnE.mean));
 end
 
 data.V.mean = state_data.flux_data.Mean;
@@ -80,7 +80,7 @@ end
 % Add information on kinetics
 % --------------------------------------------------------------
 
-q_info = cmb_define_parameterisation(network, cmb_options);
+q_info = mb_define_parameterisation(network, mb_options);
 
 [nr,nm,nx,KM_indices,KA_indices,KI_indices,nKM,nKA,nKI] = network_numbers(network);
 
@@ -110,5 +110,5 @@ data.qall.std(q_info.qall.index.KI)    = nn.kinetics.STD_nat.KI(KI_indices);
 data.qall.std(q_info.qall.index.Kcatf) = nn.kinetics.STD_nat.Kcatf;
 data.qall.std(q_info.qall.index.Kcatr) = nn.kinetics.STD_nat.Kcatr;
 
-data.qall.std(~isfinite(data.qall.std) | data.qall.std <= 0) = log(cmb_options.data_kin_geom_std);
+data.qall.std(~isfinite(data.qall.std) | data.qall.std <= 0) = log(mb_options.data_kin_geom_std);
 data.qall.std(isnan(data.qall.mean)) = nan;

@@ -14,7 +14,7 @@ This repository contains the matlab implementation, example models and data, and
 
 Two bugs in versions up to 1.0.0 affected results for real data. Both are fixed in the current code (see `CHANGELOG.md`).
 
-* **Missing data** (`cmb_prepare_posterior`): metabolites without data kept a too narrow distribution if the data file had no error bars, which pulled them towards the prior mean. Enzymes without data got a standard deviation of about 1e15 instead of the prior value.
+* **Missing data** (`mb_prepare_posterior`): metabolites without data kept a too narrow distribution if the data file had no error bars, which pulled them towards the prior mean. Enzymes without data got a standard deviation of about 1e15 instead of the prior value.
 * **Kinetic data errors** (`state_data_to_data`): the logarithm of the error was taken twice. For example, a geometric standard deviation of 1.5 acted like a standard deviation of 0.90 on the log scale, instead of 0.405, so kinetic data had about one fifth of their intended weight. JSON files written by the old code contain negative standard deviations.
 
 The results for real data in the article (Liebermeister & Noor, 2021) were computed with the old code; the article has not been changed. Results for artificial data are not affected, since they have no missing values and set the kinetic data errors directly. The results in the folder `examples/results` and the files in `examples/json` were also made with the old code, so please regenerate them before using them.
@@ -94,7 +94,7 @@ For an example, please have a look at the files `artificial_network_true.tsv`, `
 and `artificial_state_data.tsv` in the folder `resource-data/models/branch_point_model/data/`.
 
 To balance your model in matlab, you can then use the code from `demo_cmb_experimental_data.m`.
-Please note that there are many more settings that you can change. For an overview, type `help cmb_default_options` in matlab.
+Please note that there are many more settings that you can change. For an overview, type `help mb_default_options` in matlab.
 
 To balance your model in python, you first need to convert your model and data into a JSON file.
 This can be done in matlab and is shown in `demo_cmb_experimental_data.m`. For an overview of the JSON format,

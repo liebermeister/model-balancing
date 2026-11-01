@@ -20,7 +20,7 @@ Data files:
 * `e_coli_ccm_state_data_COPY_FOR_INFO.tsv`: metabolic state data (copy, for information)
 
 * `e_coli_example_reference_state.mat`: reference state for the E. coli model, determined by enzyme cost minimization
-  and written by `matlab/cmb_e_coli_c_init.m`. It is only used for the E. coli test model with artificial data,
+  and written by `matlab/mb_e_coli_c_init.m`. It is only used for the E. coli test model with artificial data,
   as a starting point for generating realistic artificial data.
 
 * `mat-files`: model and data from the enzyme cost minimization toolbox (see the README file in that folder)

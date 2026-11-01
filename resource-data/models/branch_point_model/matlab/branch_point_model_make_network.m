@@ -25,12 +25,12 @@ reversible = ones(3,1);
 external   = [1 2 3]';
 network    = network_construct(N,reversible,external,metabolites);
 
-sbml_file = [cmb_resourcedir '/models/branch_point_model/branch_point_model.xml'];
+sbml_file = [mb_resourcedir '/models/branch_point_model/branch_point_model.xml'];
 network_sbml_export(network, 0, 'branch_point_model', sbml_file);
 
 % graphics
 
-layout_file = [cmb_resourcedir '/models/branch_point_model/branch_point_model_Position.tsv'];
+layout_file = [mb_resourcedir '/models/branch_point_model/branch_point_model_Position.tsv'];
 network = netgraph_read_positions(network, layout_file);
 network.graphics_par.squaresize=0.02;
 
@@ -39,9 +39,9 @@ network.graphics_par.squaresize=0.02;
 
 figure(1000)
 netgraph_concentrations(network,network.external,[],1);
-graphics_file = [cmb_resourcedir '/models/branch_point_model/graphics/branch_point_model.eps'];
+graphics_file = [mb_resourcedir '/models/branch_point_model/graphics/branch_point_model.eps'];
 print(graphics_file, '-f1000', '-depsc'); 
 
 % export sbtab model file
-sbtab_file = [cmb_resourcedir '/models/branch_point_model/branch_point_model.tsv'];
+sbtab_file = [mb_resourcedir '/models/branch_point_model/branch_point_model.tsv'];
 network_to_sbtab(network, struct('filename', sbtab_file));

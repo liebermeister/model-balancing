@@ -3,13 +3,13 @@
 
 This is a stand-alone Python port of the Matlab code path
 
-    cmb_load_and_convert_model_and_data -> cmb_model_and_data
-      -> cmb_prepare_posterior -> cvxpy_problem_data_structure
+    mb_load_and_convert_model_and_data -> mb_model_and_data
+      -> mb_prepare_posterior -> cvxpy_problem_data_structure
 
 so that the Python version of model balancing can start from the same input files as
 the Matlab version. It needs numpy only. Input are SBtab files describing network,
 kinetic data and state data, plus (optionally) concentration constraints; the prior
-table is bundled in data/cmb_prior.tsv.
+table is bundled in data/mb_prior.tsv.
 
 The JSON file has the structure documented in docs/source/json_format.rst of the Python
 package, with these deliberate differences from the file written by Matlab:
@@ -38,7 +38,7 @@ import numpy as np
 
 __version__ = "0.1.0"
 
-DEFAULT_PRIOR_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "cmb_prior.tsv")
+DEFAULT_PRIOR_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "mb_prior.tsv")
 
 R_GAS = 0.0083144621  # kJ/(mol K), as in Matlab function RT
 TEMPERATURE = 298.15  # K
@@ -46,11 +46,11 @@ RT = R_GAS * TEMPERATURE
 
 STANDARD_CONCENTRATION = "1 mM"
 
-# fixed values from cmb_default_options
+# fixed values from mb_default_options
 DATA_KIN_GEOM_STD = 1.5
 DATA_V_GEOM_STD = 1.2
 FLUX_MAX = 100.0  # mM/s
-CONC_EPSILON = 1e-5  # used in cmb_make_bounds if a lower and upper bound are identical
+CONC_EPSILON = 1e-5  # used in mb_make_bounds if a lower and upper bound are identical
 LOG_NORMAL_MIN_MEAN = 1e-14  # used in lognormal_normal2log
 
 KINETIC_QUANTITIES = [
@@ -157,7 +157,7 @@ def index_case_insensitive(names: Sequence[str], all_names: Sequence[str]) -> np
 
 
 # --------------------------------------------------------------------------------
-# Prior table and options (Matlab: cmb_default_options)
+# Prior table and options (Matlab: mb_default_options)
 
 
 @dataclass
@@ -628,7 +628,7 @@ def load_state_data(
 
 
 # --------------------------------------------------------------------------------
-# Parameterisation (Matlab: cmb_define_parameterisation)
+# Parameterisation (Matlab: mb_define_parameterisation)
 
 
 def matlab_pinv(A: np.ndarray) -> np.ndarray:
@@ -742,7 +742,7 @@ def collect_kinetic_vectors(
 
 
 # --------------------------------------------------------------------------------
-# Prior + data (Matlab: cmb_make_prior, cmb_prepare_posterior)
+# Prior + data (Matlab: mb_make_prior, mb_prepare_posterior)
 
 
 def combine(prior_mean: np.ndarray, prior_std: np.ndarray, data_mean: np.ndarray, data_std: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
@@ -808,7 +808,7 @@ def kinetic_preposterior(
 
 
 # --------------------------------------------------------------------------------
-# Bounds (Matlab: cmb_make_bounds)
+# Bounds (Matlab: mb_make_bounds)
 
 
 def kinetic_bounds(par: Parameterisation, prior_table: Dict[str, Quantity]) -> Tuple[np.ndarray, np.ndarray]:

@@ -58,17 +58,17 @@ clear;
 model                        = 'branch_point_model'; 
 prb                          = 'with_kinetic_data';
 run                          = 'with_kinetic_data_alpha_0_5';
-network_file                 = [cmb_resourcedir '/models/branch_point_model/data/artificial_network_true.tsv'];
-kinetic_data_file            = [cmb_resourcedir '/models/branch_point_model/data/artificial_kinetic_data.tsv'];
-state_data_file              = [cmb_resourcedir '/models/branch_point_model/data/artificial_state_data.tsv'];
-file_options.constraint_sbtab_file = [cmb_resourcedir '/models/branch_point_model/branch_point_model_ConcentrationConstraint.tsv'];
+network_file                 = [mb_resourcedir '/models/branch_point_model/data/artificial_network_true.tsv'];
+kinetic_data_file            = [mb_resourcedir '/models/branch_point_model/data/artificial_kinetic_data.tsv'];
+state_data_file              = [mb_resourcedir '/models/branch_point_model/data/artificial_state_data.tsv'];
+file_options.constraint_sbtab_file = [mb_resourcedir '/models/branch_point_model/branch_point_model_ConcentrationConstraint.tsv'];
 file_options.match_data_by   = 'ModelElementId';
 file_options.columns_mean    = {'S1_Mean','S2_Mean','S3_Mean','S4_Mean','S5_Mean','S6_Mean'};
 file_options.columns_std     = {'S1_Std','S2_Std','S3_Std','S4_Std','S5_Std','S6_Std'};
 alpha                        = 0.5;
 result_dir                   = tempdir; % replace by your desired output directory
 
-filenames = cmb_filenames(model, prb, run, result_dir);
+filenames = mb_filenames(model, prb, run, result_dir);
 
 
 % -------------------------------------------------------------
@@ -86,17 +86,17 @@ filenames = cmb_filenames(model, prb, run, result_dir);
 % model                      = 'three_chain_model'; 
 % prb                        = 'with_kinetic_data';
 % run                        = 'with_kinetic_data_alpha_0_5';
-% network_file               = [cmb_resourcedir '/models/three_chain_model/data/artificial_network_true.tsv'];
-% kinetic_data_file          = [cmb_resourcedir '/models/three_chain_model/data/artificial_kinetic_data.tsv'];
-% state_data_file            = [cmb_resourcedir '/models/three_chain_model/data/artificial_state_data.tsv'];
-% file_options.constraint_sbtab_file = [cmb_resourcedir '/models/three_chain_model/three_chain_model_ConcentrationConstraint.tsv'];
+% network_file               = [mb_resourcedir '/models/three_chain_model/data/artificial_network_true.tsv'];
+% kinetic_data_file          = [mb_resourcedir '/models/three_chain_model/data/artificial_kinetic_data.tsv'];
+% state_data_file            = [mb_resourcedir '/models/three_chain_model/data/artificial_state_data.tsv'];
+% file_options.constraint_sbtab_file = [mb_resourcedir '/models/three_chain_model/three_chain_model_ConcentrationConstraint.tsv'];
 % file_options.match_data_by = 'ModelElementId';
 % file_options.columns_mean  = {'S1_Mean','S2_Mean','S3_Mean','S4_Mean','S5_Mean','S6_Mean'};
 % file_options.columns_std   = {'S1_Std','S2_Std','S3_Std','S4_Std','S5_Std','S6_Std'};
 % alpha                      = 0.5;
 % result_dir                 = tempdir; % replace by your desired output directory
 %
-% filenames   = cmb_filenames(model, prb, run, result_dir);
+% filenames   = mb_filenames(model, prb, run, result_dir);
 
 
 % -------------------------------------------------------------
@@ -118,17 +118,17 @@ filenames = cmb_filenames(model, prb, run, result_dir);
 % model                      = 'double_branch_model'; 
 % prb                          = 'with_kinetic_data';
 % run                          = 'with_kinetic_data_alpha_0_5';
-% network_file              = [cmb_resourcedir '/models/double_branch_model/data/artificial_network_true.tsv'];
-% kinetic_data_file         = [cmb_resourcedir '/models/double_branch_model/data/artificial_kinetic_data.tsv'];
-% state_data_file           = [cmb_resourcedir '/models/double_branch_model/data/artificial_state_data.tsv'];
-% file_options.constraint_sbtab_file = [cmb_resourcedir '/models/double_branch_model/double_branch_model_ConcentrationConstraint.tsv'];
+% network_file              = [mb_resourcedir '/models/double_branch_model/data/artificial_network_true.tsv'];
+% kinetic_data_file         = [mb_resourcedir '/models/double_branch_model/data/artificial_kinetic_data.tsv'];
+% state_data_file           = [mb_resourcedir '/models/double_branch_model/data/artificial_state_data.tsv'];
+% file_options.constraint_sbtab_file = [mb_resourcedir '/models/double_branch_model/double_branch_model_ConcentrationConstraint.tsv'];
 % file_options.match_data_by = 'ModelElementId';
 % file_options.columns_mean  = {'S1_Mean','S2_Mean','S3_Mean','S4_Mean','S5_Mean','S6_Mean'};
 % file_options.columns_std   = {'S1_Std','S2_Std','S3_Std','S4_Std','S5_Std','S6_Std'};
 % alpha                      = 0.5;
 % result_dir                 = tempdir; % replace by your desired output directory
 %
-% filenames   = cmb_filenames(model, prb, run, result_dir);
+% filenames   = mb_filenames(model, prb, run, result_dir);
 
 
 % -------------------------------------------------------------
@@ -141,18 +141,18 @@ filenames = cmb_filenames(model, prb, run, result_dir);
 % model                        = 'e_coli_noor_2016';  
 % prb                          = 'with_kinetic_data';
 % run                          = 'with_kinetic_data_alpha_0_5';
-% network_file                 = [cmb_resourcedir '/models/e_coli_noor_2016/e_coli_noor_2016.tsv'];
-% kinetic_data_file            = [cmb_resourcedir '/models/e_coli_noor_2016/e_coli_ccm_kinetic_data/e_coli_noor_2016_kinetic_data_modified.tsv'];
-% state_data_file              = [cmb_resourcedir '/models/e_coli_noor_2016/e_coli_ccm_state_data_COPY_FOR_INFO.tsv'];
+% network_file                 = [mb_resourcedir '/models/e_coli_noor_2016/e_coli_noor_2016.tsv'];
+% kinetic_data_file            = [mb_resourcedir '/models/e_coli_noor_2016/e_coli_ccm_kinetic_data/e_coli_noor_2016_kinetic_data_modified.tsv'];
+% state_data_file              = [mb_resourcedir '/models/e_coli_noor_2016/e_coli_ccm_state_data_COPY_FOR_INFO.tsv'];
 % %% Concentration constraints are given in a separate file:
-% file_options.constraint_sbtab_file = [cmb_resourcedir '/models/e_coli_noor_2016/e_coli_noor_2016_ConcentrationConstraint.tsv'];
+% file_options.constraint_sbtab_file = [mb_resourcedir '/models/e_coli_noor_2016/e_coli_noor_2016_ConcentrationConstraint.tsv'];
 % file_options.match_data_by   = 'ModelElementId';
 % file_options.columns_mean    = {'S_1_Mean'};
 % file_options.columns_std     = {};
 % alpha                        = 0.5;
 % result_dir                   = tempdir; % replace by your desired output directory
 % 
-% filenames   = cmb_filenames(model, prb, run, result_dir);
+% filenames   = mb_filenames(model, prb, run, result_dir);
 
 % -------------------------------------------------------------
 % Your model (network structure from SBtab file)
@@ -185,19 +185,19 @@ filenames = cmb_filenames(model, prb, run, result_dir);
 % alpha                        = 0.5;                    % alpha value used in model balancing
 % result_dir                   = 'OUTDIR_PATH';          % (directory path) desired output directory (default: tempdir)
 % 
-% filenames   = cmb_filenames(model, prb, run, result_dir);
+% filenames   = mb_filenames(model, prb, run, result_dir);
 
 
 % -------------------------------------------------
-% Set options (for other options, see 'help cmb_default_options')
+% Set options (for other options, see 'help mb_default_options')
 % -------------------------------------------------
 
-cmb_options                          = cmb_default_options;
-cmb_options.run                      = run;
-cmb_options.initial_values_variant   = 'average_sample'; 
-cmb_options.enzyme_score_alpha       = alpha;
-cmb_options.save_results             = 0;  % set to 1 to save result files 
-cmb_options.save_graphics            = 0;  % set to 1 to save graphics files 
+mb_options                          = mb_default_options;
+mb_options.run                      = run;
+mb_options.initial_values_variant   = 'average_sample'; 
+mb_options.enzyme_score_alpha       = alpha;
+mb_options.save_results             = 0;  % set to 1 to save result files 
+mb_options.save_graphics            = 0;  % set to 1 to save graphics files 
 
 
 % -------------------------------------------------
@@ -208,13 +208,13 @@ cmb_options.save_graphics            = 0;  % set to 1 to save graphics files
 switch prb, 
   
   case 'with_kinetic_data',
-    cmb_options.use_kinetic_data = 'all';
+    mb_options.use_kinetic_data = 'all';
   
   case 'with_Keq_data',
-    cmb_options.use_kinetic_data = 'only_Keq';
+    mb_options.use_kinetic_data = 'only_Keq';
   
   case 'no_kinetic_data',
-    cmb_options.use_kinetic_data = 'none';
+    mb_options.use_kinetic_data = 'none';
 
 end
 
@@ -223,11 +223,11 @@ end
 % Load model and data
 % -----------------------------------------------
 
-[network, q_info, data, c_init, kinetic_data, state_data, conc_min, conc_max] = cmb_load_and_convert_model_and_data(cmb_options, {network_file, kinetic_data_file, state_data_file}, file_options);
+[network, q_info, data, c_init, kinetic_data, state_data, conc_min, conc_max] = mb_load_and_convert_model_and_data(mb_options, {network_file, kinetic_data_file, state_data_file}, file_options);
 
 % Save model and data to SBtab files (in result directory)
 
-if cmb_options.save_results,
+if mb_options.save_results,
   save_kinetic_and_state_data(network, kinetic_data, state_data, filenames.kinetic_data, filenames.state_data);
 end
 
@@ -252,16 +252,16 @@ end
 % Generate data structures for bounds and priors
 % -----------------------------------------------
 
-[bounds, prior, init] = cmb_model_and_data(model, network, data, q_info, c_init, cmb_options, conc_min, conc_max);
+[bounds, prior, init] = mb_model_and_data(model, network, data, q_info, c_init, mb_options, conc_min, conc_max);
 
 
 % --------------------------------------------------------------
 % Save model and data to JSON files (for python code) (in result directory)
 % --------------------------------------------------------------
 
-if cmb_options.save_results,
-  cvxpy_problem = cvxpy_problem_data_structure(network, q_info, prior, data, bounds, [], cmb_options);
-  cmb_save_json_file(cvxpy_problem, filenames.model_and_data_json);
+if mb_options.save_results,
+  cvxpy_problem = cvxpy_problem_data_structure(network, q_info, prior, data, bounds, [], mb_options);
+  mb_save_json_file(cvxpy_problem, filenames.model_and_data_json);
   display(sprintf('Writing JSON file for cvxpy: %s', filenames.model_and_data_json));
 end
 
@@ -271,4 +271,4 @@ end
 % (file locations are specified in struct 'filenames')
 % -----------------------------------------------
 
-model_balancing(filenames, cmb_options, network, q_info, prior, bounds, data, [], init);
+model_balancing(filenames, mb_options, network, q_info, prior, bounds, data, [], init);

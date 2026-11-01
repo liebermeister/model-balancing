@@ -1,6 +1,6 @@
-function [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max, preposterior, pp] = model_balancing(filenames, cmb_options, network, q_info, prior, bounds, data, true, init)
+function [optimal, calculation_time, gradient_V, init, mb_options, V, kapp_max, preposterior, pp] = model_balancing(filenames, mb_options, network, q_info, prior, bounds, data, true, init)
 
-% [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max, preposterior, pp] = model_balancing(filenames, cmb_options, network, q_info, prior, bounds, data, true, init)
+% [optimal, calculation_time, gradient_V, init, mb_options, V, kapp_max, preposterior, pp] = model_balancing(filenames, mb_options, network, q_info, prior, bounds, data, true, init)
 %
 % Convex model balancing
 % For usage examples, see the demo files 'demo_cmb_artificial_data.m' and 'demo_cmb_experimental_data.m'
@@ -10,11 +10,11 @@ function [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max,
 %                filenames.graphics_dir optional; output directory for saving graphics
 %                filenames.report_txt   optional; output report file (.txt)
 %                filenames.results_mat  optional;  output results file (.mat)
-%   cmb_options  struct, options 
+%   mb_options  struct, options 
 %   network      struct, metabolic network (format as in Metabolic Network Toolbox)
 %   q_info       struct, the dependencies between model variables
-%   prior        struct, priors in the optimality problem (details see cmb_make_prior)
-%   bounds       struct, bounds in the optimality problem (details see cmb_make_bounds)
+%   prior        struct, priors in the optimality problem (details see mb_make_prior)
+%   bounds       struct, bounds in the optimality problem (details see mb_make_bounds)
 %   data         struct, data used in the optimality problem (data.V.mean contains the flux matrix)
 %   true         struct, true model variables (optional; only for models with artificial data)
 %   init         struct, initial values
@@ -24,25 +24,25 @@ function [optimal, calculation_time, gradient_V, init, cmb_options, V, kapp_max,
 %   calculation_time calculation time in seconds
 %   gradient_V       gradient of enzyme posterior loss w.r.t. fluxes (currently not computed)
 %   init             struct containing the initial model variables (fields init.q and init.X)
-%   cmb_options      struct containing options (updated by the function)
+%   mb_options      struct containing options (updated by the function)
 %   V                flux data 
 %   kapp_max         struct containing kapp_max values
 %   preposterior     struct containing the preposterior distribution
-%   pp               struct containing some data used during calculation (see cmb_make_pp(network))
+%   pp               struct containing some data used during calculation (see mb_make_pp(network))
 %
-% For generating the input data, see 'cmb_model_and_data' and 'cmb_model_artificial_data'
+% For generating the input data, see 'mb_model_and_data' and 'mb_model_artificial_data'
 
 if exist('dependencies_check_once','file')
   dependencies_check_once('model_balancing_dependencies');
 end
 
-if cmb_options.display,
+if mb_options.display,
   display(sprintf('\n---------------'));
   display(sprintf('Model balancing'));
   display(sprintf('---------------\n'));
 end
 
-rng(cmb_options.random_seed,'twister');
+rng(mb_options.random_seed,'twister');
 
 filenames_default = struct('graphics_dir',[],'report_txt',[],'results_mat',[]);
 filenames = join_struct(filenames_default,filenames);
@@ -55,18 +55,18 @@ tstart_model_balancing = tic;
 global global_structure_matrices
 global_structure_matrices = 1;
 global Mplus Mminus Wplus Wminus nm nr ind_M ind_Wp ind_Wm
-global LP_info % variable used in cmb_log_posterior
+global LP_info % variable used in mb_log_posterior
 
 % --------------------------------------------------------------
 
 eval(default('true','[]'));
 
 ns = size(data.X.mean,2);
-cmb_options.ns = ns;
+mb_options.ns = ns;
 
 % -----------------------------------------------
 
-switch cmb_options.enzyme_score_type,
+switch mb_options.enzyme_score_type,
   case 'quadratic'
     % normal quadratic likelihood term: with this option, MB is not guaranteed to be convex!
     %display('model_balancing.m:');
@@ -78,19 +78,19 @@ switch cmb_options.enzyme_score_type,
     %display('  The optimality problem is convex, but enzyme levels may be underestimated!');
   case 'interpolated'
     %display(sprintf('model_balancing.m:'))
-    display(sprintf('Using stringency alpha=%f for enzyme fit',cmb_options.enzyme_score_alpha))
+    display(sprintf('Using stringency alpha=%f for enzyme fit',mb_options.enzyme_score_alpha))
     display('  (The optimality problem may be non-convex, and enzyme levels may be underestimated)');
 end
 
-if cmb_options.beta_ln_c_over_km > 0,
-  display(sprintf('Using stringency beta=%f for c/KM ratios (option cmb_options.beta_ln_c_over_km)',cmb_options.beta_ln_c_over_km));
+if mb_options.beta_ln_c_over_km > 0,
+  display(sprintf('Using stringency beta=%f for c/KM ratios (option mb_options.beta_ln_c_over_km)',mb_options.beta_ln_c_over_km));
 end
 
-if cmb_options.use_bounds == 0,
+if mb_options.use_bounds == 0,
   display('Ignoring all bounds on individual variables');
 end
 
-if cmb_options.use_pseudo_values,
+if mb_options.use_pseudo_values,
   display('Using pseudo values');
 else
   display('Not using pseudo values');
@@ -105,7 +105,7 @@ ns = size(data.X.mean,2);
 nq = length(prior.q.mean);
 
 % Prepare the preposterior distributions (individual terms)
-preposterior = cmb_prepare_posterior(prior, data, cmb_options, q_info);
+preposterior = mb_prepare_posterior(prior, data, mb_options, q_info);
 
 if sum(isnan(data.V.mean(:))),
   error('Some fluxes are unknown');
@@ -113,12 +113,12 @@ end
 
 V = data.V.mean;
 
-pp = cmb_make_pp(network);
+pp = mb_make_pp(network);
 
 if isempty(true),
-  if strcmp(cmb_options.initial_values_variant,'true_values'),
+  if strcmp(mb_options.initial_values_variant,'true_values'),
     warning('No true values given; using method "preposterior_mode" for choosing initial values');
-    cmb_options.initial_values_variant = 'preposterior_mode';
+    mb_options.initial_values_variant = 'preposterior_mode';
   end
 end
 
@@ -143,33 +143,33 @@ end
 % -----------------------------------------------
 % Initial values
 
-switch cmb_options.initial_values_variant,
+switch mb_options.initial_values_variant,
   case 'polytope center';
     display(sprintf('Using center of mass of random LP solutions as the initial point'));
-    cmb_options.init = [];
+    mb_options.init = [];
   case 'flat_objective';
     display(sprintf('Using fmincon solution with flat objective (under constraints) as the initial point'));
-    cmb_options.init = [];
+    mb_options.init = [];
   case 'preposterior_mode';
     display(sprintf('Using preposterior mode (under constraints) as the initial point'));
-    cmb_options.init = [];
+    mb_options.init = [];
   case 'random',
     display('Using random values close to zero as the initial point; these values may violate the constraints');
-    cmb_options.init.q = 0.01 * randn(nq,1);
-    cmb_options.init.X = 0.01 * randn(size(data.X.mean));
+    mb_options.init.q = 0.01 * randn(nq,1);
+    mb_options.init.X = 0.01 * randn(size(data.X.mean));
   case 'true_values',
     display('Using true values as the initial point');
-    cmb_options.init.q = true.q;
-    cmb_options.init.X = true.X;
+    mb_options.init.q = true.q;
+    mb_options.init.X = true.X;
   case 'given_values';
     display('Using given initial values');
-    if ~isfield(cmb_options,'init'), 
-      error('missing options field "cmb_options.init", required by "cmb_options.initial_values_variant=given_values"'); 
+    if ~isfield(mb_options,'init'), 
+      error('missing options field "mb_options.init", required by "mb_options.initial_values_variant=given_values"'); 
     end
   case 'average_sample';
     display(sprintf('Using model-balancing random data as the initial point'));
 
-    my_cmb_options                        = cmb_options;
+    my_cmb_options                        = mb_options;
     my_cmb_options.ns                     = 1;
     my_cmb_options.initial_values_variant = 'preposterior_mode'; 
     my_cmb_options.show_graphics          = 0;
@@ -177,8 +177,8 @@ switch cmb_options.initial_values_variant,
     my_cmb_options.display                = 0;
     my_cmb_options.save_results           = 0;
     
-    my_q_info        = cmb_define_parameterisation(network, my_cmb_options); 
-    [~, my_prior, my_bounds, my_data] = cmb_generate_artificial_data(network, my_cmb_options, my_q_info,ones(size(network.metabolites)), conc_min, conc_max);
+    my_q_info        = mb_define_parameterisation(network, my_cmb_options); 
+    [~, my_prior, my_bounds, my_data] = mb_generate_artificial_data(network, my_cmb_options, my_q_info,ones(size(network.metabolites)), conc_min, conc_max);
     
     my_data.V.mean = nanmean(data.V.mean,2);
     my_data.X.mean = nanmean(data.X.mean,2);
@@ -198,25 +198,25 @@ switch cmb_options.initial_values_variant,
     end
     
     my_optimal = model_balancing(filenames, my_cmb_options, network, my_q_info, my_prior, my_bounds, my_data, my_true);
-    cmb_options.init.q = my_optimal.q;
-    cmb_options.init.X = repmat(my_optimal.X,1,cmb_options.ns);
+    mb_options.init.q = my_optimal.q;
+    mb_options.init.X = repmat(my_optimal.X,1,mb_options.ns);
     %display(sprintf('Initial point found\n-------------------'));
   
   otherwise 
     error('unknown option');
 end
 
-if length(cmb_options.init),
-  cmb_options.init.q(isnan(cmb_options.init.q)) = 0;
-  cmb_options.init.X(isnan(cmb_options.init.X)) = 0;
+if length(mb_options.init),
+  mb_options.init.q(isnan(mb_options.init.q)) = 0;
+  mb_options.init.X(isnan(mb_options.init.X)) = 0;
 end
 
 
 % -----------------------------------------------
 % Compute the optimum state and parameter values
 
-if cmb_options.verbose,
-  if cmb_options.use_gradient,
+if mb_options.verbose,
+  if mb_options.use_gradient,
     display('Using gradients in optimisation');
   else
     display('Not using gradients in optimisation');
@@ -227,7 +227,7 @@ end
 display(' '); 
 display('Running optimisation ..');
 
-[optimal, gradient_V, init] = cmb_estimation(network, q_info, bounds, data, prior, preposterior, pp, V, cmb_options);
+[optimal, gradient_V, init] = mb_estimation(network, q_info, bounds, data, prior, preposterior, pp, V, mb_options);
 
 optimal.A_forward = optimal.A .* sign(sign(V)+0.5);
 
@@ -237,8 +237,8 @@ optimal.A_forward = optimal.A .* sign(sign(V)+0.5);
 % initial guess, and predicted solution
 % -----------------------------------------------
 
-if cmb_options.display,
-  cmb_display_scores(network, q_info, cmb_options, pp, preposterior, init, optimal, true, V, cmb_options.verbose);
+if mb_options.display,
+  mb_display_scores(network, q_info, mb_options, pp, preposterior, init, optimal, true, V, mb_options.verbose);
 end
 
 
@@ -247,14 +247,14 @@ end
 % by additional optimisation rounds
 % -----------------------------------------------
 
-if cmb_options.use_safe_optimisation,
+if mb_options.use_safe_optimisation,
   cont = 1;
-  my_cmb_options = cmb_options;
+  my_cmb_options = mb_options;
   while cont,
     my_cmb_options.init = optimal;
     my_cmb_options.initial_values_variant = 'given_values';
-    [optimal, gradient_V, my_init] = cmb_estimation(network, q_info, bounds, data, prior, preposterior, pp, V, my_cmb_options);
-    cont = cmb_display_scores(network, q_info, my_cmb_options, pp, preposterior, my_init, optimal, true, V, cmb_options.verbose);
+    [optimal, gradient_V, my_init] = mb_estimation(network, q_info, bounds, data, prior, preposterior, pp, V, my_cmb_options);
+    cont = mb_display_scores(network, q_info, my_cmb_options, pp, preposterior, my_init, optimal, true, V, mb_options.verbose);
   end
 end
 
@@ -274,20 +274,20 @@ calculation_time = toc(tstart_model_balancing);
 
 
 % -----------------------------------------------
-% Graphics - 'cmb_graphics' also provides data for statistics below
+% Graphics - 'mb_graphics' also provides data for statistics below
 % -----------------------------------------------
 
-if cmb_options.save_graphics,
+if mb_options.save_graphics,
   graphics_dir = filenames.graphics_dir;
 else
   graphics_dir = [];
 end
 
 display(' '); ca;
-[res, res_true, res_true_data] = cmb_graphics(prior, data, optimal, true, cmb_options, q_info, graphics_dir, kapp_max, cmb_options.show_graphics);
+[res, res_true, res_true_data] = mb_graphics(prior, data, optimal, true, mb_options, q_info, graphics_dir, kapp_max, mb_options.show_graphics);
 
-if cmb_options.show_graphics,
-  cmb_diagnostic_network_graphics(network, data, optimal, cmb_options, q_info, 20, 1, graphics_dir);
+if mb_options.show_graphics,
+  mb_diagnostic_network_graphics(network, data, optimal, mb_options, q_info, 20, 1, graphics_dir);
 end
 
 % check which variables (parameters and concentrations) have no data attached and hit a bound
@@ -309,13 +309,13 @@ end
 % Save results as SBtab files and .mat files
 % -----------------------------------------------
 
-if cmb_options.save_results,
+if mb_options.save_results,
   display(' '); 
   
-  cmb_save_results(network, data, bounds, optimal, filenames, cmb_options, struct('calculation_time', calculation_time, 'consistent', 1), true);
+  mb_save_results(network, data, bounds, optimal, filenames, mb_options, struct('calculation_time', calculation_time, 'consistent', 1), true);
   
   if length(filenames.results_mat)
-    save(filenames.results_mat,'optimal', 'calculation_time', 'gradient_V', 'init', 'cmb_options', 'V', 'kapp_max', 'preposterior', 'pp', 'filenames', 'cmb_options', 'network', 'q_info', 'prior', 'bounds', 'data', 'true', 'res', 'res_true', 'res_true_data');
+    save(filenames.results_mat,'optimal', 'calculation_time', 'gradient_V', 'init', 'mb_options', 'V', 'kapp_max', 'preposterior', 'pp', 'filenames', 'mb_options', 'network', 'q_info', 'prior', 'bounds', 'data', 'true', 'res', 'res_true', 'res_true_data');
   end
   
 end
@@ -325,12 +325,12 @@ end
 % Result statistics
 % -----------------------------------------------
 
-if cmb_options.display + cmb_options.save_results,
+if mb_options.display + mb_options.save_results,
   display(' '); 
-  report = cmb_statistics(network,cmb_options,prior,data,optimal,calculation_time, res, res_true);
+  report = mb_statistics(network,mb_options,prior,data,optimal,calculation_time, res, res_true);
 end
 
-if cmb_options.save_results,
+if mb_options.save_results,
   if ~isempty(filenames.report_txt),
     mytable(report,0,filenames.report_txt);
   end
