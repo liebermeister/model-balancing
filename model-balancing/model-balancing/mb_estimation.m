@@ -173,6 +173,10 @@ switch mb_options.initial_values_variant,
       opt_quadprog = struct('Algorithm','interior-point-convex','MaxFunEvals',10^10,'MaxIter',10^10,'TolX',10^-5,'Display','off','OptimalityTolerance', 10^-5,'StepTolerance', 10^-10);
       [y_init,~,err] = quadprog(y_preposterior_prec, -y_preposterior_prec * y_preposterior_mean, y_ineq_bounds_A, y_ineq_bounds_b-epsilon,[],[], y_bound_min, y_bound_max,[],opt_quadprog);
       if err<0, error(sprintf('Error in computing initial values: quadprog error flag %d',err)); end
+      %% the constrained mode lies on the boundary of the feasible region, where the interior-point
+      %% algorithm of fmincon cannot move: therefore, move it slightly towards the polytope centre
+      y_centre = find_polytope_centre_randn([],[],y_ineq_bounds_A,y_ineq_bounds_b,y_bound_min, y_bound_max, epsilon, 5);
+      y_init   = (1 - 10^-4) * y_init + 10^-4 * y_centre;
     end
     [init.q, init.X] = mb_y_to_qX(y_init, nm, ns);
 
