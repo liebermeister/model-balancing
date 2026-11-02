@@ -7,7 +7,7 @@
 % o run model balancing
 % o save results to output files
 %
-% This script allows you to run model balancing for the four example models in the folder resource-data/models.
+% This script allows you to run model balancing for the four example models in the folder resources/models.
 % By default, it uses the example model "branch_point_model". 
 % To use one of the other models, please uncomment the respective lines in the code.
 % To use your own model, please go to "Your model" below and see the instructions
@@ -50,7 +50,7 @@ clear;
 %  /  
 % X
 % 
-% Use model and artificial data from folder resource-data/models/branch_point_model/data/
+% Use model and artificial data from folder resources/models/branch_point_model/data/
 % -------------------------------------------------------------
 
 % % To use other models, please comment out the following lines
@@ -78,7 +78,7 @@ filenames = mb_filenames(model, prb, run, result_dir);
 %
 % X - O - O - X
 %
-% Model and artificial data from folder resource-data/models/three_chain_model/data/
+% Model and artificial data from folder resources/models/three_chain_model/data/
 % -------------------------------------------------------------
 
 % To use this model, please uncomment the following lines
@@ -110,7 +110,7 @@ filenames = mb_filenames(model, prb, run, result_dir);
 %      /     \
 % X - O       X
 %
-% Use model and artificial data from folder resource-data/models/double_branch_model/data/
+% Use model and artificial data from folder resources/models/double_branch_model/data/
 % -------------------------------------------------------------
 
 % To use this model, please uncomment the following lines
@@ -138,14 +138,14 @@ filenames = mb_filenames(model, prb, run, result_dir);
 
 % To use this model, please uncomment the following lines
 % 
-% model                        = 'e_coli_noor_2016';  
+% model                        = 'escherichia-coli_noor_2016';  
 % prb                          = 'with_kinetic_data';
 % run                          = 'with_kinetic_data_alpha_0_5';
-% network_file                 = [mb_resourcedir '/models/e_coli_noor_2016/e_coli_noor_2016.tsv'];
-% kinetic_data_file            = [mb_resourcedir '/models/e_coli_noor_2016/e_coli_ccm_kinetic_data/e_coli_noor_2016_kinetic_data_modified.tsv'];
-% state_data_file              = [mb_resourcedir '/models/e_coli_noor_2016/e_coli_ccm_state_data_COPY_FOR_INFO.tsv'];
+% network_file                 = [mb_resourcedir '/models/escherichia-coli_noor_2016/escherichia-coli_noor_2016.tsv'];
+% kinetic_data_file            = [mb_resourcedir '/models/escherichia-coli_noor_2016/escherichia-coli_ccm_kinetic_data/escherichia-coli_noor_2016_kinetic_data_modified.tsv'];
+% state_data_file              = [mb_resourcedir '/models/escherichia-coli_noor_2016/escherichia-coli_ccm_state_data_COPY_FOR_INFO.tsv'];
 % %% Concentration constraints are given in a separate file:
-% file_options.constraint_sbtab_file = [mb_resourcedir '/models/e_coli_noor_2016/e_coli_noor_2016_ConcentrationConstraint.tsv'];
+% file_options.constraint_sbtab_file = [mb_resourcedir '/models/escherichia-coli_noor_2016/escherichia-coli_noor_2016_ConcentrationConstraint.tsv'];
 % file_options.match_data_by   = 'ModelElementId';
 % file_options.columns_mean    = {'S_1_Mean'};
 % file_options.columns_std     = {};
@@ -168,7 +168,7 @@ filenames = mb_filenames(model, prb, run, result_dir);
 % 'EnzymeConcentrationData'). Please have a look at the files
 % 'artificial_network_true.tsv', 'artificial_kinetic_data.tsv', and
 % 'artificial_state_data.tsv' in the folder
-% resource-data/models/branch_point_model/data/ for an example.
+% resources/models/branch_point_model/data/ for an example.
 %
 % Then, uncomment the following lines, and insert your information
 % 

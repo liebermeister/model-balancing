@@ -23,6 +23,7 @@ It does not change the Python package, and it is written so that it can be moved
 - `--match-data-by`: `ModelElementId` (default), `KeggId`, or `BiggId`
 - `--constraints`: SBtab file with the table `ConcentrationConstraint`
 - `--prior-file`: use a different prior table
+- `--km-max`: upper limit for KM values in mM (default 1000). Larger data values are replaced by it, and it is the upper bound for KM in the problem
 - `--fill-true-values`: needed for now, see below
 
 From Python:

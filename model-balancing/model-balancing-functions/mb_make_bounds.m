@@ -1,0 +1,86 @@
+function bounds = mb_make_bounds(network,q_info,mb_options, conc_min, conc_max)
+
+% bounds = mb_make_bounds(network, q_info, mb_options, conc_min, conc_max)
+%
+% Construct bounds on model variables for the model balancing problem
+% (from the information in mb_options.quantities, see mb_default_options)
+%
+% Input variables
+%   network            struct describing metabolic network (format as in Metabolic Network Toolbox)
+%   q_info             struct describing the dependencies between model variables
+%   mb_options        struct containing options
+%   conc_min, conc_max (optional) vectors of minimal and maximal metabolite concentrations
+%
+% Output variables
+%   bounds  struct with fields (all on log scale, except for v, e, and a_forward):
+%     .q_min, .q_max                   bounds on independent kinetic constants (vector q)
+%     .q_dep_min, .q_dep_max           bounds on dependent kinetic constants
+%     .q_all_min, .q_all_max           bounds on all kinetic constants
+%     .x_min, .x_max                   bounds on log metabolite concentrations
+%     .v_min, .v_max                   bounds on fluxes
+%     .e_min, .e_max                   bounds on enzyme concentrations
+%     .a_forward_min, .a_forward_max   bounds on forward thermodynamic forces
+
+eval(default('conc_min','[]','conc_max','[]'));
+  
+[nr,nm,nx,KM_ind,KA_ind,KI_ind,nKM,nKA,nKI] = network_numbers(network);
+
+nKeqind = length(q_info.q.index.Keq);
+bounds.q_min = [log(mb_options.quantities.Keq.min)  * ones(nKeqind,1); ...
+                log(mb_options.quantities.KV.min)   * ones(nr,1); ...
+                log(mb_options.quantities.KM.min)   * ones(nKM,1); ...
+                log(mb_options.quantities.KA.min)   * ones(nKA,1); ...
+                log(mb_options.quantities.KI.min)   * ones(nKI,1)];
+
+bounds.q_max = [log(mb_options.quantities.Keq.max) * ones(nKeqind,1); ...
+                log(mb_options.quantities.KV.max)  * ones(nr,1); ...
+                log(mb_options.quantities.KM.max)  * ones(nKM,1); ...
+                log(mb_options.quantities.KA.max)  * ones(nKA,1); ...
+                log(mb_options.quantities.KI.max)  * ones(nKI,1)];
+
+bounds.q_dep_min = [log(mb_options.quantities.Kcatf.min) * ones(nr,1); ...
+                    log(mb_options.quantities.Kcatr.min) * ones(nr,1)];
+bounds.q_dep_max = [log(mb_options.quantities.Kcatf.max) * ones(nr,1); ...
+                    log(mb_options.quantities.Kcatr.max) * ones(nr,1)];
+
+% q_all contains one Keq value for each reaction (q contains only the independent ones)
+bounds.q_all_min = [log(mb_options.quantities.Keq.min) * ones(nr,1); bounds.q_min(nKeqind+1:end); bounds.q_dep_min];
+bounds.q_all_max = [ log(mb_options.quantities.Keq.max) * ones(nr,1); bounds.q_max(nKeqind+1:end); bounds.q_dep_max];
+
+bounds.x_min = log(mb_options.quantities.c.min * ones(nm,1));
+bounds.x_max = log(mb_options.quantities.c.max * ones(nm,1));
+
+% make sure that conc_min < conc_max holds strictly 
+epsilon = 10^-5;
+ind = find(conc_min == conc_max);
+conc_max(ind) = conc_max(ind) * exp(epsilon);
+
+if length(conc_min),
+  bounds.x_min = log(conc_min);
+  bounds.x_max = log(conc_max);
+end
+
+bounds.v_min = -mb_options.quantities.v.max * ones(nr,1);
+bounds.v_max =  mb_options.quantities.v.max * ones(nr,1);
+
+bounds.e_min =  zeros(nr,1);
+bounds.e_max =  mb_options.quantities.e.max * ones(nr,1);
+
+bounds.a_forward_min = mb_options.quantities.Aforward.min * ones(nr,1);
+bounds.a_forward_max = mb_options.quantities.Aforward.max * ones(nr,1);
+
+% deprecated -  use bounds.x_min, bounds.x_max instead
+% bounds.conc_min = conc_min;
+% bounds.conc_max = conc_max;
+
+% check for identical lower and upper bounds
+if sum(bounds.q_min>=bounds.q_max),
+  warning('Some lower and upper bounds on q are identical or in the wrong order. This may cause numerical problems later on.');
+  equal_q_bounds = find(bounds.q_min>=bounds.q_max)
+  [bounds.q_min,bounds.q_max]
+end
+if sum(bounds.x_min>=bounds.x_max),
+  warning('Some lower and upper bounds on x are identical or in the wrong order. This may cause numerical problems later on.');
+  equal_x_bounds = find(bounds.x_min>=bounds.x_max)
+  [bounds.x_min,bounds.x_max]
+end

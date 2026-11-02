@@ -107,15 +107,15 @@ result_dir      = tempdir;
 
 % To use this example model, please uncomment the following lines
 
-% model           = 'e_coli_artificial';  
+% model           = 'escherichia-coli_artificial';  
 % prb             = 'test';
 % run             = 'test_alpha_0_5';
 % flag_artificial = 1;
 % result_dir      = tempdir;
-% network_file    = [mb_resourcedir '/models/e_coli_noor_2016/e_coli_noor_2016.tsv'];
-% constraint_file = [mb_resourcedir '/models/e_coli_noor_2016/e_coli_noor_2016_ConcentrationConstraint.tsv'];
-% position_file   = [mb_resourcedir '/models/e_coli_noor_2016/e_coli_noor_2016_Position.tsv'];
-% c_init          = mb_e_coli_c_init(model,mb_default_options);
+% network_file    = [mb_resourcedir '/models/escherichia-coli_noor_2016/escherichia-coli_noor_2016.tsv'];
+% constraint_file = [mb_resourcedir '/models/escherichia-coli_noor_2016/escherichia-coli_noor_2016_ConcentrationConstraint.tsv'];
+% position_file   = [mb_resourcedir '/models/escherichia-coli_noor_2016/escherichia-coli_noor_2016_Position.tsv'];
+% c_init          = mb_escherichia_coli_c_init(model,mb_default_options);
 % alpha           = 0.5;
 % ns              = 4;
 
@@ -149,7 +149,7 @@ mb_options.verbose                = 0;
 % generate true kinetic model, priors, and artificial data
 % -----------------------------------------------
 
-[network, bounds, prior, q_info, data, true, kinetic_data, state_data] = mb_model_artificial_data(network_file, mb_options, c_init, position_file, constraint_file);
+[network, bounds, prior, q_info, data, true_model, kinetic_data, state_data] = mb_model_artificial_data(network_file, mb_options, c_init, position_file, constraint_file);
 
 save_kinetic_and_state_data(network, kinetic_data, state_data, filenames.kinetic_data, filenames.state_data, 0);
 
@@ -158,4 +158,4 @@ save_kinetic_and_state_data(network, kinetic_data, state_data, filenames.kinetic
 % Run model balancing and save results to files 
 % -----------------------------------------------
 
-model_balancing(filenames, mb_options, network, q_info, prior, bounds, data, true);
+model_balancing(filenames, mb_options, network, q_info, prior, bounds, data, true_model);

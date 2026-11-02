@@ -50,6 +50,7 @@ STANDARD_CONCENTRATION = "1 mM"
 DATA_KIN_GEOM_STD = 1.5
 DATA_V_GEOM_STD = 1.2
 FLUX_MAX = 100.0  # mM/s
+KM_MAX = 1000.0  # mM, default upper limit for KM values (data and bounds); user option km_max
 CONC_EPSILON = 1e-5  # used in mb_make_bounds if a lower and upper bound are identical
 LOG_NORMAL_MIN_MEAN = 1e-14  # used in lognormal_normal2log
 
@@ -406,6 +407,11 @@ def _load_quantity(
 
     mean = column("Mean")
     mean_is_given = table.has("Mean") and not np.isnan(mean).all()
+
+    # values outside the allowed range are replaced by the bounds (Matlab: kinetic_data_load,
+    # option enforce_ranges); NaN values stay NaN
+    mean = np.clip(mean, q.lower, q.upper)
+    median = np.clip(median, q.lower, q.upper)
 
     if q.scaling == "Multiplicative":
         zero = (mean == 0) | (median == 0)
@@ -814,9 +820,7 @@ def kinetic_preposterior(
 def kinetic_bounds(par: Parameterisation, prior_table: Dict[str, Quantity]) -> Tuple[np.ndarray, np.ndarray]:
     """Lower and upper bounds for the vector of log kinetic constants qall."""
     lower, upper = np.zeros(len(par.names)), np.zeros(len(par.names))
-    keq_max = math.log(prior_table["Keq"].upper)
-    lower[par.index["Keq"]], upper[par.index["Keq"]] = -keq_max, keq_max
-    for key in ["KV", "KM", "KA", "KI", "Kcatf", "Kcatr"]:
+    for key in ["Keq", "KV", "KM", "KA", "KI", "Kcatf", "Kcatr"]:
         lower[par.index[key]] = math.log(prior_table[key].lower)
         upper[par.index[key]] = math.log(prior_table[key].upper)
     return lower, upper
@@ -828,7 +832,7 @@ def metabolite_bounds(
     table = document.get("ConcentrationConstraint")
     if table is None:
         c = prior_table["c"]
-        return math.log(c.lower) * np.ones(network.nm), math.log(100.0 * c.upper) * np.ones(network.nm)
+        return math.log(c.lower) * np.ones(network.nm), math.log(c.upper) * np.ones(network.nm)
 
     # Unlike the Matlab code, values are matched by metabolite (Matlab uses the order of the rows)
     ids = _column_or_empty(table, "Compound", table.nrows)
@@ -897,9 +901,15 @@ def build_problem(
     match_data_by: str = "ModelElementId",
     use_kinetic_data: str = "all",
     prior_file: str = DEFAULT_PRIOR_FILE,
+    km_max: float = KM_MAX,
 ) -> dict:
-    """Read model balancing input files and return the problem as a dictionary (for JSON)."""
+    """Read model balancing input files and return the problem as a dictionary (for JSON).
+
+    km_max is the upper limit (in mM) for KM values: larger data values are replaced by it,
+    and it is the upper bound for KM in the problem. It replaces the value from the prior table.
+    """
     prior_table = read_prior_table(prior_file)
+    prior_table["KM"].upper = km_max
     document = read_sbtab_files([network_file, kinetic_data_file, state_data_file])
     constraints = read_sbtab_files([constraint_file]) if constraint_file else {}
 
@@ -1005,12 +1015,14 @@ def main() -> None:
     parser.add_argument("--match-data-by", default="ModelElementId", choices=["ModelElementId", "KeggId", "BiggId"])
     parser.add_argument("--use-kinetic-data", default="all", choices=["all", "only_Keq", "none"])
     parser.add_argument("--prior-file", default=DEFAULT_PRIOR_FILE)
+    parser.add_argument("--km-max", type=float, default=KM_MAX,
+                        help="upper limit for KM values in mM, for data and bounds (default: %(default)s)")
     parser.add_argument("--fill-true-values", action="store_true",
                         help="insert preposterior means as true values (needed by the current Python reader)")
     args = parser.parse_args()
     problem = build_problem(
         args.network_file, args.kinetic_data_file, args.state_data_file, args.constraints,
-        args.mean, args.std, args.match_data_by, args.use_kinetic_data, args.prior_file,
+        args.mean, args.std, args.match_data_by, args.use_kinetic_data, args.prior_file, args.km_max,
     )
     if args.fill_true_values:
         fill_true_values(problem)

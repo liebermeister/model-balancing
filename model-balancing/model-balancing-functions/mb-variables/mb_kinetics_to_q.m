@@ -1,0 +1,13 @@
+function q = mb_kinetics_to_q(network, mb_options, q_info)
+
+% q = mb_kinetics_to_q(network, mb_options, q_info)
+%
+% Convert the kinetic constants in network.kinetics into a vector q of independent log kinetic constants
+
+[nr,nm,nx,KM_ind,KA_ind,KI_ind,nKM,nKA,nKI] = network_numbers(network);
+
+r = network.kinetics;
+%r.KV = sqrt(r.Kcatf .* r.Kcatr);
+
+ln_Keq_ind = q_info.M_qallKeq_to_qKeqind * log(r.Keq);
+q = full([ln_Keq_ind; log(r.KV); log(r.KM(KM_ind)); log(r.KA(KA_ind)); log(r.KI(KI_ind))]);

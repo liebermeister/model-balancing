@@ -29,7 +29,7 @@ Toolbox and others) are not in the folder that contains this repository.
 | `test_model_no_std` | no error bars in the data file |
 | `test_model_only_Keq`, `test_model_no_kinetic_data` | other settings of `use_kinetic_data` |
 | `test_model_cycle` | closed cycle, one Wegscheider condition |
-| `branch_point_model`, `e_coli_noor_2016` | models from the Matlab package |
+| `branch_point_model`, `escherichia-coli_noor_2016` | models from the Matlab package |
 
 The test model in `test_model` comes from `make_test_model.py` (seeded). It has 6 reactions and 3
 states, with an activator and an inhibitor, a stoichiometric coefficient of 2, a reaction that

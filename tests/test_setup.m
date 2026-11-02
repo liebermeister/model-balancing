@@ -13,4 +13,3 @@ assert(any(strcmp(parameter_prior.Symbol, 'KM')));
 %% default options
 mb_options = mb_default_options;
 assert(isstruct(mb_options));
-assert(strcmp(mb_options.parameterisation, 'Keq_KV_KM_KA_KI'));

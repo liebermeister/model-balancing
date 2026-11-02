@@ -30,7 +30,7 @@ octave-workspace
 
 # ---------------------------------------------------------------
 # Python (the JSON files in examples/json are used by the python
-# implementation; notebooks are kept in resource-data)
+# implementation; notebooks are kept in resources)
 # ---------------------------------------------------------------
 __pycache__/
 *.py[cod]

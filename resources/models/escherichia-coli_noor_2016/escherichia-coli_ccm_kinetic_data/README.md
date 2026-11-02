@@ -1,0 +1,9 @@
+Kinetic data for the E. coli model
+==================================
+
+* Main file (kinetic data used in the article): `escherichia-coli_noor_2016_kinetic_data_modified.tsv`
+
+* Balanced parameter file (also used in the article): see folder `balanced_parameters`
+
+Provenance: `escherichia-coli_noor_2016_kinetic_data_modified.tsv` is a copy from the gitlab repository
+liebermeister/stm-models-and-code (file `matlab/wolf/model_e_coli_ccm/original_model/escherichia-coli_noor_2016_kinetic_data_modified.tsv`).
