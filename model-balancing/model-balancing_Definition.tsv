@@ -1,0 +1,21 @@
+!!SBtab TableID='model_balancing_Definition' TableType='Definition' SBtabVersion='1.1' TableName='Extension definitions table of model-balancing'
+% Table types and columns used by this package that are not in the SBtab 1.1 definitions table.
+% It extends the default definitions, e.g. sbtab_document_set_definitions(d, 'model-balancing_Definition.tsv')
+% (Matlab) or: sbtab validator FILE -d -y model-balancing_Definition.tsv (Python).
+!Name	!Type	!Parent	!isShortname	!Format	!Description
+NameForPlots	Column	Compound	False	String	Short name shown in plots
+Option	Column	Config	True	String	Name of the option (instead of !ID)
+LocusTag	Column	Gene	False	String	Locus tag of the gene
+IsFixed	Column	Position	False	Integer	Fixed position in network layouts (0: not fixed)
+IsInvisible	Column	Position	False	Integer	1: element is not shown in network plots
+Position:x	Column	Position	False	Float	x coordinate in network plots
+Position:y	Column	Position	False	Float	y coordinate in network plots
+Gene:LocusName	Column	Quantity	False	String	Locus name of the gene (protein data)
+Gene:Name	Column	Quantity	False	String	Gene name (protein data)
+GeomStd	Column	Quantity	False	Float	Geometric standard deviation
+Lower	Column	Quantity	False	Float	Lower bound
+Mode	Column	Quantity	False	Float	Mode of the (posterior) distribution
+Reference	Column	Quantity	False	String	Literature reference or data source
+Upper	Column	Quantity	False	Float	Upper bound
+MetabolicRegulation	Column	Reaction	False	String	Allosteric regulation, e.g. '+ ADP - NADH' (activators: +, inhibitors: -)
+NameForPlots	Column	Reaction	False	String	Short name shown in plots
