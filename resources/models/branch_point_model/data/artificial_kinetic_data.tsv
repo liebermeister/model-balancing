@@ -1,4 +1,4 @@
-!!SBtab TableID='ParameterData' TableType='Quantity'										
+!!SBtab SBtabVersion='1.1' TableID='ParameterData' TableType='Quantity'										
 !QuantityType	!Compound	!Reaction	!Unit	!Median	!Mean	!Std	!Lower	!Upper	!Compound:Identifiers:kegg.compound	!Reaction:Identifiers:kegg.reaction
 Michaelis constant	X1	E1	mM	0.13325467	NaN	NaN	NaN	NaN		
 Michaelis constant	X2	E2	mM	0.36257693	NaN	NaN	NaN	NaN		

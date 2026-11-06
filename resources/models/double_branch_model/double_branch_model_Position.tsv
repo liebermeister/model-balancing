@@ -1,4 +1,4 @@
-!!SBtab TableType='Position' TableID='Position'				
+!!SBtab SBtabVersion='1.1' TableType='Position' TableID='Position'				
 !PositionX	!PositionY	!Element	!IsFixed	!IsInvisible
 -0.004722	0.7662	X1	1	0
 0.18043459	0.76591403	S2	1	0

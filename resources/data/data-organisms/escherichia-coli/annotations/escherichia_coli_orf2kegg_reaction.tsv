@@ -1,4 +1,4 @@
-!!SBtab	TableType='Gene'
+!!SBtab TableID='Gene' SBtabVersion='1.1'	TableType='Gene'
 !LocusTag	!Reaction:Identifiers:kegg.reaction
 b4226	R00004
 b3671	R00006

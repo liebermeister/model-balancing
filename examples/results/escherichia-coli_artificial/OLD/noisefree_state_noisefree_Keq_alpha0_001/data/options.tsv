@@ -1,4 +1,4 @@
-!!SBtab TableName='Options for convex model balancing' TableID='ConfigureModelBalancing' TableType='Config' Method='convex-model-balancing'	
+!!SBtab SBtabVersion='1.1' TableName='Options for convex model balancing' TableID='ConfigureModelBalancing' TableType='Config' Method='convex-model-balancing'	
 !Option	!Value
 run	noisefree_state_noisefree_Keq_alpha0_001
 ecm_score	emc4cm

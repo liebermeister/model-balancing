@@ -1,4 +1,4 @@
-!!SBtab TableType='Quantity' TableID='Quantity' Organism='Escherichia coli' ValueType='Median'
+!!SBtab SBtabVersion='1.1' TableType='Quantity' TableID='Quantity' Organism='Escherichia coli' ValueType='Median'
 
 !QuantityType	!Unit	!Compound:Name	!Compound:Identifiers:kegg.compound	!Value	!Reference
 concentration	mM	NAD	C00003	1.67	Firth 1972

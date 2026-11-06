@@ -1,4 +1,4 @@
-!!SBtab TableID='Flux' TableType='Quantity' Unit='mmol/gDW/h' Organism='Escherichia coli'								
+!!SBtab SBtabVersion='1.1' TableID='Flux' TableType='Quantity' Unit='mmol/gDW/h' Organism='Escherichia coli'								
 								
 !QuantityType	!Reaction	!Value	!Std	!Reaction:Identifiers:kegg.reaction	enzyme_name	ec_number	bigg_id	direction
 rate of reaction	HXK_R01786	8.7	0.4	R01786	hexokinase	2.7.1.2	HEX1	1

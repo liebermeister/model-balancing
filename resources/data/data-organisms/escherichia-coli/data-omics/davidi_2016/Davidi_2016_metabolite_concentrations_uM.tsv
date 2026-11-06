@@ -1,4 +1,4 @@
-!!SBtab TableID='Metabolite' TableType='Quantity' Unit='uM' Organism='Escherichia coli' Comment='Data referenced in Davidi et al. (2016) PNAS; Metabolite concentrations in E. coli in batch growth in glucose, acetate and glycerol as sole carbon sources (Bennet et al; Zimmermann et al). Values are given in units of µM.'
+!!SBtab SBtabVersion='1.1' TableID='Metabolite' TableType='Quantity' Unit='uM' Organism='Escherichia coli' Comment='Data referenced in Davidi et al. (2016) PNAS; Metabolite concentrations in E. coli in batch growth in glucose, acetate and glycerol as sole carbon sources (Bennet et al; Zimmermann et al). Values are given in units of µM.'
 !QuantityType	!Compound:Identifiers:kegg.compound	!>Condition:Glucose	!>Condition:Glycerol	!>Condition:Acetate
 concentration	C00002	9630	8980	4140
 concentration	C00003	2550	4080	2430

@@ -1,4 +1,4 @@
-!!SBtab TableID='ParameterData' TableType='Quantity'
+!!SBtab SBtabVersion='1.1' TableID='ParameterData' TableType='Quantity'
 !QuantityType	!Compound	!Reaction	!Unit	!Median
 Michaelis constant	Xa	R1	mM	0.6592319545
 Michaelis constant	A	R2	mM	0.6512917896

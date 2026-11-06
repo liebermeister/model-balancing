@@ -1,4 +1,4 @@
-!!SBtab TableID='ParameterData' TableType='Quantity'
+!!SBtab SBtabVersion='1.1' TableID='ParameterData' TableType='Quantity'
 !QuantityType	!Compound	!Reaction	!Unit	!Median
 equilibrium constant		R1	dimensionless	5
 equilibrium constant		R2	dimensionless	3

@@ -1,4 +1,4 @@
-!!SBtab TableID='Parameter' TableType='Quantity' TableName='Parameter' StandardConcentration='mM'						
+!!SBtab SBtabVersion='1.1' TableID='Parameter' TableType='Quantity' TableName='Parameter' StandardConcentration='mM'						
 !QuantityType	!Reaction	!Compound	!Mode	!Unit	!Reaction:Identifiers:kegg.reaction	!Compound:Identifiers:kegg.compound
 equilibrium constant	PTS_RPTSsy		56620000	dimensionless	RPTSsy	
 equilibrium constant	PGI_R02740		0.3637	dimensionless	R02740	

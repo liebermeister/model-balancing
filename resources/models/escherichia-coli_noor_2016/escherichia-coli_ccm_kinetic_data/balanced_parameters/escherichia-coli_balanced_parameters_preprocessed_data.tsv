@@ -1,4 +1,4 @@
-!!SBtab TableID='ParameterData' TableType='Quantity'										
+!!SBtab SBtabVersion='1.1' TableID='ParameterData' TableType='Quantity'										
 !QuantityType	!Compound	!Reaction	!Unit	!Median	!Mean	!Std	!Lower	!Upper	!Compound:Identifiers:kegg.compound	!Reaction:Identifiers:kegg.reaction
 catalytic rate constant geometric mean		PTS_RPTSsy	1/s	NaN	NaN	NaN	1e-07	10000		RPTSsy
 catalytic rate constant geometric mean		PGI_R02740	1/s	NaN	NaN	NaN	1e-07	10000		R02740

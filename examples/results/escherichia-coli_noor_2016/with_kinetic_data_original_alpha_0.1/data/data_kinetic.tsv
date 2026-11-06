@@ -1,4 +1,4 @@
-!!SBtab TableID='ParameterData' TableType='Quantity'											
+!!SBtab SBtabVersion='1.1' TableID='ParameterData' TableType='Quantity'											
 !QuantityType	!Compound	!Reaction	!Unit	!Median	!Mean	!Std	!GeomStd	!Lower	!Upper	!Compound:Identifiers:kegg.compound	!Reaction:Identifiers:kegg.reaction
 Michaelis constant	_S__Malate	FUM_R01082	mM	0.64666009	0.70206204	0.29677218	1.5	NaN	NaN	C00149	R01082
 Michaelis constant	_S__Malate	MDH_R00342	mM	0.59870169	0.64999485	0.27476259	1.5	NaN	NaN	C00149	R00342
