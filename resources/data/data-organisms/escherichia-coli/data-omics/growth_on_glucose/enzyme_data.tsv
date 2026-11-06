@@ -1,4 +1,4 @@
-!!SBtab TableType='Quantity' TableID='Concentration'  Organism='Escherichia coli' SBtabVersion='1.0' Unit='mM'			
+!!SBtab TableType='Quantity' TableID='Concentration'  Organism='Escherichia coli' SBtabVersion='1.1' Unit='mM'			
 !QuantityType	!Reaction	!Reaction:Identifiers:kegg.reaction	data
 concentration of enzyme	PTS_RPTSsy	RPTSsy	0.0052772441
 concentration of enzyme	PGI_R02740	R02740	0.0044271666
