@@ -1,6 +1,6 @@
 !!!SBtab Date='2026-11-01' SBtabVersion='1.1'				
 				
-!!SBtab TableName='Metabolic fluxes' TableID='FluxData' TableType='QuantityMatrix' Unit='mM/s' SBtabVersion='1.1'				
+!!SBtab TableName='Metabolic fluxes' TableID='FluxData' TableType='QuantityMatrix' Unit='mM/s'				
 !QuantityType	!Reaction	!Reaction:Identifiers:kegg.reaction	S_1_Mean	S_1_Std
 rate of reaction	PTS_RPTSsy	RPTSsy	0.609	0.028
 rate of reaction	PGI_R02740	R02740	0.504	0.028
@@ -33,7 +33,7 @@ rate of reaction	FUM_R01082	R01082	0.077	0.077
 rate of reaction	MDH_R00342	R00342	0.091	0.028
 rate of reaction	PPC_R00345	R00345	-0.133	0.056
 				
-!!SBtab TableName='Metabolite concentrations' TableID='MetaboliteConcentrationData' TableType='QuantityMatrix' Unit='mM' SBtabVersion='1.1'				
+!!SBtab TableName='Metabolite concentrations' TableID='MetaboliteConcentrationData' TableType='QuantityMatrix' Unit='mM'				
 !QuantityType	!Compound	!Compound:Identifiers:kegg.compound	S_1_Mean	
 concentration	_S__Malate	C00149	1.23	
 concentration	Acetyl_CoA	C00024	0.35	
@@ -76,7 +76,7 @@ concentration	_2_Phospho_D_glycerate	C00631	NaN
 concentration	Succinate	C00042	0.569	
 concentration	Sedoheptulose_7_phosphate	C05382	NaN	
 				
-!!SBtab TableName='Enzyme concentrations' TableID='EnzymeConcentrationData' TableType='QuantityMatrix' Unit='mM' SBtabVersion='1.1'				
+!!SBtab TableName='Enzyme concentrations' TableID='EnzymeConcentrationData' TableType='QuantityMatrix' Unit='mM'				
 !QuantityType	!Reaction	!Reaction:Identifiers:kegg.reaction	S_1_Mean	
 concentration of enzyme	PTS_RPTSsy	RPTSsy	0.0052772441	
 concentration of enzyme	PGI_R02740	R02740	0.0044271666	

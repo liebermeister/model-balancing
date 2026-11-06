@@ -1,6 +1,6 @@
 !!!SBtab Document='MBresult' DocumentName='MB result' StringencyAlpha='0.50' CalculationTime='3.453305 s' Date='2026-11-01' SBtabVersion='1.1'						
 						
-!!SBtab TableID='Reaction' TableType='Reaction' SBtabVersion='1.1'						
+!!SBtab TableID='Reaction' TableType='Reaction'						
 !ID	!ReactionFormula	!Name	!NameForPlots	!Identifiers:kegg.reaction	!IsReversible	!Gene
 PTS_RPTSsy	D_Glucose + Phosphoenolpyruvate <=> Pyruvate + D_Glucose_6_phosphate	PTS_RPTSsy	pts	RPTSsy	True	PTS
 PGI_R02740	D_Glucose_6_phosphate <=> D_Fructose_6_phosphate	PGI_R02740	pgi	R02740	True	PGI
@@ -33,7 +33,7 @@ FUM_R01082	Fumarate <=> _S__Malate	FUM_R01082	fum	R01082	True	FUM
 MDH_R00342	_S__Malate + NADplus <=> NADH + Oxaloacetate	MDH_R00342	mdh	R00342	True	MDH
 PPC_R00345	Orthophosphate + Oxaloacetate <=> CO2 + Phosphoenolpyruvate	PPC_R00345	ppc	R00345	True	PPC
 						
-!!SBtab TableID='Compound' TableType='Compound' SBtabVersion='1.1'						
+!!SBtab TableID='Compound' TableType='Compound'						
 !ID	!Name	!NameForPlots	!Identifiers:kegg.compound	!IsConstant		
 _S__Malate	(S)-Malate	(S)-Malate	C00149	False		
 Acetyl_CoA	Acetyl-CoA	Acetyl-CoA	C00024	False		
@@ -76,7 +76,7 @@ _2_Phospho_D_glycerate	2-Phospho-D-glycerate	2-Phospho-D-glycerate	C00631	False
 Succinate	Succinate	Succinate	C00042	False		
 Sedoheptulose_7_phosphate	Sedoheptulose 7-phosphate	Sedoheptulose 7-phosphate	C05382	False		
 						
-!!SBtab TableID='Position' TableType='Position' TableName='Network layout' SBtabVersion='1.1'						
+!!SBtab TableID='Position' TableType='Position' TableName='Network layout'						
 !Element	!Position:x	!Position:y				
 _S__Malate	0.32772	0.095058				
 Acetyl_CoA	0.359426	0.22902				
@@ -149,7 +149,7 @@ FUM_R01082	0.340351	0.035483
 MDH_R00342	0.33416	0.140744				
 PPC_R00345	0.40095304	0.50690003				
 						
-!!SBtab TableID='ConcentrationConstraint' TableType='Quantity' TableName='Metabolite concentration constraints' SBtabVersion='1.1'						
+!!SBtab TableID='ConcentrationConstraint' TableType='Quantity' TableName='Metabolite concentration constraints'						
 !QuantityType	!Compound	!Min	!Max			
 concentration	_S__Malate	0.001	10			
 concentration	Acetyl_CoA	0.001	10			

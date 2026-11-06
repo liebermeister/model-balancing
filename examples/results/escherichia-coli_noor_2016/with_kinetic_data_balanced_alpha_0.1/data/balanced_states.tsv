@@ -1,6 +1,6 @@
 !!!SBtab DocumentName='MB result' Document='MBresult' StringencyAlpha='0.10' CalculationTime='3.886153 s' Date='2026-11-01' SBtabVersion='1.1'		
 		
-!!SBtab TableName='Metabolic fluxes' TableID='Flux' TableType='QuantityMatrix' Unit='mM/s' SBtabVersion='1.1'		
+!!SBtab TableName='Metabolic fluxes' TableID='Flux' TableType='QuantityMatrix' Unit='mM/s'		
 !QuantityType	!Reaction	S1
 rate of reaction	PTS_RPTSsy	0.609
 rate of reaction	PGI_R02740	0.504
@@ -33,7 +33,7 @@ rate of reaction	FUM_R01082	0.077
 rate of reaction	MDH_R00342	0.091
 rate of reaction	PPC_R00345	-0.133
 		
-!!SBtab TableName='Metabolite concentrations' TableID='MetaboliteConcentration' TableType='QuantityMatrix' Unit='mM' SBtabVersion='1.1'		
+!!SBtab TableName='Metabolite concentrations' TableID='MetaboliteConcentration' TableType='QuantityMatrix' Unit='mM'		
 !QuantityType	!Compound	S1
 concentration	_S__Malate	1.1393149
 concentration	Acetyl_CoA	0.4096399
@@ -76,7 +76,7 @@ concentration	_2_Phospho_D_glycerate	0.1121275
 concentration	Succinate	0.52274966
 concentration	Sedoheptulose_7_phosphate	3.2052573
 		
-!!SBtab TableName='Enzyme concentrations' TableID='EnzymeConcentration' TableType='QuantityMatrix' Unit='mM' SBtabVersion='1.1'		
+!!SBtab TableName='Enzyme concentrations' TableID='EnzymeConcentration' TableType='QuantityMatrix' Unit='mM'		
 !QuantityType	!Reaction	S1
 concentration of enzyme	PTS_RPTSsy	0.0080796206
 concentration of enzyme	PGI_R02740	0.0048490609
@@ -109,7 +109,7 @@ concentration of enzyme	FUM_R01082	0.0017942103
 concentration of enzyme	MDH_R00342	0.024283021
 concentration of enzyme	PPC_R00345	0.00089422814
 		
-!!SBtab TableName='Gibbs free energies of reaction' TableID='ReactionGibbsFreeEnergy' TableType='QuantityMatrix' Unit='kJ/mol' SBtabVersion='1.1'		
+!!SBtab TableName='Gibbs free energies of reaction' TableID='ReactionGibbsFreeEnergy' TableType='QuantityMatrix' Unit='kJ/mol'		
 !QuantityType	!Reaction	S1
 Gibbs energy of reaction	PTS_RPTSsy	-49.016629
 Gibbs energy of reaction	PGI_R02740	-3.7202236
