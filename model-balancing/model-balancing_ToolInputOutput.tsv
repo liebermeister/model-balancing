@@ -1,0 +1,23 @@
+!!SBtab TableID='ToolInputOutput' TableType='ToolInputOutput' SBtabVersion='1.2' Method='model-balancing' TableName='Input and output tables of Model balancing'
+% Matlab: mb_load_model_and_data(model_file, kinetic_data_file, state_data_files, ..., constraint_sbtab_file),
+% model_balancing, and mb_save_results.
+% Rows guessed from the Matlab code and the example files of the package.
+!RequiredIn	!RequiredTable	!TableID	!File	!IsOptional	!RequiredColumns	!Comment
+Input	Reaction	Reaction	model file	False	ID, ReactionFormula, Identifiers:kegg.reaction, KineticRegulation	Model (alternatively given as SBML file)
+Input	Compound	Compound	model file	False	ID, Identifiers:kegg.compound	Model (alternatively given as SBML file)
+Input	Position	Position	model file	True	Element, PositionX, PositionY	Network layout for graphics
+Input	Quantity	ConcentrationConstraint	constraint file	True	Compound, Min, Max	Metabolite concentration bounds
+Input	Quantity	ParameterData	kinetic data file	True	QuantityType, Reaction, Compound, Mean, Std, Unit	Kinetic data
+Input	QuantityMatrix	FluxData	state data file	False	Reaction, [one column per sample]	Flux data (mM/s)
+Input	QuantityMatrix	MetaboliteConcentrationData	state data file	False	Compound, [one column per sample]	Metabolite concentration data (mM)
+Input	QuantityMatrix	EnzymeConcentrationData	state data file	False	Reaction, [one column per sample]	Enzyme concentration data (mM)
+Input	QuantityInfo	PriorTable	prior file	True	QuantityType, Symbol, Unit, PriorMedian, PriorGeometricStd, LowerBound, UpperBound, DataGeometricStd	Default: mb_prior.tsv
+Output	Reaction	Reaction	balanced model state file	False	ID, ReactionFormula	Balanced kinetic model
+Output	Compound	Compound	balanced model state file	False	ID	Balanced kinetic model
+Output	Position	Position	balanced model state file	True	Element, PositionX, PositionY	Network layout
+Output	Quantity	Parameter	balanced model state file	False	QuantityType, Reaction, Compound, Value, Unit	Balanced kinetic constants
+Output	QuantityMatrix	Flux	balanced state runs file	False	QuantityType, Reaction, [one column per sample]	Fluxes (mM/s)
+Output	QuantityMatrix	MetaboliteConcentration	balanced state runs file	False	QuantityType, Compound, [one column per sample]	Balanced metabolite concentrations (mM)
+Output	QuantityMatrix	EnzymeConcentration	balanced state runs file	False	QuantityType, Reaction, [one column per sample]	Balanced enzyme concentrations (mM)
+Output	QuantityMatrix	ReactionGibbsFreeEnergy	balanced state runs file	False	QuantityType, Reaction, [one column per sample]	Reaction Gibbs free energies (kJ/mol)
+Output	Config	ConfigureModelBalancing	options file	False	Option, Value	Options used (Method=convex-model-balancing)

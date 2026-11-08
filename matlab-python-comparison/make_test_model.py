@@ -105,7 +105,7 @@ def write(name, text):
 
 lines = ["!!!SBtab SBtabVersion='1.1' Document='test_model'", "",
          "!!SBtab TableID='Reaction' TableType='Reaction' TableName='Reaction'",
-         "!ID\t!ReactionFormula\t!IsReversible\t!MetabolicRegulation"]
+         "!ID\t!ReactionFormula\t!IsReversible\t!KineticRegulation"]
 for r, f in zip(rxns, formulas):
     sign = {"activation": "+", "inhibition": "-"}
     reg = f"{sign[regulation[r][1]]} {regulation[r][0]}" if r in regulation else ""

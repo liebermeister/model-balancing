@@ -276,13 +276,113 @@ def _parse_formula(formula: str) -> Tuple[List[Tuple[float, str]], List[Tuple[fl
     return _parse_side(left), _parse_side(right)
 
 
+# Reaction column with the kinetic regulation of enzymes (SBtab 1.1 and 1.2) and
+# older names of this column
+KINETIC_REGULATION_COLUMNS = ("KineticRegulation", "MetabolicRegulation", "Regulator")
+
+
 def _parse_regulation(text: str) -> List[Tuple[float, str]]:
-    """Parse an entry of column MetabolicRegulation, for example '+ A - B'."""
-    return [(1.0 if m[0] == "+" else -1.0, m[1]) for m in re.findall(r"(?:^|\s)([+-])\s+(\S+)", text)]
+    """
+    Parse an entry of column KineticRegulation, for example '+ A - B'.
+
+    Signs: '+' activation (1.0), '-' inhibition (-1.0); regulators with dual
+    effect ('+-') or without sign are left out. The older notation '-B|+A'
+    (column Regulator) is also accepted.
+    """
+    result = []
+    sign = ""
+    for token in text.replace("|", " ").split():
+        if token in ("+", "-", "+-"):
+            sign = token
+            continue
+        for prefix in ("+-", "+", "-"):
+            if token.startswith(prefix) and len(token) > len(prefix):
+                sign, token = prefix, token[len(prefix):]
+                break
+        if sign in ("+", "-"):
+            result.append((1.0 if sign == "+" else -1.0, token))
+        sign = ""
+    return result
 
 
 def _column_or_empty(table: Table, name: str, n: int) -> List[str]:
     return table.get(name) if table.has(name) else [""] * n
+
+
+# SBO terms of activators, inhibitors and dual-activity modifiers (column RegulationType:SBO)
+ACTIVATOR_SBO_TERMS = {459, 21, 461, 462, 170, 171, 656}
+INHIBITOR_SBO_TERMS = {20, 206, 207, 536, 537, 169}
+DUAL_SBO_TERMS = {595}
+
+
+def _regulation_type_sign(entry: str) -> float:
+    """+1 (activation), -1 (inhibition), 0 (dual) or NaN (empty or unknown) for an entry of
+    the column RegulationType ('activation', 'inhibition', 'dual'; older files: also
+    'activator', 'inhibitor', 'SBO:0000020 - inhibitor') or RegulationType:SBO."""
+    entry = entry.strip().lower()
+    match = re.search(r"sbo:0*(\d+)", entry)
+    if match:
+        sbo = int(match.group(1))
+        if sbo in ACTIVATOR_SBO_TERMS:
+            return 1.0
+        if sbo in INHIBITOR_SBO_TERMS:
+            return -1.0
+        if sbo in DUAL_SBO_TERMS:
+            return 0.0
+        return float("nan")
+    return {"activation": 1.0, "activator": 1.0, "inhibition": -1.0, "inhibitor": -1.0, "dual": 0.0}.get(
+        entry, float("nan")
+    )
+
+
+def _find_regulation_table(document: Dict[str, Table]):
+    """Regulation table (SBtab 1.2): TableID 'Regulation' (older files: 'EnzymeRegulation'),
+    or another table of TableType 'Regulation'."""
+    for table_id in ("Regulation", "EnzymeRegulation"):
+        if table_id in document:
+            return document[table_id]
+    for table in document.values():
+        if table.attributes.get("TableType") == "Regulation":
+            return table
+    return None
+
+
+def _regulation_table_entries(table: Table, metabolites, reactions) -> List[Tuple[int, int, float]]:
+    """(reaction index, compound index, sign) for the rows of a Regulation table.
+
+    Columns: TargetReaction (older: Reaction), Regulator (older: Compound), and for the
+    sign RegulationType, RegulationType:SBO or the signed Hill coefficient
+    RegulatoryCoefficient (the first of them with an entry is used). Rows with dual or
+    unspecified effect, or with unknown reactions or compounds, are skipped with a warning.
+    The magnitudes of regulatory coefficients are not used.
+    """
+    reaction_column = next((c for c in ("TargetReaction", "Reaction") if table.has(c)), None)
+    regulator_column = next((c for c in ("Regulator", "Compound") if table.has(c)), None)
+    if reaction_column is None or regulator_column is None:
+        print("Warning: Regulation table without columns TargetReaction and Regulator; ignored")
+        return []
+    n = table.nrows
+    types = table.get("RegulationType") if table.has("RegulationType") else [""] * n
+    sbo = table.get("RegulationType:SBO") if table.has("RegulationType:SBO") else [""] * n
+    coef = table.get("RegulatoryCoefficient") if table.has("RegulatoryCoefficient") else [""] * n
+    ind_r = index_case_insensitive(table.get(reaction_column), reactions)
+    ind_m = index_case_insensitive(table.get(regulator_column), metabolites)
+    entries = []
+    for k in range(n):
+        value = to_float(coef[k])
+        coef_sign = float(np.sign(value)) if value == value and value != 0 else float("nan")
+        signs = [_regulation_type_sign(types[k]), _regulation_type_sign(sbo[k]), coef_sign]
+        given = [s for s in signs if not np.isnan(s)]
+        if not given or given[0] == 0:
+            print("Warning: Regulation table, row %d: dual or unspecified effect; ignored" % (k + 1))
+            continue
+        if any(s != given[0] for s in given):
+            print("Warning: Regulation table, row %d: the columns for the type of regulation disagree" % (k + 1))
+        if ind_r[k] < 0 or ind_m[k] < 0:
+            print("Warning: Regulation table, row %d: unknown reaction or compound; ignored" % (k + 1))
+            continue
+        entries.append((ind_r[k], ind_m[k], given[0]))
+    return entries
 
 
 def build_network(document: Dict[str, Table]) -> Network:
@@ -315,21 +415,27 @@ def build_network(document: Dict[str, Table]) -> Network:
                 N[i, j] = sign * coefficient
 
     regulation = np.zeros((nr, nm))
-    if reaction_table.has("MetabolicRegulation"):
-        for j, text in enumerate(reaction_table.get("MetabolicRegulation")):
+    regulation_column = next((c for c in KINETIC_REGULATION_COLUMNS if reaction_table.has(c)), None)
+    if regulation_column is not None:
+        for j, text in enumerate(reaction_table.get(regulation_column)):
             for sign, metabolite in _parse_regulation(text):
                 i = index_case_insensitive([metabolite], metabolites)[0]
                 if i >= 0:
                     regulation[j, i] = sign
-    regulation_table = document.get("EnzymeRegulation")
+    regulation_table = _find_regulation_table(document)
     if regulation_table is not None:
-        regulation = np.zeros((nr, nm))
-        ind_m = index_case_insensitive(regulation_table.get("Compound"), metabolites)
-        ind_r = index_case_insensitive(regulation_table.get("Reaction"), reactions)
-        signs = {"activation": 1.0, "inhibition": -1.0}
-        for i, j, kind in zip(ind_m, ind_r, regulation_table.get("RegulationType")):
-            if i >= 0 and j >= 0 and kind in signs:
-                regulation[j, i] = signs[kind]
+        if regulation_column is not None and any(t.strip() for t in reaction_table.get(regulation_column)):
+            print(
+                "Warning: kinetic regulation is given both in the Reaction column %s and in a "
+                "Regulation table; the information from both is combined" % regulation_column
+            )
+        for j, i, sign in _regulation_table_entries(regulation_table, metabolites, reactions):
+            if regulation[j, i] not in (0.0, sign):
+                print(
+                    "Warning: regulation of %s by %s: the Regulation table and the column %s "
+                    "disagree; the Regulation table is used" % (reactions[j], metabolites[i], regulation_column)
+                )
+            regulation[j, i] = sign
 
     metabolite_kegg = [""] * nm
     metabolite_bigg = [""] * nm

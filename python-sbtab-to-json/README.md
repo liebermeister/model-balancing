@@ -39,7 +39,7 @@ Tables are found by their `TableID`, so one file may contain several of them.
 
 | File | Tables |
 |---|---|
-| network | `Reaction` (column `ReactionFormula`, optionally `MetabolicRegulation`), `Compound`, optionally `EnzymeRegulation` |
+| network | `Reaction` (column `ReactionFormula`, optionally `KineticRegulation`, formerly called `MetabolicRegulation` or `Regulator`), `Compound`, optionally a table of type `Regulation` (TableID `Regulation`, formerly `EnzymeRegulation`; columns `TargetReaction`, `Regulator`, and `RegulationType`, `RegulationType:SBO` or `RegulatoryCoefficient`; added to the column `KineticRegulation`, with a warning if both are given) |
 | kinetic data | `ParameterData` or `Parameter` |
 | state data | `MetaboliteConcentrationData`, `EnzymeConcentrationData`, `FluxData` |
 | constraints | `ConcentrationConstraint` |

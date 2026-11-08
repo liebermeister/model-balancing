@@ -67,6 +67,7 @@ conc_max = [];
 
 if length(file_options.constraint_sbtab_file),
   constraint_sbtab = sbtab_document_load_from_one(file_options.constraint_sbtab_file);
-  conc_min  = sbtab_table_get_column(constraint_sbtab.tables.ConcentrationConstraint,'Min',1);
-  conc_max  = sbtab_table_get_column(constraint_sbtab.tables.ConcentrationConstraint,'Max',1);
+  % bounds matched to the model metabolites by ID (column !Compound); the order of rows does not matter
+  conc_min  = sbtab_table_get_values_by_id(constraint_sbtab.tables.ConcentrationConstraint,{'Compound','Compound:SBML:species:id'},network.metabolites,'Min');
+  conc_max  = sbtab_table_get_values_by_id(constraint_sbtab.tables.ConcentrationConstraint,{'Compound','Compound:SBML:species:id'},network.metabolites,'Max');
 end

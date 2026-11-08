@@ -4,6 +4,11 @@ Version numbers have the form MAJOR.MINOR.PATCH. MAJOR changes when existing cal
 
 ## Unreleased
 
+- `python-sbtab-to-json`: Regulation tables are read with TableID `Regulation` (older files: `EnzymeRegulation`, or any table of TableType `Regulation`) and the SBtab 1.2 columns `TargetReaction`, `Regulator`, `RegulationType`, `RegulationType:SBO` and `RegulatoryCoefficient` (older columns `Reaction`, `Compound` are still read); they are added to the Reaction column `KineticRegulation`, with a warning if both are given
+- Concentration bounds (table `ConcentrationConstraint`) are matched to the model metabolites by ID (column `!Compound`) in `mb_load_model_and_data`, `mb_load_and_convert_model_and_data` and `mb_model_artificial_data`; the order of rows no longer matters. Needs sbtab with `sbtab_table_get_values_by_id`
+- Kinetic regulation is read from the Reaction column `!KineticRegulation` (SBtab 1.1 and 1.2, e.g. `+ ADP - PEP`) in `python-sbtab-to-json`; the old columns `!MetabolicRegulation` and `!Regulator` are still read. The test model (`matlab-python-comparison`) uses the new column, and the column `!MetabolicRegulation` was removed from `model-balancing_Definition.tsv`
+- Default options in the SBtab Config file `model-balancing/model-balancing_Config.tsv` (TableID `ConfigureModelBalancing`): `mb_default_options` reads the default values from this file and from the prior table (as before, for bounds and priors), and only describes the options. Needs matlab-utils with `load_config_table` (later than 1.0.0); the dependency check warns if it is missing.
+- New file `model-balancing/model-balancing_ToolInputOutput.tsv` (SBtab 1.2 table type ToolInputOutput) describing the input and output tables of model balancing (for information only; not used by the code)
 All functions and files starting with `cmb_` now start with `mb_` (for example `mb_estimation`, `mb_default_options` and `mb_prior.tsv`), and the struct `cmb_options` is now `mb_options`. The folders `cmb-variables`, `cmb-file-input-output` and `cmb-cvxpy` and the demo scripts `demo_cmb_...` now use `mb` as well.
 
 - New folder `python-sbtab-to-json`: stand-alone conversion of SBtab input files to JSON files for the python implementation

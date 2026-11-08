@@ -17,5 +17,4 @@ Lower	Column	Quantity	False	Float	Lower bound
 Mode	Column	Quantity	False	Float	Mode of the (posterior) distribution
 Reference	Column	Quantity	False	String	Literature reference or data source
 Upper	Column	Quantity	False	Float	Upper bound
-MetabolicRegulation	Column	Reaction	False	String	Allosteric regulation, e.g. '+ ADP - NADH' (activators: +, inhibitors: -)
 NameForPlots	Column	Reaction	False	String	Short name shown in plots

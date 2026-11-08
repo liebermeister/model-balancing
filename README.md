@@ -74,7 +74,7 @@ The code was tested with Matlab R2025b on Linux. The optimisation uses `fmincon`
 
 | Folder          | Contents |
 |-----------------|----------|
-| `model-balancing` | Matlab code: main function `model_balancing.m`, functions (`model-balancing/model-balancing-functions`), demo scripts (`model-balancing/demo`) |
+| `model-balancing` | Matlab code: main function `model_balancing.m`, functions (`model-balancing/model-balancing-functions`), demo scripts (`model-balancing/demo`); default options (SBtab Config file `model-balancing_Config.tsv`, read by `mb_default_options`), SBtab extension definitions (`model-balancing_Definition.tsv`) and input and output tables (`model-balancing_ToolInputOutput.tsv`) |
 | `resources` | Example models (`resources/models`) and the prior table (`resources/data/data-prior`) |
 | `examples`      | Input files for the python implementation (`examples/json`), model balancing results (`examples/results`), and result graphics (`examples/graphics`) |
 | `python-sbtab-to-json` | Stand-alone python script that converts SBtab input files into the JSON files for the python implementation |

@@ -1,0 +1,41 @@
+!!SBtab TableID='ConfigureModelBalancing' TableType='Config' SBtabVersion='1.2' Method='model-balancing' TableName='Default options of Model balancing (Matlab)'
+% Default options of the Matlab implementation, assembled from mb_default_options.m (model-balancing).
+% Empty values: option is empty by default ([] in Matlab); vector-valued options are
+% described in the column !Description. Flags: 1 (true) or 0 (false).
+% Further default values are taken from the prior table mb_prior.tsv (see mb_prior_file): the fields of
+% quantities (bounds and priors of Keq, KV, KM, KA, KI, Kcatf, Kcatr, c, e, and Aforward.max) and the options
+% metabolic_prior_c_geom_mean, metabolic_prior_c_geom_std, metabolic_prior_e_geom_mean, metabolic_prior_e_geom_std,
+% data_C_geom_std, and data_E_geom_std.
+!ID	!Value	!Description
+run	my_run	Name of the estimation scenario (freely chosen)
+kinetic_data_set	original	Name of the kinetic data set (freely chosen)
+ecm_score	emc4cm	ECM score function (see 'help ecm_scores')
+initial_values_variant	polytope center	Initial values: 'polytope center', 'preposterior_mode', 'flat_objective', 'random', 'true_values', 'given_values', 'average_sample'
+enzyme_score_type	interpolated	Enzyme score: 'quadratic' (alpha=1), 'monotonic' (alpha=0; only this guarantees convexity), 'interpolated'
+enzyme_score_alpha	0.5	Stringency parameter alpha (for enzyme_score_type='interpolated')
+beta_ln_c_over_km	0	Weight beta of the penalty on sum ln(c/KM)
+use_kinetic_data	all	Kinetic data used: 'all', 'only_Keq', 'none'
+score	neg_log_posterior	Objective: 'neg_log_posterior' or 'log_neg_log_posterior'
+use_gradient	1	Use analytic gradients in fmincon (only for ecm_score='emc4cm')
+use_safe_optimisation	1	Run several rounds of optimization (until convergence)
+random_seed	1	Random seed for optimization
+verbose	0	Verbose output
+optim_display	off	Option Display of fmincon
+display	1	Display table with scores after each optimization round
+show_graphics	1	Show graphics
+plot_true_vs_data	0	Plot true values against data values (only for artificial data)
+save_results	1	Save results to files
+save_graphics	1	Save graphics to files
+use_artificial_noise	0	Generate artificial state data with noise
+use_kinetic_data_noise	1	Generate artificial kinetic data with noise
+prior_variant	original_prior	Prior variant for tests with artificial data (also 'broad_prior', 'broad_prior_around_zero', 'prior_around_true_values', 'broad_prior_around_true_values')
+use_bounds	1	Use lower and upper bounds for all variables
+use_pseudo_values	0	Use pseudo values
+use_crosscovariances	0	Use cross-covariances between types of kinetic constants
+quantities.v.max	100	Upper bound for fluxes (mM/s)
+quantities.Aforward.min	0.0001	Lower bound for forward driving forces (kJ/mol)
+quantities.mu0.std	3.989727178099246	Standard deviation of standard chemical potentials, used for generating artificial data (kJ/mol; RT ln 5)
+data_V_geom_std	1.2	Geometric standard deviation of flux data (currently not used)
+data_kin_geom_std	1.5	Geometric standard deviation of kinetic data
+metabolic_artificial_c_geom_std	1.5	Geometric standard deviation of true metabolite concentrations (artificial data)
+metabolic_artificial_e_geom_std	1.5	Geometric standard deviation of true enzyme concentrations (artificial data)

@@ -1,7 +1,7 @@
 !!!SBtab SBtabVersion='1.1' Document='test_model'
 
 !!SBtab TableID='Reaction' TableType='Reaction' TableName='Reaction'
-!ID	!ReactionFormula	!IsReversible	!MetabolicRegulation
+!ID	!ReactionFormula	!IsReversible	!KineticRegulation
 R1	Xa <=> A	True	+ Xb
 R2	2 A <=> B	True	
 R3	B <=> C + Xd	True	- Xc
