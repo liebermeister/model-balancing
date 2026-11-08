@@ -39,7 +39,7 @@ Tables are found by their `TableID`, so one file may contain several of them.
 
 | File | Tables |
 |---|---|
-| network | `Reaction` (column `ReactionFormula`, optionally `KineticRegulation`, formerly called `MetabolicRegulation` or `Regulator`), `Compound`, optionally a table of type `Regulation` (TableID `Regulation`, formerly `EnzymeRegulation`; columns `TargetReaction`, `Regulator`, and `RegulationType`, `RegulationType:SBO` or `RegulatoryCoefficient`; added to the column `KineticRegulation`, with a warning if both are given) |
+| network | `Reaction` (column `ReactionFormula`, optionally `KineticRegulation`, formerly called `MetabolicRegulation` or `Regulator`), `Compound`, optionally a table of type `Regulation` (TableID `Regulation`, formerly `EnzymeRegulation`; columns `Regulator`, `Target`, optionally `RegulatorType` and `TargetType` (rows with types other than `metabolite` and `enzyme` are skipped), and `RegulationType`, `RegulationType:SBO` or `RegulatoryCoefficient` (NaN: unknown or dual); added to the column `KineticRegulation`, with a warning if both are given) |
 | kinetic data | `ParameterData` or `Parameter` |
 | state data | `MetaboliteConcentrationData`, `EnzymeConcentrationData`, `FluxData` |
 | constraints | `ConcentrationConstraint` |
@@ -47,9 +47,10 @@ Tables are found by their `TableID`, so one file may contain several of them.
 ## Validation
 
 `../matlab-python-comparison` compares the output with the JSON written by the fixed Matlab code.
-All numbers agree within 1e-8 for nine cases: a test model with regulation, missing data and a zero
+All numbers agree within 1e-8 for ten cases: a test model with regulation, missing data and a zero
 flux (different options), a model with a closed cycle, the branch point model, and the *E. coli*
-model. Only array shapes differ, see below.
+model, and the test model with one regulation arrow given in a Regulation table. Only array
+shapes differ, see below.
 
 The reader of the Python package reads the output, and its solver runs on it without Matlab. On
 the branch point model it reaches an objective of 0.08245 (Matlab: 0.08250).

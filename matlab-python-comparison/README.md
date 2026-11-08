@@ -13,7 +13,7 @@ Toolbox and others) are not in the folder that contains this repository.
 
 ## Steps
 
-1. `matlab_side.m` runs nine cases. For each, it writes the JSON problem (`*_problem.json`) and the
+1. `matlab_side.m` runs ten cases. For each, it writes the JSON problem (`*_problem.json`) and the
    optimum found by Matlab (`*_matlab.json`).
 2. `compare_json.py` runs the converter on the same SBtab files, writes `*_python.json`, and compares
    all numbers with the Matlab JSON (tolerance 1e-8, shape ignored).
@@ -30,6 +30,7 @@ Toolbox and others) are not in the folder that contains this repository.
 | `test_model_only_Keq`, `test_model_no_kinetic_data` | other settings of `use_kinetic_data` |
 | `test_model_cycle` | closed cycle, one Wegscheider condition |
 | `branch_point_model`, `escherichia-coli_noor_2016` | models from the Matlab package |
+| `test_model_regulation_table` | test model with one regulation arrow in the Reaction column `KineticRegulation` and one in a Regulation table (SBtab 1.2) |
 
 The test model in `test_model` comes from `make_test_model.py` (seeded). It has 6 reactions and 3
 states, with an activator and an inhibitor, a stoichiometric coefficient of 2, a reaction that
@@ -46,8 +47,8 @@ states, and missing metabolite and enzyme data.
 - `PASS (expected failure ...)`: an issue was fixed, so remove it from `KNOWN_ISSUES` and from the
   expected checks
 
-Current state: all 9 cases identical in `compare_json.py`; in `compare_objective.py`, 63 checks with
-33 passed, 30 known issues, 0 failed.
+Current state (2026-11-08): all 10 cases identical in `compare_json.py`; in `compare_objective.py`, 70
+checks with 36 passed, 34 known issues, 0 failed.
 
 The comparison uses the point found by Matlab, so it does not show differences in the constraints.
 In particular, Python has no Wegscheider conditions: on `test_model_cycle`, the solver of the Python

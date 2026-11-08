@@ -55,6 +55,9 @@ c = struct('files',{{[m 'escherichia-coli_noor_2016.tsv'],[m 'escherichia-coli_c
            'constraints',[m 'escherichia-coli_noor_2016_ConcentrationConstraint.tsv'],'mean',{{'S_1_Mean'}},'std',{{}});
 c.name = 'escherichia-coli_noor_2016'; c.alpha = 0.5; c.use_kinetic_data = 'all'; cases{9} = c;
 
+c = test_model; c.files{1} = fn('regulation_table_network');
+c.name = 'test_model_regulation_table';   c.alpha = 0.5; c.use_kinetic_data = 'all';      cases{10} = c;
+
 manifest = {};
 
 for it = 1:length(cases)

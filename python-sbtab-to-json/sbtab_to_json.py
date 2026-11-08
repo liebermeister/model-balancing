@@ -350,25 +350,32 @@ def _find_regulation_table(document: Dict[str, Table]):
 def _regulation_table_entries(table: Table, metabolites, reactions) -> List[Tuple[int, int, float]]:
     """(reaction index, compound index, sign) for the rows of a Regulation table.
 
-    Columns: TargetReaction (older: Reaction), Regulator (older: Compound), and for the
+    Columns: Target (older: TargetReaction, Reaction), Regulator (older: Compound), and for the
     sign RegulationType, RegulationType:SBO or the signed Hill coefficient
-    RegulatoryCoefficient (the first of them with an entry is used). Rows with dual or
-    unspecified effect, or with unknown reactions or compounds, are skipped with a warning.
-    The magnitudes of regulatory coefficients are not used.
+    RegulatoryCoefficient (the first of them with an entry is used; NaN stands for unknown or
+    dual regulation). Rows with dual or unspecified effect, or with unknown reactions or
+    compounds, are skipped with a warning. Rows whose RegulatorType or TargetType is given and
+    is not 'metabolite' or 'enzyme' (e.g. regulation of gene expression) describe no kinetic
+    regulation and are skipped. The magnitudes of regulatory coefficients are not used.
     """
-    reaction_column = next((c for c in ("TargetReaction", "Reaction") if table.has(c)), None)
+    reaction_column = next((c for c in ("Target", "TargetReaction", "Reaction") if table.has(c)), None)
     regulator_column = next((c for c in ("Regulator", "Compound") if table.has(c)), None)
     if reaction_column is None or regulator_column is None:
-        print("Warning: Regulation table without columns TargetReaction and Regulator; ignored")
+        print("Warning: Regulation table without columns Target and Regulator; ignored")
         return []
     n = table.nrows
     types = table.get("RegulationType") if table.has("RegulationType") else [""] * n
     sbo = table.get("RegulationType:SBO") if table.has("RegulationType:SBO") else [""] * n
     coef = table.get("RegulatoryCoefficient") if table.has("RegulatoryCoefficient") else [""] * n
+    regulator_types = table.get("RegulatorType") if table.has("RegulatorType") else [""] * n
+    target_types = table.get("TargetType") if table.has("TargetType") else [""] * n
     ind_r = index_case_insensitive(table.get(reaction_column), reactions)
     ind_m = index_case_insensitive(table.get(regulator_column), metabolites)
     entries = []
     for k in range(n):
+        if str(regulator_types[k]).strip().lower() not in ("", "metabolite") or \
+                str(target_types[k]).strip().lower() not in ("", "enzyme"):
+            continue  # not a kinetic regulation of an enzyme by a compound
         value = to_float(coef[k])
         coef_sign = float(np.sign(value)) if value == value and value != 0 else float("nan")
         signs = [_regulation_type_sign(types[k]), _regulation_type_sign(sbo[k]), coef_sign]
