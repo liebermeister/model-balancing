@@ -286,16 +286,16 @@ def _parse_regulation(text: str) -> List[Tuple[float, str]]:
     Parse an entry of column KineticRegulation, for example '+ A - B'.
 
     Signs: '+' activation (1.0), '-' inhibition (-1.0); regulators with dual
-    effect ('+-') or without sign are left out. The older notation '-B|+A'
+    effect ('+-'), unknown effect ('?') or without sign are left out. The older notation '-B|+A'
     (column Regulator) is also accepted.
     """
     result = []
     sign = ""
     for token in text.replace("|", " ").split():
-        if token in ("+", "-", "+-"):
+        if token in ("+", "-", "+-", "?"):
             sign = token
             continue
-        for prefix in ("+-", "+", "-"):
+        for prefix in ("+-", "+", "-", "?"):
             if token.startswith(prefix) and len(token) > len(prefix):
                 sign, token = prefix, token[len(prefix):]
                 break
@@ -313,11 +313,12 @@ def _column_or_empty(table: Table, name: str, n: int) -> List[str]:
 ACTIVATOR_SBO_TERMS = {459, 21, 461, 462, 170, 171, 656}
 INHIBITOR_SBO_TERMS = {20, 206, 207, 536, 537, 169}
 DUAL_SBO_TERMS = {595}
+UNKNOWN_SBO_TERMS = {596}
 
 
 def _regulation_type_sign(entry: str) -> float:
-    """+1 (activation), -1 (inhibition), 0 (dual) or NaN (empty or unknown) for an entry of
-    the column RegulationType ('activation', 'inhibition', 'dual'; older files: also
+    """+1 (activation), -1 (inhibition), 0 (dual or 'unknown') or NaN (empty) for an entry of
+    the column RegulationType ('activation', 'inhibition', 'dual', 'unknown'; older files: also
     'activator', 'inhibitor', 'SBO:0000020 - inhibitor') or RegulationType:SBO."""
     entry = entry.strip().lower()
     match = re.search(r"sbo:0*(\d+)", entry)
@@ -327,10 +328,10 @@ def _regulation_type_sign(entry: str) -> float:
             return 1.0
         if sbo in INHIBITOR_SBO_TERMS:
             return -1.0
-        if sbo in DUAL_SBO_TERMS:
+        if sbo in DUAL_SBO_TERMS or sbo in UNKNOWN_SBO_TERMS:
             return 0.0
         return float("nan")
-    return {"activation": 1.0, "activator": 1.0, "inhibition": -1.0, "inhibitor": -1.0, "dual": 0.0}.get(
+    return {"activation": 1.0, "activator": 1.0, "inhibition": -1.0, "inhibitor": -1.0, "dual": 0.0, "unknown": 0.0}.get(
         entry, float("nan")
     )
 

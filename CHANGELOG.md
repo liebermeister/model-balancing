@@ -4,6 +4,7 @@ Version numbers have the form MAJOR.MINOR.PATCH. MAJOR changes when existing cal
 
 ## Unreleased
 
+- `python-sbtab-to-json`: kinetic regulation formulae with the sign `?` (regulation of unknown type, e.g. `+ ADP ? ATP`) are parsed, and such regulators are left out, like regulators without sign; in Regulation tables, `RegulationType` `unknown` and SBO:0000596 (modifier of unknown activity) are treated in the same way
 - `python-sbtab-to-json`, Regulation tables: new optional columns `RegulatorType` and `TargetType` (SBtab 1.2); rows with types other than `metabolite` (regulator) and `enzyme` (target) are skipped; `RegulatoryCoefficient` NaN stands for unknown or dual regulation. The Regulation table of the test model has the column order `!ID`, `!Regulator`, `!Target` and the new type columns
 - `matlab-python-comparison`: new test case `test_model_regulation_table` (kinetic regulation given partly in the Reaction column `KineticRegulation` and partly in a Regulation table); the Matlab code and `python-sbtab-to-json` give the same JSON problem
 - `python-sbtab-to-json`: Regulation tables are read with TableID `Regulation` (older files: `EnzymeRegulation`, or any table of TableType `Regulation`) and the SBtab 1.2 columns `Target`, `Regulator`, `RegulationType`, `RegulationType:SBO` and `RegulatoryCoefficient` (older columns `Reaction`, `Compound` are still read); they are added to the Reaction column `KineticRegulation`, with a warning if both are given
