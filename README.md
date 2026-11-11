@@ -109,7 +109,7 @@ Implementation notes:
 
 ### Python
 For using model balancing in python, please refer to our [Read The Docs](https://model-balancing.readthedocs.io/en/latest/index.html) page;
-the code itself can be found on [our GitLab repository](https://gitlab.com/elad.noor/model-balancing).
+the code itself can be found on [our GitLab repository](https://gitlab.com/eladnoor/model-balancing).
 The script `python-sbtab-to-json/sbtab_to_json.py` makes the JSON input files from the same SBtab files as used in matlab, so matlab is not needed for this step.
 
 ### Example models

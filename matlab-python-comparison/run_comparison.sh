@@ -2,7 +2,7 @@
 # Compare the Matlab version, the SBtab-to-JSON converter, and the Python version of model balancing.
 # usage: run_comparison.sh [PYTHON]
 #   PYTHON: Python interpreter with numpy, scipy, pint, cvxpy, sbtab (default: python3)
-#   MB_PYTHON_SRC (required): src folder of the Python package (gitlab.com/elad.noor/model-balancing)
+#   MB_PYTHON_SRC (required): src folder of the Python package (gitlab.com/eladnoor/model-balancing)
 # Output files are written to the folder "results"; the Python package is not changed.
 set -e
 cd "$(dirname "$0")"

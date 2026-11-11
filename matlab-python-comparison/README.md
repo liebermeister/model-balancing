@@ -5,7 +5,7 @@ version of model balancing describe the same problem. Nothing in the Python pack
 
     MB_PYTHON_SRC=/path/to/python-package/src ./run_comparison.sh /path/to/python
 
-`MB_PYTHON_SRC` is the `src` folder of the [Python package](https://gitlab.com/elad.noor/model-balancing). The
+`MB_PYTHON_SRC` is the `src` folder of the [Python package](https://gitlab.com/eladnoor/model-balancing). The
 interpreter needs numpy, scipy, pint, cvxpy and sbtab. The script stops on the first failing step and
 writes its files to `results`; set `MB_COMPARISON_OUT` for a different output folder. `matlab_side.m`
 sets up the Matlab paths itself; set `MB_MATLAB_PACKAGES` if the Matlab packages (Metabolic Network
