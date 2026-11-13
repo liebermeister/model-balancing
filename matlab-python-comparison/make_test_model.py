@@ -114,7 +114,7 @@ lines += ["", "!!SBtab TableID='Compound' TableType='Compound' TableName='Compou
 lines += [f"{m}\t{m}\t{'True' if m in external else 'False'}" for m in mets]
 write("test_model_network.tsv", "\n".join(lines) + "\n")
 
-lines = ["!!SBtab TableID='ParameterData' TableType='Quantity'", "!QuantityType\t!Compound\t!Reaction\t!Unit\t!Median"]
+lines = ["!!SBtab SBtabVersion='1.1' TableID='ParameterData' TableType='Quantity' StandardConcentration='1mM'", "!QuantityType\t!Compound\t!Reaction\t!Unit\t!Median"]
 # only part of the constants are measured
 for k, (i, j) in enumerate(km_pairs):
     if k % 2 == 0:

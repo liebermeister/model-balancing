@@ -41,6 +41,8 @@ sbtab_options = struct('use_sbml_ids',0,'verbose',0,'modular_rate_law_kinetics',
 % -----------------------------------------
 % Save metabolic states as SBtab
 % (ecm_save_result_sbtab expects forward affinities, and computes Delta G from them and from the flux signs)
+% Equilibrium constants and standard chemical potentials are written for the standard concentration
+% mb_options.keq_standard_concentration (the convention of the tool, see model-balancing_Config.tsv)
 
 clear result
 
@@ -51,7 +53,7 @@ for it = 1:ns,
   result.V.(data.samples{it}) = data.V.mean(:,it);
 end
 
-ecm_sbtab_options = struct('r', optimal.kinetics,'method','emc4cm','document_name',filenames.model_name, 'save_tolerance_ranges',0,'sbtab_attributes',struct('DocumentName', 'MB result', 'Document', 'MBresult', 'StringencyAlpha', sprintf('%.2f',mb_options.enzyme_score_alpha), 'CalculationTime', sprintf('%f s',options.calculation_time)),'filename_model_state', filenames.extension_model_state, 'filename_state_runs',filenames.extension_state_runs);
+ecm_sbtab_options = struct('r', optimal.kinetics,'method','emc4cm','document_name',filenames.model_name, 'save_tolerance_ranges',0,'sbtab_attributes',struct('DocumentName', 'MB result', 'Document', 'MBresult', 'StringencyAlpha', sprintf('%.2f',mb_options.enzyme_score_alpha), 'CalculationTime', sprintf('%f s',options.calculation_time)),'filename_model_state', filenames.extension_model_state, 'filename_state_runs',filenames.extension_state_runs, 'standard_concentration', mb_options.keq_standard_concentration);
 
 ecm_save_result_sbtab(filenames.balanced, network_optimal, result.C, result.E, result.A_forward, ecm_sbtab_options, exp(bounds.x_min), exp(bounds.x_max), [],[],[],[],[],result.V);
 
@@ -73,7 +75,7 @@ if length(true_model),
     result.V.(data.samples{it}) = true_model.V(:,it);
   end
   
-  ecm_sbtab_options = struct('r', true_model.kinetics,'method','emc4cm','document_name',filenames.model_name, 'save_tolerance_ranges',0,'sbtab_attributes',struct('DocumentName', 'MB result', 'Document', 'MBresult', 'CalculationTime', sprintf('%f s',options.calculation_time)),'filename_model_state', filenames.extension_model_state, 'filename_state_runs', filenames.extension_state_runs);
+  ecm_sbtab_options = struct('r', true_model.kinetics,'method','emc4cm','document_name',filenames.model_name, 'save_tolerance_ranges',0,'sbtab_attributes',struct('DocumentName', 'MB result', 'Document', 'MBresult', 'CalculationTime', sprintf('%f s',options.calculation_time)),'filename_model_state', filenames.extension_model_state, 'filename_state_runs', filenames.extension_state_runs, 'standard_concentration', mb_options.keq_standard_concentration);
 
   ecm_save_result_sbtab(filenames.true, network_true, result.C, result.E, result.A_forward, ecm_sbtab_options, exp(bounds.x_min), exp(bounds.x_max),[],[],[],[],[],result.V);
 

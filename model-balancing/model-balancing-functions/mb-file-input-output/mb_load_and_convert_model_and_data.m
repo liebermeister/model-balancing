@@ -30,7 +30,15 @@ function [network, q_info, data, c_init, kinetic_data, state_data, conc_min, con
   
 eval(default('file_options','struct'));
 
-file_options = join_struct(struct('constraint_sbtab_file',[],'prior_file',mb_prior_file), file_options);
+% data files that do not declare a standard concentration are read with the standard
+% concentration of model balancing (option keq_standard_concentration)
+if isfield(mb_options,'keq_standard_concentration')
+  default_standard_concentration = mb_options.keq_standard_concentration;
+else
+  mb_defaults = mb_default_options;
+  default_standard_concentration = mb_defaults.keq_standard_concentration;
+end
+file_options = join_struct(struct('constraint_sbtab_file',[],'prior_file',mb_prior_file,'default_data_standard_concentration',default_standard_concentration), file_options);
 
 % --------------------------------------------------------------
 % Load data files -> network, kinetic_data, state_data

@@ -62,6 +62,9 @@ function mb_options = mb_default_options(flag_artificial)
 %   .quantities.Keq.max          new value for upper_bound(ind.Keq);
 %   .quantities.Keq.mean_ln      new value for prior_median_ln(ind.Keq);
 %   .quantities.Keq.std_ln       new value for prior_geostd_ln(ind.Keq);
+%   .quantities.Keq.standard_concentration  standard concentration to which quantities.Keq.min, .max and .mean_ln
+%                                refer (default: the one declared in the prior table); model balancing converts
+%                                them, for each reaction, to 1 mM (used internally)
 %   .quantities.KV.min           new value for lower_bound(ind.KV);
 %   .quantities.KV.max           new value for upper_bound(ind.KV);
 %   .quantities.KV.mean_ln       new value for prior_median_ln(ind.KV);
@@ -177,6 +180,9 @@ for my_quantity = {'Keq','KV','KM','KA','KI','Kcatf','Kcatr'}
   mb_options.quantities.(q).mean_ln = prior_median_ln(ind.(q));
   mb_options.quantities.(q).std_ln  = prior_geostd_ln(ind.(q));
 end
+
+% standard concentration of the Keq prior values (table attribute StandardConcentration of the prior table)
+mb_options.quantities.Keq.standard_concentration = parameter_prior.standard_concentration;
 
 mb_options.quantities.c.min           = lower_bound(ind.c);
 mb_options.quantities.c.max           = upper_bound(ind.c);

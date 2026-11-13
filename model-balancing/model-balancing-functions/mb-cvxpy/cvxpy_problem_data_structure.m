@@ -6,7 +6,8 @@ function problem = cvxpy_problem_data_structure(network, q_info, prior, data, bo
 % into a single data structure, exported to json and then used by python model balancing tool (based on CVXpy)
 %
 % Structure, default values, and matrix sizes for a network with nr reactions and nm metabolites (and ns metabolic states)
-%   .standard_concentration: '1 mM'
+%   .standard_concentration: standard concentration of the equilibrium constants (option
+%                            keq_standard_concentration, default '1 M'; internally, Matlab uses 1 mM)
 %   .state_names:            {ns x 1 cell}
 %   .use_pseudo_values:      Boolean
 %
@@ -292,6 +293,42 @@ problem.kinetic_constants.Kcatr = Kcatr;
 problem.kinetic_constants.KM    = KM;
 problem.kinetic_constants.KA    = KA;
 problem.kinetic_constants.KI    = KI;
+
+% --------------------------------------------------------------
+% Equilibrium constants: from 1 mM (used internally) to the standard concentration of the
+% tool (option keq_standard_concentration). Keq scales with (1 mM / c_standard) ^ (sum of
+% stoichiometric coefficients, water excluded); on log scale this is an added constant, so
+% standard deviations and precision matrices stay unchanged.
+
+if isfield(mb_options,'keq_standard_concentration')
+  standard_concentration = mb_options.keq_standard_concentration;
+else
+  standard_concentration = '1 mM';
+end
+switch strrep(standard_concentration,' ','')
+  case {'M','1M'},   c_standard_in_mM = 1000;
+  case {'mM','1mM'}, c_standard_in_mM = 1;
+  otherwise, error(sprintf('Unknown standard concentration ''%s'' (allowed: ''1 M'' or ''1 mM'')', standard_concentration));
+end
+problem.standard_concentration = standard_concentration;
+if c_standard_in_mM ~= 1
+  ind_water = network_find_water(network);
+  N_dissolved = network.N;
+  N_dissolved(ind_water,:) = 0;
+  ln_factor = - log(c_standard_in_mM) * full(sum(N_dissolved,1))';
+  Keq = problem.kinetic_constants.Keq;
+  if length(Keq.true), Keq.true = Keq.true .* exp(ln_factor); end
+  Keq.bounds_ln.min      = Keq.bounds_ln.min    + ln_factor;
+  Keq.bounds_ln.max      = Keq.bounds_ln.max    + ln_factor;
+  Keq.bounds.min         = Keq.bounds.min      .* exp(ln_factor);
+  Keq.bounds.max         = Keq.bounds.max      .* exp(ln_factor);
+  Keq.data_ln.mean       = Keq.data_ln.mean     + ln_factor;
+  Keq.combined.mean_ln   = Keq.combined.mean_ln + ln_factor;
+  Keq.combined.geom_mean = exp(Keq.combined.mean_ln);
+  problem.kinetic_constants.Keq = Keq;
+  problem.kinetic_constants.all.mean_ln(index.Keq)   = problem.kinetic_constants.all.mean_ln(index.Keq) + ln_factor;
+  problem.kinetic_constants.all.geom_mean(index.Keq) = exp(problem.kinetic_constants.all.mean_ln(index.Keq));
+end
 
 % problem.kinetic_constants.prec_blocks.prec_Keq_ln       = qall_struct.combined.prec_ln(index.Keq,index.Keq);
 % problem.kinetic_constants.prec_blocks.prec_KM_ln        = qall_struct.combined.prec_ln(index.KM,index.KM);

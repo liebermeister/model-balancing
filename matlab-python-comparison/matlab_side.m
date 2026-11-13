@@ -76,6 +76,7 @@ for it = 1:length(cases)
   o.enzyme_score_alpha = c.alpha;
   o.use_kinetic_data = c.use_kinetic_data;
   o.save_results = 0; o.save_graphics = 0; o.show_graphics = 0;
+  o.keq_standard_concentration = '1 mM'; % as in python-sbtab-to-json (the data files declare their own convention)
 
   [network,q_info,data,c_init,~,~,conc_min,conc_max] = mb_load_and_convert_model_and_data(o,c.files,file_options);
   [bounds,prior] = mb_model_and_data(c.name,network,data,q_info,c_init,o,conc_min,conc_max);

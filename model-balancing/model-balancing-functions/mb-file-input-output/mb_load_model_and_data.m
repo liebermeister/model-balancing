@@ -45,6 +45,10 @@ if length(kinetic_data_file),
   if isempty(find(cellfun('length',network.metabolite_KEGGID))), warning('No KEGG species annotations found in model');  end
   if isempty(find(cellfun('length',network.reaction_KEGGID))),   warning('No KEGG reaction annotations found in model');  end
   opt = struct('use_sbml_ids', options.use_sbml_ids, 'use_kegg_ids', options.use_kegg_ids, 'verbose', 0);
+  % data files that do not declare a standard concentration are read with the standard
+  % concentration of model balancing (option keq_standard_concentration in model-balancing_Config.tsv)
+  mb_defaults = mb_default_options;
+  opt.default_data_standard_concentration = mb_defaults.keq_standard_concentration;
   kinetic_data = kinetic_data_load(data_quantities, parameter_prior, network, kinetic_data_file, opt);
 else
   kinetic_data = [];

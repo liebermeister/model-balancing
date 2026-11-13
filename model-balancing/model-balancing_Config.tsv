@@ -34,6 +34,7 @@ use_pseudo_values	0	Use pseudo values
 use_crosscovariances	0	Use cross-covariances between types of kinetic constants
 quantities.v.max	100	Upper bound for fluxes (mM/s)
 quantities.Aforward.min	0.0001	Lower bound for forward driving forces (kJ/mol)
+keq_standard_concentration	1 M	Standard concentration ('1 M' or '1 mM') of the tool for equilibrium constants and standard Gibbs free energies: assumed for data files that do not declare one (table attribute StandardConcentration), and used in the JSON problem file and in the result files. Data and prior files that declare a different standard concentration are converted on import. (Internally, the Matlab implementation works with 1 mM.)
 quantities.mu0.std	3.989727178099246	Standard deviation of standard chemical potentials, used for generating artificial data (kJ/mol; RT ln 5)
 data_V_geom_std	1.2	Geometric standard deviation of flux data (currently not used)
 data_kin_geom_std	1.5	Geometric standard deviation of kinetic data
